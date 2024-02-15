@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using Capstone.Exceptions;
 using Capstone.Models;
 using Capstone.Security;
 using Capstone.Security.Models;
+using Npgsql;
 
 namespace Capstone.DAO
 {
-    public class UserSqlDao : IUserDao
+    public class UserPostgresDao : IUserDao
     {
         private readonly string connectionString;
 
-        public UserSqlDao(string dbConnectionString)
+        public UserPostgresDao(string dbConnectionString)
         {
             connectionString = dbConnectionString;
         }
@@ -26,12 +25,12 @@ namespace Capstone.DAO
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
-                    conn.Open();
+                    connection.Open();
 
-                    SqlCommand cmd = new SqlCommand(sql, conn);
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
 
                     while (reader.Read())
                     {
@@ -40,7 +39,7 @@ namespace Capstone.DAO
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new DaoException("SQL exception occurred", ex);
             }
@@ -56,13 +55,13 @@ namespace Capstone.DAO
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@user_id", userId);
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read()) 
                     {
@@ -70,7 +69,7 @@ namespace Capstone.DAO
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new DaoException("SQL exception occurred", ex);
             }
@@ -86,13 +85,13 @@ namespace Capstone.DAO
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@username", username);
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())
                     {
@@ -100,7 +99,7 @@ namespace Capstone.DAO
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new DaoException("SQL exception occurred", ex);
             }
@@ -122,11 +121,11 @@ namespace Capstone.DAO
             int newUserId = 0;
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@username", username);
                     cmd.Parameters.AddWithValue("@password_hash", hash.Password);
                     cmd.Parameters.AddWithValue("@salt", hash.Salt);
@@ -137,7 +136,7 @@ namespace Capstone.DAO
                 }
                 newUser = GetUserById(newUserId);
             }
-            catch (SqlException ex)
+            catch (NpgsqlException ex)
             {
                 throw new DaoException("SQL exception occurred", ex);
             }
@@ -145,7 +144,7 @@ namespace Capstone.DAO
             return newUser;
         }
 
-        private User MapRowToUser(SqlDataReader reader)
+        private User MapRowToUser(NpgsqlDataReader reader)
         {
             User user = new User();
             user.UserId = Convert.ToInt32(reader["user_id"]);
