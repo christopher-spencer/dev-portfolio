@@ -19,7 +19,10 @@ module.exports = {
           ['@', './src']
         ],
         extensions: [".vue", ".js"]
-      }
+      },
+      node: {
+        extensions: ['.js', '.jsx', '.json', '.vue'],
+      },
     },
   },
   // Needed for accessing .env from import.meta.env
