@@ -126,8 +126,7 @@ namespace Capstone.DAO
             PasswordHash hash = passwordHasher.ComputeHash(password);
 
             string sql = "INSERT INTO users (username, password_hash, salt, user_role) " +
-                         "OUTPUT INSERTED.user_id " +
-                         "VALUES (@username, @password_hash, @salt, @user_role)";
+                         "VALUES (@username, @password_hash, @salt, @user_role) RETURNING user_id";
 
             int newUserId = 0;
             try
