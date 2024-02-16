@@ -79,6 +79,12 @@ namespace Capstone.DAO
 
         public User GetUserByUsername(string username)
         {
+            // Check if the username is null or empty
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new ArgumentException("Username cannot be null or empty.", nameof(username));
+            }
+
             User user = null;
 
             string sql = "SELECT user_id, username, password_hash, salt, user_role FROM users WHERE username = @username";
@@ -90,7 +96,12 @@ namespace Capstone.DAO
                     conn.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@username", username);
+
+                    // Create a new parameter and set its NpgsqlDbType and value
+                    NpgsqlParameter parameter = new NpgsqlParameter("@username", NpgsqlTypes.NpgsqlDbType.Text);
+                    parameter.Value = username;
+                    cmd.Parameters.Add(parameter);
+
                     NpgsqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())
