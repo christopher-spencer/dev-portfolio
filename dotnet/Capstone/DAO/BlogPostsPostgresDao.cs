@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Capstone.DAO.Interfaces;
+using Capstone.Exceptions;
 using Capstone.Models;
 using Npgsql;
 
@@ -31,7 +32,17 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        BlogPost blogPost = MapRowToBlogPost(reader);
+                        blogPosts.Add(blogPost);
+                    }
                 }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("SQL exception occurred", ex);
             }
 
             return blogPosts;
