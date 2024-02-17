@@ -15,7 +15,7 @@ namespace Capstone.Controllers
             this.blogPostsDao = blogPostsDao;
         }
 
-        [HttpGet]
+        [HttpGet("/blogposts")]
         public ActionResult<List<BlogPost>> GetBlogPosts()
         {
             List<BlogPost> blogPosts = blogPostsDao.GetBlogPosts();
