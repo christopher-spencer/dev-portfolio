@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Capstone.DAO.Interfaces;
+using Capstone.Models;
 
 namespace Capstone.DAO
 {
@@ -8,6 +10,15 @@ namespace Capstone.DAO
 
         public BlogPostsPostgresDao(string dbConnectionString) {
             connectionString = dbConnectionString;
+        }
+
+        public List<BlogPost> GetBlogPosts()
+        {
+            List<BlogPost> blogPosts = new List<BlogPost>();
+
+            
+
+            return blogPosts;
         }
 
     }
