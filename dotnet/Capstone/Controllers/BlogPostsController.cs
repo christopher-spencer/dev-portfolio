@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Capstone.DAO.Interfaces;
+using Capstone.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Capstone.Controllers
@@ -13,7 +15,20 @@ namespace Capstone.Controllers
             this.blogPostsDao = blogPostsDao;
         }
 
+        [HttpGet]
+        public ActionResult<List<BlogPost>> GetBlogPosts()
+        {
+            List<BlogPost> blogPosts = blogPostsDao.GetBlogPosts();
 
+            if (blogPosts == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(blogPosts);
+            }
+        }
     }
 
 }
