@@ -1,10 +1,7 @@
-namespace DevPortfolioTests;
-
-[TestClass]
-public class UnitTest1
+namespace Capstone.UnitTests.DAO
 {
-    [TestMethod]
-    public void TestMethod1()
-    {
-    }
+
 }
+
+
+
