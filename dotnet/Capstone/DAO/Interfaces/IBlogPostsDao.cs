@@ -8,7 +8,7 @@ namespace Capstone.DAO.Interfaces
         List<BlogPost> GetBlogPosts();
         BlogPost GetBlogPostById(int blogPostId);
         BlogPost AddBlogPost(BlogPost blogPost);
-        BlogPost UpdateBlogPost(BlogPost blogPost);
+        BlogPost UpdateBlogPost(BlogPost blogPost, int blogPostId);
 
     }
 }

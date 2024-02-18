@@ -62,6 +62,22 @@ namespace Capstone.Controllers
 
             }
         }
+
+        [Authorize]
+        [HttpPut("/update-blogpost/{blogPostId}/")]
+        public ActionResult UpdateBlogPost(BlogPost blogPost, int blogPostId)
+        {
+            BlogPost updatedBlogPost = blogPostsDao.UpdateBlogPost(blogPost, blogPostId);
+
+            if (updatedBlogPost == null)
+            {
+                 return BadRequest();
+            }
+            else 
+            {
+                return Ok(updatedBlogPost);
+            }
+        }
     }
 
 }

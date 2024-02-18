@@ -120,7 +120,7 @@ namespace Capstone.DAO
             return newBlogPost;
         }
 
-        public BlogPost UpdateBlogPost(BlogPost blogPost)
+        public BlogPost UpdateBlogPost(BlogPost blogPost, int blogPostId)
         {
             string sql = "UPDATE blogposts SET blogpost_name = @blogpost_name, blogpost_author = @blogpost_author, " +
                 "blogpost_description = @blogpost_description, blogpost_content = @blogpost_content, image_name = @image_name, " +
@@ -135,7 +135,7 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
 
-                    cmd.Parameters.AddWithValue("@blogpost_id", blogPost.Id); // assuming Id property exists
+                    cmd.Parameters.AddWithValue("@blogpost_id", blogPostId); 
                     cmd.Parameters.AddWithValue("@blogpost_name", blogPost.Name);
                     cmd.Parameters.AddWithValue("@blogpost_author", blogPost.Author);
                     cmd.Parameters.AddWithValue("@blogpost_description", blogPost.Description);
