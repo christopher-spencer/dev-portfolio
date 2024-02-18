@@ -29,6 +29,21 @@ namespace Capstone.Controllers
                 return Ok(blogPosts);
             }
         }
+
+        [HttpGet("blogpost/{blogPostId}")]
+        public ActionResult<BlogPost> GetBlogPostById(int blogPostId)
+        {
+            BlogPost blogPost = blogPostsDao.GetBlogPostById(blogPostId);
+
+            if (blogPost == null) 
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(blogPost);
+            }
+        }
     }
 
 }
