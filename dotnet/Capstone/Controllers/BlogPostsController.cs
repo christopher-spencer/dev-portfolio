@@ -80,6 +80,8 @@ namespace Capstone.Controllers
             }
         }
 
+        // UPDATE THE EXCEPTIONS
+
         [Authorize]
         [HttpDelete("/blogpost/delete/{blogPostId}")]
         public ActionResult DeleteBlogPostByBlogPostId(int blogPostId)
