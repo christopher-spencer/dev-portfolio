@@ -161,6 +161,32 @@ namespace Capstone.DAO
             }    
         }
 
+        public int DeleteBlogPostByBlogPostId(int blogPostId)
+        {
+            int numberOfRowsAffected = 0;
+
+            string sql = "DELETE FROM blogposts WHERE blogpost_id = @blogpost_id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@blogpost_id", blogPostId);
+
+                    numberOfRowsAffected = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the blog post.", ex);
+            }
+
+            return numberOfRowsAffected;
+        }
+
         private BlogPost MapRowToBlogPost(NpgsqlDataReader reader)
         {
             BlogPost blogPost = new BlogPost
