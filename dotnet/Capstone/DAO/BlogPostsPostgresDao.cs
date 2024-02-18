@@ -120,6 +120,47 @@ namespace Capstone.DAO
             return newBlogPost;
         }
 
+        public BlogPost UpdateBlogPost(BlogPost blogPost)
+        {
+            string sql = "UPDATE blogposts SET blogpost_name = @blogpost_name, blogpost_author = @blogpost_author, " +
+                "blogpost_description = @blogpost_description, blogpost_content = @blogpost_content, image_name = @image_name, " +
+                "image_url = @image_url " +
+                "WHERE blogpost_id = @blogpost_id;";
+
+             try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+
+                    cmd.Parameters.AddWithValue("@blogpost_id", blogPost.Id); // assuming Id property exists
+                    cmd.Parameters.AddWithValue("@blogpost_name", blogPost.Name);
+                    cmd.Parameters.AddWithValue("@blogpost_author", blogPost.Author);
+                    cmd.Parameters.AddWithValue("@blogpost_description", blogPost.Description);
+                    cmd.Parameters.AddWithValue("@blogpost_content", blogPost.Content);
+                    cmd.Parameters.AddWithValue("@image_name", blogPost.ImageName);
+                    cmd.Parameters.AddWithValue("@image_url", blogPost.ImageUrl);
+
+                    int count = cmd.ExecuteNonQuery();
+
+                    if (count == 1) 
+                    {
+                        return blogPost;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the blog post.", ex);
+            }    
+        }
+
         private BlogPost MapRowToBlogPost(NpgsqlDataReader reader)
         {
             BlogPost blogPost = new BlogPost
