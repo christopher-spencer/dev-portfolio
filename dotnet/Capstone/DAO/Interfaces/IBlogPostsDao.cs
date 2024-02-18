@@ -7,6 +7,7 @@ namespace Capstone.DAO.Interfaces
     {
         List<BlogPost> GetBlogPosts();
         BlogPost GetBlogPostById(int blogPostId);
+        BlogPost AddBlogPost(BlogPost blogPost);
 
     }
 }
