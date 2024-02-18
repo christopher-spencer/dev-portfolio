@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Capstone.DAO.Interfaces;
+using Capstone.Exceptions;
 using Capstone.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -78,6 +79,29 @@ namespace Capstone.Controllers
                 return Ok(updatedBlogPost);
             }
         }
-    }
 
+        [Authorize]
+        [HttpDelete("/blogpost/delete/{blogPostId}")]
+        public ActionResult DeleteBlogPostByBlogPostId(int blogPostId)
+        {
+            try
+            {
+                int rowsAffected = blogPostsDao.DeleteBlogPostByBlogPostId(blogPostId);
+        
+                if (rowsAffected > 0)
+                {
+                    return Ok("Blog post deleted successfully");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the blog post.");
+            }
+        }
+
+    }
 }
