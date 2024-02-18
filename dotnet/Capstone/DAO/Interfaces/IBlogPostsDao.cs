@@ -6,6 +6,7 @@ namespace Capstone.DAO.Interfaces
     public interface IBlogPostsDao
     {
         List<BlogPost> GetBlogPosts();
+        BlogPost GetBlogPostById(int blogPostId);
 
     }
 }
