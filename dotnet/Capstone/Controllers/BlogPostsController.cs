@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Capstone.DAO.Interfaces;
 using Capstone.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Capstone.Controllers
@@ -42,6 +43,23 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(blogPost);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("/create-blogpost")]
+        public ActionResult AddBlogPost(BlogPost blogPost)
+        {
+            BlogPost createdBlogPost = blogPostsDao.AddBlogPost(blogPost);
+
+            if (createdBlogPost == null) 
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return CreatedAtAction(nameof(GetBlogPostById), new { blogPostId = createdBlogPost.Id }, createdBlogPost);
+
             }
         }
     }
