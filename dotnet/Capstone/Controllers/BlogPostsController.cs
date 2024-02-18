@@ -30,7 +30,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("blogpost/{blogPostId}")]
+        [HttpGet("/blogpost/{blogPostId}")]
         public ActionResult<BlogPost> GetBlogPostById(int blogPostId)
         {
             BlogPost blogPost = blogPostsDao.GetBlogPostById(blogPostId);

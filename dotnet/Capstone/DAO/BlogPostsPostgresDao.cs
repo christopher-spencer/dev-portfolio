@@ -82,6 +82,44 @@ namespace Capstone.DAO
             return blogPost;
         }
 
+        public BlogPost AddBlogPost(BlogPost blogPost)
+        {
+            BlogPost newBlogPost = null;
+
+            string sql = "INSERT into blogposts (blogpost_name, blogpost_author, blogpost_description, blogpost_content, " +
+                "image_name, image_url) " +
+                "VALUES (@blogpost_name, @blogpost_author, @blogpost_description, @blogpost_content, @image_name, @image_url) " +
+                "RETURNING blogpost_id;";
+
+            int newBlogPostId = 0;    
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+
+                    cmd.Parameters.AddWithValue("@blogpost_name", blogPost.Name);
+                    cmd.Parameters.AddWithValue("@blogpost_author", blogPost.Author);
+                    cmd.Parameters.AddWithValue("@blogpost_description", blogPost.Description);
+                    cmd.Parameters.AddWithValue("@blogpost_content", blogPost.Content);
+                    cmd.Parameters.AddWithValue("@image_name", blogPost.ImageName);
+                    cmd.Parameters.AddWithValue("@image_url", blogPost.ImageUrl);
+
+                    newBlogPostId = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+
+                newBlogPost = GetBlogPostById(newBlogPostId);
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("SQL exception occurred", ex);
+            }
+            return newBlogPost;
+        }
+
         private BlogPost MapRowToBlogPost(NpgsqlDataReader reader)
         {
             BlogPost blogPost = new BlogPost
