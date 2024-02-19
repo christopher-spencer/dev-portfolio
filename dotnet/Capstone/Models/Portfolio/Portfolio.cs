@@ -19,6 +19,6 @@ namespace Capstone.Models
         public List<Education> EducationHistory { get; set; }
         public List<Credential> CertificationsAndCredentials { get; set; }
         public List<VolunteerWork> VolunteerWorks { get; set; }
-        public List<string> OpenSourceContributions { get; set; }
+        public List<OpenSourceContribution> OpenSourceContributions { get; set; }
     }
 }
