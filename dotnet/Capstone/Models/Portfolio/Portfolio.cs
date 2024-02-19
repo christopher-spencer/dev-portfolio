@@ -15,10 +15,10 @@ namespace Capstone.Models
         public string LinkedInURL { get; set; }
         public List<TechSkill> TechSkills { get; set; }
         public List<SideProject> SideProjects { get; set; }
-        public List<string> BackgroundExperience { get; set; }
+        public List<string> BackgroundExperiences { get; set; }
         public List<string> EducationHistory { get; set; }
         public List<Credential> CertificationsAndCredentials { get; set; }
-        public List<string> VolunteerWork { get; set; }
+        public List<string> VolunteerWorks { get; set; }
         public List<string> OpenSourceContributions { get; set; }
     }
 }
