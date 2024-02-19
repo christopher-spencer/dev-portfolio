@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace Capstone.Models
 {
-    public class TechSkills
+    public class TechSkill
     {
         public string Name { get; set; }
-        public string AssociatedProjects { get; set; }
     }
 }
