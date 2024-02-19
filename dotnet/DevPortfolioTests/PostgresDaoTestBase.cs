@@ -20,6 +20,7 @@ namespace Capstone.UnitTests.DAO
 
                 string sql_insert = "INSERT INTO users (username, password_hash, salt, user_role) " +
                     "VALUES ('notauser', 'jjjjjjjjj', 'kkkkkkkkkk', 'user');";
+                    
                 NpgsqlCommand cmd = new NpgsqlCommand(sql_insert, conn);
                 int count = cmd.ExecuteNonQuery();
 

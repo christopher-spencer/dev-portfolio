@@ -8,7 +8,7 @@ using Capstone.UnitTests.DAO;
 namespace Capstone.UnitTests.DAO
 {
     [TestClass]
-    public class UserPostgresDAOTest : PostgresDaoTestBase
+    public class UserPostgresDAOTests : PostgresDaoTestBase
     {
         [TestMethod]
         public void GetUserTest()
