@@ -11,8 +11,6 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
-            // Assuming there are already some blog posts inserted in the database
-            // Insert blog posts here (SQL provided below)
 
             // Act
             List<BlogPost> blogPosts = dao.GetBlogPosts();
@@ -27,8 +25,6 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
-            // Assuming there's a blog post with ID 1 in the database
-            // Insert blog post with ID 1 here (SQL provided below)
 
             // Act
             BlogPost blogPost = dao.GetBlogPostById(1);
@@ -60,11 +56,10 @@ namespace Capstone.UnitTests.DAO
 
             // Assert
             Assert.IsNotNull(addedBlogPost);
-            Assert.AreNotEqual(0, addedBlogPost.Id); // Assuming ID is auto-generated
-            // Additional assertions based on expected data
+            Assert.AreNotEqual(0, addedBlogPost.Id); 
             Assert.AreEqual(newBlogPost.Name, addedBlogPost.Name);
             Assert.AreEqual(newBlogPost.Author, addedBlogPost.Author);
-            // Assert other properties...
+            // TODO Assert other properties...
         }
 
         [TestMethod]
@@ -72,18 +67,17 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
-            // Assuming there's a blog post with ID 1 in the database
-            // Insert blog post with ID 1 here (SQL provided below)
+ 
             BlogPost updatedBlogPost = new BlogPost
             {
-                Id = 1, // Assuming this is the ID of the existing blog post to update
+                Id = 1, 
                 Name = "Updated Blog Post",
                 Author = "Jane Doe",
                 Description = "Updated description",
                 Content = "Updated content",
                 ImageName = "updated_image.jpg",
                 ImageUrl = "https://example.com/updated_image.jpg",
-                CreatedAt = DateTime.Now, // Assuming these values will not change during update
+                CreatedAt = DateTime.Now, 
                 UpdatedAt = DateTime.Now
             };
 
@@ -92,7 +86,6 @@ namespace Capstone.UnitTests.DAO
 
             // Assert
             Assert.IsNotNull(result);
-            // Additional assertions if needed
         }
 
         [TestMethod]
@@ -100,15 +93,12 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
-            // Assuming there's a blog post with ID 1 in the database
-            // Insert blog post with ID 1 here (SQL provided below)
 
             // Act
             int rowsAffected = dao.DeleteBlogPostByBlogPostId(1);
 
             // Assert
             Assert.AreEqual(1, rowsAffected);
-            // Additional assertions if needed
         }
     }
 }
