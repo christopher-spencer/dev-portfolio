@@ -6,6 +6,7 @@ namespace Capstone.Models
     public class Education
     {
         public string SchoolOrInstitution { get; set; }
+        public string InstitutionLogoUrl { get; set; }
         public string Location { get; set; }
         public string Description { get; set; }
         public string FieldOfStudy { get; set; }
@@ -14,5 +15,7 @@ namespace Capstone.Models
         public DateTime StartDate { get; set; }
         public DateTime GraduationDate { get; set; }
         public List<string> HonorsAndAwards { get; set; }
+        public string MainImageUrl { get; set; }
+        public List<string> AdditionalImagesUrl { get; set; }
     }
 }
