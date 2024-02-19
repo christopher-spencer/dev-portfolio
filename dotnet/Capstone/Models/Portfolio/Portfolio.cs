@@ -14,8 +14,8 @@ namespace Capstone.Models
         public string LinkedInURL { get; set; }
         public List<TechSkill> TechSkills { get; set; }
         public List<SideProject> SideProjects { get; set; }
-        public List<string> Experience { get; set; }
-        public List<string> Education { get; set; }
-        public List<string> Certifications { get; set; }
+        public List<string> BackgroundExperience { get; set; }
+        public List<string> EducationHistory { get; set; }
+        public List<Credential> CertificationsAndCredentials { get; set; }
     }
 }

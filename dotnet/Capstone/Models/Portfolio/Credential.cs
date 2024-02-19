@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Capstone.Models
 {
-    public class Certification
+    public class Credential
     {
         public int Id { get; set; }
         public string Name { get; set; }

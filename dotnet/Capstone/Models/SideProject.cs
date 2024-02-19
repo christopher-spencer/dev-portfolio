@@ -10,6 +10,9 @@ namespace Capstone.Models
         public string MainImageUrl { get; set; }
         public string Description { get; set; }
         public List<string> AdditionalImagesUrl { get; set; }
+        public string VideoWalkthroughUrl { get; set; }
         public List<TechSkill> ToolsUsed { get; set; }
+        public string WebsiteLink { get; set; }
+        public string GitHubRepoLink { get; set; }
     }
 }
