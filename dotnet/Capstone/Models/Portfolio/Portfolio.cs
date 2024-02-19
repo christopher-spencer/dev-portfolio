@@ -12,7 +12,7 @@ namespace Capstone.Models
         public string GitHubURL { get; set; }
         public string LinkedInURL { get; set; }
         public List<string> TechSkills { get; set; }
-        public List<string> Projects { get; set; }
+        public List<Project> Projects { get; set; }
         public List<string> Experience { get; set; }
         public List<string> Education { get; set; }
         public List<string> Certifications { get; set; }
