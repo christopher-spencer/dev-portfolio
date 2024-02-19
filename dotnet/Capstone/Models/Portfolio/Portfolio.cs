@@ -8,7 +8,8 @@ namespace Capstone.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
-        public string Bio { get; set; }
+        public string ProfessionalSummary { get; set; }
+        public List<string> InterestsAndHobbies { get; set; }
         public string Email { get; set; }
         public string GitHubURL { get; set; }
         public string LinkedInURL { get; set; }
@@ -17,5 +18,7 @@ namespace Capstone.Models
         public List<string> BackgroundExperience { get; set; }
         public List<string> EducationHistory { get; set; }
         public List<Credential> CertificationsAndCredentials { get; set; }
+        public List<string> VolunteerWork { get; set; }
+        public List<string> OpenSourceContributions { get; set; }
     }
 }
