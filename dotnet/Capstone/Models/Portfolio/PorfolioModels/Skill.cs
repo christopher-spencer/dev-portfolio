@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Capstone.Models
 {
-    public class TechSkill
+    public class Skill
     {
         public string Name { get; set; }
         public string IconImageUrl { get; set; }

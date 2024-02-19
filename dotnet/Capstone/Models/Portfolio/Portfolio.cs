@@ -13,10 +13,10 @@ namespace Capstone.Models
         public string Email { get; set; }
         public string GitHubURL { get; set; }
         public string LinkedInURL { get; set; }
-        public List<TechSkill> TechSkills { get; set; }
+        public List<Skill> TechSkills { get; set; }
         public List<SideProject> SideProjects { get; set; }
         public List<string> BackgroundExperiences { get; set; }
-        public List<string> EducationHistory { get; set; }
+        public List<Education> EducationHistory { get; set; }
         public List<Credential> CertificationsAndCredentials { get; set; }
         public List<string> VolunteerWorks { get; set; }
         public List<string> OpenSourceContributions { get; set; }

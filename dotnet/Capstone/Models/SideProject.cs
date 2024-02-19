@@ -12,7 +12,7 @@ namespace Capstone.Models
         public List<string> GoalsAndObjectives { get; set; }
         public List<string> AdditionalImagesUrl { get; set; }
         public string VideoWalkthroughUrl { get; set; }
-        public List<TechSkill> ToolsUsed { get; set; }
+        public List<Skill> ToolsUsed { get; set; }
         public string WebsiteLink { get; set; }
         public string GitHubRepoLink { get; set; }
         public List<string> Contributors { get; set; }
