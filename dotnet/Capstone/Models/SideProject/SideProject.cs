@@ -7,10 +7,10 @@ namespace Capstone.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string MainImageUrl { get; set; }
+        public Image MainImageUrl { get; set; }
         public string Description { get; set; }
         public List<string> GoalsAndObjectives { get; set; }
-        public List<string> AdditionalImagesUrl { get; set; }
+        public List<Image> AdditionalImagesUrl { get; set; }
         public string VideoWalkthroughUrl { get; set; }
         public List<Skill> ToolsUsed { get; set; }
         public string WebsiteLink { get; set; }
