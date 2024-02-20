@@ -13,8 +13,8 @@ namespace Capstone.Models
         public DateTime EndDate { get; set; }
         public string ProjectDescription { get; set; }
         public string ContributionDetails { get; set; }
-        public string WebsiteUrl { get; set; }
-        public string RepoUrl { get; set; }
+        public WebsiteLink WebsiteUrl { get; set; }
+        public WebsiteLink RepoUrl { get; set; }
         public List<Skill> TechSkillsUtilized { get; set; }
         public List<string> PullRequestsLinks { get; set; }
         public List<string> ReviewCommentsAndFeedbackReceived { get; set; }

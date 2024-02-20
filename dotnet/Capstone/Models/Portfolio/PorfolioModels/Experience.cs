@@ -9,6 +9,7 @@ namespace Capstone.Models
         public string PositionTitle { get; set; }
         public string CompanyName { get; set; }
         public Image CompanyLogoUrl { get; set; }
+        public WebsiteLink CompanyWebsite { get; set; }
         public string Location { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

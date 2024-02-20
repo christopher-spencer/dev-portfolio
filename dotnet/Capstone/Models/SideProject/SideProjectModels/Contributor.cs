@@ -12,9 +12,9 @@ namespace Capstone.Models
         public string Email { get; set; }
         public string Bio { get; set; }
         public string ContributionDetails { get; set; }
-        public string LinkedInLink { get; set; }
-        public string GitHubLink { get; set; }
-        public string PortfolioLink { get; set; }
+        public WebsiteLink LinkedInLink { get; set; }
+        public WebsiteLink GitHubLink { get; set; }
+        public WebsiteLink PortfolioLink { get; set; }
 
     }
 }
