@@ -12,8 +12,8 @@ namespace Capstone.Models
         public string ProfessionalSummary { get; set; }
         public List<Hobby> Hobbies { get; set; }
         public string Email { get; set; }
-        public string GitHubURL { get; set; }
-        public string LinkedInURL { get; set; }
+        public WebsiteLink GitHubURL { get; set; }
+        public WebsiteLink LinkedInURL { get; set; }
         public List<Skill> TechSkills { get; set; }
         public List<SideProject> SideProjects { get; set; }
         public List<Experience> BackgroundExperiences { get; set; }

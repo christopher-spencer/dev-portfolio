@@ -16,8 +16,8 @@ namespace Capstone.Models
         public WebsiteLink WebsiteUrl { get; set; }
         public WebsiteLink RepoUrl { get; set; }
         public List<Skill> TechSkillsUtilized { get; set; }
-        public List<string> PullRequestsLinks { get; set; }
-        public List<string> ReviewCommentsAndFeedbackReceived { get; set; }
+        public List<WebsiteLink> PullRequestsLinks { get; set; }
+        public List<Achievement> ReviewCommentsAndFeedbackReceived { get; set; }
         public Image MainImageUrl { get; set; }
         public List<Image> AdditionalImagesUrl { get; set; }
 

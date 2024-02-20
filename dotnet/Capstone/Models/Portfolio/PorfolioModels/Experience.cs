@@ -13,7 +13,7 @@ namespace Capstone.Models
         public string Location { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<string> ResponsibilitiesAndAchievements { get; set; }
+        public List<Achievement> ResponsibilitiesAndAchievements { get; set; }
         public List<Skill> SkillsUsedOrObtained { get; set; }
         public Image MainImageUrl { get; set; }
         public List<Image> AdditionalImagesUrl { get; set; }

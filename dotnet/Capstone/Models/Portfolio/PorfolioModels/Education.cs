@@ -16,7 +16,7 @@ namespace Capstone.Models
         public int GPA { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime GraduationDate { get; set; }
-        public List<string> HonorsAndAwards { get; set; }
+        public List<Achievement> HonorsAndAwards { get; set; }
         public Image MainImageUrl { get; set; }
         public List<Image> AdditionalImagesUrl { get; set; }
     }

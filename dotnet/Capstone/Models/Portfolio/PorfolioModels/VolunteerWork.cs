@@ -11,10 +11,10 @@ namespace Capstone.Models
         public string Location { get; set; }
         public string OrganizationDescription { get; set; }
         public WebsiteLink OrganizationWebsiteUrl { get; set; }
-        public string RoleOrPosition { get; set; }
+        public string PositionTitle { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<string> KeyResponsibilities { get; set; }
+        public List<Achievement> ResponsibilitiesAndAchievements { get; set; }
         public List<Skill> SkillsUsedAndObtained { get; set; }
         public Image MainImageUrl { get; set; }
         public List<Image> AdditionalImagesUrl { get; set; }
