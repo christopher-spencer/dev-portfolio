@@ -5,6 +5,7 @@ namespace Capstone.Models
 {
     public class OpenSourceContribution
     {
+        public int Id { get; set; }
         public string ProjectName { get; set; }
         public string OrganizationName { get; set; }
         public string OrganizationLogoUrl { get; set; }

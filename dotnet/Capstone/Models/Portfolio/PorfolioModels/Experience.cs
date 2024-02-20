@@ -5,6 +5,7 @@ namespace Capstone.Models
 {
     public class Experience
     {
+        public int Id { get; set; }
         public string PositionTitle { get; set; }
         public string CompanyName { get; set; }
         public string CompanyLogoUrl { get; set; }

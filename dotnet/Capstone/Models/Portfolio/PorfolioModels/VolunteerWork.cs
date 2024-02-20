@@ -5,6 +5,7 @@ namespace Capstone.Models
 {
     public class VolunteerWork
     {
+        public int Id { get; set; }
         public string OrganizationName { get; set; }
         public string OrganizationLogoUrl { get; set; }
         public string Location { get; set; }

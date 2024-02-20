@@ -5,6 +5,7 @@ namespace Capstone.Models
 {
     public class Education
     {
+        public int Id { get; set; }
         public string SchoolOrInstitution { get; set; }
         public string InstitutionLogoUrl { get; set; }
         public string Location { get; set; }
