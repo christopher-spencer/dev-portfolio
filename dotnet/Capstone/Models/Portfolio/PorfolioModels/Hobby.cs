@@ -7,6 +7,6 @@ namespace Capstone.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string IconImageUrl { get; set; }
+        public BadImageFormatException IconImageUrl { get; set; }
     }
 }

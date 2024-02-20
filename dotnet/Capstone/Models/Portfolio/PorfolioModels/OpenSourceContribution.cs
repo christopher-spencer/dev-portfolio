@@ -8,7 +8,7 @@ namespace Capstone.Models
         public int Id { get; set; }
         public string ProjectName { get; set; }
         public string OrganizationName { get; set; }
-        public string OrganizationLogoUrl { get; set; }
+        public Image OrganizationLogoUrl { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string ProjectDescription { get; set; }
@@ -18,8 +18,8 @@ namespace Capstone.Models
         public List<Skill> TechSkillsUtilized { get; set; }
         public List<string> PullRequestsLinks { get; set; }
         public List<string> ReviewCommentsAndFeedbackReceived { get; set; }
-        public string MainImageUrl { get; set; }
-        public List<string> AdditionalImagesUrl { get; set; }
+        public Image MainImageUrl { get; set; }
+        public List<Image> AdditionalImagesUrl { get; set; }
 
     }
 }

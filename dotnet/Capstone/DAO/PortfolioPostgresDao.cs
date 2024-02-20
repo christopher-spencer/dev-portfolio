@@ -20,7 +20,10 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["portfolio_id"]),
                 Name = Convert.ToString(reader["portfolio_name"]),
-                PortfolioImage = Convert.ToString(reader["portfolio_image"]),
+                PortfolioImage = new Image
+                {
+                    Url = Convert.ToString(reader["portfolio_image"])
+                },
                 Location = Convert.ToString(reader["location"]),
                 ProfessionalSummary = Convert.ToString(reader["professional_summary"]),
 

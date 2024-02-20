@@ -16,7 +16,7 @@ namespace Capstone.Models
         public DateTime StartDate { get; set; }
         public DateTime GraduationDate { get; set; }
         public List<string> HonorsAndAwards { get; set; }
-        public string MainImageUrl { get; set; }
-        public List<string> AdditionalImagesUrl { get; set; }
+        public Image MainImageUrl { get; set; }
+        public List<Image> AdditionalImagesUrl { get; set; }
     }
 }

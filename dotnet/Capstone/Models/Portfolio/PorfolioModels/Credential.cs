@@ -13,7 +13,7 @@ namespace Capstone.Models
         public DateTime ExpirationDate { get; set; }
         public int CredentialId { get; set; }
         public string CredentialURL { get; set; }
-        public string ImageUrl { get; set; }
+        public Image ImageUrl { get; set; }
         public List <Skill> AssociatedSkills { get; set; }
     } 
 }

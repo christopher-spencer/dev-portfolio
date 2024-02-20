@@ -7,7 +7,7 @@ namespace Capstone.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string PortfolioImage { get; set; }
+        public Image PortfolioImage { get; set; }
         public string Location { get; set; }
         public string ProfessionalSummary { get; set; }
         public List<Hobby> Hobbies { get; set; }
