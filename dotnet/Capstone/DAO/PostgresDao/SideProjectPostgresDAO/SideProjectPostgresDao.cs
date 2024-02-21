@@ -222,8 +222,12 @@ namespace Capstone.DAO
                 },
                 Description = Convert.ToString(reader["description"]),
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
-                // TODO switch to get links in same way below through Interface?
-                Website = new Website { Url = Convert.ToString(reader["website_link_url"]) },
+                // TODO switch to get links in same way below through Interface? (or add sql queries)
+                Website = new Website 
+                { 
+                    Name = Convert.ToString(reader["website_name"]),
+                    Url = Convert.ToString(reader["website_url"]) 
+                },
                 GitHubRepoLink = new Website { Url = Convert.ToString(reader["github_repo_link_url"]) },
                 ProjectStatus = Convert.ToString(reader["project_status"]),
                 StartDate = Convert.ToDateTime(reader["start_date"]),
