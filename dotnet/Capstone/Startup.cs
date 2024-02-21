@@ -61,12 +61,31 @@ namespace Capstone
             });
 
             // Dependency Injection configuration
+            
+            //TODO Ask a mentor about this setup 
+            // Instantiate DAOs for dependencies
+            IGoalDao goalDao = new GoalPostgresDao(connectionString);
+            IImageDao imageDao = new ImagePostgresDao(connectionString);
+            ISkillDao skillDao = new SkillPostgresDao(connectionString);
+            IContributorDao contributorDao = new ContributorPostgresDao(connectionString);
+            IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString);
+            IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString);
+
+            // Register services with DI container
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
             services.AddSingleton<IPasswordHasher>(ph => new PasswordHasher());
             services.AddTransient<IUserDao>(m => new UserPostgresDao(connectionString));
             services.AddTransient<IBlogPostsDao>(m => new BlogPostsPostgresDao(connectionString));
             services.AddTransient<IPortfolioDao>(m => new PortfolioPostgresDao(connectionString));
-            services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(connectionString));
+            services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(
+                connectionString,
+                goalDao,
+                imageDao,
+                skillDao,
+                contributorDao,
+                apiServiceDao,
+                dependencyLibraryDao
+            ));
 
             services.AddTransient<IContributorDao>(m => new ContributorPostgresDao(connectionString));
             services.AddTransient<IApiServiceDao>(m => new ApiServicePostgresDao(connectionString));
