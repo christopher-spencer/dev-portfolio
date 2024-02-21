@@ -13,13 +13,18 @@ namespace Capstone.DAO
         private readonly string connectionString;
         private readonly IGoalDao goalDao;
         private readonly IImageDao imageDao;
+        private readonly ISkillDao skillDao;
+        private readonly IContributorDao contributorDao;
 
-        public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao, IImageDao imageDao)
-        {
-            connectionString = dbConnectionString;
-            this.goalDao = goalDao;
-            this.imageDao = imageDao;
-        }
+        public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao, IImageDao imageDao, 
+            ISkillDao skillDao, IContributorDao contributorDao)
+            {
+                connectionString = dbConnectionString;
+                this.goalDao = goalDao;
+                this.imageDao = imageDao;
+                this.skillDao = skillDao;
+                this.contributorDao = contributorDao;
+            }
 
         public List<SideProject> GetSideProjects()
         {
@@ -220,10 +225,12 @@ namespace Capstone.DAO
                 FinishDate = Convert.ToDateTime(reader["finish_date"])
             };
 
-            sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(sideProject.Id);
-            sideProject.AdditionalImagesUrl = imageDao.GetImagesByProjectId(sideProject.Id);
-            // sideProject.ToolsUsed = SkillPostgresDao.GetSkillsByProjectId(projectId);
-            // sideProject.Contributors = ContributorPostgresDao.GetContributorsByProjectId(projectId);
+            int projectId = sideProject.Id;
+
+            sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(projectId);
+            sideProject.AdditionalImagesUrl = imageDao.GetImagesByProjectId(projectId);
+            sideProject.ToolsUsed = skillDao.GetSkillsByProjectId(projectId);
+            sideProject.Contributors = contributorDao.GetContributorsByProjectId(projectId);
             // sideProject.ExternalAPIsAndServicesUsed = ApiServicePostgresDao.GetAPIsByProjectId(projectId);
             // sideProject.DependenciesOrLibrariesUsed = DependencyLibraryPostgresDao.GetDependenciesByProjectId(projectId);
 

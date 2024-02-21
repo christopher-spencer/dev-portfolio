@@ -51,6 +51,41 @@ namespace Capstone.DAO
             return contributor;
         }
 
+        public List<Contributor> GetContributorsByProjectId(int projectId)
+        {
+            List<Contributor> contributors = new List<Contributor>();
+
+            string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_name, c.contributor_image_url, " +
+                         "c.email, c.bio, c.contribution_details, c.linkedin_url, c.github_url, c.portfolio_url " +
+                         "FROM contributors c " +
+                         "JOIN side_project_contributors pc ON c.id = pc.contributor_id " +
+                         "WHERE pc.project_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        contributors.Add(MapRowToContributor(reader));
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving contributors by project ID.", ex);
+            }
+
+            return contributors;
+        }
+
         public Contributor GetContributorById(int contributorId)
         {
             string sql = "SELECT first_name, last_name, contributor_image_name, contributor_image_url, email, bio, contribution_details, linkedin_url, github_url, portfolio_url FROM contributors WHERE id = @id;";
@@ -110,7 +145,7 @@ namespace Capstone.DAO
         public Contributor UpdateContributor(Contributor contributor)
         {
             string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, contributor_image_name = @contributor_image_name, contributor_image_url = @contributor_image_url, email = @email, bio = @bio, contribution_details = @contribution_details, linkedin_url = @linkedin_url, github_url = @github_url, portfolio_url = @portfolio_url WHERE id = @id;";
-            
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))

@@ -44,6 +44,41 @@ namespace Capstone.DAO
             return skill;
         }
 
+        public List<Skill> GetSkillsByProjectId(int projectId)
+        {
+            List<Skill> skills = new List<Skill>();
+
+            string sql = "SELECT s.id, s.name, s.icon_image_name, s.icon_image_url " +
+                         "FROM skills s " +
+                         "JOIN side_project_skills ps ON s.id = ps.skill_id " +
+                         "WHERE ps.project_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Skill skill = MapRowToSkill(reader);
+                        skills.Add(skill);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving skills by project ID.", ex);
+            }
+
+            return skills;
+        }
+
         public Skill GetSkillById(int skillId)
         {
             string sql = "SELECT name, icon_image_name, icon_image_url FROM skills WHERE id = @id;";
