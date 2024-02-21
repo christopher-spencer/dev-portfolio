@@ -19,7 +19,7 @@ namespace Capstone.DAO
 
         public ApiService CreateApiService(ApiService apiService)
         {
-            string sql = "INSERT INTO api_services (name, description, url, image_logo_name, image_logo_url) VALUES (@name, @description, @url, @image_logo_name, @image_logo_url) RETURNING id;";
+            string sql = "INSERT INTO api_services (name, description, url, logo_name, logo_url) VALUES (@name, @description, @url, @logo_name, @logo_url) RETURNING id;";
 
             try
             {
@@ -31,8 +31,8 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@name", apiService.Name);
                     cmd.Parameters.AddWithValue("@description", apiService.Description);
                     cmd.Parameters.AddWithValue("@url", apiService.Url.Url);
-                    cmd.Parameters.AddWithValue("@image_logo_name", apiService.ImageLogoUrl.Name);
-                    cmd.Parameters.AddWithValue("@image_logo_url", apiService.ImageLogoUrl.Url);
+                    cmd.Parameters.AddWithValue("@logo_name", apiService.Logo.Name);
+                    cmd.Parameters.AddWithValue("@logo_url", apiService.Logo.Url);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     apiService.Id = id;
@@ -50,7 +50,7 @@ namespace Capstone.DAO
         {
             List<ApiService> apiServices = new List<ApiService>();
 
-            string sql = "SELECT a.id, a.name, a.description, a.url, a.image_logo_name, a.image_logo_url " +
+            string sql = "SELECT a.id, a.name, a.description, a.url, a.logo_name, a.logo_url " +
                          "FROM api_services a " +
                          "JOIN side_project_api_services pas ON a.id = pas.api_service_id " +
                          "WHERE pas.project_id = @projectId;";
@@ -83,7 +83,7 @@ namespace Capstone.DAO
 
         public ApiService GetApiServiceById(int apiServiceId)
         {
-            string sql = "SELECT name, description, url, image_logo_name, image_logo_url FROM api_services WHERE id = @id;";
+            string sql = "SELECT name, description, url, logo_name, logo_url FROM api_services WHERE id = @id;";
 
             try
             {
@@ -112,7 +112,7 @@ namespace Capstone.DAO
         public List<ApiService> GetAllApiServices()
         {
             List<ApiService> apiServices = new List<ApiService>();
-            string sql = "SELECT id, name, description, url, image_logo_name, image_logo_url FROM api_services;";
+            string sql = "SELECT id, name, description, url, logo_name, logo_url FROM api_services;";
 
             try
             {
@@ -139,7 +139,7 @@ namespace Capstone.DAO
 
         public ApiService UpdateApiService(ApiService apiService)
         {
-            string sql = "UPDATE api_services SET name = @name, description = @description, url = @url, image_logo_name = @image_logo_name, image_logo_url = @image_logo_url WHERE id = @id;";
+            string sql = "UPDATE api_services SET name = @name, description = @description, url = @url, logo_name = @logo_name, logo_url = @logo_url WHERE id = @id;";
 
             try
             {
@@ -152,8 +152,8 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@name", apiService.Name);
                     cmd.Parameters.AddWithValue("@description", apiService.Description);
                     cmd.Parameters.AddWithValue("@url", apiService.Url.Url);
-                    cmd.Parameters.AddWithValue("@image_logo_name", apiService.ImageLogoUrl.Name);
-                    cmd.Parameters.AddWithValue("@image_logo_url", apiService.ImageLogoUrl.Url);
+                    cmd.Parameters.AddWithValue("@logo_name", apiService.Logo.Name);
+                    cmd.Parameters.AddWithValue("@logo_url", apiService.Logo.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -200,10 +200,10 @@ namespace Capstone.DAO
                 Name = Convert.ToString(reader["name"]),
                 Description = Convert.ToString(reader["description"]),
                 Url = new Website { Url = Convert.ToString(reader["url"]) },
-                ImageLogoUrl = new Image
+                Logo = new Image
                 {
-                    Name = Convert.ToString(reader["image_logo_name"]),
-                    Url = Convert.ToString(reader["image_logo_url"])
+                    Name = Convert.ToString(reader["logo_name"]),
+                    Url = Convert.ToString(reader["logo_url"])
                 }
             };
         }

@@ -9,6 +9,6 @@ namespace Capstone.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public Website Url { get; set; }
-        public Image ImageLogoUrl { get; set; }
+        public Image Logo { get; set; }
     }
 }
