@@ -44,6 +44,40 @@ namespace Capstone.DAO
             return goal;
         }
 
+        public List<Goal> GetGoalsAndObjectivesByProjectId(int projectId)
+        {
+            List<Goal> goals = new List<Goal>();
+
+            string sql = "SELECT g.id, g.description, g.icon_image_name, g.icon_image_url " +
+                         "FROM goals g " +
+                         "JOIN project_goals pg ON g.id = pg.goal_id " +
+                         "WHERE pg.project_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        goals.Add(MapRowToGoal(reader));
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving goals and objectives for the project.", ex);
+            }
+
+            return goals;
+        }
+
         public Goal GetGoalById(int goalId)
         {
             string sql = "SELECT description, icon_image_name, icon_image_url FROM goals WHERE id = @id;";

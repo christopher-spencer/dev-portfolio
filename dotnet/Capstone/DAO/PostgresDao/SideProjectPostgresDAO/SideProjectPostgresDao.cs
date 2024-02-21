@@ -11,10 +11,12 @@ namespace Capstone.DAO
     public class SideProjectPostgresDao : ISideProjectDao
     {
         private readonly string connectionString;
+        private readonly IGoalDao goalDao;
 
-        public SideProjectPostgresDao(string dbConnectionString)
+        public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao)
         {
             connectionString = dbConnectionString;
+            this.goalDao = goalDao;
         }
 
         public List<SideProject> GetSideProjects()
@@ -207,6 +209,15 @@ namespace Capstone.DAO
                 StartDate = Convert.ToDateTime(reader["start_date"]),
                 FinishDate = Convert.ToDateTime(reader["finish_date"])
             };
+
+            int projectId = sideProject.Id;
+
+            sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(projectId);
+            // sideProject.AdditionalImagesUrl = ImagePostgresDao.GetImagesByProjectId(projectId);
+            // sideProject.ToolsUsed = SkillPostgresDao.GetSkillsByProjectId(projectId);
+            // sideProject.Contributors = ContributorPostgresDao.GetContributorsByProjectId(projectId);
+            // sideProject.ExternalAPIsAndServicesUsed = ApiServicePostgresDao.GetAPIsByProjectId(projectId);
+            // sideProject.DependenciesOrLibrariesUsed = DependencyLibraryPostgresDao.GetDependenciesByProjectId(projectId);
 
             return sideProject;
         }
