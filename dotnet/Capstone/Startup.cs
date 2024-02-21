@@ -70,6 +70,8 @@ namespace Capstone
 
             services.AddTransient<IContributorDao>(m => new ContributorPostgresDao(connectionString));
             services.AddTransient<IApiServiceDao>(m => new ApiServicePostgresDao(connectionString));
+            services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString));
+
 
             services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
             services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString));
