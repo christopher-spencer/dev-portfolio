@@ -15,15 +15,17 @@ namespace Capstone.DAO
         private readonly IImageDao imageDao;
         private readonly ISkillDao skillDao;
         private readonly IContributorDao contributorDao;
+        private readonly IApiServiceDao apiServiceDao;
 
         public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao, IImageDao imageDao, 
-            ISkillDao skillDao, IContributorDao contributorDao)
+            ISkillDao skillDao, IContributorDao contributorDao, IApiServiceDao apiServiceDao)
             {
                 connectionString = dbConnectionString;
                 this.goalDao = goalDao;
                 this.imageDao = imageDao;
                 this.skillDao = skillDao;
                 this.contributorDao = contributorDao;
+                this.apiServiceDao = apiServiceDao;
             }
 
         public List<SideProject> GetSideProjects()
@@ -231,7 +233,7 @@ namespace Capstone.DAO
             sideProject.AdditionalImagesUrl = imageDao.GetImagesByProjectId(projectId);
             sideProject.ToolsUsed = skillDao.GetSkillsByProjectId(projectId);
             sideProject.Contributors = contributorDao.GetContributorsByProjectId(projectId);
-            // sideProject.ExternalAPIsAndServicesUsed = ApiServicePostgresDao.GetAPIsByProjectId(projectId);
+            sideProject.ExternalAPIsAndServicesUsed = apiServiceDao.GetAPIsAndServicesByProjectId(projectId);
             // sideProject.DependenciesOrLibrariesUsed = DependencyLibraryPostgresDao.GetDependenciesByProjectId(projectId);
 
             return sideProject;

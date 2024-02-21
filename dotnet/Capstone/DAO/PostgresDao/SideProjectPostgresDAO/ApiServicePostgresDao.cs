@@ -46,6 +46,41 @@ namespace Capstone.DAO
             return apiService;
         }
 
+        public List<ApiService> GetAPIsAndServicesByProjectId(int projectId)
+        {
+            List<ApiService> apiServices = new List<ApiService>();
+
+            string sql = "SELECT a.id, a.name, a.description, a.url, a.image_logo_name, a.image_logo_url " +
+                         "FROM api_services a " +
+                         "JOIN side_project_api_services pas ON a.id = pas.api_service_id " +
+                         "WHERE pas.project_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        apiServices.Add(MapRowToApiService(reader));
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving API services by project ID.", ex);
+            }
+
+            return apiServices;
+        }
+
+
         public ApiService GetApiServiceById(int apiServiceId)
         {
             string sql = "SELECT name, description, url, image_logo_name, image_logo_url FROM api_services WHERE id = @id;";
@@ -105,7 +140,7 @@ namespace Capstone.DAO
         public ApiService UpdateApiService(ApiService apiService)
         {
             string sql = "UPDATE api_services SET name = @name, description = @description, url = @url, image_logo_name = @image_logo_name, image_logo_url = @image_logo_url WHERE id = @id;";
-            
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
