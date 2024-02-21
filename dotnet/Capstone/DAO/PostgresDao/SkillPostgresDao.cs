@@ -19,7 +19,7 @@ namespace Capstone.DAO
 
         public Skill CreateSkill(Skill skill)
         {
-            string sql = "INSERT INTO skills (name, icon_image_name, icon_image_url) VALUES (@name, @icon_image_name, @icon_image_url) RETURNING id;";
+            string sql = "INSERT INTO skills (name, icon_name, icon_url) VALUES (@name, @icon_name, @icon_url) RETURNING id;";
 
             try
             {
@@ -29,8 +29,8 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", skill.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_name", skill.IconImageUrl.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_url", skill.IconImageUrl.Url);
+                    cmd.Parameters.AddWithValue("@icon_name", skill.Icon.Name);
+                    cmd.Parameters.AddWithValue("@icon_url", skill.Icon.Url);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     skill.Id = id;
@@ -48,7 +48,7 @@ namespace Capstone.DAO
         {
             List<Skill> skills = new List<Skill>();
 
-            string sql = "SELECT s.id, s.name, s.icon_image_name, s.icon_image_url " +
+            string sql = "SELECT s.id, s.name, s.icon_name, s.icon_url " +
                          "FROM skills s " +
                          "JOIN side_project_skills ps ON s.id = ps.skill_id " +
                          "WHERE ps.project_id = @projectId;";
@@ -81,7 +81,7 @@ namespace Capstone.DAO
 
         public Skill GetSkillById(int skillId)
         {
-            string sql = "SELECT name, icon_image_name, icon_image_url FROM skills WHERE id = @id;";
+            string sql = "SELECT name, icon_name, icon_url FROM skills WHERE id = @id;";
 
             try
             {
@@ -110,7 +110,7 @@ namespace Capstone.DAO
         public List<Skill> GetAllSkills()
         {
             List<Skill> skills = new List<Skill>();
-            string sql = "SELECT id, name, icon_image_name, icon_image_url FROM skills;";
+            string sql = "SELECT id, name, icon_name, icon_url FROM skills;";
 
             try
             {
@@ -137,7 +137,7 @@ namespace Capstone.DAO
 
         public Skill UpdateSkill(Skill skill)
         {
-            string sql = "UPDATE skills SET name = @name, icon_image_name = @icon_image_name, icon_image_url = @icon_image_url WHERE id = @id;";
+            string sql = "UPDATE skills SET name = @name, icon_name = @icon_name, icon_url = @icon_url WHERE id = @id;";
 
             try
             {
@@ -148,8 +148,8 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@id", skill.Id);
                     cmd.Parameters.AddWithValue("@name", skill.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_name", skill.IconImageUrl.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_url", skill.IconImageUrl.Url);
+                    cmd.Parameters.AddWithValue("@icon_name", skill.Icon.Name);
+                    cmd.Parameters.AddWithValue("@icon_url", skill.Icon.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -194,10 +194,10 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
-                IconImageUrl = new Image
+                Icon = new Image
                 {
-                    Name = Convert.ToString(reader["icon_image_name"]),
-                    Url = Convert.ToString(reader["icon_image_url"])
+                    Name = Convert.ToString(reader["icon_name"]),
+                    Url = Convert.ToString(reader["icon_url"])
                 }
             };
         }
