@@ -226,7 +226,12 @@ namespace Capstone.DAO
                 Website = new Website 
                 { 
                     Name = Convert.ToString(reader["website_name"]),
-                    Url = Convert.ToString(reader["website_url"]) 
+                    Url = Convert.ToString(reader["website_url"]),
+                    Logo = new Image 
+                    {
+                        Name = Convert.ToString(reader["website_logo_name"]),
+                        Url = Convert.ToString(reader["website_logo_url"]) 
+                    }    
                 },
                 GitHubRepoLink = new Website { Url = Convert.ToString(reader["github_repo_link_url"]) },
                 ProjectStatus = Convert.ToString(reader["project_status"]),

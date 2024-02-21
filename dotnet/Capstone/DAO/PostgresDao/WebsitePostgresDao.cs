@@ -30,8 +30,8 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", websiteLink.Name);
                     cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    cmd.Parameters.AddWithValue("@icon_name", websiteLink.Icon.Name);
-                    cmd.Parameters.AddWithValue("@icon_url", websiteLink.Icon.Url);
+                    cmd.Parameters.AddWithValue("@icon_name", websiteLink.Logo.Name);
+                    cmd.Parameters.AddWithValue("@icon_url", websiteLink.Logo.Url);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     websiteLink.Id = id;
@@ -115,8 +115,8 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@id", websiteLink.Id);
                     cmd.Parameters.AddWithValue("@name", websiteLink.Name);
                     cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    cmd.Parameters.AddWithValue("@icon_name", websiteLink.Icon.Name);
-                    cmd.Parameters.AddWithValue("@icon_url", websiteLink.Icon.Url);
+                    cmd.Parameters.AddWithValue("@icon_name", websiteLink.Logo.Name);
+                    cmd.Parameters.AddWithValue("@icon_url", websiteLink.Logo.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -162,7 +162,7 @@ namespace Capstone.DAO
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
                 Url = Convert.ToString(reader["url"]),
-                Icon = new Image
+                Logo = new Image
                 {
                     Name = Convert.ToString(reader["icon_name"]),
                     Url = Convert.ToString(reader["icon_url"])
