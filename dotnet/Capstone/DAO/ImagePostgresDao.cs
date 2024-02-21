@@ -151,7 +151,7 @@ namespace Capstone.DAO
             }
         }
 
-        private Image MapRowToImage(DbDataReader reader)
+        private Image MapRowToImage(NpgsqlDataReader reader)
         {
             return new Image
             {

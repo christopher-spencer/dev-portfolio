@@ -8,18 +8,18 @@ using Npgsql;
 
 namespace Capstone.DAO
 {
-    public class GoalPostgresDao : IGoalDao
+    public class SkillPostgresDao : ISkillDao
     {
         private readonly string connectionString;
 
-        public GoalPostgresDao(string dbConnectionString)
+        public SkillPostgresDao(string dbConnectionString)
         {
             connectionString = dbConnectionString;
         }
 
-        public Goal CreateGoal(Goal goal)
+        public Skill CreateSkill(Skill skill)
         {
-            string sql = "INSERT INTO goals (description, icon_image_name, icon_image_url) VALUES (@description, @icon_image_name, @icon_image_url) RETURNING id;";
+            string sql = "INSERT INTO skills (name, icon_image_name, icon_image_url) VALUES (@name, @icon_image_name, @icon_image_url) RETURNING id;";
 
             try
             {
@@ -28,25 +28,25 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@description", goal.Description);
-                    cmd.Parameters.AddWithValue("@icon_image_name", goal.IconImageUrl.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_url", goal.IconImageUrl.Url);
+                    cmd.Parameters.AddWithValue("@name", skill.Name);
+                    cmd.Parameters.AddWithValue("@icon_image_name", skill.IconImageUrl.Name);
+                    cmd.Parameters.AddWithValue("@icon_image_url", skill.IconImageUrl.Url);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
-                    goal.Id = id;
+                    skill.Id = id;
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the goal.", ex);
+                throw new DaoException("An error occurred while creating the skill.", ex);
             }
 
-            return goal;
+            return skill;
         }
 
-        public Goal GetGoalById(int goalId)
+        public Skill GetSkillById(int skillId)
         {
-            string sql = "SELECT description, icon_image_name, icon_image_url FROM goals WHERE id = @id;";
+            string sql = "SELECT name, icon_image_name, icon_image_url FROM skills WHERE id = @id;";
 
             try
             {
@@ -55,27 +55,27 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", goalId);
+                    cmd.Parameters.AddWithValue("@id", skillId);
 
                     NpgsqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
-                        return MapRowToGoal(reader);
+                        return MapRowToSkill(reader);
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the goal.", ex);
+                throw new DaoException("An error occurred while retrieving the skill.", ex);
             }
 
             return null;
         }
 
-        public List<Goal> GetAllGoals()
+        public List<Skill> GetAllSkills()
         {
-            List<Goal> goals = new List<Goal>();
-            string sql = "SELECT id, description, icon_image_name, icon_image_url FROM goals;";
+            List<Skill> skills = new List<Skill>();
+            string sql = "SELECT id, name, icon_image_name, icon_image_url FROM skills;";
 
             try
             {
@@ -88,21 +88,21 @@ namespace Capstone.DAO
 
                     while (reader.Read())
                     {
-                        goals.Add(MapRowToGoal(reader));
+                        skills.Add(MapRowToSkill(reader));
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the goals.", ex);
+                throw new DaoException("An error occurred while retrieving the skills.", ex);
             }
 
-            return goals;
+            return skills;
         }
 
-        public Goal UpdateGoal(Goal goal)
+        public Skill UpdateSkill(Skill skill)
         {
-            string sql = "UPDATE goals SET description = @description, icon_image_name = @icon_image_name, icon_image_url = @icon_image_url WHERE id = @id;";
+            string sql = "UPDATE skills SET name = @name, icon_image_name = @icon_image_name, icon_image_url = @icon_image_url WHERE id = @id;";
 
             try
             {
@@ -111,29 +111,29 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", goal.Id);
-                    cmd.Parameters.AddWithValue("@description", goal.Description);
-                    cmd.Parameters.AddWithValue("@icon_image_name", goal.IconImageUrl.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_url", goal.IconImageUrl.Url);
+                    cmd.Parameters.AddWithValue("@id", skill.Id);
+                    cmd.Parameters.AddWithValue("@name", skill.Name);
+                    cmd.Parameters.AddWithValue("@icon_image_name", skill.IconImageUrl.Name);
+                    cmd.Parameters.AddWithValue("@icon_image_url", skill.IconImageUrl.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
                     {
-                        return goal;
+                        return skill;
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the goal.", ex);
+                throw new DaoException("An error occurred while updating the skill.", ex);
             }
 
             return null;
         }
 
-        public int DeleteGoalById(int goalId)
+        public int DeleteSkillById(int skillId)
         {
-            string sql = "DELETE FROM goals WHERE id = @id;";
+            string sql = "DELETE FROM skills WHERE id = @id;";
 
             try
             {
@@ -142,23 +142,23 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", goalId);
+                    cmd.Parameters.AddWithValue("@id", skillId);
 
                     return cmd.ExecuteNonQuery();
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the goal.", ex);
+                throw new DaoException("An error occurred while deleting the skill.", ex);
             }
         }
 
-        private Goal MapRowToGoal(NpgsqlDataReader reader)
+        private Skill MapRowToSkill(NpgsqlDataReader reader)
         {
-            return new Goal
+            return new Skill
             {
                 Id = Convert.ToInt32(reader["id"]),
-                Description = Convert.ToString(reader["description"]),
+                Name = Convert.ToString(reader["name"]),
                 IconImageUrl = new Image
                 {
                     Name = Convert.ToString(reader["icon_image_name"]),

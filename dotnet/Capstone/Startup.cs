@@ -69,6 +69,8 @@ namespace Capstone
             services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(connectionString));
             services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
             services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString));
+            services.AddTransient<ISkillDao>(m => new SkillPostgresDao(connectionString));
+
 
         }
 
