@@ -67,6 +67,9 @@ namespace Capstone
             services.AddTransient<IBlogPostsDao>(m => new BlogPostsPostgresDao(connectionString));
             services.AddTransient<IPortfolioDao>(m => new PortfolioPostgresDao(connectionString));
             services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(connectionString));
+            services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
+            services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
