@@ -10,7 +10,7 @@ namespace Capstone.Models
         public Image OrganizationLogoUrl { get; set; }
         public string Location { get; set; }
         public string OrganizationDescription { get; set; }
-        public WebsiteLink OrganizationWebsiteUrl { get; set; }
+        public Website OrganizationWebsiteUrl { get; set; }
         public string PositionTitle { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

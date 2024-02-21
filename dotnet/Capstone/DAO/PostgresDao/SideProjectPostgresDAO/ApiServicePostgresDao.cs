@@ -199,7 +199,7 @@ namespace Capstone.DAO
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
                 Description = Convert.ToString(reader["description"]),
-                Url = new WebsiteLink { Url = Convert.ToString(reader["url"]) },
+                Url = new Website { Url = Convert.ToString(reader["url"]) },
                 ImageLogoUrl = new Image
                 {
                     Name = Convert.ToString(reader["image_logo_name"]),

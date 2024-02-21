@@ -19,7 +19,7 @@ namespace Capstone.DAO
 
         public DependencyLibrary CreateDependencyLibrary(DependencyLibrary dependencyLibrary)
         {
-            string sql = "INSERT INTO dependency_libraries (name, description, url, image_logo_name, image_logo_url) VALUES (@name, @description, @url, @image_logo_name, @image_logo_url) RETURNING id;";
+            string sql = "INSERT INTO dependency_libraries (name, description, website_url, image_logo_name, image_logo_url) VALUES (@name, @description, @website_url, @image_logo_name, @image_logo_url) RETURNING id;";
 
             try
             {
@@ -30,7 +30,7 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@url", dependencyLibrary.Website.Url);
+                    cmd.Parameters.AddWithValue("@website_url", dependencyLibrary.Website.Url);
                     cmd.Parameters.AddWithValue("@image_logo_name", dependencyLibrary.Logo.Name);
                     cmd.Parameters.AddWithValue("@image_logo_url", dependencyLibrary.Logo.Url);
 
@@ -50,7 +50,7 @@ namespace Capstone.DAO
         {
             List<DependencyLibrary> dependencyLibraries = new List<DependencyLibrary>();
 
-            string sql = "SELECT dl.id, dl.name, dl.description, dl.url, dl.image_logo_name, dl.image_logo_url " +
+            string sql = "SELECT dl.id, dl.name, dl.description, dl.website_url, dl.image_logo_name, dl.image_logo_url " +
                          "FROM dependency_libraries dl " +
                          "JOIN side_project_dependency_libraries pdl ON dl.id = pdl.dependency_library_id " +
                          "WHERE pdl.project_id = @projectId;";
@@ -83,7 +83,7 @@ namespace Capstone.DAO
 
         public DependencyLibrary GetDependencyLibraryById(int dependencyLibraryId)
         {
-            string sql = "SELECT name, description, url, image_logo_name, image_logo_url FROM dependency_libraries WHERE id = @id;";
+            string sql = "SELECT name, description, website_url, image_logo_name, image_logo_url FROM dependency_libraries WHERE id = @id;";
 
             try
             {
@@ -112,7 +112,7 @@ namespace Capstone.DAO
         public List<DependencyLibrary> GetAllDependencyLibraries()
         {
             List<DependencyLibrary> dependencyLibraries = new List<DependencyLibrary>();
-            string sql = "SELECT id, name, description, url, image_logo_name, image_logo_url FROM dependency_libraries;";
+            string sql = "SELECT id, name, description, website_url, image_logo_name, image_logo_url FROM dependency_libraries;";
 
             try
             {
@@ -139,7 +139,7 @@ namespace Capstone.DAO
 
         public DependencyLibrary UpdateDependencyLibrary(DependencyLibrary dependencyLibrary)
         {
-            string sql = "UPDATE dependency_libraries SET name = @name, description = @description, url = @url, image_logo_name = @image_logo_name, image_logo_url = @image_logo_url WHERE id = @id;";
+            string sql = "UPDATE dependency_libraries SET name = @name, description = @description, website_url = @website_url, image_logo_name = @image_logo_name, image_logo_url = @image_logo_url WHERE id = @id;";
 
             try
             {
@@ -151,7 +151,7 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@id", dependencyLibrary.Id);
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@url", dependencyLibrary.Website.Url);
+                    cmd.Parameters.AddWithValue("@website_url", dependencyLibrary.Website.Url);
                     cmd.Parameters.AddWithValue("@image_logo_name", dependencyLibrary.Logo.Name);
                     cmd.Parameters.AddWithValue("@image_logo_url", dependencyLibrary.Logo.Url);
 
@@ -200,7 +200,10 @@ namespace Capstone.DAO
                 Name = Convert.ToString(reader["name"]),
                 Description = Convert.ToString(reader["description"]),
                 // TODO Add Website Name 
-                Website = new WebsiteLink { Url = Convert.ToString(reader["url"]) },
+                Website = new Website 
+                { 
+                    Url = Convert.ToString(reader["url"]) 
+                },
                 Logo = new Image
                 {
                     Name = Convert.ToString(reader["image_logo_name"]),

@@ -217,9 +217,9 @@ namespace Capstone.DAO
                 Email = Convert.ToString(reader["email"]),
                 Bio = Convert.ToString(reader["bio"]),
                 ContributionDetails = Convert.ToString(reader["contribution_details"]),
-                LinkedInLink = new WebsiteLink { Url = Convert.ToString(reader["linkedin_url"]) },
-                GitHubLink = new WebsiteLink { Url = Convert.ToString(reader["github_url"]) },
-                PortfolioLink = new WebsiteLink { Url = Convert.ToString(reader["portfolio_url"]) }
+                LinkedInLink = new Website { Url = Convert.ToString(reader["linkedin_url"]) },
+                GitHubLink = new Website { Url = Convert.ToString(reader["github_url"]) },
+                PortfolioLink = new Website { Url = Convert.ToString(reader["portfolio_url"]) }
             };
         }
     }

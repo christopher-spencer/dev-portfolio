@@ -8,7 +8,7 @@ namespace Capstone.Models
         public int Id { get; set; }
         public string SchoolOrInstitution { get; set; }
         public Image InstitutionLogoUrl { get; set; }
-        public WebsiteLink InstitutionWebsite { get; set; }
+        public Website InstitutionWebsite { get; set; }
         public string Location { get; set; }
         public string Description { get; set; }
         public string FieldOfStudy { get; set; }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Capstone.DAO.Interfaces
 {
-    public interface IWebsiteLinkDao
+    public interface IWebsiteDao
     {
-        WebsiteLink CreateWebsiteLink(WebsiteLink websiteLink);
-        WebsiteLink GetWebsiteLinkById(int websiteLinkId);
-        List<WebsiteLink> GetAllWebsiteLinks();
-        WebsiteLink UpdateWebsiteLink(WebsiteLink websiteLink);
+        Website CreateWebsiteLink(Website websiteLink);
+        Website GetWebsiteLinkById(int websiteLinkId);
+        List<Website> GetAllWebsiteLinks();
+        Website UpdateWebsiteLink(Website websiteLink);
         int DeleteWebsiteLinkById(int websiteLinkId);
     }
 }

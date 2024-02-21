@@ -13,8 +13,8 @@ namespace Capstone.Models
         public List<Image> AdditionalImagesUrl { get; set; }
         public string VideoWalkthroughUrl { get; set; }
         public List<Skill> ToolsUsed { get; set; }
-        public WebsiteLink WebsiteLink { get; set; }
-        public WebsiteLink GitHubRepoLink { get; set; }
+        public Website Website { get; set; }
+        public Website GitHubRepoLink { get; set; }
         public List<Contributor> Contributors { get; set; }
         public List<ApiService> ExternalAPIsAndServicesUsed { get; set; }
         public List<DependencyLibrary> DependenciesOrLibrariesUsed { get; set; }

@@ -8,16 +8,16 @@ using Npgsql;
 
 namespace Capstone.DAO
 {
-    public class WebsiteLinkPostgresDao : IWebsiteLinkDao
+    public class WebsitePostgresDao : IWebsiteDao
     {
         private readonly string connectionString;
 
-        public WebsiteLinkPostgresDao(string dbConnectionString)
+        public WebsitePostgresDao(string dbConnectionString)
         {
             connectionString = dbConnectionString;
         }
 
-        public WebsiteLink CreateWebsiteLink(WebsiteLink websiteLink)
+        public Website CreateWebsiteLink(Website websiteLink)
         {
             string sql = "INSERT INTO website_links (name, url, icon_image_name, icon_image_url) VALUES (@name, @url, @icon_image_name, @icon_image_url) RETURNING id;";
 
@@ -45,7 +45,7 @@ namespace Capstone.DAO
             return websiteLink;
         }
 
-        public WebsiteLink GetWebsiteLinkById(int websiteLinkId)
+        public Website GetWebsiteLinkById(int websiteLinkId)
         {
             string sql = "SELECT name, url, icon_image_name, icon_image_url FROM website_links WHERE id = @id;";
 
@@ -73,9 +73,9 @@ namespace Capstone.DAO
             return null;
         }
 
-        public List<WebsiteLink> GetAllWebsiteLinks()
+        public List<Website> GetAllWebsiteLinks()
         {
-            List<WebsiteLink> websiteLinks = new List<WebsiteLink>();
+            List<Website> websiteLinks = new List<Website>();
             string sql = "SELECT id, name, url, icon_image_name, icon_image_url FROM website_links;";
 
             try
@@ -101,7 +101,7 @@ namespace Capstone.DAO
             return websiteLinks;
         }
 
-        public WebsiteLink UpdateWebsiteLink(WebsiteLink websiteLink)
+        public Website UpdateWebsiteLink(Website websiteLink)
         {
             string sql = "UPDATE website_links SET name = @name, url = @url, icon_image_name = @icon_image_name, icon_image_url = @icon_image_url WHERE id = @id;";
 
@@ -155,9 +155,9 @@ namespace Capstone.DAO
             }
         }
 
-        private WebsiteLink MapRowToWebsiteLink(NpgsqlDataReader reader)
+        private Website MapRowToWebsiteLink(NpgsqlDataReader reader)
         {
-            return new WebsiteLink
+            return new Website
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),

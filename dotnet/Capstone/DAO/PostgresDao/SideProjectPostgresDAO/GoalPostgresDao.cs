@@ -19,7 +19,7 @@ namespace Capstone.DAO
 
         public Goal CreateGoal(Goal goal)
         {
-            string sql = "INSERT INTO goals (description, icon_image_name, icon_image_url) VALUES (@description, @icon_image_name, @icon_image_url) RETURNING id;";
+            string sql = "INSERT INTO goals (description, icon_name, icon_url) VALUES (@description, @icon_name, @icon_url) RETURNING id;";
 
             try
             {
@@ -29,8 +29,8 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@description", goal.Description);
-                    cmd.Parameters.AddWithValue("@icon_image_name", goal.IconImageUrl.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_url", goal.IconImageUrl.Url);
+                    cmd.Parameters.AddWithValue("@icon_name", goal.Icon.Name);
+                    cmd.Parameters.AddWithValue("@icon_url", goal.Icon.Url);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     goal.Id = id;
@@ -48,7 +48,7 @@ namespace Capstone.DAO
         {
             List<Goal> goals = new List<Goal>();
 
-            string sql = "SELECT g.id, g.description, g.icon_image_name, g.icon_image_url " +
+            string sql = "SELECT g.id, g.description, g.icon_name, g.icon_url " +
                          "FROM goals g " +
                          "JOIN side_project_goals spg ON g.id = spg.goal_id " +
                          "WHERE spg.project_id = @projectId;";
@@ -80,7 +80,7 @@ namespace Capstone.DAO
 
         public Goal GetGoalById(int goalId)
         {
-            string sql = "SELECT description, icon_image_name, icon_image_url FROM goals WHERE id = @id;";
+            string sql = "SELECT description, icon_name, icon_url FROM goals WHERE id = @id;";
 
             try
             {
@@ -109,7 +109,7 @@ namespace Capstone.DAO
         public List<Goal> GetAllGoals()
         {
             List<Goal> goals = new List<Goal>();
-            string sql = "SELECT id, description, icon_image_name, icon_image_url FROM goals;";
+            string sql = "SELECT id, description, icon_name, icon_url FROM goals;";
 
             try
             {
@@ -136,7 +136,7 @@ namespace Capstone.DAO
 
         public Goal UpdateGoal(Goal goal)
         {
-            string sql = "UPDATE goals SET description = @description, icon_image_name = @icon_image_name, icon_image_url = @icon_image_url WHERE id = @id;";
+            string sql = "UPDATE goals SET description = @description, icon_name = @icon_name, icon_url = @icon_url WHERE id = @id;";
 
             try
             {
@@ -147,8 +147,8 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@id", goal.Id);
                     cmd.Parameters.AddWithValue("@description", goal.Description);
-                    cmd.Parameters.AddWithValue("@icon_image_name", goal.IconImageUrl.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_url", goal.IconImageUrl.Url);
+                    cmd.Parameters.AddWithValue("@icon_name", goal.Icon.Name);
+                    cmd.Parameters.AddWithValue("@icon_url", goal.Icon.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -193,10 +193,10 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Description = Convert.ToString(reader["description"]),
-                IconImageUrl = new Image
+                Icon = new Image
                 {
-                    Name = Convert.ToString(reader["icon_image_name"]),
-                    Url = Convert.ToString(reader["icon_image_url"])
+                    Name = Convert.ToString(reader["icon_name"]),
+                    Url = Convert.ToString(reader["icon_url"])
                 }
             };
         }
