@@ -91,12 +91,10 @@ namespace Capstone
             services.AddTransient<IApiServiceDao>(m => new ApiServicePostgresDao(connectionString));
             services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString));
 
-
             services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
             services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString));
             services.AddTransient<ISkillDao>(m => new SkillPostgresDao(connectionString));
             services.AddTransient<IWebsiteDao>(m => new WebsitePostgresDao(connectionString));
-
 
         }
 

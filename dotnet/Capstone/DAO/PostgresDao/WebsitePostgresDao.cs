@@ -19,7 +19,7 @@ namespace Capstone.DAO
 
         public Website CreateWebsiteLink(Website websiteLink)
         {
-            string sql = "INSERT INTO website_links (name, url, icon_image_name, icon_image_url) VALUES (@name, @url, @icon_image_name, @icon_image_url) RETURNING id;";
+            string sql = "INSERT INTO website_links (name, url, icon_name, icon_url) VALUES (@name, @url, @icon_name, @icon_url) RETURNING id;";
 
             try
             {
@@ -30,8 +30,8 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", websiteLink.Name);
                     cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    cmd.Parameters.AddWithValue("@icon_image_name", websiteLink.IconImageUrl.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_url", websiteLink.IconImageUrl.Url);
+                    cmd.Parameters.AddWithValue("@icon_name", websiteLink.Icon.Name);
+                    cmd.Parameters.AddWithValue("@icon_url", websiteLink.Icon.Url);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     websiteLink.Id = id;
@@ -47,7 +47,7 @@ namespace Capstone.DAO
 
         public Website GetWebsiteLinkById(int websiteLinkId)
         {
-            string sql = "SELECT name, url, icon_image_name, icon_image_url FROM website_links WHERE id = @id;";
+            string sql = "SELECT name, url, icon_name, icon_url FROM website_links WHERE id = @id;";
 
             try
             {
@@ -76,7 +76,7 @@ namespace Capstone.DAO
         public List<Website> GetAllWebsiteLinks()
         {
             List<Website> websiteLinks = new List<Website>();
-            string sql = "SELECT id, name, url, icon_image_name, icon_image_url FROM website_links;";
+            string sql = "SELECT id, name, url, icon_name, icon_url FROM website_links;";
 
             try
             {
@@ -103,7 +103,7 @@ namespace Capstone.DAO
 
         public Website UpdateWebsiteLink(Website websiteLink)
         {
-            string sql = "UPDATE website_links SET name = @name, url = @url, icon_image_name = @icon_image_name, icon_image_url = @icon_image_url WHERE id = @id;";
+            string sql = "UPDATE website_links SET name = @name, url = @url, icon_name = @icon_name, icon_url = @icon_url WHERE id = @id;";
 
             try
             {
@@ -115,8 +115,8 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@id", websiteLink.Id);
                     cmd.Parameters.AddWithValue("@name", websiteLink.Name);
                     cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    cmd.Parameters.AddWithValue("@icon_image_name", websiteLink.IconImageUrl.Name);
-                    cmd.Parameters.AddWithValue("@icon_image_url", websiteLink.IconImageUrl.Url);
+                    cmd.Parameters.AddWithValue("@icon_name", websiteLink.Icon.Name);
+                    cmd.Parameters.AddWithValue("@icon_url", websiteLink.Icon.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -162,10 +162,10 @@ namespace Capstone.DAO
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
                 Url = Convert.ToString(reader["url"]),
-                IconImageUrl = new Image
+                Icon = new Image
                 {
-                    Name = Convert.ToString(reader["icon_image_name"]),
-                    Url = Convert.ToString(reader["icon_image_url"])
+                    Name = Convert.ToString(reader["icon_name"]),
+                    Url = Convert.ToString(reader["icon_url"])
                 }
             };
         }
