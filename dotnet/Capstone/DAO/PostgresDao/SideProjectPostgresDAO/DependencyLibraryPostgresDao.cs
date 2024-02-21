@@ -17,7 +17,7 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
         }
 
-        public DependencyLibrary CreateDependencyLibrary(DependencyLibrary dependencyLibrary)
+        public DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
         {
             string sql = "INSERT INTO dependency_libraries (name, description, website_url, logo_name, logo_url) " +
                 "VALUES (@name, @description, @website_url, @logo_name, @logo_url) " +
@@ -83,7 +83,7 @@ namespace Capstone.DAO
         }
 
 
-        public DependencyLibrary GetDependencyLibraryById(int dependencyLibraryId)
+        public DependencyLibrary GetDependencyOrLibraryById(int dependencyLibraryId)
         {
             string sql = "SELECT name, description, website_url, logo_name, logo_url FROM dependency_libraries WHERE id = @id;";
 
@@ -111,7 +111,7 @@ namespace Capstone.DAO
             return null;
         }
 
-        public List<DependencyLibrary> GetAllDependencyLibraries()
+        public List<DependencyLibrary> GetAllDependenciesAndLibraries()
         {
             List<DependencyLibrary> dependencyLibraries = new List<DependencyLibrary>();
             string sql = "SELECT id, name, description, website_url, logo_name, logo_url FROM dependency_libraries;";
@@ -139,7 +139,7 @@ namespace Capstone.DAO
             return dependencyLibraries;
         }
 
-        public DependencyLibrary UpdateDependencyLibrary(DependencyLibrary dependencyLibrary)
+        public DependencyLibrary UpdateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
         {
             string sql = "UPDATE dependency_libraries SET name = @name, description = @description, website_url = @website_url, " +
                 "logo_name = @logo_name, logo_url = @logo_url WHERE id = @id;";
@@ -173,7 +173,7 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteDependencyLibraryById(int dependencyLibraryId)
+        public int DeleteDependencyOrLibraryById(int dependencyLibraryId)
         {
             string sql = "DELETE FROM dependency_libraries WHERE id = @id;";
 

@@ -5,11 +5,11 @@ namespace Capstone.DAO.Interfaces
 {
     public interface IDependencyLibraryDao
     {
-        DependencyLibrary CreateDependencyLibrary(DependencyLibrary dependencyLibrary);
+        DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary);
         List<DependencyLibrary> GetDependenciesAndLibrariesByProjectId(int projectId);
-        DependencyLibrary GetDependencyLibraryById(int dependencyLibraryId);
-        List<DependencyLibrary> GetAllDependencyLibraries();
-        DependencyLibrary UpdateDependencyLibrary(DependencyLibrary dependencyLibrary);
-        int DeleteDependencyLibraryById(int dependencyLibraryId);
+        DependencyLibrary GetDependencyOrLibraryById(int dependencyLibraryId);
+        List<DependencyLibrary> GetAllDependenciesAndLibraries();
+        DependencyLibrary UpdateDependencyOrLibrary(DependencyLibrary dependencyLibrary);
+        int DeleteDependencyOrLibraryById(int dependencyLibraryId);
     }
 }
