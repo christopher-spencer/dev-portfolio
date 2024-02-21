@@ -46,6 +46,41 @@ namespace Capstone.DAO
             return dependencyLibrary;
         }
 
+        public List<DependencyLibrary> GetDependenciesAndLibrariesByProjectId(int projectId)
+        {
+            List<DependencyLibrary> dependencyLibraries = new List<DependencyLibrary>();
+
+            string sql = "SELECT dl.id, dl.name, dl.description, dl.url, dl.image_logo_name, dl.image_logo_url " +
+                         "FROM dependency_libraries dl " +
+                         "JOIN side_project_dependency_libraries pdl ON dl.id = pdl.dependency_library_id " +
+                         "WHERE pdl.project_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        dependencyLibraries.Add(MapRowToDependencyLibrary(reader));
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving dependency libraries by project ID.", ex);
+            }
+
+            return dependencyLibraries;
+        }
+
+
         public DependencyLibrary GetDependencyLibraryById(int dependencyLibraryId)
         {
             string sql = "SELECT name, description, url, image_logo_name, image_logo_url FROM dependency_libraries WHERE id = @id;";
@@ -105,7 +140,7 @@ namespace Capstone.DAO
         public DependencyLibrary UpdateDependencyLibrary(DependencyLibrary dependencyLibrary)
         {
             string sql = "UPDATE dependency_libraries SET name = @name, description = @description, url = @url, image_logo_name = @image_logo_name, image_logo_url = @image_logo_url WHERE id = @id;";
-            
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
