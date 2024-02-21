@@ -30,9 +30,9 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@url", dependencyLibrary.Url.Url);
-                    cmd.Parameters.AddWithValue("@image_logo_name", dependencyLibrary.ImageLogoUrl.Name);
-                    cmd.Parameters.AddWithValue("@image_logo_url", dependencyLibrary.ImageLogoUrl.Url);
+                    cmd.Parameters.AddWithValue("@url", dependencyLibrary.Website.Url);
+                    cmd.Parameters.AddWithValue("@image_logo_name", dependencyLibrary.Logo.Name);
+                    cmd.Parameters.AddWithValue("@image_logo_url", dependencyLibrary.Logo.Url);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     dependencyLibrary.Id = id;
@@ -151,9 +151,9 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@id", dependencyLibrary.Id);
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@url", dependencyLibrary.Url.Url);
-                    cmd.Parameters.AddWithValue("@image_logo_name", dependencyLibrary.ImageLogoUrl.Name);
-                    cmd.Parameters.AddWithValue("@image_logo_url", dependencyLibrary.ImageLogoUrl.Url);
+                    cmd.Parameters.AddWithValue("@url", dependencyLibrary.Website.Url);
+                    cmd.Parameters.AddWithValue("@image_logo_name", dependencyLibrary.Logo.Name);
+                    cmd.Parameters.AddWithValue("@image_logo_url", dependencyLibrary.Logo.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -199,8 +199,9 @@ namespace Capstone.DAO
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
                 Description = Convert.ToString(reader["description"]),
-                Url = new WebsiteLink { Url = Convert.ToString(reader["url"]) },
-                ImageLogoUrl = new Image
+                // TODO Add Website Name 
+                Website = new WebsiteLink { Url = Convert.ToString(reader["url"]) },
+                Logo = new Image
                 {
                     Name = Convert.ToString(reader["image_logo_name"]),
                     Url = Convert.ToString(reader["image_logo_url"])
