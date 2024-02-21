@@ -206,7 +206,7 @@ namespace Capstone.DAO
 
             return numberOfRowsAffected;
         }
-
+            // TODO will need full CRUD methods for all PostgresDaos by PROJECT ID :)
         private SideProject MapRowToSideProject(NpgsqlDataReader reader)
         {
             SideProject sideProject = new SideProject
