@@ -12,11 +12,13 @@ namespace Capstone.DAO
     {
         private readonly string connectionString;
         private readonly IGoalDao goalDao;
+        private readonly IImageDao imageDao;
 
-        public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao)
+        public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao, IImageDao imageDao)
         {
             connectionString = dbConnectionString;
             this.goalDao = goalDao;
+            this.imageDao = imageDao;
         }
 
         public List<SideProject> GetSideProjects()
@@ -201,19 +203,25 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["sideproject_id"]),
                 Name = Convert.ToString(reader["sideproject_name"]),
-                // TODO add additional fields from Models
-                // MainImageUrl = Convert.ToString(reader["main_image_url"]),
+                // TODO switch to get images in same way below through Interface? 
+                // FIXME (image_name not current sql query)
+                MainImageUrl = new Image 
+                {   
+                    Name = Convert.ToString(reader["main_image_name"]),
+                    Url = Convert.ToString(reader["main_image_url"]) 
+                },
                 Description = Convert.ToString(reader["description"]),
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
+                // TODO switch to get links in same way below through Interface?
+                WebsiteLink = new WebsiteLink { Url = Convert.ToString(reader["website_link_url"]) },
+                GitHubRepoLink = new WebsiteLink { Url = Convert.ToString(reader["github_repo_link_url"]) },
                 ProjectStatus = Convert.ToString(reader["project_status"]),
                 StartDate = Convert.ToDateTime(reader["start_date"]),
                 FinishDate = Convert.ToDateTime(reader["finish_date"])
             };
 
-            int projectId = sideProject.Id;
-
-            sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(projectId);
-            // sideProject.AdditionalImagesUrl = ImagePostgresDao.GetImagesByProjectId(projectId);
+            sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(sideProject.Id);
+            sideProject.AdditionalImagesUrl = imageDao.GetImagesByProjectId(sideProject.Id);
             // sideProject.ToolsUsed = SkillPostgresDao.GetSkillsByProjectId(projectId);
             // sideProject.Contributors = ContributorPostgresDao.GetContributorsByProjectId(projectId);
             // sideProject.ExternalAPIsAndServicesUsed = ApiServicePostgresDao.GetAPIsByProjectId(projectId);

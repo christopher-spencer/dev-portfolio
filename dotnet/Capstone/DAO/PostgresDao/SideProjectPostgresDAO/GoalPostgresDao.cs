@@ -50,8 +50,8 @@ namespace Capstone.DAO
 
             string sql = "SELECT g.id, g.description, g.icon_image_name, g.icon_image_url " +
                          "FROM goals g " +
-                         "JOIN project_goals pg ON g.id = pg.goal_id " +
-                         "WHERE pg.project_id = @projectId;";
+                         "JOIN side_project_goals spg ON g.id = spg.goal_id " +
+                         "WHERE spg.project_id = @projectId;";
 
             try
             {

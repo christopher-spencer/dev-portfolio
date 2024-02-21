@@ -43,6 +43,78 @@ namespace Capstone.DAO
             return image;
         }
 
+        public List<Image> GetImagesByProjectId(int projectId)
+        {
+            List<Image> images = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN side_project_images spi ON i.id = spi.image_id " +
+                         "WHERE spi.project_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Image image = MapRowToImage(reader);
+                        images.Add(image);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving images by project ID.", ex);
+            }
+
+            return images;
+        }
+
+        // TODO GetImageByProjectNameAndImageName (?)
+        public Image GetImageByProjectIdAndImageId(int projectId, int imageId)
+        {
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN side_project_images spi ON i.id = spi.image_id " +
+                         "WHERE spi.project_id = @projectId " +
+                         "AND i.id = @imageId;"; 
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        image = MapRowToImage(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by project ID and image ID.", ex);
+            }
+
+            return image;
+        }
+
         public Image GetImageById(int imageId)
         {
             string sql = "SELECT name, url FROM images WHERE id = @id;";
