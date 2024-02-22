@@ -103,7 +103,10 @@ namespace Capstone.DAO
         {
             int websiteId = -1; // Default value to indicate absence
 
-            string sql = "SELECT website_id FROM side_project_websites WHERE project_id = @sideProjectId;";
+            string sql = "SELECT w.id " +
+                "FROM website w " +
+                "JOIN side_project_website spw ON spw.website_id = w.id" +
+                "WHERE side_project_id = @sideProjectId;";
 
             try
             {
