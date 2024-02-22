@@ -16,11 +16,12 @@ namespace Capstone.DAO
         private readonly ISkillDao skillDao;
         private readonly IContributorDao contributorDao;
         private readonly IApiServiceDao apiServiceDao;
+        private readonly IWebsiteDao websiteDao;
         private readonly IDependencyLibraryDao dependencyLibraryDao;
 
         public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao, IImageDao imageDao, 
             ISkillDao skillDao, IContributorDao contributorDao, IApiServiceDao apiServiceDao, 
-            IDependencyLibraryDao dependencyLibraryDao)
+            IDependencyLibraryDao dependencyLibraryDao, IWebsiteDao websiteDao)
             {
                 connectionString = dbConnectionString;
                 this.goalDao = goalDao;
@@ -29,6 +30,7 @@ namespace Capstone.DAO
                 this.contributorDao = contributorDao;
                 this.apiServiceDao = apiServiceDao;
                 this.dependencyLibraryDao = dependencyLibraryDao;
+                this.websiteDao = websiteDao;
             }
 
         public List<SideProject> GetSideProjects()

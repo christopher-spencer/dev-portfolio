@@ -70,6 +70,7 @@ namespace Capstone
             IContributorDao contributorDao = new ContributorPostgresDao(connectionString);
             IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString);
             IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString);
+            IWebsiteDao websiteDao = new WebsitePostgresDao(connectionString);
 
             // Register services with DI container
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
@@ -84,7 +85,8 @@ namespace Capstone
                 skillDao,
                 contributorDao,
                 apiServiceDao,
-                dependencyLibraryDao
+                dependencyLibraryDao,
+                websiteDao
             ));
 
             services.AddTransient<IContributorDao>(m => new ContributorPostgresDao(connectionString));
