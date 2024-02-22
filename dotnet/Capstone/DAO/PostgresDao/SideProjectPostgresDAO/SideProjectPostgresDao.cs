@@ -11,26 +11,26 @@ namespace Capstone.DAO
     public class SideProjectPostgresDao : ISideProjectDao
     {
         private readonly string connectionString;
-        private readonly IGoalDao goalDao;
-        private readonly IImageDao imageDao;
-        private readonly ISkillDao skillDao;
-        private readonly IContributorDao contributorDao;
-        private readonly IApiServiceDao apiServiceDao;
-        private readonly IWebsiteDao websiteDao;
-        private readonly IDependencyLibraryDao dependencyLibraryDao;
+        private readonly IGoalDao _goalDao;
+        private readonly IImageDao _imageDao;
+        private readonly ISkillDao _skillDao;
+        private readonly IContributorDao _contributorDao;
+        private readonly IApiServiceDao _apiServiceDao;
+        private readonly IWebsiteDao _websiteDao;
+        private readonly IDependencyLibraryDao _dependencyLibraryDao;
 
         public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao, IImageDao imageDao, 
             ISkillDao skillDao, IContributorDao contributorDao, IApiServiceDao apiServiceDao, 
             IDependencyLibraryDao dependencyLibraryDao, IWebsiteDao websiteDao)
             {
                 connectionString = dbConnectionString;
-                this.goalDao = goalDao;
-                this.imageDao = imageDao;
-                this.skillDao = skillDao;
-                this.contributorDao = contributorDao;
-                this.apiServiceDao = apiServiceDao;
-                this.dependencyLibraryDao = dependencyLibraryDao;
-                this.websiteDao = websiteDao;
+                this._goalDao = goalDao;
+                this._imageDao = imageDao;
+                this._skillDao = skillDao;
+                this._contributorDao = contributorDao;
+                this._apiServiceDao = apiServiceDao;
+                this._dependencyLibraryDao = dependencyLibraryDao;
+                this._websiteDao = websiteDao;
             }
 
         public List<SideProject> GetSideProjects()
@@ -234,16 +234,16 @@ namespace Capstone.DAO
 
             int projectId = sideProject.Id;
             // FIXME Figure out how to do Image and Website correctly
-            sideProject.MainImageUrl = imageDao.GetImageByProjectId(projectId);
+            sideProject.MainImageUrl = _imageDao.GetImageByProjectId(projectId);
             // sideProject.Website = websiteDao.GetWebsiteByProjectId(projectId);
             // sideProject.GitHubRepoLink = websiteDao.GetWebsiteByProjectId(projectId);
 
-            sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(projectId);
-            sideProject.AdditionalImagesUrl = imageDao.GetImagesByProjectId(projectId);
-            sideProject.ToolsUsed = skillDao.GetSkillsByProjectId(projectId);
-            sideProject.Contributors = contributorDao.GetContributorsByProjectId(projectId);
-            sideProject.ExternalAPIsAndServicesUsed = apiServiceDao.GetAPIsAndServicesByProjectId(projectId);
-            sideProject.DependenciesOrLibrariesUsed = dependencyLibraryDao.GetDependenciesAndLibrariesByProjectId(projectId);
+            sideProject.GoalsAndObjectives = _goalDao.GetGoalsAndObjectivesByProjectId(projectId);
+            sideProject.AdditionalImagesUrl = _imageDao.GetImagesByProjectId(projectId);
+            sideProject.ToolsUsed = _skillDao.GetSkillsByProjectId(projectId);
+            sideProject.Contributors = _contributorDao.GetContributorsByProjectId(projectId);
+            sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesByProjectId(projectId);
+            sideProject.DependenciesOrLibrariesUsed = _dependencyLibraryDao.GetDependenciesAndLibrariesByProjectId(projectId);
 
             return sideProject;
         }
