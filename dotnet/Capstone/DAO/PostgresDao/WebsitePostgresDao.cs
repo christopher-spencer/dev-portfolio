@@ -45,6 +45,41 @@ namespace Capstone.DAO
             return websiteLink;
         }
 
+        public Website GetWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId)
+        {
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url " +
+                         "FROM websites w " +
+                         "JOIN side_project_websites spw ON w.id = spw.website_id " +
+                         "WHERE spw.project_id = @projectId AND w.id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        website = MapRowToWebsiteLink(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website by project ID and website ID.", ex);
+            }
+
+            return website;
+        }
+
         public Website GetWebsiteLinkById(int websiteLinkId)
         {
             string sql = "SELECT name, url, icon_name, icon_url FROM website_links WHERE id = @id;";

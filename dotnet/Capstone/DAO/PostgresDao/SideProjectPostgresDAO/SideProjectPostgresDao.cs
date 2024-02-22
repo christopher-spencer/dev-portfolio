@@ -35,7 +35,7 @@ namespace Capstone.DAO
         {
             List<SideProject> sideProjects = new List<SideProject>();
 
-            string sql = "SELECT sideproject_id, sideproject_name, main_image_url, description, " +
+            string sql = "SELECT sideproject_id, sideproject_name, description, " +
                          "video_walkthrough_url, project_status, start_date, finish_date " +
                          "FROM sideprojects;";
 
@@ -67,7 +67,7 @@ namespace Capstone.DAO
         {
             SideProject sideProject = null;
 
-            string sql = "SELECT sideproject_id, sideproject_name, main_image_url, description, " +
+            string sql = "SELECT sideproject_id, sideproject_name, description, " +
                          "video_walkthrough_url, project_status, start_date, finish_date " +
                          "FROM sideprojects WHERE sideproject_id = @sideproject_id";
 
@@ -101,9 +101,9 @@ namespace Capstone.DAO
         {
             SideProject newSideProject = null;
 
-            string sql = "INSERT into sideprojects (sideproject_name, main_image_url, description, " +
+            string sql = "INSERT into sideprojects (sideproject_name, description, " +
                          "video_walkthrough_url, project_status, start_date, finish_date) " +
-                         "VALUES (@sideproject_name, @main_image_url, @description, " +
+                         "VALUES (@sideproject_name, @description, " +
                          "@video_walkthrough_url, @project_status, @start_date, @finish_date) " +
                          "RETURNING sideproject_id;";
 
@@ -118,7 +118,6 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
 
                     cmd.Parameters.AddWithValue("@sideproject_name", sideProject.Name);
-                    cmd.Parameters.AddWithValue("@main_image_url", sideProject.MainImageUrl);
                     cmd.Parameters.AddWithValue("@description", sideProject.Description);
                     cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
                     cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
@@ -140,7 +139,7 @@ namespace Capstone.DAO
         public SideProject UpdateSideProject(SideProject sideProject, int sideProjectId)
         {
             string sql = "UPDATE sideprojects SET sideproject_name = @sideproject_name, " +
-                         "main_image_url = @main_image_url, description = @description, " +
+                         "description = @description, " +
                          "video_walkthrough_url = @video_walkthrough_url, " +
                          "project_status = @project_status, start_date = @start_date, " +
                          "finish_date = @finish_date " +
@@ -156,7 +155,6 @@ namespace Capstone.DAO
 
                     cmd.Parameters.AddWithValue("@sideproject_id", sideProjectId);
                     cmd.Parameters.AddWithValue("@sideproject_name", sideProject.Name);
-                    cmd.Parameters.AddWithValue("@main_image_url", sideProject.MainImageUrl);
                     cmd.Parameters.AddWithValue("@description", sideProject.Description);
                     cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
                     cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
@@ -213,13 +211,6 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["sideproject_id"]),
                 Name = Convert.ToString(reader["sideproject_name"]),
-                // TODO switch to get images in same way below through Interface? 
-                // FIXME (image_name not current sql query)
-                MainImageUrl = new Image 
-                {   
-                    Name = Convert.ToString(reader["main_image_name"]),
-                    Url = Convert.ToString(reader["main_image_url"]) 
-                },
                 Description = Convert.ToString(reader["description"]),
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
                 // TODO switch to get links in same way below through Interface? (or add sql queries)
@@ -241,6 +232,7 @@ namespace Capstone.DAO
 
             int projectId = sideProject.Id;
 
+            sideProject.MainImageUrl = imageDao.GetImageByProjectId(projectId);
             sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(projectId);
             sideProject.AdditionalImagesUrl = imageDao.GetImagesByProjectId(projectId);
             sideProject.ToolsUsed = skillDao.GetSkillsByProjectId(projectId);

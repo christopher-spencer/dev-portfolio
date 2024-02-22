@@ -7,6 +7,7 @@ namespace Capstone.DAO.Interfaces
     {
         Image CreateImage(Image image);
         List<Image> GetImagesByProjectId(int projectId);
+        Image GetImageByProjectId(int projectId);
         Image GetImageByProjectIdAndImageId(int projectId, int imageId);
         Image GetImageById(int imageId);
         List<Image> GetAllImages();

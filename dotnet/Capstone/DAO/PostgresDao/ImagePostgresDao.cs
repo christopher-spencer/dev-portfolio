@@ -78,6 +78,40 @@ namespace Capstone.DAO
             return images;
         }
 
+        public Image GetImageByProjectId(int projectId)
+        {
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN side_project_images spi ON i.id = spi.image_id " +
+                         "WHERE spi.project_id = @projectId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        image = MapRowToImage(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by project ID.", ex);
+            }
+
+            return image;
+        }
+
         // TODO GetImageByProjectNameAndImageName (?)
         public Image GetImageByProjectIdAndImageId(int projectId, int imageId)
         {
@@ -87,7 +121,7 @@ namespace Capstone.DAO
                          "FROM images i " +
                          "JOIN side_project_images spi ON i.id = spi.image_id " +
                          "WHERE spi.project_id = @projectId " +
-                         "AND i.id = @imageId;"; 
+                         "AND i.id = @imageId;";
 
             try
             {
