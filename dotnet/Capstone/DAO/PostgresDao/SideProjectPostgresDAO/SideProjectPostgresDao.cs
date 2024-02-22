@@ -233,10 +233,11 @@ namespace Capstone.DAO
             };
 
             int projectId = sideProject.Id;
-
+            // FIXME Figure out how to do Image and Website correctly
             sideProject.MainImageUrl = imageDao.GetImageByProjectId(projectId);
             // sideProject.Website = websiteDao.GetWebsiteByProjectId(projectId);
             // sideProject.GitHubRepoLink = websiteDao.GetWebsiteByProjectId(projectId);
+
             sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(projectId);
             sideProject.AdditionalImagesUrl = imageDao.GetImagesByProjectId(projectId);
             sideProject.ToolsUsed = skillDao.GetSkillsByProjectId(projectId);
