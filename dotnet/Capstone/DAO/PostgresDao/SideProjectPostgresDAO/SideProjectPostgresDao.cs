@@ -98,7 +98,7 @@ namespace Capstone.DAO
 
             return sideProject;
         }
-
+            //TODO possibly cut this method altogether
         public int GetWebsiteIdBySideProjectId(int sideProjectId)
         {
             int websiteId = -1; // Default value to indicate absence
