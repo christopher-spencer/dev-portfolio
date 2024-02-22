@@ -19,19 +19,19 @@ namespace Capstone.DAO
         private readonly IWebsiteDao _websiteDao;
         private readonly IDependencyLibraryDao _dependencyLibraryDao;
 
-        public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao, IImageDao imageDao, 
-            ISkillDao skillDao, IContributorDao contributorDao, IApiServiceDao apiServiceDao, 
+        public SideProjectPostgresDao(string dbConnectionString, IGoalDao goalDao, IImageDao imageDao,
+            ISkillDao skillDao, IContributorDao contributorDao, IApiServiceDao apiServiceDao,
             IDependencyLibraryDao dependencyLibraryDao, IWebsiteDao websiteDao)
-            {
-                connectionString = dbConnectionString;
-                this._goalDao = goalDao;
-                this._imageDao = imageDao;
-                this._skillDao = skillDao;
-                this._contributorDao = contributorDao;
-                this._apiServiceDao = apiServiceDao;
-                this._dependencyLibraryDao = dependencyLibraryDao;
-                this._websiteDao = websiteDao;
-            }
+        {
+            connectionString = dbConnectionString;
+            this._goalDao = goalDao;
+            this._imageDao = imageDao;
+            this._skillDao = skillDao;
+            this._contributorDao = contributorDao;
+            this._apiServiceDao = apiServiceDao;
+            this._dependencyLibraryDao = dependencyLibraryDao;
+            this._websiteDao = websiteDao;
+        }
 
         public List<SideProject> GetSideProjects()
         {
@@ -97,6 +97,37 @@ namespace Capstone.DAO
             }
 
             return sideProject;
+        }
+
+        public int GetWebsiteIdBySideProjectId(int sideProjectId)
+        {
+            int websiteId = -1; // Default value to indicate absence
+
+            string sql = "SELECT website_id FROM side_project_websites WHERE project_id = @sideProjectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+
+                    object result = cmd.ExecuteScalar();
+
+                    if (result != null && result != DBNull.Value)
+                    {
+                        websiteId = Convert.ToInt32(result);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website ID by side project ID.", ex);
+            }
+
+            return websiteId;
         }
 
         public SideProject CreateSideProject(SideProject sideProject)
@@ -206,7 +237,7 @@ namespace Capstone.DAO
 
             return numberOfRowsAffected;
         }
-            // TODO will need full CRUD methods for all PostgresDaos by PROJECT ID :)
+        // TODO will need full CRUD methods for all PostgresDaos by PROJECT ID :)
         private SideProject MapRowToSideProject(NpgsqlDataReader reader)
         {
             SideProject sideProject = new SideProject
@@ -232,11 +263,14 @@ namespace Capstone.DAO
                 FinishDate = Convert.ToDateTime(reader["finish_date"])
             };
 
+
             int projectId = sideProject.Id;
+            int websiteId = GetWebsiteIdBySideProjectId(projectId);
             // FIXME Figure out how to do Image and Website correctly
             sideProject.MainImageUrl = _imageDao.GetImageByProjectId(projectId);
-            // sideProject.Website = websiteDao.GetWebsiteByProjectId(projectId);
-            // sideProject.GitHubRepoLink = websiteDao.GetWebsiteByProjectId(projectId);
+
+            sideProject.Website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+            sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
 
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsAndObjectivesByProjectId(projectId);
             sideProject.AdditionalImagesUrl = _imageDao.GetImagesByProjectId(projectId);
