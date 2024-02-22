@@ -216,17 +216,17 @@ namespace Capstone.DAO
                 Description = Convert.ToString(reader["description"]),
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
                 // TODO switch to get links in same way below through Interface? (or add sql queries)
-                Website = new Website 
-                { 
-                    Name = Convert.ToString(reader["website_name"]),
-                    Url = Convert.ToString(reader["website_url"]),
-                    Logo = new Image 
-                    {
-                        Name = Convert.ToString(reader["website_logo_name"]),
-                        Url = Convert.ToString(reader["website_logo_url"]) 
-                    }    
-                },
-                GitHubRepoLink = new Website { Url = Convert.ToString(reader["github_repo_link_url"]) },
+                // Website = new Website 
+                // { 
+                //     Name = Convert.ToString(reader["website_name"]),
+                //     Url = Convert.ToString(reader["website_url"]),
+                //     Logo = new Image 
+                //     {
+                //         Name = Convert.ToString(reader["website_logo_name"]),
+                //         Url = Convert.ToString(reader["website_logo_url"]) 
+                //     }    
+                // },
+                // GitHubRepoLink = new Website { Url = Convert.ToString(reader["github_repo_link_url"]) },
                 ProjectStatus = Convert.ToString(reader["project_status"]),
                 StartDate = Convert.ToDateTime(reader["start_date"]),
                 FinishDate = Convert.ToDateTime(reader["finish_date"])
@@ -235,6 +235,8 @@ namespace Capstone.DAO
             int projectId = sideProject.Id;
 
             sideProject.MainImageUrl = imageDao.GetImageByProjectId(projectId);
+            // sideProject.Website = websiteDao.GetWebsiteByProjectId(projectId);
+            // sideProject.GitHubRepoLink = websiteDao.GetWebsiteByProjectId(projectId);
             sideProject.GoalsAndObjectives = goalDao.GetGoalsAndObjectivesByProjectId(projectId);
             sideProject.AdditionalImagesUrl = imageDao.GetImagesByProjectId(projectId);
             sideProject.ToolsUsed = skillDao.GetSkillsByProjectId(projectId);
