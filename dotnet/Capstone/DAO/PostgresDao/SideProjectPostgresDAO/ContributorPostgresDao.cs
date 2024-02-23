@@ -35,9 +35,9 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
                     cmd.Parameters.AddWithValue("@bio", contributor.Bio);
                     cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmd.Parameters.AddWithValue("@linkedin_url", contributor.LinkedInLink.Url);
-                    cmd.Parameters.AddWithValue("@github_url", contributor.GitHubLink.Url);
-                    cmd.Parameters.AddWithValue("@portfolio_url", contributor.PortfolioLink.Url);
+                    cmd.Parameters.AddWithValue("@linkedin_url", contributor.LinkedIn.Url);
+                    cmd.Parameters.AddWithValue("@github_url", contributor.GitHub.Url);
+                    cmd.Parameters.AddWithValue("@portfolio_url", contributor.Portfolio.Url);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     contributor.Id = id;
@@ -161,9 +161,9 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
                     cmd.Parameters.AddWithValue("@bio", contributor.Bio);
                     cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmd.Parameters.AddWithValue("@linkedin_url", contributor.LinkedInLink.Url);
-                    cmd.Parameters.AddWithValue("@github_url", contributor.GitHubLink.Url);
-                    cmd.Parameters.AddWithValue("@portfolio_url", contributor.PortfolioLink.Url);
+                    cmd.Parameters.AddWithValue("@linkedin_url", contributor.LinkedIn.Url);
+                    cmd.Parameters.AddWithValue("@github_url", contributor.GitHub.Url);
+                    cmd.Parameters.AddWithValue("@portfolio_url", contributor.Portfolio.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -217,9 +217,9 @@ namespace Capstone.DAO
                 Email = Convert.ToString(reader["email"]),
                 Bio = Convert.ToString(reader["bio"]),
                 ContributionDetails = Convert.ToString(reader["contribution_details"]),
-                LinkedInLink = new Website { Url = Convert.ToString(reader["linkedin_url"]) },
-                GitHubLink = new Website { Url = Convert.ToString(reader["github_url"]) },
-                PortfolioLink = new Website { Url = Convert.ToString(reader["portfolio_url"]) }
+                LinkedIn = new Website { Url = Convert.ToString(reader["linkedin_url"]) },
+                GitHub = new Website { Url = Convert.ToString(reader["github_url"]) },
+                Portfolio = new Website { Url = Convert.ToString(reader["portfolio_url"]) }
             };
         }
     }
