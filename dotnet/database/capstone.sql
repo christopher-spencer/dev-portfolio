@@ -65,9 +65,9 @@ CREATE TABLE apis_and_services (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    url_id INTEGER,
+    website_id INTEGER,
     logo_id INTEGER,
-    FOREIGN KEY (url_id) REFERENCES websites(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id),
     FOREIGN KEY (logo_id) REFERENCES images(id)
 );
 

@@ -355,7 +355,6 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while deleting the website link.", ex);
             }
         }
-        //TODO update logo_id namespace in sql queries
         private Website MapRowToWebsite(NpgsqlDataReader reader)
         {
             Website website = new Website

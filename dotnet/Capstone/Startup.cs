@@ -67,10 +67,11 @@ namespace Capstone
             IGoalDao goalDao = new GoalPostgresDao(connectionString);
             IImageDao imageDao = new ImagePostgresDao(connectionString);
             ISkillDao skillDao = new SkillPostgresDao(connectionString, imageDao);
-            IContributorDao contributorDao = new ContributorPostgresDao(connectionString);
-            IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString);
-            IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString);
             IWebsiteDao websiteDao = new WebsitePostgresDao(connectionString, imageDao);
+            IContributorDao contributorDao = new ContributorPostgresDao(connectionString);
+            IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString, imageDao, websiteDao);
+            IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString);
+        
 
             // Register services with DI container
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
@@ -90,7 +91,7 @@ namespace Capstone
             ));
 
             services.AddTransient<IContributorDao>(m => new ContributorPostgresDao(connectionString));
-            services.AddTransient<IApiServiceDao>(m => new ApiServicePostgresDao(connectionString));
+            services.AddTransient<IApiServiceDao>(m => new ApiServicePostgresDao(connectionString, imageDao, websiteDao));
             services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString));
 
             services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
