@@ -6,6 +6,7 @@ namespace Capstone.DAO.Interfaces
     public interface IImageDao
     {
         Image CreateImage(Image image);
+        Image CreateImageByProjectId(int projectId, Image image);
         List<Image> GetImagesByProjectId(int projectId);
         Image GetImageByProjectId(int projectId);
         Image GetImageByProjectIdAndImageId(int projectId, int imageId);
@@ -13,5 +14,6 @@ namespace Capstone.DAO.Interfaces
         List<Image> GetAllImages();
         Image UpdateImage(Image image);
         int DeleteImageById(int imageId);
+        int DeleteImageByProjectId(int projectId, int imageId);
     }
 }
