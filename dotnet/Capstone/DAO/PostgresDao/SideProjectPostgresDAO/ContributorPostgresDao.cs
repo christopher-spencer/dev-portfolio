@@ -21,9 +21,59 @@ namespace Capstone.DAO
             this._websiteDao = websiteDao;
         }
 
+        public Contributor CreateContributorByProjectId(int projectId, Contributor contributor)
+        {
+            string insertContributorSql = "INSERT INTO contributors (first_name, last_name, contributor_image_id, email, " +
+                                          "bio, contribution_details, linkedin_id, github_id, portfolio_id) " +
+                                          "VALUES (@first_name, @last_name, @contributor_image_id, @email, @bio, " +
+                                          "@contribution_details, @linkedin_id, @github_id, @portfolio_id) " +
+                                          "RETURNING id;";
+            string insertSideProjectContributorSql = "INSERT INTO sideproject_contributors (sideproject_id, contributor_id) " +
+                                                     "VALUES (@projectId, @contributorId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmdInsertContributor = new NpgsqlCommand(insertContributorSql, connection);
+                    cmdInsertContributor.Parameters.AddWithValue("@first_name", contributor.FirstName);
+                    cmdInsertContributor.Parameters.AddWithValue("@last_name", contributor.LastName);
+                    cmdInsertContributor.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
+                    cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email);
+                    cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio);
+                    cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+                    cmdInsertContributor.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
+                    cmdInsertContributor.Parameters.AddWithValue("@github_id", contributor.GitHubId);
+                    cmdInsertContributor.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
+
+                    int contributorId = (int)cmdInsertContributor.ExecuteScalar();
+
+                    NpgsqlCommand cmdInsertSideProjectContributor = new NpgsqlCommand(insertSideProjectContributorSql, connection);
+                    cmdInsertSideProjectContributor.Parameters.AddWithValue("@projectId", projectId);
+                    cmdInsertSideProjectContributor.Parameters.AddWithValue("@contributorId", contributorId);
+
+                    cmdInsertSideProjectContributor.ExecuteNonQuery();
+
+                    contributor.Id = contributorId;
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the contributor for the project.", ex);
+            }
+
+            return contributor;
+        }
+
         public Contributor CreateContributor(Contributor contributor)
         {
-            string sql = "INSERT INTO contributors (first_name, last_name, contributor_image_name, contributor_image_url, email, bio, contribution_details, linkedin_url, github_url, portfolio_url) VALUES (@first_name, @last_name, @contributor_image_name, @contributor_image_url, @email, @bio, @contribution_details, @linkedin_url, @github_url, @portfolio_url) RETURNING id;";
+            string sql = "INSERT INTO contributors (first_name, last_name, contributor_image_id, email, " +
+                         "bio, contribution_details, linkedin_id, github_id, portfolio_id) " +
+                         "VALUES (@first_name, @last_name, @contributor_image_id, @email, @bio, " +
+                         "@contribution_details, @linkedin_id, @github_id, @portfolio_id) " +
+                         "RETURNING id;";
 
             try
             {
@@ -34,14 +84,13 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
                     cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmd.Parameters.AddWithValue("@contributor_image_name", contributor.ContributorImage.Name);
-                    cmd.Parameters.AddWithValue("@contributor_image_url", contributor.ContributorImage.Url);
+                    cmd.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
                     cmd.Parameters.AddWithValue("@bio", contributor.Bio);
                     cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmd.Parameters.AddWithValue("@linkedin_url", contributor.LinkedIn.Url);
-                    cmd.Parameters.AddWithValue("@github_url", contributor.GitHub.Url);
-                    cmd.Parameters.AddWithValue("@portfolio_url", contributor.Portfolio.Url);
+                    cmd.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
+                    cmd.Parameters.AddWithValue("@github_id", contributor.GitHubId);
+                    cmd.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     contributor.Id = id;
@@ -59,11 +108,11 @@ namespace Capstone.DAO
         {
             List<Contributor> contributors = new List<Contributor>();
 
-            string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_name, c.contributor_image_url, " +
-                         "c.email, c.bio, c.contribution_details, c.linkedin_url, c.github_url, c.portfolio_url " +
+            string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_id, c.email, c.bio, c.contribution_details, " +
+                         "c.linkedin_id, c.github_id, c.portfolio_id " +
                          "FROM contributors c " +
-                         "JOIN side_project_contributors pc ON c.id = pc.contributor_id " +
-                         "WHERE pc.project_id = @projectId;";
+                         "JOIN sideproject_contributors pc ON c.id = pc.contributor_id " +
+                         "WHERE pc.sideproject_id = @projectId;";
 
             try
             {
@@ -90,9 +139,46 @@ namespace Capstone.DAO
             return contributors;
         }
 
+        public Contributor GetContributorByProjectId(int projectId, int contributorId)
+        {
+            Contributor contributor = null;
+
+            string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_id, c.email, c.bio, c.contribution_details, " +
+                         "c.linkedin_id, c.github_id, c.portfolio_id FROM contributors c " +
+                         "JOIN sideproject_contributors pc ON c.id = pc.contributor_id " +
+                         "WHERE pc.sideproject_id = @projectId AND c.id = @contributorId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        contributor = MapRowToContributor(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the contributor for the project.", ex);
+            }
+
+            return contributor;
+        }
+
         public Contributor GetContributorById(int contributorId)
         {
-            string sql = "SELECT first_name, last_name, contributor_image_name, contributor_image_url, email, bio, contribution_details, linkedin_url, github_url, portfolio_url FROM contributors WHERE id = @id;";
+            string sql = "SELECT first_name, last_name, contributor_image_id, email, bio, contribution_details, " +
+                         "linkedin_id, github_id, portfolio_id " +
+                         "FROM contributors WHERE id = @id;";
 
             try
             {
@@ -121,7 +207,9 @@ namespace Capstone.DAO
         public List<Contributor> GetAllContributors()
         {
             List<Contributor> contributors = new List<Contributor>();
-            string sql = "SELECT id, first_name, last_name, contributor_image_name, contributor_image_url, email, bio, contribution_details, linkedin_url, github_url, portfolio_url FROM contributors;";
+            string sql = "SELECT id, first_name, last_name, contributor_image_id, email, bio, " +
+                         "contribution_details, linkedin_id, github_id, portfolio_id " +
+                         "FROM contributors;";
 
             try
             {
@@ -146,9 +234,55 @@ namespace Capstone.DAO
             return contributors;
         }
 
+        public Contributor UpdateContributorByProjectId(int projectId, Contributor updatedContributor)
+        {
+            string sql = "UPDATE contributors " +
+                         "SET first_name = @first_name, last_name = @last_name, contributor_image_id = @contributor_image_id, " +
+                         "email = @email, bio = @bio, contribution_details = @contribution_details, " +
+                         "linkedin_id = @linkedin_id, github_id = @github_id, portfolio_id = @portfolio_id " +
+                         "FROM sideproject_contributors " +
+                         "WHERE contributors.id = sideproject_contributors.contributor_id " +
+                         "AND sideproject_contributors.sideproject_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@first_name", updatedContributor.FirstName);
+                    cmd.Parameters.AddWithValue("@last_name", updatedContributor.LastName);
+                    cmd.Parameters.AddWithValue("@contributor_image_id", updatedContributor.ContributorImageId);
+                    cmd.Parameters.AddWithValue("@email", updatedContributor.Email);
+                    cmd.Parameters.AddWithValue("@bio", updatedContributor.Bio);
+                    cmd.Parameters.AddWithValue("@contribution_details", updatedContributor.ContributionDetails);
+                    cmd.Parameters.AddWithValue("@linkedin_id", updatedContributor.LinkedInId);
+                    cmd.Parameters.AddWithValue("@github_id", updatedContributor.GitHubId);
+                    cmd.Parameters.AddWithValue("@portfolio_id", updatedContributor.PortfolioId);
+
+                    int count = cmd.ExecuteNonQuery();
+
+                    if (count > 0)
+                    {
+                        return updatedContributor;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the contributor for the project.", ex);
+            }
+
+            return null;
+        }
         public Contributor UpdateContributor(Contributor contributor)
         {
-            string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, contributor_image_name = @contributor_image_name, contributor_image_url = @contributor_image_url, email = @email, bio = @bio, contribution_details = @contribution_details, linkedin_url = @linkedin_url, github_url = @github_url, portfolio_url = @portfolio_url WHERE id = @id;";
+            string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, contributor_image_id = @contributor_image_id, " +
+                         "email = @email, bio = @bio, contribution_details = @contribution_details, " +
+                         "linkedin_id = @linkedin_id, github_id = @github_id, portfolio_id = @portfolio_id " +
+                         "WHERE id = @id;";
 
             try
             {
@@ -160,14 +294,13 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@id", contributor.Id);
                     cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
                     cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmd.Parameters.AddWithValue("@contributor_image_name", contributor.ContributorImage.Name);
-                    cmd.Parameters.AddWithValue("@contributor_image_url", contributor.ContributorImage.Url);
+                    cmd.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
                     cmd.Parameters.AddWithValue("@bio", contributor.Bio);
                     cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmd.Parameters.AddWithValue("@linkedin_url", contributor.LinkedIn.Url);
-                    cmd.Parameters.AddWithValue("@github_url", contributor.GitHub.Url);
-                    cmd.Parameters.AddWithValue("@portfolio_url", contributor.Portfolio.Url);
+                    cmd.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
+                    cmd.Parameters.AddWithValue("@github_id", contributor.GitHubId);
+                    cmd.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -182,6 +315,29 @@ namespace Capstone.DAO
             }
 
             return null;
+        }
+
+        public int DeleteContributorByProjectId(int projectId, int contributorId)
+        {
+            string sql = "DELETE FROM sideproject_contributors WHERE sideproject_id = @projectId AND contributor_id = @contributorId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the contributor from the project.", ex);
+            }
         }
 
         public int DeleteContributorById(int contributorId)
