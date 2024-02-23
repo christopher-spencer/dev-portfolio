@@ -240,6 +240,40 @@ namespace Capstone.DAO
             return images;
         }
 
+        public Image UpdateImageByProjectId(int projectId, Image updatedImage)
+        {
+            string sql = "UPDATE images " +
+                         "SET name = @name, url = @url " +
+                         "FROM sideproject_images " +
+                         "WHERE images.id = sideproject_images.image_id AND sideproject_images.sideproject_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@name", updatedImage.Name);
+                    cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+
+                    int count = cmd.ExecuteNonQuery();
+
+                    if (count > 0)
+                    {
+                        return updatedImage;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image.", ex);
+            }
+
+            return null;
+        }
+
         public Image UpdateImage(Image image)
         {
             string sql = "UPDATE images SET name = @name, url = @url WHERE id = @id;";

@@ -12,6 +12,7 @@ namespace Capstone.DAO.Interfaces
         Image GetImageByProjectIdAndImageId(int projectId, int imageId);
         Image GetImageById(int imageId);
         List<Image> GetAllImages();
+        Image UpdateImageByProjectId(int projectId, Image updatedImage);
         Image UpdateImage(Image image);
         int DeleteImageById(int imageId);
         int DeleteImageByProjectId(int projectId, int imageId);
