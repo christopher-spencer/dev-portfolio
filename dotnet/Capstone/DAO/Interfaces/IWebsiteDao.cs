@@ -14,6 +14,7 @@ namespace Capstone.DAO.Interfaces
         
         Website GetWebsiteById(int websiteLinkId);
         List<Website> GetAllWebsites();
+        Website UpdateWebsiteByProjectId(int projectId, Website updatedWebsite);
         Website UpdateWebsiteByWebsiteId(int websiteId, Website website);
         Website UpdateWebsite(Website websiteLink);
         int DeleteWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId);

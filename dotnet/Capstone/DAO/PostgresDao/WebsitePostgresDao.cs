@@ -213,6 +213,41 @@ namespace Capstone.DAO
             return websiteLinks;
         }
 
+        public Website UpdateWebsiteByProjectId(int projectId, Website updatedWebsite)
+        {
+            string sql = "UPDATE websites " +
+                         "SET name = @name, url = @url " +
+                         "FROM sideproject_websites " +
+                         "WHERE websites.id = sideproject_websites.website_id " +
+                         "AND sideproject_websites.sideproject_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
+                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+
+                    int count = cmd.ExecuteNonQuery();
+
+                    if (count > 0)
+                    {
+                        return updatedWebsite;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website.", ex);
+            }
+
+            return null;
+        }
+
         public Website UpdateWebsiteByWebsiteId(int websiteId, Website updatedWebsite)
         {
             string sql = "UPDATE websites " +
