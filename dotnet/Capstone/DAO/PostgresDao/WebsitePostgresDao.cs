@@ -11,16 +11,18 @@ namespace Capstone.DAO
     public class WebsitePostgresDao : IWebsiteDao
     {
         private readonly string connectionString;
+        private readonly IImageDao _imageDao;
 
-        public WebsitePostgresDao(string dbConnectionString)
+        public WebsitePostgresDao(string dbConnectionString, IImageDao imageDao)
         {
             connectionString = dbConnectionString;
+            this._imageDao = imageDao;
         }
 
         public Website CreateWebsiteByProjectId(int projectId, Website website)
         {
-            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
-            string insertSideProjectWebsiteSql = "INSERT INTO side_project_websites (project_id, website_id) VALUES (@projectId, @websiteId);";
+            string insertWebsiteSql = "INSERT INTO websites (name, url, logo_id) VALUES (@name, @url, @logoId) RETURNING id;";
+            string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@projectId, @websiteId);";
 
             try
             {
@@ -31,6 +33,7 @@ namespace Capstone.DAO
                     NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection);
                     cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                     cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                    cmdInsertWebsite.Parameters.AddWithValue("@logoId", website.Logo.Id);
 
                     int websiteId = (int)cmdInsertWebsite.ExecuteScalar();
 
@@ -53,7 +56,7 @@ namespace Capstone.DAO
 
         public Website CreateWebsiteLink(Website websiteLink)
         {
-            string sql = "INSERT INTO website_links (name, url, icon_name, icon_url) VALUES (@name, @url, @icon_name, @icon_url) RETURNING id;";
+            string sql = "INSERT INTO websites (name, url, logo_id) VALUES (@name, @url, @logoId) RETURNING id;";
 
             try
             {
@@ -64,8 +67,7 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", websiteLink.Name);
                     cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    cmd.Parameters.AddWithValue("@icon_name", websiteLink.Logo.Name);
-                    cmd.Parameters.AddWithValue("@icon_url", websiteLink.Logo.Url);
+                    cmd.Parameters.AddWithValue("@logoId", websiteLink.Logo.Id);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     websiteLink.Id = id;
@@ -83,10 +85,11 @@ namespace Capstone.DAO
         {
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url " +
+            string sql = "SELECT w.id, w.name, w.url, i.name AS icon_name, i.url AS icon_url " +
                          "FROM websites w " +
-                         "JOIN side_project_websites spw ON w.id = spw.website_id " +
-                         "WHERE spw.project_id = @projectId;";
+                         "JOIN sideproject_websites sw ON w.id = sw.website_id " +
+                         "JOIN images i ON w.logo_id = i.id " +
+                         "WHERE sw.sideproject_id = @projectId;";
 
             try
             {
@@ -101,7 +104,7 @@ namespace Capstone.DAO
 
                     if (reader.Read())
                     {
-                        website = MapRowToWebsiteLink(reader);
+                        website = MapRowToWebsite(reader);
                     }
                 }
             }
@@ -117,10 +120,11 @@ namespace Capstone.DAO
         {
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url " +
+            string sql = "SELECT w.id, w.name, w.url, i.name AS icon_name, i.url AS icon_url " +
                          "FROM websites w " +
-                         "JOIN side_project_websites spw ON w.id = spw.website_id " +
-                         "WHERE spw.project_id = @projectId AND w.id = @websiteId;";
+                         "JOIN images i ON w.logo_id = i.id " +
+                         "JOIN sideproject_websites sw ON w.id = sw.website_id " +
+                         "WHERE sw.sideproject_id = @projectId AND w.id = @websiteId;";
 
             try
             {
@@ -136,7 +140,7 @@ namespace Capstone.DAO
 
                     if (reader.Read())
                     {
-                        website = MapRowToWebsiteLink(reader);
+                        website = MapRowToWebsite(reader);
                     }
                 }
             }
@@ -148,9 +152,12 @@ namespace Capstone.DAO
             return website;
         }
 
-        public Website GetWebsiteLinkById(int websiteLinkId)
+        public Website GetWebsiteById(int websiteId)
         {
-            string sql = "SELECT name, url, icon_name, icon_url FROM website_links WHERE id = @id;";
+            string sql = "SELECT w.id, w.name, w.url, i.name AS icon_name, i.url AS icon_url " +
+                         "FROM websites w " +
+                         "JOIN images i ON w.logo_id = i.id " +
+                         "WHERE w.id = @id;";
 
             try
             {
@@ -159,12 +166,12 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", websiteLinkId);
+                    cmd.Parameters.AddWithValue("@id", websiteId);
 
                     NpgsqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
-                        return MapRowToWebsiteLink(reader);
+                        return MapRowToWebsite(reader);
                     }
                 }
             }
@@ -176,10 +183,12 @@ namespace Capstone.DAO
             return null;
         }
 
-        public List<Website> GetAllWebsiteLinks()
+        public List<Website> GetAllWebsites()
         {
             List<Website> websiteLinks = new List<Website>();
-            string sql = "SELECT id, name, url, icon_name, icon_url FROM website_links;";
+            string sql = "SELECT w.id, w.name, w.url, i.name AS icon_name, i.url AS icon_url " +
+                         "FROM websites w " +
+                         "JOIN images i ON w.logo_id = i.id;";
 
             try
             {
@@ -192,7 +201,7 @@ namespace Capstone.DAO
 
                     while (reader.Read())
                     {
-                        websiteLinks.Add(MapRowToWebsiteLink(reader));
+                        websiteLinks.Add(MapRowToWebsite(reader));
                     }
                 }
             }
@@ -204,14 +213,11 @@ namespace Capstone.DAO
             return websiteLinks;
         }
 
-        public Website UpdateWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId, Website website)
+        public Website UpdateWebsiteByWebsiteId(int websiteId, Website updatedWebsite)
         {
             string sql = "UPDATE websites " +
                          "SET name = @name, url = @url " +
-                         "WHERE id = @websiteId;" +
-                         "UPDATE side_project_websites " +
-                         "SET project_id = @projectId " +
-                         "WHERE website_id = @websiteId;";
+                         "WHERE id = @websiteId;";
 
             try
             {
@@ -220,16 +226,15 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
                     cmd.Parameters.AddWithValue("@websiteId", websiteId);
-                    cmd.Parameters.AddWithValue("@name", website.Name);
-                    cmd.Parameters.AddWithValue("@url", website.Url);
+                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
+                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
 
                     int count = cmd.ExecuteNonQuery();
 
                     if (count > 0)
                     {
-                        return website;
+                        return updatedWebsite;
                     }
                 }
             }
@@ -241,9 +246,9 @@ namespace Capstone.DAO
             return null;
         }
 
-        public Website UpdateWebsiteLink(Website websiteLink)
+        public Website UpdateWebsite(Website updatedWebsite)
         {
-            string sql = "UPDATE website_links SET name = @name, url = @url, icon_name = @icon_name, icon_url = @icon_url WHERE id = @id;";
+            string sql = "UPDATE websites SET name = @name, url = @url WHERE id = @id;";
 
             try
             {
@@ -252,16 +257,14 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", websiteLink.Id);
-                    cmd.Parameters.AddWithValue("@name", websiteLink.Name);
-                    cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    cmd.Parameters.AddWithValue("@icon_name", websiteLink.Logo.Name);
-                    cmd.Parameters.AddWithValue("@icon_url", websiteLink.Logo.Url);
+                    cmd.Parameters.AddWithValue("@id", updatedWebsite.Id);
+                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
+                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
                     {
-                        return websiteLink;
+                        return updatedWebsite;
                     }
                 }
             }
@@ -275,8 +278,7 @@ namespace Capstone.DAO
 
         public int DeleteWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId)
         {
-            string sql = "DELETE FROM side_project_websites WHERE project_id = @projectId AND website_id = @websiteId;" +
-                         "DELETE FROM websites WHERE id = @websiteId;";
+            string sql = "DELETE FROM sideproject_websites WHERE sideproject_id = @projectId AND website_id = @websiteId;";
 
             try
             {
@@ -293,13 +295,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the website.", ex);
+                throw new DaoException("An error occurred while deleting the website from the side project.", ex);
             }
         }
 
-        public int DeleteWebsiteLinkById(int websiteLinkId)
+        public int DeleteWebsiteById(int websiteId)
         {
-            string sql = "DELETE FROM website_links WHERE id = @id;";
+            string sql = "DELETE FROM websites WHERE id = @id;";
 
             try
             {
@@ -308,7 +310,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", websiteLinkId);
+                    cmd.Parameters.AddWithValue("@id", websiteId);
 
                     return cmd.ExecuteNonQuery();
                 }
@@ -318,20 +320,24 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while deleting the website link.", ex);
             }
         }
-
-        private Website MapRowToWebsiteLink(NpgsqlDataReader reader)
+        //TODO update logo_id namespace in sql queries
+        private Website MapRowToWebsite(NpgsqlDataReader reader)
         {
-            return new Website
+            Website website = new Website
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
                 Url = Convert.ToString(reader["url"]),
-                Logo = new Image
-                {
-                    Name = Convert.ToString(reader["icon_name"]),
-                    Url = Convert.ToString(reader["icon_url"])
-                }
+                LogoId = Convert.ToInt32(reader["logo_id"])
             };
+
+            if (reader["logo_id"] != DBNull.Value)
+            {
+                int logoId = Convert.ToInt32(reader["logo_id"]);
+                website.Logo = _imageDao.GetImageById(logoId);
+            }
+
+            return website;
         }
     }
 }
