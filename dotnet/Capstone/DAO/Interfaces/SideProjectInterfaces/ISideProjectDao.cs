@@ -7,9 +7,6 @@ namespace Capstone.DAO.Interfaces
     {
         List<SideProject> GetSideProjects();
         SideProject GetSideProjectById(int sideProjectId);
-
-        int GetWebsiteIdBySideProjectId(int sideProjectId);
-
         SideProject CreateSideProject(SideProject sideProject);
         SideProject UpdateSideProject(SideProject sideProject, int sideProjectId);
         int DeleteSideProjectBySideProjectId(int sideProjectId);

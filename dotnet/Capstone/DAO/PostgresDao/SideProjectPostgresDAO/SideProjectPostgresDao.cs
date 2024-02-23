@@ -98,40 +98,6 @@ namespace Capstone.DAO
 
             return sideProject;
         }
-            //TODO possibly cut this method altogether
-        public int GetWebsiteIdBySideProjectId(int sideProjectId)
-        {
-            int websiteId = -1; // Default value to indicate absence
-            //TODO fix this sql
-            string sql = "SELECT w.id " +
-                "FROM website w " +
-                "JOIN side_project_website spw ON w.id = spw.website_id " +
-                "WHERE spw.project_id = @sideProjectId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-
-                    object result = cmd.ExecuteScalar();
-
-                    if (result != null && result != DBNull.Value)
-                    {
-                        websiteId = Convert.ToInt32(result);
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving the website ID by side project ID.", ex);
-            }
-
-            return websiteId;
-        }
 
         public SideProject CreateSideProject(SideProject sideProject)
         {
@@ -268,12 +234,12 @@ namespace Capstone.DAO
 
 
             int projectId = sideProject.Id;
-            int websiteId = GetWebsiteIdBySideProjectId(projectId);
-            // FIXME Figure out how to do Image and Website correctly
+            // int websiteId = GetWebsiteIdBySideProjectId(projectId);
+            // FIXME Get Image and Website correctly
             sideProject.MainImageUrl = _imageDao.GetImageByProjectId(projectId);
 
-            sideProject.Website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
-            sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+            // sideProject.Website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+            // sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
 
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsAndObjectivesByProjectId(projectId);
             sideProject.AdditionalImagesUrl = _imageDao.GetImagesByProjectId(projectId);
