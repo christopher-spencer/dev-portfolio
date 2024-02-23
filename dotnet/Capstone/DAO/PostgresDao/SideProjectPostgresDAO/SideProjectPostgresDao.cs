@@ -192,7 +192,7 @@ namespace Capstone.DAO
         {
             int numberOfRowsAffected = 0;
 
-            string sql = "DELETE FROM sideprojects WHERE sideproject_id = @sideproject_id;";
+            string sql = "DELETE FROM sideprojects WHERE id = @sideProjectId;";
 
             try
             {
@@ -201,7 +201,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@sideproject_id", sideProjectId);
+                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                     numberOfRowsAffected = cmd.ExecuteNonQuery();
                 }
@@ -218,36 +218,38 @@ namespace Capstone.DAO
         {
             SideProject sideProject = new SideProject
             {
-                Id = Convert.ToInt32(reader["sideproject_id"]),
-                Name = Convert.ToString(reader["sideproject_name"]),
+                Id = Convert.ToInt32(reader["id"]),
+                Name = Convert.ToString(reader["name"]),
                 Description = Convert.ToString(reader["description"]),
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
-                // TODO switch to get links in same way below through Interface? (or add sql queries)
-                // Website = new Website 
-                // { 
-                //     Name = Convert.ToString(reader["website_name"]),
-                //     Url = Convert.ToString(reader["website_url"]),
-                //     Logo = new Image 
-                //     {
-                //         Name = Convert.ToString(reader["website_logo_name"]),
-                //         Url = Convert.ToString(reader["website_logo_url"]) 
-                //     }    
-                // },
-                // GitHubRepoLink = new Website { Url = Convert.ToString(reader["github_repo_link_url"]) },
                 ProjectStatus = Convert.ToString(reader["project_status"]),
                 StartDate = Convert.ToDateTime(reader["start_date"]),
-                FinishDate = Convert.ToDateTime(reader["finish_date"])
+                FinishDate = Convert.ToDateTime(reader["finish_date"]),
+                MainImageId = Convert.ToInt32(reader["main_image_id"]),
+                WebsiteId = Convert.ToInt32(reader["website_id"]),
+                GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"])
             };
 
 
             int projectId = sideProject.Id;
-            // int websiteId = GetWebsiteIdBySideProjectId(projectId);
-            // FIXME Get Image and Website correctly
 
-            // sideProject.MainImageUrl = _imageDao.GetImageByProjectIdAndImageId(projectId);
+            if (reader["main_image_id"] != DBNull.Value)
+            {
+                int mainImageId = Convert.ToInt32(reader["main_image_id"]);
+                sideProject.MainImage = _imageDao.GetImageByProjectIdAndImageId(projectId, mainImageId);
+            }
 
-            // sideProject.Website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
-            // sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+            if (reader["website_id"] != DBNull.Value)
+            {
+                int websiteId = Convert.ToInt32(reader["website_id"]);
+                sideProject.Website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+            }
+
+            if (reader["github_repo_link_id"] != DBNull.Value)
+            {
+                int githubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
+                sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, githubRepoLinkId);
+            }
 
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsAndObjectivesByProjectId(projectId);
             sideProject.AdditionalImagesUrl = _imageDao.GetImagesByProjectId(projectId);
