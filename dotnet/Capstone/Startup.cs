@@ -64,8 +64,8 @@ namespace Capstone
             
             //TODO Ask a mentor about this setup 
             // Instantiate DAOs for dependencies
-            IGoalDao goalDao = new GoalPostgresDao(connectionString);
             IImageDao imageDao = new ImagePostgresDao(connectionString);
+            IGoalDao goalDao = new GoalPostgresDao(connectionString, imageDao);
             ISkillDao skillDao = new SkillPostgresDao(connectionString, imageDao);
             IWebsiteDao websiteDao = new WebsitePostgresDao(connectionString, imageDao);
             IContributorDao contributorDao = new ContributorPostgresDao(connectionString, imageDao, websiteDao);
@@ -88,7 +88,7 @@ namespace Capstone
             services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString, imageDao, websiteDao));
 
             services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
-            services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString));
+            services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString, imageDao));
             services.AddTransient<ISkillDao>(m => new SkillPostgresDao(connectionString, imageDao));
             services.AddTransient<IWebsiteDao>(m => new WebsitePostgresDao(connectionString, imageDao));
 

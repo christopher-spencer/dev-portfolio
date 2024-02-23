@@ -11,10 +11,13 @@ namespace Capstone.DAO
     public class GoalPostgresDao : IGoalDao
     {
         private readonly string connectionString;
+        private readonly IImageDao _imageDao;
 
-        public GoalPostgresDao(string dbConnectionString)
+
+        public GoalPostgresDao(string dbConnectionString, IImageDao imageDao)
         {
             connectionString = dbConnectionString;
+            this._imageDao = imageDao;
         }
 
         public Goal CreateGoal(Goal goal)
