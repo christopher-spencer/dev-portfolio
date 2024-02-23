@@ -79,13 +79,13 @@ CREATE TABLE contributors (
     email VARCHAR(255),
     bio TEXT,
     contribution_details TEXT,
-    linkedin_link_id INTEGER,
-    github_link_id INTEGER,
-    portfolio_link_id INTEGER,
+    linkedin_id INTEGER,
+    github_id INTEGER,
+    portfolio_id INTEGER,
     FOREIGN KEY (contributor_image_id) REFERENCES images(id),
-    FOREIGN KEY (linkedin_link_id) REFERENCES websites(id),
-    FOREIGN KEY (github_link_id) REFERENCES websites(id),
-    FOREIGN KEY (portfolio_link_id) REFERENCES websites(id)
+    FOREIGN KEY (linkedin_id) REFERENCES websites(id),
+    FOREIGN KEY (github_id) REFERENCES websites(id),
+    FOREIGN KEY (portfolio_id) REFERENCES websites(id)
 );
 
 CREATE TABLE dependencies_and_libraries (
