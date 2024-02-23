@@ -85,7 +85,7 @@ namespace Capstone.DAO
         {
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url, i.name AS icon_name, i.url AS icon_url " +
+            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
                          "FROM websites w " +
                          "JOIN sideproject_websites sw ON w.id = sw.website_id " +
                          "JOIN images i ON w.logo_id = i.id " +
@@ -120,7 +120,7 @@ namespace Capstone.DAO
         {
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url, i.name AS icon_name, i.url AS icon_url " +
+            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
                          "FROM websites w " +
                          "JOIN images i ON w.logo_id = i.id " +
                          "JOIN sideproject_websites sw ON w.id = sw.website_id " +
@@ -154,7 +154,7 @@ namespace Capstone.DAO
 
         public Website GetWebsiteById(int websiteId)
         {
-            string sql = "SELECT w.id, w.name, w.url, i.name AS icon_name, i.url AS icon_url " +
+            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
                          "FROM websites w " +
                          "JOIN images i ON w.logo_id = i.id " +
                          "WHERE w.id = @id;";
@@ -186,7 +186,7 @@ namespace Capstone.DAO
         public List<Website> GetAllWebsites()
         {
             List<Website> websiteLinks = new List<Website>();
-            string sql = "SELECT w.id, w.name, w.url, i.name AS icon_name, i.url AS icon_url " +
+            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
                          "FROM websites w " +
                          "JOIN images i ON w.logo_id = i.id;";
 
