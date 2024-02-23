@@ -70,7 +70,7 @@ namespace Capstone
             IWebsiteDao websiteDao = new WebsitePostgresDao(connectionString, imageDao);
             IContributorDao contributorDao = new ContributorPostgresDao(connectionString, imageDao, websiteDao);
             IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString, imageDao, websiteDao);
-            IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString);
+            IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString, imageDao, websiteDao);
         
 
             // Register services with DI container
@@ -85,7 +85,7 @@ namespace Capstone
 
             services.AddTransient<IContributorDao>(m => new ContributorPostgresDao(connectionString, imageDao, websiteDao));
             services.AddTransient<IApiServiceDao>(m => new ApiServicePostgresDao(connectionString, imageDao, websiteDao));
-            services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString));
+            services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString, imageDao, websiteDao));
 
             services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
             services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString));

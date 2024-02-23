@@ -11,10 +11,14 @@ namespace Capstone.DAO
     public class DependencyLibraryPostgresDao : IDependencyLibraryDao
     {
         private readonly string connectionString;
+        private readonly IImageDao _imageDao;
+        private readonly IWebsiteDao _websiteDao;
 
-        public DependencyLibraryPostgresDao(string dbConnectionString)
+        public DependencyLibraryPostgresDao(string dbConnectionString, IImageDao imageDao, IWebsiteDao websiteDao)
         {
             connectionString = dbConnectionString;
+            this._imageDao = imageDao;
+            this._websiteDao = websiteDao;
         }
 
         public DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
@@ -197,22 +201,18 @@ namespace Capstone.DAO
 
         private DependencyLibrary MapRowToDependencyLibrary(NpgsqlDataReader reader)
         {
-            return new DependencyLibrary
+            DependencyLibrary dependencyLibrary = new DependencyLibrary
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
                 Description = Convert.ToString(reader["description"]),
-                // TODO Add Website Name 
-                Website = new Website 
-                { 
-                    Url = Convert.ToString(reader["url"]) 
-                },
-                Logo = new Image
-                {
-                    Name = Convert.ToString(reader["logo_name"]),
-                    Url = Convert.ToString(reader["logo_url"])
-                }
+                WebsiteId = Convert.ToInt32(reader["website_id"]),
+                LogoId = Convert.ToInt32(reader["logo_id"])
             };
+
+
+
+            return dependencyLibrary;
         }
     }
 }
