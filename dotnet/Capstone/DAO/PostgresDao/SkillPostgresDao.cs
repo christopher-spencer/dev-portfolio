@@ -11,10 +11,12 @@ namespace Capstone.DAO
     public class SkillPostgresDao : ISkillDao
     {
         private readonly string connectionString;
+        private readonly IImageDao _imageDao;
 
-        public SkillPostgresDao(string dbConnectionString)
+        public SkillPostgresDao(string dbConnectionString, IImageDao imageDao)
         {
             connectionString = dbConnectionString;
+            this._imageDao = imageDao;
         }
         public Skill CreateSkill(Skill skill)
         {
@@ -317,12 +319,20 @@ namespace Capstone.DAO
 
         private Skill MapRowToSkill(NpgsqlDataReader reader)
         {
-            return new Skill
+            Skill skill = new Skill
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
                 IconId = Convert.ToInt32(reader["icon_id"])
             };
+
+            if (reader["logo_id"] != DBNull.Value)
+            {
+                int iconId = Convert.ToInt32(reader["icon_id"]);
+                skill.Icon = _imageDao.GetImageById(iconId);
+            }
+
+            return skill;
         }
     }
 }

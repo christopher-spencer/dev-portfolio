@@ -66,7 +66,7 @@ namespace Capstone
             // Instantiate DAOs for dependencies
             IGoalDao goalDao = new GoalPostgresDao(connectionString);
             IImageDao imageDao = new ImagePostgresDao(connectionString);
-            ISkillDao skillDao = new SkillPostgresDao(connectionString);
+            ISkillDao skillDao = new SkillPostgresDao(connectionString, imageDao);
             IContributorDao contributorDao = new ContributorPostgresDao(connectionString);
             IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString);
             IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString);
@@ -95,7 +95,7 @@ namespace Capstone
 
             services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
             services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString));
-            services.AddTransient<ISkillDao>(m => new SkillPostgresDao(connectionString));
+            services.AddTransient<ISkillDao>(m => new SkillPostgresDao(connectionString, imageDao));
             services.AddTransient<IWebsiteDao>(m => new WebsitePostgresDao(connectionString, imageDao));
 
         }
