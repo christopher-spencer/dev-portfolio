@@ -11,10 +11,14 @@ namespace Capstone.DAO
     public class ContributorPostgresDao : IContributorDao
     {
         private readonly string connectionString;
+        private readonly IImageDao _imageDao;
+        private readonly IWebsiteDao _websiteDao;
 
-        public ContributorPostgresDao(string dbConnectionString)
+        public ContributorPostgresDao(string dbConnectionString, IImageDao imageDao, IWebsiteDao websiteDao)
         {
             connectionString = dbConnectionString;
+            this._imageDao = imageDao;
+            this._websiteDao = websiteDao;
         }
 
         public Contributor CreateContributor(Contributor contributor)
@@ -204,23 +208,23 @@ namespace Capstone.DAO
 
         private Contributor MapRowToContributor(NpgsqlDataReader reader)
         {
-            return new Contributor
+            Contributor contributor = new Contributor
             {
                 Id = Convert.ToInt32(reader["id"]),
                 FirstName = Convert.ToString(reader["first_name"]),
                 LastName = Convert.ToString(reader["last_name"]),
-                ContributorImage = new Image
-                {
-                    Name = Convert.ToString(reader["contributor_image_name"]),
-                    Url = Convert.ToString(reader["contributor_image_url"])
-                },
+                ContributorImageId = Convert.ToInt32(reader["contributor_image_id"]),
                 Email = Convert.ToString(reader["email"]),
                 Bio = Convert.ToString(reader["bio"]),
                 ContributionDetails = Convert.ToString(reader["contribution_details"]),
-                LinkedIn = new Website { Url = Convert.ToString(reader["linkedin_url"]) },
-                GitHub = new Website { Url = Convert.ToString(reader["github_url"]) },
-                Portfolio = new Website { Url = Convert.ToString(reader["portfolio_url"]) }
+                LinkedInId = Convert.ToInt32(reader["linkedin_id"]),
+                GitHubId = Convert.ToInt32(reader["github_id"]),
+                PortfolioId = Convert.ToInt32(reader["portfolio_id"])
             };
+
+
+
+            return contributor;
         }
     }
 }

@@ -68,7 +68,7 @@ namespace Capstone
             IImageDao imageDao = new ImagePostgresDao(connectionString);
             ISkillDao skillDao = new SkillPostgresDao(connectionString, imageDao);
             IWebsiteDao websiteDao = new WebsitePostgresDao(connectionString, imageDao);
-            IContributorDao contributorDao = new ContributorPostgresDao(connectionString);
+            IContributorDao contributorDao = new ContributorPostgresDao(connectionString, imageDao, websiteDao);
             IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString, imageDao, websiteDao);
             IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString);
         
@@ -80,17 +80,10 @@ namespace Capstone
             services.AddTransient<IBlogPostsDao>(m => new BlogPostsPostgresDao(connectionString));
             services.AddTransient<IPortfolioDao>(m => new PortfolioPostgresDao(connectionString));
             services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(
-                connectionString,
-                goalDao,
-                imageDao,
-                skillDao,
-                contributorDao,
-                apiServiceDao,
-                dependencyLibraryDao,
-                websiteDao
-            ));
+                connectionString, goalDao, imageDao, skillDao, contributorDao, apiServiceDao,
+                dependencyLibraryDao, websiteDao));
 
-            services.AddTransient<IContributorDao>(m => new ContributorPostgresDao(connectionString));
+            services.AddTransient<IContributorDao>(m => new ContributorPostgresDao(connectionString, imageDao, websiteDao));
             services.AddTransient<IApiServiceDao>(m => new ApiServicePostgresDao(connectionString, imageDao, websiteDao));
             services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString));
 
