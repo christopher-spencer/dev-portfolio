@@ -23,21 +23,21 @@ CREATE TABLE blogposts (
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT PK_blogpost PRIMARY KEY (blogpost_id)
 );
-
+// TODO text vs varchar
 CREATE TABLE sideprojects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
-    mainimage_id INTEGER,
+    main_image_id INTEGER,
     description TEXT,
-    videowalkthrough_url TEXT,
+    video_walkthrough_url TEXT,
     website_id INTEGER,
-    githubrepo_link_id INTEGER,
+    github_repo_link_id INTEGER,
     project_status VARCHAR(100),
     start_date TIMESTAMP,
     finish_date TIMESTAMP,
-    FOREIGN KEY (mainimage_id) REFERENCES images(id),
+    FOREIGN KEY (main_image_id) REFERENCES images(id),
     FOREIGN KEY (website_id) REFERENCES websites(id),
-    FOREIGN KEY (githubrepo_link_id) REFERENCES websites(id)
+    FOREIGN KEY (github_repo_link_id) REFERENCES websites(id)
 );
 
 CREATE TABLE images (

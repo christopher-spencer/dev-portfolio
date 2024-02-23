@@ -37,9 +37,10 @@ namespace Capstone.DAO
         {
             List<SideProject> sideProjects = new List<SideProject>();
 
-            string sql = "SELECT sideproject_id, sideproject_name, description, " +
-                         "video_walkthrough_url, project_status, start_date, finish_date " +
-                         "FROM sideprojects;";
+            string sql = "SELECT id, name, main_image_id, description, video_walkthrough_url, " +
+                    "website_id, github_repo_link_id, project_status, start_date, finish_date " +
+                    "FROM sideprojects";
+
 
             try
             {
@@ -69,9 +70,10 @@ namespace Capstone.DAO
         {
             SideProject sideProject = null;
 
-            string sql = "SELECT sideproject_id, sideproject_name, description, " +
-                         "video_walkthrough_url, project_status, start_date, finish_date " +
-                         "FROM sideprojects WHERE sideproject_id = @sideproject_id";
+            string sql = "SELECT id, name, main_image_id, description, video_walkthrough_url, " +
+                    "website_id, github_repo_link_id, project_status, start_date, finish_date " +
+                    "FROM sideprojects WHERE id = @sideProjectId";
+
 
             try
             {
@@ -81,7 +83,7 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
 
-                    cmd.Parameters.AddWithValue("@sideproject_id", sideProjectId);
+                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                     NpgsqlDataReader reader = cmd.ExecuteReader();
 
@@ -103,11 +105,11 @@ namespace Capstone.DAO
         {
             SideProject newSideProject = null;
 
-            string sql = "INSERT into sideprojects (sideproject_name, description, " +
-                         "video_walkthrough_url, project_status, start_date, finish_date) " +
-                         "VALUES (@sideproject_name, @description, " +
-                         "@video_walkthrough_url, @project_status, @start_date, @finish_date) " +
-                         "RETURNING sideproject_id;";
+            string sql = "INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, " +
+                        "start_date, finish_date, main_image_id, website_id, github_repo_link_id) " +
+                         "VALUES (@name, @description, @video_walkthrough_url, @project_status, @start_date, " +
+                         "@finish_date, @main_image_id, @website_id, @github_repo_link_id) " +
+                         "RETURNING id";
 
             int newSideProjectId = 0;
 
@@ -119,12 +121,15 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
 
-                    cmd.Parameters.AddWithValue("@sideproject_name", sideProject.Name);
+                    cmd.Parameters.AddWithValue("@name", sideProject.Name);
                     cmd.Parameters.AddWithValue("@description", sideProject.Description);
                     cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
                     cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
                     cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
                     cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                    cmd.Parameters.AddWithValue("@main_image_id", sideProject.MainImageId);
+                    cmd.Parameters.AddWithValue("@website_id", sideProject.WebsiteId);
+                    cmd.Parameters.AddWithValue("@github_repo_link_id", sideProject.GitHubRepoLinkId);
 
                     newSideProjectId = Convert.ToInt32(cmd.ExecuteScalar());
                 }
@@ -135,17 +140,16 @@ namespace Capstone.DAO
             {
                 throw new DaoException("SQL exception occurred", ex);
             }
+
             return newSideProject;
         }
-
         public SideProject UpdateSideProject(SideProject sideProject, int sideProjectId)
         {
-            string sql = "UPDATE sideprojects SET sideproject_name = @sideproject_name, " +
-                         "description = @description, " +
-                         "video_walkthrough_url = @video_walkthrough_url, " +
-                         "project_status = @project_status, start_date = @start_date, " +
-                         "finish_date = @finish_date " +
-                         "WHERE sideproject_id = @sideproject_id;";
+            string sql = "UPDATE sideprojects SET name = @name, description = @description, " +
+                         "video_walkthrough_url = @video_walkthrough_url, project_status = @project_status, " +
+                         "start_date = @start_date, finish_date = @finish_date, main_image_id = @main_image_id, " +
+                         "website_id = @website_id, github_repo_link_id = @github_repo_link_id " +
+                         "WHERE id = @sideProjectId";
 
             try
             {
@@ -155,13 +159,16 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
 
-                    cmd.Parameters.AddWithValue("@sideproject_id", sideProjectId);
-                    cmd.Parameters.AddWithValue("@sideproject_name", sideProject.Name);
+                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                    cmd.Parameters.AddWithValue("@name", sideProject.Name);
                     cmd.Parameters.AddWithValue("@description", sideProject.Description);
                     cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
                     cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
                     cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
                     cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                    cmd.Parameters.AddWithValue("@main_image_id", sideProject.MainImageId);
+                    cmd.Parameters.AddWithValue("@website_id", sideProject.WebsiteId);
+                    cmd.Parameters.AddWithValue("@github_repo_link_id", sideProject.GitHubRepoLinkId);
 
                     int count = cmd.ExecuteNonQuery();
 
@@ -236,7 +243,8 @@ namespace Capstone.DAO
             int projectId = sideProject.Id;
             // int websiteId = GetWebsiteIdBySideProjectId(projectId);
             // FIXME Get Image and Website correctly
-            sideProject.MainImageUrl = _imageDao.GetImageByProjectId(projectId);
+
+            // sideProject.MainImageUrl = _imageDao.GetImageByProjectIdAndImageId(projectId);
 
             // sideProject.Website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
             // sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
