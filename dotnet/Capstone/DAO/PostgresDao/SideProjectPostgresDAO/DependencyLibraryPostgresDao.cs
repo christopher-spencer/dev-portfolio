@@ -210,7 +210,17 @@ namespace Capstone.DAO
                 LogoId = Convert.ToInt32(reader["logo_id"])
             };
 
+            if (reader["website_id"] != DBNull.Value)
+            {
+                int websiteId = Convert.ToInt32(reader["website_id"]);
+                dependencyLibrary.Website = _websiteDao.GetWebsiteById(websiteId);
+            }
 
+            if (reader["logo_id"] != DBNull.Value)
+            {
+                int logoId = Convert.ToInt32(reader["logo_id"]);
+                dependencyLibrary.Logo = _imageDao.GetImageById(logoId);
+            }
 
             return dependencyLibrary;
         }
