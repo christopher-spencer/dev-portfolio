@@ -192,16 +192,21 @@ namespace Capstone.DAO
 
         private Goal MapRowToGoal(NpgsqlDataReader reader)
         {
-            return new Goal
+            Goal goal = new Goal
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Description = Convert.ToString(reader["description"]),
-                Icon = new Image
-                {
-                    Name = Convert.ToString(reader["icon_name"]),
-                    Url = Convert.ToString(reader["icon_url"])
-                }
+                IconId = Convert.ToInt32(reader["icon_id"]),
+                   
             };
+
+            if (reader["icon_id"] != DBNull.Value)
+            {
+                int iconId = Convert.ToInt32(reader["icon_id"]);
+                goal.Icon = _imageDao.GetImageById(iconId);
+            }
+
+            return goal;
         }
     }
 }
