@@ -222,7 +222,29 @@ namespace Capstone.DAO
                 PortfolioId = Convert.ToInt32(reader["portfolio_id"])
             };
 
+            if (reader["contributor_image_id"] != DBNull.Value)
+            {
+                int contributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
+                contributor.ContributorImage = _imageDao.GetImageById(contributorImageId);
+            }
 
+            if (reader["linkedin_id"] != DBNull.Value)
+            {
+                int linkedInId = Convert.ToInt32(reader["linkedin_id"]);
+                contributor.LinkedIn = _websiteDao.GetWebsiteById(linkedInId);
+            }
+
+            if (reader["github_id"] != DBNull.Value)
+            {
+                int githubId = Convert.ToInt32(reader["github_id"]);
+                contributor.GitHub = _websiteDao.GetWebsiteById(githubId);
+            }
+
+            if (reader["portfolio_id"] != DBNull.Value)
+            {
+                int portfolioId = Convert.ToInt32(reader["portfolio_id"]);
+                contributor.Portfolio = _websiteDao.GetWebsiteById(portfolioId);
+            }
 
             return contributor;
         }
