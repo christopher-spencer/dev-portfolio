@@ -52,7 +52,7 @@ namespace Capstone.UnitTests.DAO
             };
 
             // Act
-            BlogPost addedBlogPost = dao.AddBlogPost(newBlogPost);
+            BlogPost addedBlogPost = dao.CreateBlogPost(newBlogPost);
 
             // Assert
             Assert.IsNotNull(addedBlogPost);

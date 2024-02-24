@@ -51,7 +51,7 @@ namespace Capstone.Controllers
         [HttpPost("/create-blogpost")]
         public ActionResult AddBlogPost(BlogPost blogPost)
         {
-            BlogPost createdBlogPost = blogPostsDao.AddBlogPost(blogPost);
+            BlogPost createdBlogPost = blogPostsDao.CreateBlogPost(blogPost);
 
             if (createdBlogPost == null) 
             {

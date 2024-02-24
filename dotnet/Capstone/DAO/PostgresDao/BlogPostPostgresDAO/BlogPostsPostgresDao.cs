@@ -8,12 +8,13 @@ using Npgsql;
 
 namespace Capstone.DAO
 {
-    public class BlogPostsPostgresDao : IBlogPostsDao 
+    public class BlogPostsPostgresDao : IBlogPostsDao
     {
         private readonly string connectionString;
         private readonly IImageDao _imageDao;
 
-        public BlogPostsPostgresDao(string dbConnectionString, IImageDao imageDao) {
+        public BlogPostsPostgresDao(string dbConnectionString, IImageDao imageDao)
+        {
             connectionString = dbConnectionString;
             this._imageDao = imageDao;
         }
@@ -26,7 +27,7 @@ namespace Capstone.DAO
                     "content, main_image_id, created_at, updated_at " +
                     "FROM blogposts;";
 
-            try 
+            try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
@@ -50,7 +51,7 @@ namespace Capstone.DAO
             return blogPosts;
         }
 
-        public BlogPost GetBlogPostById(int blogPostId) 
+        public BlogPost GetBlogPostById(int blogPostId)
         {
             BlogPost blogPost = null;
 
@@ -58,14 +59,14 @@ namespace Capstone.DAO
                 "main_image_id, created_at, updated_at " +
                 "FROM blogposts WHERE id = @blogPostId";
 
-            try 
+            try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    
+
                     cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
 
                     NpgsqlDataReader reader = cmd.ExecuteReader();
@@ -84,16 +85,15 @@ namespace Capstone.DAO
             return blogPost;
         }
 
-        public BlogPost AddBlogPost(BlogPost blogPost)
+        public BlogPost CreateBlogPost(BlogPost blogPost)
         {
             BlogPost newBlogPost = null;
 
-            string sql = "INSERT into blogposts (name, author, description, content, " +
-                         "main_image_id) " +
-                         "VALUES (@name, @author, @description, @content, @main_image_id) " +
+            string sql = "INSERT into blogposts (name, author, description, content) " +
+                         "VALUES (@name, @author, @description, @content) " +
                          "RETURNING id;";
 
-            int newBlogPostId = 0;    
+            int newBlogPostId = 0;
 
             try
             {
@@ -107,7 +107,6 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@author", blogPost.Author);
                     cmd.Parameters.AddWithValue("@description", blogPost.Description);
                     cmd.Parameters.AddWithValue("@content", blogPost.Content);
-                    cmd.Parameters.AddWithValue("@main_image_id", blogPost.MainImageId);
 
                     newBlogPostId = Convert.ToInt32(cmd.ExecuteScalar());
                 }
@@ -124,10 +123,10 @@ namespace Capstone.DAO
         public BlogPost UpdateBlogPost(BlogPost blogPost, int blogPostId)
         {
             string sql = "UPDATE blogposts SET name = @name, author = @author, " +
-                         "description = @description, content = @content, main_image_id = @main_image_id " +
+                         "description = @description, content = @content " +
                          "WHERE id = @blogPostId;";
 
-             try
+            try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
@@ -135,16 +134,15 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
 
-                    cmd.Parameters.AddWithValue("@blogPostId", blogPostId); 
+                    cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
                     cmd.Parameters.AddWithValue("@name", blogPost.Name);
                     cmd.Parameters.AddWithValue("@author", blogPost.Author);
                     cmd.Parameters.AddWithValue("@description", blogPost.Description);
                     cmd.Parameters.AddWithValue("@content", blogPost.Content);
-                    cmd.Parameters.AddWithValue("@main_image_id", blogPost.MainImageId);
 
                     int count = cmd.ExecuteNonQuery();
 
-                    if (count == 1) 
+                    if (count == 1)
                     {
                         return blogPost;
                     }
@@ -157,7 +155,7 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while updating the blog post.", ex);
-            }    
+            }
         }
 
         public int DeleteBlogPostByBlogPostId(int blogPostId)
@@ -195,15 +193,25 @@ namespace Capstone.DAO
                 Author = Convert.ToString(reader["author"]),
                 Description = Convert.ToString(reader["description"]),
                 Content = Convert.ToString(reader["content"]),
-                MainImageId = Convert.ToInt32(reader["main_image_id"]),
                 CreatedAt = Convert.ToDateTime(reader["created_at"]),
                 UpdatedAt = Convert.ToDateTime(reader["updated_at"])
             };
 
+            // if (reader["main_image_id"] != DBNull.Value)
+            // {
+            //     int mainImageId = Convert.ToInt32(reader["main_image_id"]);
+            //     blogPost.MainImage = _imageDao.GetImageByImageIdAndBlogPostId(mainImageId, blogPost.Id);
+            // }
+
             if (reader["main_image_id"] != DBNull.Value)
             {
+                blogPost.MainImageId = Convert.ToInt32(reader["main_image_id"]);
                 int mainImageId = Convert.ToInt32(reader["main_image_id"]);
                 blogPost.MainImage = _imageDao.GetImageByImageIdAndBlogPostId(mainImageId, blogPost.Id);
+            }
+            else
+            {
+                blogPost.MainImageId = 0; 
             }
 
             return blogPost;
