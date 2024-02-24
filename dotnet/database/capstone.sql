@@ -1,7 +1,22 @@
 BEGIN TRANSACTION;
 
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS sideproject_websites;
+DROP TABLE IF EXISTS sideproject_dependencies_and_libraries;
+DROP TABLE IF EXISTS sideproject_apis_and_services;
+DROP TABLE IF EXISTS sideproject_contributors;
+DROP TABLE IF EXISTS sideproject_skills;
+DROP TABLE IF EXISTS sideproject_goals;
+DROP TABLE IF EXISTS sideproject_images;
+DROP TABLE IF EXISTS goals;
+DROP TABLE IF EXISTS dependencies_and_libraries;
+DROP TABLE IF EXISTS contributors;
+DROP TABLE IF EXISTS apis_and_services;
+DROP TABLE IF EXISTS websites;
+DROP TABLE IF EXISTS skills;
+DROP TABLE IF EXISTS images;
+DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
