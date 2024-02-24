@@ -27,11 +27,11 @@ CREATE TABLE users (
 );
 
 CREATE TABLE blogposts (
-	blogpost_id SERIAL PRIMARY KEY,
-	blogpost_name VARCHAR(50) NOT NULL UNIQUE,
-	blogpost_author VARCHAR(50) NOT NULL,
-	blogpost_description VARCHAR(300) NOT NULL,
-	blogpost_content VARCHAR(5000) NOT NULL,
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(50) NOT NULL UNIQUE,
+	author VARCHAR(50) NOT NULL,
+	description VARCHAR(300) NOT NULL,
+	content VARCHAR(5000) NOT NULL,
 	main_image_id INTEGER,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

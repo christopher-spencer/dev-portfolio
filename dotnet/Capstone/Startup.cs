@@ -77,7 +77,7 @@ namespace Capstone
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
             services.AddSingleton<IPasswordHasher>(ph => new PasswordHasher());
             services.AddTransient<IUserDao>(m => new UserPostgresDao(connectionString));
-            services.AddTransient<IBlogPostsDao>(m => new BlogPostsPostgresDao(connectionString));
+            services.AddTransient<IBlogPostsDao>(m => new BlogPostsPostgresDao(connectionString, imageDao));
             services.AddTransient<IPortfolioDao>(m => new PortfolioPostgresDao(connectionString));
             services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(
                 connectionString, goalDao, imageDao, skillDao, contributorDao, apiServiceDao,
