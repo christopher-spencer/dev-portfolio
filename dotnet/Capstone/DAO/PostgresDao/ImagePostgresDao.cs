@@ -184,6 +184,41 @@ namespace Capstone.DAO
             return image;
         }
 
+        public Image GetImageByImageIdAndBlogPostId(int imageId, int blogPostId)
+        {
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN blogpost_images bi ON i.id = bi.image_id " +
+                         "WHERE bi.image_id = @imageId AND bi.blogpost_id = @blogPostId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@imageId", imageId);
+                    cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        image = MapRowToImage(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by image ID and blog post ID.", ex);
+            }
+
+            return image;
+        }
+
         public Image GetImageById(int imageId)
         {
             string sql = "SELECT name, url FROM images WHERE id = @id;";

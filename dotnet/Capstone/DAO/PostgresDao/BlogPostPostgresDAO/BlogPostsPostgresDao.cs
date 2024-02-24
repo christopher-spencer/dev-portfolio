@@ -200,12 +200,10 @@ namespace Capstone.DAO
                 UpdatedAt = Convert.ToDateTime(reader["updated_at"])
             };
 
-            // TODO Add getImageByBlogPostId in ImagePostgresDao
-
             if (reader["main_image_id"] != DBNull.Value)
             {
                 int mainImageId = Convert.ToInt32(reader["main_image_id"]);
-                blogPost.MainImage = _imageDao.GetImageById(mainImageId);
+                blogPost.MainImage = _imageDao.GetImageByImageIdAndBlogPostId(mainImageId, blogPost.Id);
             }
 
             return blogPost;

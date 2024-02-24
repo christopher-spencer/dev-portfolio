@@ -10,6 +10,7 @@ namespace Capstone.DAO.Interfaces
         List<Image> GetImagesByProjectId(int projectId);
         Image GetImageByProjectId(int projectId);
         Image GetImageByProjectIdAndImageId(int projectId, int imageId);
+        Image GetImageByImageIdAndBlogPostId(int imageId, int blogPostId);
         Image GetImageById(int imageId);
         List<Image> GetAllImages();
         Image UpdateImageByProjectId(int projectId, Image updatedImage);
