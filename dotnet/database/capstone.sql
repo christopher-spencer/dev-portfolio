@@ -29,11 +29,11 @@ CREATE TABLE users (
 CREATE TABLE blogposts (
 	blogpost_id SERIAL,
 	blogpost_name VARCHAR(50) NOT NULL UNIQUE,
-	blogpost_author VARCHAR(50),
-	blogpost_description VARCHAR(300),
-	blogpost_content VARCHAR(5000),
+	blogpost_author VARCHAR(50) NOT NULL,
+	blogpost_description VARCHAR(300) NOT NULL,
+	blogpost_content VARCHAR(5000) NOT NULL,
 	image_name VARCHAR(50),
-	image_url VARCHAR(512),
+	image_url VARCHAR(2000),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT PK_blogpost PRIMARY KEY (blogpost_id)
@@ -43,11 +43,11 @@ CREATE TABLE sideprojects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     main_image_id INTEGER,
-    description TEXT,
-    video_walkthrough_url TEXT,
+    description VARCHAR(500) NOT NULL,
+    video_walkthrough_url VARCHAR(2000),
     website_id INTEGER,
     github_repo_link_id INTEGER,
-    project_status VARCHAR(100),
+    project_status VARCHAR(40),
     start_date TIMESTAMP,
     finish_date TIMESTAMP,
     FOREIGN KEY (main_image_id) REFERENCES images(id),
@@ -57,29 +57,29 @@ CREATE TABLE sideprojects (
 
 CREATE TABLE images (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    url TEXT
+    name VARCHAR(50) NOT NULL,
+    url VARCHAR(2000) NOT NULL
 );
 
 CREATE TABLE skills (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     icon_id INTEGER,
     FOREIGN KEY (icon_id) REFERENCES images(id)
 );
 
 CREATE TABLE websites (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    url TEXT,
+    name VARCHAR(50) NOT NULL,
+    url VARCHAR(2000),
     logo_id INTEGER,
     FOREIGN KEY (logo_id) REFERENCES images(id)
 );
 
 CREATE TABLE apis_and_services (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
+    name VARCHAR(150) NOT NULL,
+    description VARCHAR(400),
     website_id INTEGER,
     logo_id INTEGER,
     FOREIGN KEY (website_id) REFERENCES websites(id),
@@ -88,12 +88,12 @@ CREATE TABLE apis_and_services (
 
 CREATE TABLE contributors (
     id SERIAL PRIMARY KEY,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
+    first_name VARCHAR(60) NOT NULL,
+    last_name VARCHAR(60) NOT NULL,
     contributor_image_id INTEGER,
-    email VARCHAR(255),
-    bio TEXT,
-    contribution_details TEXT,
+    email VARCHAR(75),
+    bio VARCHAR(500),
+    contribution_details VARCHAR(500),
     linkedin_id INTEGER,
     github_id INTEGER,
     portfolio_id INTEGER,
@@ -105,8 +105,8 @@ CREATE TABLE contributors (
 
 CREATE TABLE dependencies_and_libraries (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
+    name VARCHAR(150) NOT NULL,
+    description VARCHAR(400),
     website_id INTEGER,
     logo_id INTEGER,
     FOREIGN KEY (website_id) REFERENCES websites(id),
@@ -115,7 +115,7 @@ CREATE TABLE dependencies_and_libraries (
 
 CREATE TABLE goals (
     id SERIAL PRIMARY KEY,
-    description TEXT,
+    description VARCHAR(300) NOT NULL,
     icon_id INTEGER,
     FOREIGN KEY (icon_id) REFERENCES images(id)
 );
