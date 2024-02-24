@@ -27,18 +27,17 @@ CREATE TABLE users (
 );
 
 CREATE TABLE blogposts (
-	blogpost_id SERIAL,
+	blogpost_id SERIAL PRIMARY KEY,
 	blogpost_name VARCHAR(50) NOT NULL UNIQUE,
 	blogpost_author VARCHAR(50) NOT NULL,
 	blogpost_description VARCHAR(300) NOT NULL,
 	blogpost_content VARCHAR(5000) NOT NULL,
-	image_name VARCHAR(50),
-	image_url VARCHAR(2000),
+	main_image_id INTEGER,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT PK_blogpost PRIMARY KEY (blogpost_id)
+    FOREIGN KEY (main_image_id) REFERENCES images(id)
 );
-// TODO text vs varchar
+
 CREATE TABLE sideprojects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
