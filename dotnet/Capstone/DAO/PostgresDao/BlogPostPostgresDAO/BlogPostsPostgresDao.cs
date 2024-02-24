@@ -190,11 +190,11 @@ namespace Capstone.DAO
         {
             BlogPost blogPost = new BlogPost
             {
-                Id = Convert.ToInt32(reader["blogpost_id"]),
-                Name = Convert.ToString(reader["blogpost_name"]),
-                Author = Convert.ToString(reader["blogpost_author"]),
-                Description = Convert.ToString(reader["blogpost_description"]),
-                Content = Convert.ToString(reader["blogpost_content"]),
+                Id = Convert.ToInt32(reader["id"]),
+                Name = Convert.ToString(reader["name"]),
+                Author = Convert.ToString(reader["author"]),
+                Description = Convert.ToString(reader["description"]),
+                Content = Convert.ToString(reader["content"]),
                 MainImageId = Convert.ToInt32(reader["main_image_id"]),
                 CreatedAt = Convert.ToDateTime(reader["created_at"]),
                 UpdatedAt = Convert.ToDateTime(reader["updated_at"])
