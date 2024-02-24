@@ -251,7 +251,7 @@ namespace Capstone.DAO
                 sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, githubRepoLinkId);
             }
 
-            sideProject.GoalsAndObjectives = _goalDao.GetGoalsAndObjectivesByProjectId(projectId);
+            sideProject.GoalsAndObjectives = _goalDao.GetGoalsByProjectId(projectId);
             sideProject.AdditionalImagesUrl = _imageDao.GetImagesByProjectId(projectId);
             sideProject.ToolsUsed = _skillDao.GetSkillsByProjectId(projectId);
             sideProject.Contributors = _contributorDao.GetContributorsByProjectId(projectId);

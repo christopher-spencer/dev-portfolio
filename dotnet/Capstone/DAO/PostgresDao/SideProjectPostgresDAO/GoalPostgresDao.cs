@@ -19,6 +19,40 @@ namespace Capstone.DAO
             this._imageDao = imageDao;
         }
 
+        public Goal CreateGoalByProjectId(int projectId, Goal goal)
+        {
+            string insertGoalSql = "INSERT INTO goals (description, icon_id) VALUES (@description, @iconId) RETURNING id;";
+            string insertSideProjectGoalSql = "INSERT INTO sideproject_goals (sideproject_id, goal_id) VALUES (@projectId, @goalId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmdInsertGoal = new NpgsqlCommand(insertGoalSql, connection);
+                    cmdInsertGoal.Parameters.AddWithValue("@description", goal.Description);
+                    cmdInsertGoal.Parameters.AddWithValue("@iconId", goal.Icon.Id);
+
+                    int goalId = (int)cmdInsertGoal.ExecuteScalar();
+
+                    NpgsqlCommand cmdInsertSideProjectGoal = new NpgsqlCommand(insertSideProjectGoalSql, connection);
+                    cmdInsertSideProjectGoal.Parameters.AddWithValue("@projectId", projectId);
+                    cmdInsertSideProjectGoal.Parameters.AddWithValue("@goalId", goalId);
+
+                    cmdInsertSideProjectGoal.ExecuteNonQuery();
+
+                    goal.Id = goalId;
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the goal for the project.", ex);
+            }
+
+            return goal;
+        }
+
         public Goal CreateGoal(Goal goal)
         {
             string sql = "INSERT INTO goals (description, icon_id) VALUES (@description, @iconId) RETURNING id;";
@@ -45,7 +79,7 @@ namespace Capstone.DAO
             return goal;
         }
 
-        public List<Goal> GetGoalsAndObjectivesByProjectId(int projectId)
+        public List<Goal> GetGoalsByProjectId(int projectId)
         {
             List<Goal> goals = new List<Goal>();
 
@@ -77,6 +111,41 @@ namespace Capstone.DAO
             }
 
             return goals;
+        }
+
+        public Goal GetGoalByProjectId(int projectId, int goalId)
+        {
+            Goal goal = null;
+
+            string sql = "SELECT g.id, g.description, g.icon_id " +
+                         "FROM goals g " +
+                         "JOIN sideproject_goals spg ON g.id = spg.goal_id " +
+                         "WHERE spg.sideproject_id = @projectId AND g.id = @goalId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@goalId", goalId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        goal = MapRowToGoal(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the goal for the project.", ex);
+            }
+
+            return goal;
         }
 
         public Goal GetGoalById(int goalId)
@@ -135,6 +204,41 @@ namespace Capstone.DAO
             return goals;
         }
 
+        public Goal UpdateGoalByProjectId(int projectId, Goal updatedGoal)
+        {
+            string sql = "UPDATE goals " +
+                         "SET description = @description, icon_id = @iconId " +
+                         "FROM sideproject_goals " +
+                         "WHERE goals.id = sideproject_goals.goal_id " +
+                         "AND sideproject_goals.sideproject_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@description", updatedGoal.Description);
+                    cmd.Parameters.AddWithValue("@iconId", updatedGoal.Icon.Id);
+
+                    int count = cmd.ExecuteNonQuery();
+
+                    if (count > 0)
+                    {
+                        return updatedGoal;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the goal for the project.", ex);
+            }
+
+            return null;
+        }
+
         public Goal UpdateGoal(Goal goal)
         {
             string sql = "UPDATE goals SET description = @description, icon_id = @iconId WHERE id = @id;";
@@ -163,6 +267,29 @@ namespace Capstone.DAO
             }
 
             return null;
+        }
+
+        public int DeleteGoalByProjectId(int projectId, int goalId)
+        {
+            string sql = "DELETE FROM sideproject_goals WHERE sideproject_id = @projectId AND goal_id = @goalId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@goalId", goalId);
+
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the goal from the project.", ex);
+            }
         }
 
         public int DeleteGoalById(int goalId)
