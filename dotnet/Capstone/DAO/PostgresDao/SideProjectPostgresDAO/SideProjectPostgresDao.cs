@@ -33,6 +33,12 @@ namespace Capstone.DAO
             this._websiteDao = websiteDao;
         }
 
+        /*  
+            **********************************************************************************************
+                                            SIDE PROJECT CRUD
+            **********************************************************************************************
+        */        
+
         public List<SideProject> GetSideProjects()
         {
             List<SideProject> sideProjects = new List<SideProject>();
@@ -127,9 +133,9 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
                     cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
                     cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
-                    cmd.Parameters.AddWithValue("@main_image_id", sideProject.MainImageId);
-                    cmd.Parameters.AddWithValue("@website_id", sideProject.WebsiteId);
-                    cmd.Parameters.AddWithValue("@github_repo_link_id", sideProject.GitHubRepoLinkId);
+                    // cmd.Parameters.AddWithValue("@main_image_id", sideProject.MainImageId);
+                    // cmd.Parameters.AddWithValue("@website_id", sideProject.WebsiteId);
+                    // cmd.Parameters.AddWithValue("@github_repo_link_id", sideProject.GitHubRepoLinkId);
 
                     newSideProjectId = Convert.ToInt32(cmd.ExecuteScalar());
                 }
@@ -166,9 +172,9 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
                     cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
                     cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
-                    cmd.Parameters.AddWithValue("@main_image_id", sideProject.MainImageId);
-                    cmd.Parameters.AddWithValue("@website_id", sideProject.WebsiteId);
-                    cmd.Parameters.AddWithValue("@github_repo_link_id", sideProject.GitHubRepoLinkId);
+                    // cmd.Parameters.AddWithValue("@main_image_id", sideProject.MainImageId);
+                    // cmd.Parameters.AddWithValue("@website_id", sideProject.WebsiteId);
+                    // cmd.Parameters.AddWithValue("@github_repo_link_id", sideProject.GitHubRepoLinkId);
 
                     int count = cmd.ExecuteNonQuery();
 

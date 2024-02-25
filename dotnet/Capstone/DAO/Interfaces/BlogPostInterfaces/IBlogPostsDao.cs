@@ -5,8 +5,10 @@ namespace Capstone.DAO.Interfaces
 {
     public interface IBlogPostsDao
     {
-        /*
-            BLOGPOST CRUD
+        /*  
+            **********************************************************************************************
+                                        BLOG POST CRUD
+            **********************************************************************************************
         */
         List<BlogPost> GetBlogPosts();
         BlogPost GetBlogPostById(int blogPostId);

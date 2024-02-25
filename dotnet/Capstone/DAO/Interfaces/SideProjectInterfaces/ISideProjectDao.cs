@@ -5,6 +5,12 @@ namespace Capstone.DAO.Interfaces
 {
     public interface ISideProjectDao
     {
+
+        /*  
+            **********************************************************************************************
+                                        SIDE PROJECT CRUD
+            **********************************************************************************************
+        */
         List<SideProject> GetSideProjects();
         SideProject GetSideProjectById(int sideProjectId);
         SideProject CreateSideProject(SideProject sideProject);
