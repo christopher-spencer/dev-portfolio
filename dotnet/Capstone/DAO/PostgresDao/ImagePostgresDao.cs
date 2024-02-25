@@ -84,6 +84,7 @@ namespace Capstone.DAO
         {
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
             string insertBlogPostImageSql = "INSERT INTO blogpost_images (blogpost_id, image_id) VALUES (@blogPostId, @imageId);";
+            string updateBlogPostMainImageSql = "UPDATE blogposts SET main_image_id = @imageId WHERE id = @blogPostId;";
 
             try
             {
@@ -101,6 +102,15 @@ namespace Capstone.DAO
                     }
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(insertBlogPostImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    // TODO Set the main_image_id in the blogposts table
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateBlogPostMainImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
                         cmd.Parameters.AddWithValue("@imageId", image.Id);
