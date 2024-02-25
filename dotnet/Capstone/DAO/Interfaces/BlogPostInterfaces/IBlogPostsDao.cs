@@ -5,6 +5,9 @@ namespace Capstone.DAO.Interfaces
 {
     public interface IBlogPostsDao
     {
+        /*
+            BLOGPOST CRUD
+        */
         List<BlogPost> GetBlogPosts();
         BlogPost GetBlogPostById(int blogPostId);
         BlogPost CreateBlogPost(BlogPost blogPost);

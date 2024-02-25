@@ -19,6 +19,10 @@ namespace Capstone.DAO
             this._imageDao = imageDao;
         }
 
+        /*
+            BLOGPOST CRUD
+        */
+
         public List<BlogPost> GetBlogPosts()
         {
             List<BlogPost> blogPosts = new List<BlogPost>();
