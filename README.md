@@ -1,12 +1,6 @@
-# Final Capstone
+# Dev Portfolio
 
-This directory contains all of the starter projects for the final capstone. The Vue starter project works with both the Java and .NET backend projects with a single configuration update that you can read about in the README.
+* A full-stack C#/.NET application, which dynamically accesses/modifies information in the PostgreSQL database based on selection, with future plans to feature JavaScript via React on the front end.
+* A Developer Portfolio in the works, with plans to feature a Portfolio page, Side Projects page, Blog Posts page, and some other exciting, dynamic capabilities in the near future.
 
-Each project contains instructions that provides information about the starting code and explains how to get started with the final capstone project.
-
-1. Click "Use this template" > "Create a new repository".
-2. Leave "Include all branches" unckecked.
-3. Give your repo a sensible name and description.
-4. Click "Create repository".
-5. Finally, clone the repository to your local machine.
-Happy coding!
+(**Tools:** C#/.NET, ASP.NET Web API, ADO.NET, JavaScript, CSS, HTML, Vue.js, Postman, VSCode, Unit Testing, Integration Testing, PostgreSQL, MVC, DAO, REST APIs, Git)
