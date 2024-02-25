@@ -58,19 +58,19 @@ namespace Capstone.Controllers
         //     }
         // }
 
-        // [HttpGet]
-        // public IActionResult GetAllImages()
-        // {
-        //     try
-        //     {
-        //         List<Image> images = _imageDao.GetAllImages();
-        //         return Ok(images);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, $"Internal server error: {ex.Message}");
-        //     }
-        // }
+        [HttpGet("/get-all-images")]
+        public IActionResult GetAllImages()
+        {
+            try
+            {
+                List<Image> images = _imageDao.GetAllImages();
+                return Ok(images);
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         // [HttpPut]
         // public IActionResult UpdateImage(Image image)
@@ -194,6 +194,8 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
+        // FIXME when you create a new image for a project, it replaces the old at mainImageId but the old image stays in database unconnected to anything
+
         [HttpPost("/blogpost/{blogPostId}/create-image")]
         public IActionResult CreateImageByBlogPostId(int blogPostId, Image image)
         {
@@ -262,7 +264,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpDelete("/blogpost/{blogPostId}/{imageId}")]
+        [HttpDelete("/blogpost/{blogPostId}/delete-image/{imageId}")]
         public IActionResult DeleteImageByBlogPostId(int blogPostId, int imageId)
         {
             try
