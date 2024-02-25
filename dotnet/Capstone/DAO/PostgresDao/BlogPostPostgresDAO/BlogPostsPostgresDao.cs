@@ -19,8 +19,10 @@ namespace Capstone.DAO
             this._imageDao = imageDao;
         }
 
-        /*
-            BLOGPOST CRUD
+        /*  
+            **********************************************************************************************
+                                                    BLOG POST CRUD
+            **********************************************************************************************
         */
 
         public List<BlogPost> GetBlogPosts()
@@ -204,6 +206,7 @@ namespace Capstone.DAO
             if (reader["main_image_id"] != DBNull.Value)
             {
                 blogPost.MainImageId = Convert.ToInt32(reader["main_image_id"]);
+                
                 int mainImageId = Convert.ToInt32(reader["main_image_id"]);
                 blogPost.MainImage = _imageDao.GetImageByImageIdAndBlogPostId(mainImageId, blogPost.Id);
             }

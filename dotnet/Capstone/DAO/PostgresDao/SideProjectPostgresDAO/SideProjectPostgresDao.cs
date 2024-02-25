@@ -223,31 +223,46 @@ namespace Capstone.DAO
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
                 ProjectStatus = Convert.ToString(reader["project_status"]),
                 StartDate = Convert.ToDateTime(reader["start_date"]),
-                FinishDate = Convert.ToDateTime(reader["finish_date"]),
-                MainImageId = Convert.ToInt32(reader["main_image_id"]),
-                WebsiteId = Convert.ToInt32(reader["website_id"]),
-                GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"])
+                FinishDate = Convert.ToDateTime(reader["finish_date"])
             };
 
 
             int projectId = sideProject.Id;
 
             if (reader["main_image_id"] != DBNull.Value)
-            {
+            {   
+                sideProject.MainImageId = Convert.ToInt32(reader["main_image_id"]);
+
                 int mainImageId = Convert.ToInt32(reader["main_image_id"]);
                 sideProject.MainImage = _imageDao.GetImageByProjectIdAndImageId(projectId, mainImageId);
+            }
+            else
+            {
+                sideProject.MainImageId = 0;
             }
 
             if (reader["website_id"] != DBNull.Value)
             {
+                sideProject.WebsiteId = Convert.ToInt32(reader["website_id"]);
+
                 int websiteId = Convert.ToInt32(reader["website_id"]);
                 sideProject.Website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+            }
+            else
+            {
+                sideProject.WebsiteId = 0;
             }
 
             if (reader["github_repo_link_id"] != DBNull.Value)
             {
+                sideProject.GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
+
                 int githubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
                 sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, githubRepoLinkId);
+            }
+            else
+            {
+                sideProject.GitHubRepoLinkId = 0;
             }
 
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsByProjectId(projectId);
