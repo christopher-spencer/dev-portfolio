@@ -19,6 +19,12 @@ namespace Capstone.Controllers
             _imageDao = imageDao;
         }
 
+        /*  
+            **********************************************************************************************
+                                                IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
         // [HttpPost]
         // public IActionResult CreateImage(Image image)
         // {
@@ -32,6 +38,85 @@ namespace Capstone.Controllers
         //         return StatusCode(500, ex.Message);
         //     }
         // }
+
+        // [HttpGet("{imageId}")]
+        // public IActionResult GetImageById(int imageId)
+        // {
+        //     try
+        //     {
+        //         Image image = _imageDao.GetImageById(imageId);
+        //         if (image == null)
+        //         {
+        //             return NotFound();
+        //         }
+
+        //         return Ok(image);
+        //     }
+        //     catch (DaoException ex)
+        //     {
+        //         return StatusCode(500, $"Internal server error: {ex.Message}");
+        //     }
+        // }
+
+        // [HttpGet]
+        // public IActionResult GetAllImages()
+        // {
+        //     try
+        //     {
+        //         List<Image> images = _imageDao.GetAllImages();
+        //         return Ok(images);
+        //     }
+        //     catch (DaoException ex)
+        //     {
+        //         return StatusCode(500, $"Internal server error: {ex.Message}");
+        //     }
+        // }
+
+        // [HttpPut]
+        // public IActionResult UpdateImage(Image image)
+        // {
+        //     try
+        //     {
+        //         Image updatedImage = _imageDao.UpdateImage(image);
+        //         if (updatedImage == null)
+        //         {
+        //             return NotFound();
+        //         }
+
+        //         return Ok(updatedImage);
+        //     }
+        //     catch (DaoException ex)
+        //     {
+        //         return StatusCode(500, $"Internal server error: {ex.Message}");
+        //     }
+        // }
+
+        // [HttpDelete("{imageId}")]
+        // public IActionResult DeleteImageById(int imageId)
+        // {
+        //     try
+        //     {
+        //         int rowsAffected = _imageDao.DeleteImageById(imageId);
+        //         if (rowsAffected > 0)
+        //         {
+        //             return Ok();
+        //         }
+        //         else
+        //         {
+        //             return NotFound();
+        //         }
+        //     }
+        //     catch (DaoException ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        /*  
+            **********************************************************************************************
+                                        SIDE PROJECT IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
 
         // [HttpPost("project/{projectId}")]
         // public IActionResult CreateImageByProjectId(int projectId, Image image)
@@ -47,40 +132,12 @@ namespace Capstone.Controllers
         //     }
         // }
 
-        [HttpPost("/blogpost/{blogPostId}/create-image")]
-        public IActionResult CreateImageByBlogPostId(int blogPostId, Image image)
-        {
-            try
-            {
-                Image createdImage = _imageDao.CreateImageByBlogPostId(blogPostId, image);
-                return Ok(createdImage);
-            }
-            catch (DaoException ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         // [HttpGet("project/{projectId}")]
         // public IActionResult GetImagesByProjectId(int projectId)
         // {
         //     try
         //     {
         //         List<Image> images = _imageDao.GetImagesByProjectId(projectId);
-        //         return Ok(images);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
-        // [HttpGet("blogpost/{blogPostId}")]
-        // public IActionResult GetImagesByBlogPostId(int blogPostId)
-        // {
-        //     try
-        //     {
-        //         List<Image> images = _imageDao.GetImagesByBlogPostId(blogPostId);
         //         return Ok(images);
         //     }
         //     catch (DaoException ex)
@@ -98,48 +155,6 @@ namespace Capstone.Controllers
         //         if (updatedImage != null)
         //         {
         //             return Ok(updatedImage);
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
-        // [HttpPut("blogpost/{blogPostId}/update-image")]
-        // public IActionResult UpdateImageByBlogPostId(int blogPostId, Image image)
-        // {
-        //     try
-        //     {
-        //         Image updatedImage = _imageDao.UpdateImageByBlogPostId(blogPostId, image);
-        //         if (updatedImage != null)
-        //         {
-        //             return Ok(updatedImage);
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
-        // [HttpDelete("{imageId}")]
-        // public IActionResult DeleteImageById(int imageId)
-        // {
-        //     try
-        //     {
-        //         int rowsAffected = _imageDao.DeleteImageById(imageId);
-        //         if (rowsAffected > 0)
-        //         {
-        //             return Ok();
         //         }
         //         else
         //         {
@@ -173,25 +188,99 @@ namespace Capstone.Controllers
         //     }
         // }
 
-        // [HttpDelete("blogpost/{blogPostId}/{imageId}")]
-        // public IActionResult DeleteImageByBlogPostId(int blogPostId, int imageId)
-        // {
-        //     try
-        //     {
-        //         int rowsAffected = _imageDao.DeleteImageByBlogPostId(blogPostId, imageId);
-        //         if (rowsAffected > 0)
-        //         {
-        //             return Ok();
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        /*  
+            **********************************************************************************************
+                                        BLOG POST IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        [HttpPost("/blogpost/{blogPostId}/create-image")]
+        public IActionResult CreateImageByBlogPostId(int blogPostId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByBlogPostId(blogPostId, image);
+                return Ok(createdImage);
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("blogpost/{blogPostId}/image/{imageId}")]
+        public IActionResult GetImageByBlogPostIdAndImageId(int blogPostId, int imageId)
+        {
+            try
+            {
+                Image image = _imageDao.GetImageByImageIdAndBlogPostId(imageId, blogPostId);
+                if (image == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(image);
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("/blogpost/{blogPostId}/images")]
+        public IActionResult GetImagesByBlogPostId(int blogPostId)
+        {
+            try
+            {
+                List<Image> images = _imageDao.GetImagesByBlogPostId(blogPostId);
+                return Ok(images);
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("blogpost/{blogPostId}/update-image")]
+        public IActionResult UpdateImageByBlogPostId(int blogPostId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByBlogPostId(blogPostId, image);
+                if (updatedImage != null)
+                {
+                    return Ok(updatedImage);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("blogpost/{blogPostId}/{imageId}")]
+        public IActionResult DeleteImageByBlogPostId(int blogPostId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByBlogPostId(blogPostId, imageId);
+                if (rowsAffected > 0)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
