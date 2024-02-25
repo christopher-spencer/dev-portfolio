@@ -6,9 +6,9 @@ namespace Capstone.DAO.Interfaces
     public interface IImageDao
     {
         /*  
-            *******************
-                IMAGE CRUD
-            *******************
+            **********************************************************************************************
+                                                    IMAGE CRUD
+            **********************************************************************************************
         */
         Image CreateImage(Image image);
         Image GetImageById(int imageId);
@@ -16,11 +16,10 @@ namespace Capstone.DAO.Interfaces
         Image UpdateImage(Image image);
         int DeleteImageById(int imageId);
 
-
         /*  
-            ****************************
-               SIDE PROJECT IMAGE CRUD
-            ****************************
+            **********************************************************************************************
+                                            SIDE PROJECT IMAGE CRUD
+            **********************************************************************************************
         */
         Image CreateImageByProjectId(int projectId, Image image);
         List<Image> GetImagesByProjectId(int projectId);
@@ -29,11 +28,10 @@ namespace Capstone.DAO.Interfaces
         Image UpdateImageByProjectId(int projectId, Image updatedImage);
         int DeleteImageByProjectId(int projectId, int imageId);
 
-
         /*  
-            ****************************
-                BLOGPOST IMAGE CRUD
-            ****************************
+            **********************************************************************************************
+                                            BLOG POST IMAGE CRUD
+            **********************************************************************************************
         */
         Image CreateImageByBlogPostId(int blogPostId, Image image);
         Image GetImageByImageIdAndBlogPostId(int imageId, int blogPostId);
