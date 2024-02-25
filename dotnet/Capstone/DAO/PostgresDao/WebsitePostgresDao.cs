@@ -19,6 +19,191 @@ namespace Capstone.DAO
             this._imageDao = imageDao;
         }
 
+        /*  
+            **********************************************************************************************
+                                                    WEBSITE CRUD
+            **********************************************************************************************
+        */
+
+        public Website CreateWebsiteLink(Website websiteLink)
+        {
+            string sql = "INSERT INTO websites (name, url, logo_id) VALUES (@name, @url, @logoId) RETURNING id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@name", websiteLink.Name);
+                    cmd.Parameters.AddWithValue("@url", websiteLink.Url);
+                    cmd.Parameters.AddWithValue("@logoId", websiteLink.Logo.Id);
+
+                    int id = Convert.ToInt32(cmd.ExecuteScalar());
+                    websiteLink.Id = id;
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the website link.", ex);
+            }
+
+            return websiteLink;
+        }
+
+        public Website GetWebsiteById(int websiteId)
+        {
+            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
+                         "FROM websites w " +
+                         "JOIN images i ON w.logo_id = i.id " +
+                         "WHERE w.id = @id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@id", websiteId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        return MapRowToWebsite(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website link.", ex);
+            }
+
+            return null;
+        }
+
+        public List<Website> GetAllWebsites()
+        {
+            List<Website> websiteLinks = new List<Website>();
+            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
+                         "FROM websites w " +
+                         "JOIN images i ON w.logo_id = i.id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        websiteLinks.Add(MapRowToWebsite(reader));
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website links.", ex);
+            }
+
+            return websiteLinks;
+        }
+
+        public Website UpdateWebsiteByWebsiteId(int websiteId, Website updatedWebsite)
+        {
+            string sql = "UPDATE websites " +
+                         "SET name = @name, url = @url " +
+                         "WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
+                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+
+                    int count = cmd.ExecuteNonQuery();
+
+                    if (count > 0)
+                    {
+                        return updatedWebsite;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website.", ex);
+            }
+
+            return null;
+        }
+
+        public Website UpdateWebsite(Website updatedWebsite)
+        {
+            string sql = "UPDATE websites SET name = @name, url = @url WHERE id = @id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@id", updatedWebsite.Id);
+                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
+                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+
+                    int count = cmd.ExecuteNonQuery();
+                    if (count == 1)
+                    {
+                        return updatedWebsite;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website link.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteWebsiteById(int websiteId)
+        {
+            string sql = "DELETE FROM websites WHERE id = @id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@id", websiteId);
+
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the website link.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                            SIDE PROJECT WEBSITE CRUD
+            **********************************************************************************************
+        */
+
         public Website CreateWebsiteByProjectId(int projectId, Website website)
         {
             string insertWebsiteSql = "INSERT INTO websites (name, url, logo_id) VALUES (@name, @url, @logoId) RETURNING id;";
@@ -52,33 +237,6 @@ namespace Capstone.DAO
             }
 
             return website;
-        }
-
-        public Website CreateWebsiteLink(Website websiteLink)
-        {
-            string sql = "INSERT INTO websites (name, url, logo_id) VALUES (@name, @url, @logoId) RETURNING id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@name", websiteLink.Name);
-                    cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    cmd.Parameters.AddWithValue("@logoId", websiteLink.Logo.Id);
-
-                    int id = Convert.ToInt32(cmd.ExecuteScalar());
-                    websiteLink.Id = id;
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the website link.", ex);
-            }
-
-            return websiteLink;
         }
 
         public Website GetWebsiteByProjectId(int projectId)
@@ -152,67 +310,6 @@ namespace Capstone.DAO
             return website;
         }
 
-        public Website GetWebsiteById(int websiteId)
-        {
-            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
-                         "FROM websites w " +
-                         "JOIN images i ON w.logo_id = i.id " +
-                         "WHERE w.id = @id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", websiteId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        return MapRowToWebsite(reader);
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving the website link.", ex);
-            }
-
-            return null;
-        }
-
-        public List<Website> GetAllWebsites()
-        {
-            List<Website> websiteLinks = new List<Website>();
-            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
-                         "FROM websites w " +
-                         "JOIN images i ON w.logo_id = i.id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        websiteLinks.Add(MapRowToWebsite(reader));
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving the website links.", ex);
-            }
-
-            return websiteLinks;
-        }
-
         public Website UpdateWebsiteByProjectId(int projectId, Website updatedWebsite)
         {
             string sql = "UPDATE websites " +
@@ -248,69 +345,6 @@ namespace Capstone.DAO
             return null;
         }
 
-        public Website UpdateWebsiteByWebsiteId(int websiteId, Website updatedWebsite)
-        {
-            string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url " +
-                         "WHERE id = @websiteId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
-                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
-                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
-
-                    int count = cmd.ExecuteNonQuery();
-
-                    if (count > 0)
-                    {
-                        return updatedWebsite;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the website.", ex);
-            }
-
-            return null;
-        }
-
-        public Website UpdateWebsite(Website updatedWebsite)
-        {
-            string sql = "UPDATE websites SET name = @name, url = @url WHERE id = @id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", updatedWebsite.Id);
-                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
-                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
-
-                    int count = cmd.ExecuteNonQuery();
-                    if (count == 1)
-                    {
-                        return updatedWebsite;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the website link.", ex);
-            }
-
-            return null;
-        }
-
         public int DeleteWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId)
         {
             string sql = "DELETE FROM sideproject_websites WHERE sideproject_id = @projectId AND website_id = @websiteId;";
@@ -334,29 +368,19 @@ namespace Capstone.DAO
             }
         }
 
-        public int DeleteWebsiteById(int websiteId)
-        {
-            string sql = "DELETE FROM websites WHERE id = @id;";
+        /*  
+            **********************************************************************************************
+                                           EVENTUAL BLOG POST WEBSITE CRUD
+            **********************************************************************************************
+        */
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        /*  
+            **********************************************************************************************
+                                                WEBSITE MAP ROW
+            **********************************************************************************************
+        */
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", websiteId);
-
-                    return cmd.ExecuteNonQuery();
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while deleting the website link.", ex);
-            }
-        }
-
-        // TODO Update Website MapRow based on BlogPost and SideProject MapRow
+        // TODO Update Website MapRow based on BlogPost and SideProject MapRow (And fix Create/Update methods accordingly)
         private Website MapRowToWebsite(NpgsqlDataReader reader)
         {
             Website website = new Website
