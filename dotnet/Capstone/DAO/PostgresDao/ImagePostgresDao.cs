@@ -80,6 +80,43 @@ namespace Capstone.DAO
             return image;
         }
 
+        public Image CreateImageByBlogPostId(int blogPostId, Image image)
+        {
+            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertBlogPostImageSql = "INSERT INTO blogpost_images (blogpost_id, image_id) VALUES (@blogPostId, @imageId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+
+                        int id = Convert.ToInt32(cmd.ExecuteScalar());
+                        image.Id = id;
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertBlogPostImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the image.", ex);
+            }
+
+            return image;
+        }
+
         public Image GetImageByProjectId(int projectId)
         {
             Image image = null;
@@ -219,6 +256,44 @@ namespace Capstone.DAO
             return image;
         }
 
+        public List<Image> GetImagesByBlogPostId(int blogPostId)
+        {
+            List<Image> images = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN blogpost_images bi ON i.id = bi.image_id " +
+                         "WHERE bi.blogpost_id = @blogPostId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Image image = MapRowToImage(reader);
+                                images.Add(image);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving images by blog post ID.", ex);
+            }
+
+            return images;
+        }
+
         public Image GetImageById(int imageId)
         {
             string sql = "SELECT name, url FROM images WHERE id = @id;";
@@ -309,6 +384,42 @@ namespace Capstone.DAO
             return null;
         }
 
+        public Image UpdateImageByBlogPostId(int blogPostId, Image updatedImage)
+        {
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url " +
+                                    "FROM blogpost_images " +
+                                    "WHERE images.id = blogpost_images.image_id AND blogpost_images.blogpost_id = @blogPostId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedImage;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by blog post ID.", ex);
+            }
+
+            return null;
+        }
+
         public Image UpdateImage(Image image)
         {
             string sql = "UPDATE images SET name = @name, url = @url WHERE id = @id;";
@@ -391,6 +502,39 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while deleting the image.", ex);
+            }
+        }
+
+        public int DeleteImageByBlogPostId(int blogPostId, int imageId)
+        {
+            string deleteBlogPostImageSql = "DELETE FROM blogpost_images WHERE blogpost_id = @blogPostId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteBlogPostImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the image by blog post ID.", ex);
             }
         }
 
