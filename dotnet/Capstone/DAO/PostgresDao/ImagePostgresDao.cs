@@ -49,7 +49,7 @@ namespace Capstone.DAO
             return image;
         }
 
-                public Image GetImageById(int imageId)
+        public Image GetImageById(int imageId)
         {
             string sql = "SELECT name, url FROM images WHERE id = @id;";
 
@@ -163,10 +163,11 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public Image CreateImageByProjectId(int projectId, Image image)
+        public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
-            string insertSideProjectImageSql = "INSERT INTO sideproject_images (sideproject_id, image_id) VALUES (@projectId, @imageId);";
+            string insertSideProjectImageSql = "INSERT INTO sideproject_images (sideproject_id, image_id) VALUES (@sideProjectId, @imageId);";
+            string updateSideProjectMainImageSql = "UPDATE sideprojects SET main_image_id = @imageId WHERE id = @sideProjectId;";
 
             try
             {
@@ -185,7 +186,16 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(insertSideProjectImageSql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    // Set the main_image_id in the sideprojects table
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateSideProjectMainImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@imageId", image.Id);
 
                         cmd.ExecuteNonQuery();
@@ -200,14 +210,15 @@ namespace Capstone.DAO
             return image;
         }
 
-                public Image GetImageByProjectId(int projectId)
+
+        public Image GetImageBySideProjectId(int sideProjectId)
         {
             Image image = null;
 
             string sql = "SELECT i.id, i.name, i.url " +
                          "FROM images i " +
                          "JOIN sideproject_images spi ON i.id = spi.image_id " +
-                         "WHERE spi.sideproject_id = @projectId";
+                         "WHERE spi.sideproject_id = @sideProjectId";
 
             try
             {
@@ -216,7 +227,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                     NpgsqlDataReader reader = cmd.ExecuteReader();
 
@@ -234,14 +245,14 @@ namespace Capstone.DAO
             return image;
         }
 
-        public List<Image> GetImagesByProjectId(int projectId)
+        public List<Image> GetImagesBySideProjectId(int sideProjectId)
         {
             List<Image> images = new List<Image>();
 
             string sql = "SELECT i.id, i.name, i.url " +
                          "FROM images i " +
                          "JOIN sideproject_images spi ON i.id = spi.image_id " +
-                         "WHERE spi.sideproject_id = @projectId;";
+                         "WHERE spi.sideproject_id = @sideProjectId;";
 
             try
             {
@@ -250,7 +261,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                     NpgsqlDataReader reader = cmd.ExecuteReader();
 
@@ -269,14 +280,14 @@ namespace Capstone.DAO
             return images;
         }
 
-        public Image GetImageByProjectIdAndImageId(int projectId, int imageId)
+        public Image GetImageBySideProjectIdAndImageId(int sideProjectId, int imageId)
         {
             Image image = null;
 
             string sql = "SELECT i.id, i.name, i.url " +
                          "FROM images i " +
                          "JOIN sideproject_images spi ON i.id = spi.image_id " +
-                         "WHERE spi.sideproject_id = @projectId AND i.id = @imageId;";
+                         "WHERE spi.sideproject_id = @sideProjectId AND i.id = @imageId;";
 
             try
             {
@@ -285,7 +296,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                     cmd.Parameters.AddWithValue("@imageId", imageId);
 
                     NpgsqlDataReader reader = cmd.ExecuteReader();
@@ -304,12 +315,12 @@ namespace Capstone.DAO
             return image;
         }
 
-        public Image UpdateImageByProjectId(int projectId, Image updatedImage)
+        public Image UpdateImageBySideProjectId(int sideProjectId, Image updatedImage)
         {
             string sql = "UPDATE images " +
                          "SET name = @name, url = @url " +
                          "FROM sideproject_images " +
-                         "WHERE images.id = sideproject_images.image_id AND sideproject_images.sideproject_id = @projectId;";
+                         "WHERE images.id = sideproject_images.image_id AND sideproject_images.sideproject_id = @sideProjectId;";
 
             try
             {
@@ -318,7 +329,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                     cmd.Parameters.AddWithValue("@name", updatedImage.Name);
                     cmd.Parameters.AddWithValue("@url", updatedImage.Url);
 
@@ -338,9 +349,9 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteImageByProjectId(int projectId, int imageId)
+        public int DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {
-            string deleteSideProjectImageSql = "DELETE FROM sideproject_images WHERE sideproject_id = @projectId AND image_id = @imageId;";
+            string deleteSideProjectImageSql = "DELETE FROM sideproject_images WHERE sideproject_id = @sideProjectId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
             try
@@ -351,7 +362,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSideProjectImageSql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@imageId", imageId);
 
                         cmd.ExecuteNonQuery();
@@ -406,7 +417,7 @@ namespace Capstone.DAO
                         cmd.ExecuteNonQuery();
                     }
 
-                    // TODO Set the main_image_id in the blogposts table
+                    // Set the main_image_id in the blogposts table
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateBlogPostMainImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@blogPostId", blogPostId);

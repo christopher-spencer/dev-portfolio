@@ -240,7 +240,7 @@ namespace Capstone.DAO
                 sideProject.MainImageId = Convert.ToInt32(reader["main_image_id"]);
 
                 int mainImageId = Convert.ToInt32(reader["main_image_id"]);
-                sideProject.MainImage = _imageDao.GetImageByProjectIdAndImageId(projectId, mainImageId);
+                sideProject.MainImage = _imageDao.GetImageBySideProjectIdAndImageId(projectId, mainImageId);
             }
             else
             {
@@ -272,7 +272,7 @@ namespace Capstone.DAO
             }
 
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsByProjectId(projectId);
-            sideProject.AdditionalImagesUrl = _imageDao.GetImagesByProjectId(projectId);
+            sideProject.AdditionalImagesUrl = _imageDao.GetImagesBySideProjectId(projectId);
             sideProject.ToolsUsed = _skillDao.GetSkillsByProjectId(projectId);
             sideProject.Contributors = _contributorDao.GetContributorsByProjectId(projectId);
             sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesByProjectId(projectId);
