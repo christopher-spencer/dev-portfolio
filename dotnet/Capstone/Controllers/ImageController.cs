@@ -208,7 +208,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("blogpost/{blogPostId}/image/{imageId}")]
+        [HttpGet("/blogpost/{blogPostId}/image/{imageId}")]
         public IActionResult GetImageByBlogPostIdAndImageId(int blogPostId, int imageId)
         {
             try
@@ -241,7 +241,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpPut("blogpost/{blogPostId}/update-image")]
+        [HttpPut("/blogpost/{blogPostId}/update-image")]
         public IActionResult UpdateImageByBlogPostId(int blogPostId, Image image)
         {
             try
@@ -262,7 +262,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpDelete("blogpost/{blogPostId}/{imageId}")]
+        [HttpDelete("/blogpost/{blogPostId}/{imageId}")]
         public IActionResult DeleteImageByBlogPostId(int blogPostId, int imageId)
         {
             try
