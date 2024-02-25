@@ -112,9 +112,9 @@ namespace Capstone.DAO
             SideProject newSideProject = null;
 
             string sql = "INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, " +
-                        "start_date, finish_date, main_image_id, website_id, github_repo_link_id) " +
+                        "start_date, finish_date) " +
                          "VALUES (@name, @description, @video_walkthrough_url, @project_status, @start_date, " +
-                         "@finish_date, @main_image_id, @website_id, @github_repo_link_id) " +
+                         "@finish_date) " +
                          "RETURNING id";
 
             int newSideProjectId = 0;
@@ -153,8 +153,7 @@ namespace Capstone.DAO
         {
             string sql = "UPDATE sideprojects SET name = @name, description = @description, " +
                          "video_walkthrough_url = @video_walkthrough_url, project_status = @project_status, " +
-                         "start_date = @start_date, finish_date = @finish_date, main_image_id = @main_image_id, " +
-                         "website_id = @website_id, github_repo_link_id = @github_repo_link_id " +
+                         "start_date = @start_date, finish_date = @finish_date, " +
                          "WHERE id = @sideProjectId";
 
             try

@@ -27,7 +27,7 @@ namespace Capstone.DAO
 
         public Website CreateWebsiteLink(Website websiteLink)
         {
-            string sql = "INSERT INTO websites (name, url, logo_id) VALUES (@name, @url, @logoId) RETURNING id;";
+            string sql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
 
             try
             {
@@ -38,7 +38,7 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", websiteLink.Name);
                     cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    cmd.Parameters.AddWithValue("@logoId", websiteLink.Logo.Id);
+                    // cmd.Parameters.AddWithValue("@logoId", websiteLink.Logo.Id);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     websiteLink.Id = id;
@@ -206,7 +206,7 @@ namespace Capstone.DAO
 
         public Website CreateWebsiteByProjectId(int projectId, Website website)
         {
-            string insertWebsiteSql = "INSERT INTO websites (name, url, logo_id) VALUES (@name, @url, @logoId) RETURNING id;";
+            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
             string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@projectId, @websiteId);";
 
             try
@@ -218,7 +218,7 @@ namespace Capstone.DAO
                     NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection);
                     cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                     cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                    cmdInsertWebsite.Parameters.AddWithValue("@logoId", website.Logo.Id);
+                    // cmdInsertWebsite.Parameters.AddWithValue("@logoId", website.Logo.Id);
 
                     int websiteId = (int)cmdInsertWebsite.ExecuteScalar();
 
@@ -387,14 +387,19 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
-                Url = Convert.ToString(reader["url"]),
-                LogoId = Convert.ToInt32(reader["logo_id"])
+                Url = Convert.ToString(reader["url"])
             };
 
             if (reader["logo_id"] != DBNull.Value)
             {
+                website.LogoId = Convert.ToInt32(reader["logo_id"]);
+
                 int logoId = Convert.ToInt32(reader["logo_id"]);
                 website.Logo = _imageDao.GetImageById(logoId);
+            }
+            else
+            {
+                website.LogoId = 0;
             }
 
             return website;
