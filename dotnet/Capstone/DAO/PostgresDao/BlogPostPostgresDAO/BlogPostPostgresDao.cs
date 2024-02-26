@@ -8,12 +8,12 @@ using Npgsql;
 
 namespace Capstone.DAO
 {
-    public class BlogPostsPostgresDao : IBlogPostsDao
+    public class BlogPostPostgresDao : IBlogPostDao
     {
         private readonly string connectionString;
         private readonly IImageDao _imageDao;
 
-        public BlogPostsPostgresDao(string dbConnectionString, IImageDao imageDao)
+        public BlogPostPostgresDao(string dbConnectionString, IImageDao imageDao)
         {
             connectionString = dbConnectionString;
             this._imageDao = imageDao;

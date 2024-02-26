@@ -10,7 +10,7 @@ namespace Capstone.UnitTests.DAO
         public void GetBlogPosts_Returns_All_Blog_Posts()
         {
             // Arrange
-            BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
+            BlogPostPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
 
             // Act
             List<BlogPost> blogPosts = dao.GetBlogPosts();
@@ -24,7 +24,7 @@ namespace Capstone.UnitTests.DAO
         public void GetBlogPostById_Returns_Correct_Blog_Post()
         {
             // Arrange
-            BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
+            BlogPostPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
 
             // Act
             BlogPost blogPost = dao.GetBlogPostById(1);
@@ -38,7 +38,7 @@ namespace Capstone.UnitTests.DAO
         public void AddBlogPost_Inserts_New_Blog_Post()
         {
             // Arrange
-            BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
+            BlogPostPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
             BlogPost newBlogPost = new BlogPost
             {
                 Name = "New Blog Post",
@@ -66,7 +66,7 @@ namespace Capstone.UnitTests.DAO
         public void UpdateBlogPost_Updates_Existing_Blog_Post()
         {
             // Arrange
-            BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
+            BlogPostPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
  
             BlogPost updatedBlogPost = new BlogPost
             {
@@ -92,7 +92,7 @@ namespace Capstone.UnitTests.DAO
         public void DeleteBlogPostByBlogPostId_Deletes_Existing_Blog_Post()
         {
             // Arrange
-            BlogPostsPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
+            BlogPostPostgresDao dao = new BlogPostsPostgresDao(ConnectionString);
 
             // Act
             int rowsAffected = dao.DeleteBlogPostByBlogPostId(1);

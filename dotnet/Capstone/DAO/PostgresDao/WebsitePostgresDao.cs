@@ -38,7 +38,6 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", websiteLink.Name);
                     cmd.Parameters.AddWithValue("@url", websiteLink.Url);
-                    // cmd.Parameters.AddWithValue("@logoId", websiteLink.Logo.Id);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     websiteLink.Id = id;
@@ -218,7 +217,6 @@ namespace Capstone.DAO
                     NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection);
                     cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                     cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                    // cmdInsertWebsite.Parameters.AddWithValue("@logoId", website.Logo.Id);
 
                     int websiteId = (int)cmdInsertWebsite.ExecuteScalar();
 
@@ -380,7 +378,7 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        // TODO Update Website MapRow based on BlogPost and SideProject MapRow (And fix Create/Update methods accordingly)
+        // TODO Make sure worked => updating Website MapRow like BlogPost/SideProject (And fixing Create/Update methods)
         private Website MapRowToWebsite(NpgsqlDataReader reader)
         {
             Website website = new Website

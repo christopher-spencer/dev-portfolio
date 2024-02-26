@@ -9,11 +9,11 @@ namespace Capstone.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class BlogPostsController : ControllerBase
+    public class BlogPostController : ControllerBase
     {
-        private IBlogPostsDao blogPostsDao;
+        private IBlogPostDao blogPostsDao;
 
-        public BlogPostsController(IBlogPostsDao blogPostsDao) {
+        public BlogPostController(IBlogPostDao blogPostsDao) {
             this.blogPostsDao = blogPostsDao;
         }
 
@@ -49,7 +49,7 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpPost("/create-blogpost")]
-        public ActionResult AddBlogPost(BlogPost blogPost)
+        public ActionResult CreateBlogPost(BlogPost blogPost)
         {
             BlogPost createdBlogPost = blogPostsDao.CreateBlogPost(blogPost);
 
@@ -80,7 +80,7 @@ namespace Capstone.Controllers
             }
         }
 
-        // UPDATE THE EXCEPTIONS
+        // TODO UPDATE THE EXCEPTIONS
 
         [Authorize]
         [HttpDelete("/blogpost/delete/{blogPostId}")]
