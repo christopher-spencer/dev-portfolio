@@ -7,7 +7,6 @@ namespace Capstone.DAO.Interfaces
     public interface IWebsiteDao
     {
 
-
         /*  
             **********************************************************************************************
                                                     WEBSITE CRUD

@@ -390,6 +390,13 @@ namespace Capstone.DAO
                 Url = Convert.ToString(reader["url"])
             };
 
+            SetWebsiteLogoIdProperties(reader, website);
+
+            return website;
+        }
+
+       private void SetWebsiteLogoIdProperties(NpgsqlDataReader reader, Website website)
+        {
             if (reader["logo_id"] != DBNull.Value)
             {
                 website.LogoId = Convert.ToInt32(reader["logo_id"]);
@@ -401,8 +408,6 @@ namespace Capstone.DAO
             {
                 website.LogoId = 0;
             }
-
-            return website;
         }
     }
 }
