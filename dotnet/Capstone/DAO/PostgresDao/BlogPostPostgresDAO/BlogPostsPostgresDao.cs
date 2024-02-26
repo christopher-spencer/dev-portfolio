@@ -203,6 +203,13 @@ namespace Capstone.DAO
                 UpdatedAt = Convert.ToDateTime(reader["updated_at"])
             };
 
+            MapRowToMainImageId(reader, blogPost);
+
+            return blogPost;
+        }
+
+        private void MapRowToMainImageId(NpgsqlDataReader reader, BlogPost blogPost)
+        {
             if (reader["main_image_id"] != DBNull.Value)
             {
                 blogPost.MainImageId = Convert.ToInt32(reader["main_image_id"]);
@@ -214,8 +221,6 @@ namespace Capstone.DAO
             {
                 blogPost.MainImageId = 0; 
             }
-
-            return blogPost;
         }
 
     }
