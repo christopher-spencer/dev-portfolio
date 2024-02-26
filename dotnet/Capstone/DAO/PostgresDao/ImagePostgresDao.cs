@@ -631,6 +631,144 @@ namespace Capstone.DAO
             return image;
         }
 
+        public Image GetImageByWebsiteId(int websiteId)
+        {
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN website_images wi ON i.id = wi.image_id " +
+                         "WHERE wi.website_id = @websiteId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        image = MapRowToImage(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by website ID.", ex);
+            }
+
+            return image;
+        }
+
+        public List<Image> GetImagesByWebsiteId(int websiteId)
+        {
+            List<Image> images = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN website_images wi ON i.id = wi.image_id " +
+                         "WHERE wi.website_id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Image image = MapRowToImage(reader);
+                        images.Add(image);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving images by website ID.", ex);
+            }
+
+            return images;
+        }
+
+        public Image UpdateImageByWebsiteId(int websiteId, Image updatedImage)
+        {
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url " +
+                                    "FROM website_images " +
+                                    "WHERE images.id = website_images.image_id AND website_images.website_id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedImage;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by website ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteImageByWebsiteId(int websiteId, int imageId)
+        {
+            string deleteWebsiteImageSql = "DELETE FROM website_images WHERE website_id = @websiteId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the image by website ID.", ex);
+            }
+        }
+
 
         /*  
             **********************************************************************************************
