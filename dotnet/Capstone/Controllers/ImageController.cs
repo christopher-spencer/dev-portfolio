@@ -284,5 +284,80 @@ namespace Capstone.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        /*  
+            **********************************************************************************************
+                                             WEBSITE IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        // [HttpPost("website/{websiteId}")]
+        // public ActionResult<Image> CreateImageByWebsiteId(int websiteId, Image image)
+        // {
+        //     try
+        //     {
+        //         var createdImage = _imageDao.CreateImageByWebsiteId(websiteId, image);
+        //         return Created($"/api/image/{createdImage.Id}", createdImage);
+        //     }
+        //     catch (DaoException ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        // [HttpGet("website/{websiteId}")]
+        // public ActionResult<Image> GetImageByWebsiteId(int websiteId)
+        // {
+        //     var image = _imageDao.GetImageByWebsiteId(websiteId);
+        //     if (image == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //     return image;
+        // }
+
+        // [HttpGet("website/{websiteId}/all")]
+        // public ActionResult<List<Image>> GetImagesByWebsiteId(int websiteId)
+        // {
+        //     var images = _imageDao.GetImagesByWebsiteId(websiteId);
+        //     return images;
+        // }
+
+        // [HttpPut("website/{websiteId}")]
+        // public ActionResult<Image> UpdateImageByWebsiteId(int websiteId, Image updatedImage)
+        // {
+        //     try
+        //     {
+        //         var image = _imageDao.UpdateImageByWebsiteId(websiteId, updatedImage);
+        //         if (image == null)
+        //         {
+        //             return NotFound();
+        //         }
+        //         return image;
+        //     }
+        //     catch (DaoException ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
+
+        // [HttpDelete("website/{websiteId}/image/{imageId}")]
+        // public IActionResult DeleteImageByWebsiteId(int websiteId, int imageId)
+        // {
+        //     try
+        //     {
+        //         var deletedRows = _imageDao.DeleteImageByWebsiteId(websiteId, imageId);
+        //         if (deletedRows == 0)
+        //         {
+        //             return NotFound();
+        //         }
+        //         return NoContent();
+        //     }
+        //     catch (DaoException ex)
+        //     {
+        //         return StatusCode(500, ex.Message);
+        //     }
+        // }
     }
 }
