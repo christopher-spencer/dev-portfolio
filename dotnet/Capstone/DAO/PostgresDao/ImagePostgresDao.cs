@@ -588,7 +588,8 @@ namespace Capstone.DAO
         public Image CreateImageByWebsiteId(int websiteId, Image image)
         {
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
-            string insertWebsiteImageSql = "UPDATE websites SET logo_id = @imageId WHERE id = @websiteId;";
+            string insertWebsiteImageSql = "INSERT INTO website_images (website_id, image_id) VALUES (@websiteId, @imageId);";
+            string updateWebsiteLogoIdSql = "UPDATE websites SET logo_id = @imageId WHERE id = @websiteId;";
 
             try
             {
@@ -612,6 +613,14 @@ namespace Capstone.DAO
 
                         cmd.ExecuteNonQuery();
                     }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteLogoIdSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -628,7 +637,6 @@ namespace Capstone.DAO
                                                 MAP ROW TO IMAGE
             **********************************************************************************************
         */
-
 
         private Image MapRowToImage(NpgsqlDataReader reader)
         {
