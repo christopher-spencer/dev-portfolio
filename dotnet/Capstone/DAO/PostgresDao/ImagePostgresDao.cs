@@ -212,7 +212,6 @@ namespace Capstone.DAO
             return image;
         }
 
-
         public Image GetImageBySideProjectId(int sideProjectId)
         {
             Image image = null;

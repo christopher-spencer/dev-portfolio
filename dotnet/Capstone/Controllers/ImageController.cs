@@ -18,7 +18,7 @@ namespace Capstone.Controllers
         {
             _imageDao = imageDao;
         }
-
+        // TODO uncomment and test out all IMAGE CONTROLLER METHODS
         /*  
             **********************************************************************************************
                                                 IMAGE CRUD CONTROLLER
