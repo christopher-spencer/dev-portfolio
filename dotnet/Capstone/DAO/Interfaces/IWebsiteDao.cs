@@ -26,7 +26,6 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
         Website CreateWebsiteByProjectId(int projectId, Website website);
-
         Website GetWebsiteByProjectId(int projectId);
         Website GetWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId);    
         Website UpdateWebsiteByProjectId(int projectId, Website updatedWebsite);
