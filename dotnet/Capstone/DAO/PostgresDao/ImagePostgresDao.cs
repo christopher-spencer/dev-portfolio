@@ -579,7 +579,49 @@ namespace Capstone.DAO
             }
         }
 
-        
+        /*  
+            **********************************************************************************************
+                                             WEBSITE IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        public Image CreateImageByWebsiteId(int websiteId, Image image)
+        {
+            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertWebsiteImageSql = "UPDATE websites SET logo_id = @imageId WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+
+                        int id = Convert.ToInt32(cmd.ExecuteScalar());
+                        image.Id = id;
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertWebsiteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the image for the website.", ex);
+            }
+
+            return image;
+        }
+
 
         /*  
             **********************************************************************************************
