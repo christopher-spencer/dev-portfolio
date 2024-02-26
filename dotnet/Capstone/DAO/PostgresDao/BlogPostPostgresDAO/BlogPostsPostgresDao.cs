@@ -203,12 +203,12 @@ namespace Capstone.DAO
                 UpdatedAt = Convert.ToDateTime(reader["updated_at"])
             };
 
-            MapRowToMainImageId(reader, blogPost);
+            SetBlogPostMainImageIdProperties(reader, blogPost);
 
             return blogPost;
         }
 
-        private void MapRowToMainImageId(NpgsqlDataReader reader, BlogPost blogPost)
+        private void SetBlogPostMainImageIdProperties(NpgsqlDataReader reader, BlogPost blogPost)
         {
             if (reader["main_image_id"] != DBNull.Value)
             {

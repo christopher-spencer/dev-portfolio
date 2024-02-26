@@ -231,9 +231,24 @@ namespace Capstone.DAO
                 FinishDate = Convert.ToDateTime(reader["finish_date"])
             };
 
-
             int projectId = sideProject.Id;
 
+            SetSideProjectMainImageIdProperties(reader, sideProject, projectId);
+            SetSideProjectWebsiteIdProperties(reader, sideProject, projectId);
+            SetSideProjectGitHubRepoLinkIdProperties(reader, sideProject, projectId);
+
+            sideProject.GoalsAndObjectives = _goalDao.GetGoalsByProjectId(projectId);
+            sideProject.AdditionalImagesUrl = _imageDao.GetImagesBySideProjectId(projectId);
+            sideProject.ToolsUsed = _skillDao.GetSkillsByProjectId(projectId);
+            sideProject.Contributors = _contributorDao.GetContributorsByProjectId(projectId);
+            sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesByProjectId(projectId);
+            sideProject.DependenciesOrLibrariesUsed = _dependencyLibraryDao.GetDependenciesAndLibrariesByProjectId(projectId);
+
+            return sideProject;
+        }
+
+        private void SetSideProjectMainImageIdProperties(NpgsqlDataReader reader, SideProject sideProject, int projectId)
+        {
             if (reader["main_image_id"] != DBNull.Value)
             {   
                 sideProject.MainImageId = Convert.ToInt32(reader["main_image_id"]);
@@ -245,7 +260,10 @@ namespace Capstone.DAO
             {
                 sideProject.MainImageId = 0;
             }
+        }
 
+        private void SetSideProjectWebsiteIdProperties(NpgsqlDataReader reader, SideProject sideProject, int projectId)
+        {
             if (reader["website_id"] != DBNull.Value)
             {
                 sideProject.WebsiteId = Convert.ToInt32(reader["website_id"]);
@@ -257,7 +275,10 @@ namespace Capstone.DAO
             {
                 sideProject.WebsiteId = 0;
             }
+        }
 
+        private void SetSideProjectGitHubRepoLinkIdProperties(NpgsqlDataReader reader, SideProject sideProject, int projectId)
+        {
             if (reader["github_repo_link_id"] != DBNull.Value)
             {
                 sideProject.GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
@@ -269,15 +290,7 @@ namespace Capstone.DAO
             {
                 sideProject.GitHubRepoLinkId = 0;
             }
-
-            sideProject.GoalsAndObjectives = _goalDao.GetGoalsByProjectId(projectId);
-            sideProject.AdditionalImagesUrl = _imageDao.GetImagesBySideProjectId(projectId);
-            sideProject.ToolsUsed = _skillDao.GetSkillsByProjectId(projectId);
-            sideProject.Contributors = _contributorDao.GetContributorsByProjectId(projectId);
-            sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesByProjectId(projectId);
-            sideProject.DependenciesOrLibrariesUsed = _dependencyLibraryDao.GetDependenciesAndLibrariesByProjectId(projectId);
-
-            return sideProject;
         }
+
     }
 }
