@@ -18,7 +18,7 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
             this._imageDao = imageDao;
         }
-
+// TODO Organize Methods By CRUD and BLogPost or SideProject, etc.
         public Skill CreateSkill(Skill skill)
         {
             string sql = "INSERT INTO skills (name, icon_id) VALUES (@name, @iconId) RETURNING id;";
