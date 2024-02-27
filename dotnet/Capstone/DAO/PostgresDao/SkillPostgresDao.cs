@@ -19,7 +19,6 @@ namespace Capstone.DAO
             this._imageDao = imageDao;
         }
 
-// TODO fix sql queries based on new database and setups in BlogPostPGDAO and similar PGDAOs
         public Skill CreateSkill(Skill skill)
         {
             string sql = "INSERT INTO skills (name, icon_id) VALUES (@name, @iconId) RETURNING id;";
