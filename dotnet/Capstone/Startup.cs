@@ -62,7 +62,6 @@ namespace Capstone
 
             // Dependency Injection configuration
             
-            //TODO Ask a mentor about this setup 
             // Instantiate DAOs for dependencies
             IImageDao imageDao = new ImagePostgresDao(connectionString);
             IGoalDao goalDao = new GoalPostgresDao(connectionString, imageDao);
