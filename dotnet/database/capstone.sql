@@ -1,7 +1,5 @@
 BEGIN TRANSACTION;
 
-// TODO Double triple check placements for website_images table
-
 DROP TABLE IF EXISTS sideproject_websites;
 DROP TABLE IF EXISTS sideproject_dependencies_and_libraries;
 DROP TABLE IF EXISTS sideproject_apis_and_services;
@@ -10,7 +8,7 @@ DROP TABLE IF EXISTS sideproject_skills;
 DROP TABLE IF EXISTS sideproject_goals;
 DROP TABLE IF EXISTS sideproject_images;
 DROP TABLE IF EXISTS blogpost_images;
--- DROP TABLE IF EXISTS website_images;
+DROP TABLE IF EXISTS website_images;
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
 DROP TABLE IF EXISTS users;
@@ -123,13 +121,13 @@ CREATE TABLE sideprojects (
     FOREIGN KEY (github_repo_link_id) REFERENCES websites(id)
 );
 
--- CREATE TABLE website_images (
---     website_id INTEGER,
---     image_id INTEGER,
---     PRIMARY KEY (website_id, image_id),
---     FOREIGN KEY (website_id) REFERENCES websites(id),
---     FOREIGN KEY (image_id) REFERENCES images(id)
--- );
+CREATE TABLE website_images (
+    website_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (website_id, image_id),
+    FOREIGN KEY (website_id) REFERENCES websites(id),
+    FOREIGN KEY (image_id) REFERENCES images(id)
+);
 
 CREATE TABLE blogpost_images (
     blogpost_id INTEGER,
