@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Capstone.DAO;
 using Capstone.DAO.Interfaces;
 using Capstone.Exceptions;
 using Capstone.Models;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Capstone.Controllers
 {
+
+// TODO fix controller based on BlogPostController
     [Route("[controller]")]
     [ApiController]
     public class SideProjectController : ControllerBase
@@ -32,36 +35,35 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideprojects/{id}")]
-        public ActionResult<SideProject> GetSideProjectById(int id)
+        [HttpGet("/sideproject/{sideProjectId}")]
+        public ActionResult<SideProject> GetSideProjectById(int sideProjectId)
         {
-            try
+            SideProject sideProject = _sideProjectDao.GetSideProjectById(sideProjectId);
+
+            if (sideProject == null) 
             {
-                var sideProject = _sideProjectDao.GetSideProjectById(id);
-                if (sideProject == null)
-                {
-                    return NotFound();
-                }
-                return Ok(sideProject);
+                return NotFound();
             }
-            catch (DaoException ex)
+            else 
             {
-                return StatusCode(500, ex.Message);
+                return Ok(sideProject);
             }
         }
 
         [Authorize]
         [HttpPost("/create-sideproject")]
-        public ActionResult<SideProject> CreateSideProject([FromBody] SideProject sideProject)
+        public ActionResult CreateSideProject(SideProject sideProject)
         {
-            try
+            SideProject createdSideProject = _sideProjectDao.CreateSideProject(sideProject);
+
+            if (createdSideProject == null) 
             {
-                var newSideProject = _sideProjectDao.CreateSideProject(sideProject);
-                return CreatedAtAction(nameof(GetSideProjectById), new { id = newSideProject.Id }, newSideProject);
+                return BadRequest();
             }
-            catch (DaoException ex)
+            else
             {
-                return StatusCode(500, ex.Message);
+                return CreatedAtAction(nameof(GetSideProjectById), new { sideProjectId = createdSideProject.Id }, createdSideProject);
+
             }
         }
 

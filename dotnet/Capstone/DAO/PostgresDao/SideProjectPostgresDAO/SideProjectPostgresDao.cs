@@ -148,7 +148,7 @@ namespace Capstone.DAO
         {
             string sql = "UPDATE sideprojects SET name = @name, description = @description, " +
                          "video_walkthrough_url = @video_walkthrough_url, project_status = @project_status, " +
-                         "start_date = @start_date, finish_date = @finish_date, " +
+                         "start_date = @start_date, finish_date = @finish_date " +
                          "WHERE id = @sideProjectId";
 
             try

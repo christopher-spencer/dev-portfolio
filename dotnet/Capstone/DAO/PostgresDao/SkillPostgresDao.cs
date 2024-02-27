@@ -88,7 +88,7 @@ namespace Capstone.DAO
             string sql = "SELECT s.id, s.name, s.icon_id " +
                          "FROM skills s " +
                          "JOIN sideproject_skills ps ON s.id = ps.skill_id " +
-                         "WHERE ps.project_id = @projectId;";
+                         "WHERE ps.sideproject_id = @projectId;";
 
             try
             {
@@ -276,7 +276,7 @@ namespace Capstone.DAO
 
         public int DeleteSkillByProjectId(int projectId, int skillId)
         {
-            string sql = "DELETE FROM sideproject_skills WHERE project_id = @projectId AND skill_id = @skillId;";
+            string sql = "DELETE FROM sideproject_skills WHERE sideproject_id = @projectId AND skill_id = @skillId;";
 
             try
             {
