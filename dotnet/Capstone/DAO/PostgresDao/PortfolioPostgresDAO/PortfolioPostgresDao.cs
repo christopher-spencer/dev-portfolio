@@ -12,7 +12,7 @@ namespace Capstone.DAO
         public PortfolioPostgresDao(string dbConnectionString) {
             connectionString = dbConnectionString;
         }
-
+// TODO will need to model after SP and BP Daos
 
         private Portfolio MapRowToPortfolio(NpgsqlDataReader reader)
         {
