@@ -118,19 +118,19 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        // [HttpPost("project/{projectId}")]
-        // public IActionResult CreateImageByProjectId(int projectId, Image image)
-        // {
-        //     try
-        //     {
-        //         Image createdImage = _imageDao.CreateImageByProjectId(projectId, image);
-        //         return Ok(createdImage);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        [HttpPost("sideproject/{projectId}/create-image")]
+        public IActionResult CreateImageBySideProjectId(int projectId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageBySideProjectId(projectId, image);
+                return Ok(createdImage);
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         // [HttpGet("project/{projectId}")]
         // public IActionResult GetImagesByProjectId(int projectId)

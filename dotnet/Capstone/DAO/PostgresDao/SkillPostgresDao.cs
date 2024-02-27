@@ -18,6 +18,8 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
             this._imageDao = imageDao;
         }
+
+// TODO fix sql queries based on new database and setups in BlogPostPGDAO and similar PGDAOs
         public Skill CreateSkill(Skill skill)
         {
             string sql = "INSERT INTO skills (name, icon_id) VALUES (@name, @iconId) RETURNING id;";
@@ -47,7 +49,7 @@ namespace Capstone.DAO
         public Skill CreateSkillByProjectId(int projectId, Skill skill)
         {
             string insertSkillSql = "INSERT INTO skills (name, icon_id) VALUES (@name, @iconId) RETURNING id;";
-            string insertSideProjectSkillSql = "INSERT INTO side_project_skills (project_id, skill_id) VALUES (@projectId, @skillId);";
+            string insertSideProjectSkillSql = "INSERT INTO sideproject_skills (sideproject_id, skill_id) VALUES (@projectId, @skillId);";
 
             try
             {
@@ -85,7 +87,7 @@ namespace Capstone.DAO
 
             string sql = "SELECT s.id, s.name, s.icon_id " +
                          "FROM skills s " +
-                         "JOIN side_project_skills ps ON s.id = ps.skill_id " +
+                         "JOIN sideproject_skills ps ON s.id = ps.skill_id " +
                          "WHERE ps.project_id = @projectId;";
 
             try
@@ -120,8 +122,8 @@ namespace Capstone.DAO
 
             string sql = "SELECT s.id, s.name, s.icon_id " +
                          "FROM skills s " +
-                         "JOIN side_project_skills ps ON s.id = ps.skill_id " +
-                         "WHERE ps.project_id = @projectId AND s.id = @skillId;";
+                         "JOIN sideproject_skills ps ON s.id = ps.skill_id " +
+                         "WHERE ps.sideproject_id = @projectId AND s.id = @skillId;";
 
             try
             {
@@ -209,9 +211,9 @@ namespace Capstone.DAO
         {
             string sql = "UPDATE skills " +
                          "SET name = @name, icon_id = @iconId " +
-                         "FROM side_project_skills " +
-                         "WHERE skills.id = side_project_skills.skill_id " +
-                         "AND side_project_skills.project_id = @projectId " +
+                         "FROM sideproject_skills " +
+                         "WHERE skills.id = sideproject_skills.skill_id " +
+                         "AND sideproject_skills.project_id = @projectId " +
                          "AND skills.id = @skillId;";
 
             try
@@ -274,7 +276,7 @@ namespace Capstone.DAO
 
         public int DeleteSkillByProjectId(int projectId, int skillId)
         {
-            string sql = "DELETE FROM side_project_skills WHERE project_id = @projectId AND skill_id = @skillId;";
+            string sql = "DELETE FROM sideproject_skills WHERE project_id = @projectId AND skill_id = @skillId;";
 
             try
             {
