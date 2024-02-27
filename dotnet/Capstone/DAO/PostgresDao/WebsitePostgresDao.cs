@@ -378,7 +378,6 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        // TODO Make sure worked => updating Website MapRow like BlogPost/SideProject (And fixing Create/Update methods)
         private Website MapRowToWebsite(NpgsqlDataReader reader)
         {
             Website website = new Website
