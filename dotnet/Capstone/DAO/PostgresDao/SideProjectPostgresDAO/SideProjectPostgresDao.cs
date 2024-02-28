@@ -234,7 +234,7 @@ namespace Capstone.DAO
             sideProject.ToolsUsed = _skillDao.GetSkillsBySideProjectId(projectId);
             sideProject.Contributors = _contributorDao.GetContributorsBySideProjectId(projectId);
             sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesBySideProjectId(projectId);
-            sideProject.DependenciesOrLibrariesUsed = _dependencyLibraryDao.GetDependenciesAndLibrariesByProjectId(projectId);
+            sideProject.DependenciesOrLibrariesUsed = _dependencyLibraryDao.GetDependenciesAndLibrariesBySideProjectId(projectId);
 
             return sideProject;
         }

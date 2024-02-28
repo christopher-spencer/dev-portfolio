@@ -22,43 +22,11 @@ namespace Capstone.DAO
             this._websiteDao = websiteDao;
         }
 
-        public DependencyLibrary CreateDependencyOrLibraryByProjectId(int projectId, DependencyLibrary dependencyLibrary)
-        {
-            string sql = "INSERT INTO dependencies_and_libraries (name, description, website_id, logo_id) " +
-                         "VALUES (@name, @description, @websiteId, @logoId) RETURNING id;";
-            
-            string insertAssociationSql = "INSERT INTO sideproject_dependencies_and_libraries (sideproject_id, dependencylibrary_id) " +
-                                                "VALUES (@projectId, @dependencyLibraryId);";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
-                    cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@websiteId", dependencyLibrary.WebsiteId);
-                    cmd.Parameters.AddWithValue("@logoId", dependencyLibrary.LogoId);
-
-                    int id = Convert.ToInt32(cmd.ExecuteScalar());
-                    dependencyLibrary.Id = id;
-
-                    NpgsqlCommand cmdInsertAssociation = new NpgsqlCommand(insertAssociationSql, connection);
-                    cmdInsertAssociation.Parameters.AddWithValue("@projectId", projectId);
-                    cmdInsertAssociation.Parameters.AddWithValue("@dependencyLibraryId", id);
-                    cmdInsertAssociation.ExecuteNonQuery();
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the dependency library for the project.", ex);
-            }
-
-            return dependencyLibrary;
-        }
-
+        /*  
+            **********************************************************************************************
+                                        DEPENDENCIES AND LIBRARIES CRUD
+            **********************************************************************************************
+        */ 
         public DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
         {
             string sql = "INSERT INTO dependencies_and_libraries (name, description, website_id, logo_id) " +
@@ -88,76 +56,6 @@ namespace Capstone.DAO
 
             return dependencyLibrary;
         }
-
-        public List<DependencyLibrary> GetDependenciesAndLibrariesByProjectId(int projectId)
-        {
-            List<DependencyLibrary> dependencyLibraries = new List<DependencyLibrary>();
-
-            string sql = "SELECT dl.id, dl.name, dl.description, dl.website_id, dl.logo_id " +
-                         "FROM dependencies_and_libraries dl " +
-                         "JOIN sideproject_dependencies_and_libraries pdl ON dl.id = pdl.dependencylibrary_id " +
-                         "WHERE pdl.sideproject_id = @projectId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        dependencyLibraries.Add(MapRowToDependencyLibrary(reader));
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving dependency libraries by project ID.", ex);
-            }
-
-            return dependencyLibraries;
-        }
-
-        public DependencyLibrary GetDependencyOrLibraryByProjectId(int projectId, int dependencyLibraryId)
-        {
-            DependencyLibrary dependencyLibrary = null;
-
-            string sql = "SELECT dl.id, dl.name, dl.description, dl.website_id, dl.logo_id " +
-                         "FROM dependencies_and_libraries dl " +
-                         "JOIN sideproject_dependencies_and_libraries pdl ON dl.id = pdl.dependencylibrary_id " +
-                         "WHERE pdl.sideproject_id = @projectId AND dl.id = @dependencyLibraryId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        dependencyLibrary = MapRowToDependencyLibrary(reader);
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving the dependency library by project ID.", ex);
-            }
-
-            return dependencyLibrary;
-        }
-
 
         public DependencyLibrary GetDependencyOrLibraryById(int dependencyLibraryId)
         {
@@ -215,7 +113,174 @@ namespace Capstone.DAO
             return dependencyLibraries;
         }
 
-        public DependencyLibrary UpdateDependencyOrLibraryByProjectId(int projectId, DependencyLibrary updatedDependencyLibrary)
+        public DependencyLibrary UpdateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
+        {
+            string sql = "UPDATE dependencies_and_libraries SET name = @name, description = @description, " +
+                         "website_id = @websiteId, logo_id = @logoId WHERE id = @id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@id", dependencyLibrary.Id);
+                    cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
+                    cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
+                    cmd.Parameters.AddWithValue("@websiteId", dependencyLibrary.WebsiteId);
+                    cmd.Parameters.AddWithValue("@logoId", dependencyLibrary.LogoId);
+
+                    int count = cmd.ExecuteNonQuery();
+                    if (count == 1)
+                    {
+                        return dependencyLibrary;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the dependency library.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteDependencyOrLibraryById(int dependencyLibraryId)
+        {
+            string sql = "DELETE FROM dependencies_and_libraries WHERE id = @id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@id", dependencyLibraryId);
+
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the dependency library.", ex);
+            }
+        }
+
+
+        /*  
+            **********************************************************************************************
+                                    SIDE PROJECT DEPENDENCIES AND LIBRARIES CRUD
+            **********************************************************************************************
+        */ 
+        public DependencyLibrary CreateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary)
+        {
+            string sql = "INSERT INTO dependencies_and_libraries (name, description, website_id, logo_id) " +
+                         "VALUES (@name, @description, @websiteId, @logoId) RETURNING id;";
+            
+            string insertAssociationSql = "INSERT INTO sideproject_dependencies_and_libraries (sideproject_id, dependencylibrary_id) " +
+                                                "VALUES (@projectId, @dependencyLibraryId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
+                    cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
+                    cmd.Parameters.AddWithValue("@websiteId", dependencyLibrary.WebsiteId);
+                    cmd.Parameters.AddWithValue("@logoId", dependencyLibrary.LogoId);
+
+                    int id = Convert.ToInt32(cmd.ExecuteScalar());
+                    dependencyLibrary.Id = id;
+
+                    NpgsqlCommand cmdInsertAssociation = new NpgsqlCommand(insertAssociationSql, connection);
+                    cmdInsertAssociation.Parameters.AddWithValue("@projectId", projectId);
+                    cmdInsertAssociation.Parameters.AddWithValue("@dependencyLibraryId", id);
+                    cmdInsertAssociation.ExecuteNonQuery();
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the dependency library for the project.", ex);
+            }
+
+            return dependencyLibrary;
+        }
+
+        public List<DependencyLibrary> GetDependenciesAndLibrariesBySideProjectId(int projectId)
+        {
+            List<DependencyLibrary> dependencyLibraries = new List<DependencyLibrary>();
+
+            string sql = "SELECT dl.id, dl.name, dl.description, dl.website_id, dl.logo_id " +
+                         "FROM dependencies_and_libraries dl " +
+                         "JOIN sideproject_dependencies_and_libraries pdl ON dl.id = pdl.dependencylibrary_id " +
+                         "WHERE pdl.sideproject_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        dependencyLibraries.Add(MapRowToDependencyLibrary(reader));
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving dependency libraries by project ID.", ex);
+            }
+
+            return dependencyLibraries;
+        }
+
+        public DependencyLibrary GetDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId)
+        {
+            DependencyLibrary dependencyLibrary = null;
+
+            string sql = "SELECT dl.id, dl.name, dl.description, dl.website_id, dl.logo_id " +
+                         "FROM dependencies_and_libraries dl " +
+                         "JOIN sideproject_dependencies_and_libraries pdl ON dl.id = pdl.dependencylibrary_id " +
+                         "WHERE pdl.sideproject_id = @projectId AND dl.id = @dependencyLibraryId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        dependencyLibrary = MapRowToDependencyLibrary(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the dependency library by project ID.", ex);
+            }
+
+            return dependencyLibrary;
+        }
+
+        public DependencyLibrary UpdateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary updatedDependencyLibrary)
         {
             string sql = "UPDATE dependencies_and_libraries dl " +
                          "SET name = @name, description = @description, website_id = @websiteId, logo_id = @logoId " +
@@ -251,40 +316,7 @@ namespace Capstone.DAO
             return null;
         }
 
-        public DependencyLibrary UpdateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
-        {
-            string sql = "UPDATE dependencies_and_libraries SET name = @name, description = @description, " +
-                         "website_id = @websiteId, logo_id = @logoId WHERE id = @id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", dependencyLibrary.Id);
-                    cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
-                    cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@websiteId", dependencyLibrary.WebsiteId);
-                    cmd.Parameters.AddWithValue("@logoId", dependencyLibrary.LogoId);
-
-                    int count = cmd.ExecuteNonQuery();
-                    if (count == 1)
-                    {
-                        return dependencyLibrary;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the dependency library.", ex);
-            }
-
-            return null;
-        }
-
-        public int DeleteDependencyOrLibraryByProjectId(int projectId, int dependencyLibraryId)
+        public int DeleteDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId)
         {
             string sql = "DELETE FROM sideproject_dependencies_and_libraries WHERE sideproject_id = @projectId AND dependencylibrary_id = @dependencyLibraryId;";
 
@@ -307,28 +339,11 @@ namespace Capstone.DAO
             }
         }
 
-        public int DeleteDependencyOrLibraryById(int dependencyLibraryId)
-        {
-            string sql = "DELETE FROM dependencies_and_libraries WHERE id = @id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", dependencyLibraryId);
-
-                    return cmd.ExecuteNonQuery();
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while deleting the dependency library.", ex);
-            }
-        }
-
+        /*  
+            **********************************************************************************************
+                                    DEPENDENCIES AND LIBRARIES MAP ROW
+            **********************************************************************************************
+        */ 
         private DependencyLibrary MapRowToDependencyLibrary(NpgsqlDataReader reader)
         {
             DependencyLibrary dependencyLibrary = new DependencyLibrary
