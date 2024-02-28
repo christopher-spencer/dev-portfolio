@@ -8,6 +8,7 @@ using Npgsql;
 
 namespace Capstone.DAO
 {
+    // TODO Organize Methods By CRUD and BLogPost or SideProject, etc.
     public class ContributorPostgresDao : IContributorDao
     {
         private readonly string connectionString;
