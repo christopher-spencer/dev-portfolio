@@ -8,7 +8,6 @@ using Npgsql;
 
 namespace Capstone.DAO
 {
-    // TODO Organize Methods By CRUD and BLogPost or SideProject, etc.
     public class ContributorPostgresDao : IContributorDao
     {
         private readonly string connectionString;
@@ -22,52 +21,11 @@ namespace Capstone.DAO
             this._websiteDao = websiteDao;
         }
 
-        public Contributor CreateContributorByProjectId(int projectId, Contributor contributor)
-        {
-            string insertContributorSql = "INSERT INTO contributors (first_name, last_name, contributor_image_id, email, " +
-                                          "bio, contribution_details, linkedin_id, github_id, portfolio_id) " +
-                                          "VALUES (@first_name, @last_name, @contributor_image_id, @email, @bio, " +
-                                          "@contribution_details, @linkedin_id, @github_id, @portfolio_id) " +
-                                          "RETURNING id;";
-            string insertSideProjectContributorSql = "INSERT INTO sideproject_contributors (sideproject_id, contributor_id) " +
-                                                     "VALUES (@projectId, @contributorId);";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmdInsertContributor = new NpgsqlCommand(insertContributorSql, connection);
-                    cmdInsertContributor.Parameters.AddWithValue("@first_name", contributor.FirstName);
-                    cmdInsertContributor.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmdInsertContributor.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
-                    cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email);
-                    cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio);
-                    cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmdInsertContributor.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
-                    cmdInsertContributor.Parameters.AddWithValue("@github_id", contributor.GitHubId);
-                    cmdInsertContributor.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
-
-                    int contributorId = (int)cmdInsertContributor.ExecuteScalar();
-
-                    NpgsqlCommand cmdInsertSideProjectContributor = new NpgsqlCommand(insertSideProjectContributorSql, connection);
-                    cmdInsertSideProjectContributor.Parameters.AddWithValue("@projectId", projectId);
-                    cmdInsertSideProjectContributor.Parameters.AddWithValue("@contributorId", contributorId);
-
-                    cmdInsertSideProjectContributor.ExecuteNonQuery();
-
-                    contributor.Id = contributorId;
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the contributor for the project.", ex);
-            }
-
-            return contributor;
-        }
-
+        /*  
+            **********************************************************************************************
+                                                CONTRIBUTOR CRUD
+            **********************************************************************************************
+        */ 
         public Contributor CreateContributor(Contributor contributor)
         {
             string sql = "INSERT INTO contributors (first_name, last_name, contributor_image_id, email, " +
@@ -100,76 +58,6 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while creating the contributor.", ex);
-            }
-
-            return contributor;
-        }
-
-        public List<Contributor> GetContributorsByProjectId(int projectId)
-        {
-            List<Contributor> contributors = new List<Contributor>();
-
-            string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_id, c.email, c.bio, c.contribution_details, " +
-                         "c.linkedin_id, c.github_id, c.portfolio_id " +
-                         "FROM contributors c " +
-                         "JOIN sideproject_contributors pc ON c.id = pc.contributor_id " +
-                         "WHERE pc.sideproject_id = @projectId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        contributors.Add(MapRowToContributor(reader));
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving contributors by project ID.", ex);
-            }
-
-            return contributors;
-        }
-
-        public Contributor GetContributorByProjectId(int projectId, int contributorId)
-        {
-            Contributor contributor = null;
-
-            string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_id, c.email, c.bio, c.contribution_details, " +
-                         "c.linkedin_id, c.github_id, c.portfolio_id FROM contributors c " +
-                         "JOIN sideproject_contributors pc ON c.id = pc.contributor_id " +
-                         "WHERE pc.sideproject_id = @projectId AND c.id = @contributorId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@contributorId", contributorId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        contributor = MapRowToContributor(reader);
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving the contributor for the project.", ex);
             }
 
             return contributor;
@@ -235,7 +123,190 @@ namespace Capstone.DAO
             return contributors;
         }
 
-        public Contributor UpdateContributorByProjectId(int projectId, Contributor updatedContributor)
+        public Contributor UpdateContributor(Contributor contributor)
+        {
+            string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, contributor_image_id = @contributor_image_id, " +
+                         "email = @email, bio = @bio, contribution_details = @contribution_details, " +
+                         "linkedin_id = @linkedin_id, github_id = @github_id, portfolio_id = @portfolio_id " +
+                         "WHERE id = @id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@id", contributor.Id);
+                    cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
+                    cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
+                    cmd.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
+                    cmd.Parameters.AddWithValue("@email", contributor.Email);
+                    cmd.Parameters.AddWithValue("@bio", contributor.Bio);
+                    cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+                    cmd.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
+                    cmd.Parameters.AddWithValue("@github_id", contributor.GitHubId);
+                    cmd.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
+
+                    int count = cmd.ExecuteNonQuery();
+                    if (count == 1)
+                    {
+                        return contributor;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the contributor.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteContributorById(int contributorId)
+        {
+            string sql = "DELETE FROM contributors WHERE id = @id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@id", contributorId);
+
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the contributor.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                          SIDE PROJECT CONTRIBUTOR CRUD
+            **********************************************************************************************
+        */          
+        public Contributor CreateContributorBySideProjectId(int projectId, Contributor contributor)
+        {
+            string insertContributorSql = "INSERT INTO contributors (first_name, last_name, contributor_image_id, email, " +
+                                          "bio, contribution_details, linkedin_id, github_id, portfolio_id) " +
+                                          "VALUES (@first_name, @last_name, @contributor_image_id, @email, @bio, " +
+                                          "@contribution_details, @linkedin_id, @github_id, @portfolio_id) " +
+                                          "RETURNING id;";
+            string insertSideProjectContributorSql = "INSERT INTO sideproject_contributors (sideproject_id, contributor_id) " +
+                                                     "VALUES (@projectId, @contributorId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmdInsertContributor = new NpgsqlCommand(insertContributorSql, connection);
+                    cmdInsertContributor.Parameters.AddWithValue("@first_name", contributor.FirstName);
+                    cmdInsertContributor.Parameters.AddWithValue("@last_name", contributor.LastName);
+                    cmdInsertContributor.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
+                    cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email);
+                    cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio);
+                    cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+                    cmdInsertContributor.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
+                    cmdInsertContributor.Parameters.AddWithValue("@github_id", contributor.GitHubId);
+                    cmdInsertContributor.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
+
+                    int contributorId = (int)cmdInsertContributor.ExecuteScalar();
+
+                    NpgsqlCommand cmdInsertSideProjectContributor = new NpgsqlCommand(insertSideProjectContributorSql, connection);
+                    cmdInsertSideProjectContributor.Parameters.AddWithValue("@projectId", projectId);
+                    cmdInsertSideProjectContributor.Parameters.AddWithValue("@contributorId", contributorId);
+
+                    cmdInsertSideProjectContributor.ExecuteNonQuery();
+
+                    contributor.Id = contributorId;
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the contributor for the project.", ex);
+            }
+
+            return contributor;
+        }
+
+        public List<Contributor> GetContributorsBySideProjectId(int projectId)
+        {
+            List<Contributor> contributors = new List<Contributor>();
+
+            string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_id, c.email, c.bio, c.contribution_details, " +
+                         "c.linkedin_id, c.github_id, c.portfolio_id " +
+                         "FROM contributors c " +
+                         "JOIN sideproject_contributors pc ON c.id = pc.contributor_id " +
+                         "WHERE pc.sideproject_id = @projectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        contributors.Add(MapRowToContributor(reader));
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving contributors by project ID.", ex);
+            }
+
+            return contributors;
+        }
+
+        public Contributor GetContributorBySideProjectId(int projectId, int contributorId)
+        {
+            Contributor contributor = null;
+
+            string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_id, c.email, c.bio, c.contribution_details, " +
+                         "c.linkedin_id, c.github_id, c.portfolio_id FROM contributors c " +
+                         "JOIN sideproject_contributors pc ON c.id = pc.contributor_id " +
+                         "WHERE pc.sideproject_id = @projectId AND c.id = @contributorId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        contributor = MapRowToContributor(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the contributor for the project.", ex);
+            }
+
+            return contributor;
+        }
+
+        public Contributor UpdateContributorBySideProjectId(int projectId, Contributor updatedContributor)
         {
             string sql = "UPDATE contributors " +
                          "SET first_name = @first_name, last_name = @last_name, contributor_image_id = @contributor_image_id, " +
@@ -278,47 +349,8 @@ namespace Capstone.DAO
 
             return null;
         }
-        public Contributor UpdateContributor(Contributor contributor)
-        {
-            string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, contributor_image_id = @contributor_image_id, " +
-                         "email = @email, bio = @bio, contribution_details = @contribution_details, " +
-                         "linkedin_id = @linkedin_id, github_id = @github_id, portfolio_id = @portfolio_id " +
-                         "WHERE id = @id;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", contributor.Id);
-                    cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
-                    cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmd.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
-                    cmd.Parameters.AddWithValue("@email", contributor.Email);
-                    cmd.Parameters.AddWithValue("@bio", contributor.Bio);
-                    cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmd.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
-                    cmd.Parameters.AddWithValue("@github_id", contributor.GitHubId);
-                    cmd.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
-
-                    int count = cmd.ExecuteNonQuery();
-                    if (count == 1)
-                    {
-                        return contributor;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the contributor.", ex);
-            }
-
-            return null;
-        }
-
-        public int DeleteContributorByProjectId(int projectId, int contributorId)
+        public int DeleteContributorBySideProjectId(int projectId, int contributorId)
         {
             string sql = "DELETE FROM sideproject_contributors WHERE sideproject_id = @projectId AND contributor_id = @contributorId;";
 
@@ -341,27 +373,6 @@ namespace Capstone.DAO
             }
         }
 
-        public int DeleteContributorById(int contributorId)
-        {
-            string sql = "DELETE FROM contributors WHERE id = @id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", contributorId);
-
-                    return cmd.ExecuteNonQuery();
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while deleting the contributor.", ex);
-            }
-        }
         /*  
             **********************************************************************************************
                                             CONTRIBUTOR MAP ROW

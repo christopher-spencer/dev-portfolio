@@ -198,7 +198,6 @@ namespace Capstone.DAO
             return skill;
         }
 
-
         public List<Skill> GetSkillsBySideProjectId(int projectId)
         {
             List<Skill> skills = new List<Skill>();

@@ -5,16 +5,27 @@ namespace Capstone.DAO.Interfaces
 {
     public interface IContributorDao
     {
-        Contributor CreateContributorByProjectId(int projectId, Contributor contributor);
+        /*  
+            **********************************************************************************************
+                                                CONTRIBUTOR CRUD
+            **********************************************************************************************
+        */ 
         Contributor CreateContributor(Contributor contributor);
-        List<Contributor> GetContributorsByProjectId(int projectId);
-        Contributor GetContributorByProjectId(int projectId, int contributorId);
         Contributor GetContributorById(int contributorId);
         List<Contributor> GetAllContributors();
-        Contributor UpdateContributorByProjectId(int projectId, Contributor updatedContributor);
         Contributor UpdateContributor(Contributor contributor);
-        int DeleteContributorByProjectId(int projectId, int contributorId);
         int DeleteContributorById(int contributorId);
+
+        /*  
+            **********************************************************************************************
+                                          SIDE PROJECT CONTRIBUTOR CRUD
+            **********************************************************************************************
+        */         
+        Contributor CreateContributorBySideProjectId(int projectId, Contributor contributor);
+        List<Contributor> GetContributorsBySideProjectId(int projectId);
+        Contributor GetContributorBySideProjectId(int projectId, int contributorId);
+        Contributor UpdateContributorBySideProjectId(int projectId, Contributor updatedContributor);
+        int DeleteContributorBySideProjectId(int projectId, int contributorId);
 
     }
 }

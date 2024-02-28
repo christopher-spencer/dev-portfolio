@@ -232,7 +232,7 @@ namespace Capstone.DAO
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsBySideProjectId(projectId);
             sideProject.AdditionalImagesUrl = _imageDao.GetImagesBySideProjectId(projectId);
             sideProject.ToolsUsed = _skillDao.GetSkillsBySideProjectId(projectId);
-            sideProject.Contributors = _contributorDao.GetContributorsByProjectId(projectId);
+            sideProject.Contributors = _contributorDao.GetContributorsBySideProjectId(projectId);
             sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesByProjectId(projectId);
             sideProject.DependenciesOrLibrariesUsed = _dependencyLibraryDao.GetDependenciesAndLibrariesByProjectId(projectId);
 
