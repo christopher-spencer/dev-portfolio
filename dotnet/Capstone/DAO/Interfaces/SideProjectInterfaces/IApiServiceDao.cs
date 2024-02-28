@@ -5,14 +5,26 @@ namespace Capstone.DAO.Interfaces
 {
     public interface IApiServiceDao
     {
-        ApiService CreateAPIOrServiceByProjectId(int projectId, ApiService apiService);
+        /*  
+            **********************************************************************************************
+                                        APIS AND SERVICES CRUD
+            **********************************************************************************************
+        */ 
         ApiService CreateAPIOrService(ApiService apiService);
-        List<ApiService> GetAPIsAndServicesByProjectId(int projectId);
-        ApiService GetAPIOrServiceByProjectId(int projectId, int apiServiceId);
         ApiService GetAPIOrServiceById(int apiServiceId);
         List<ApiService> GetAllAPIsAndServices();
-        ApiService UpdateAPIOrServiceByProjectId(int projectId, ApiService updatedApiService);
         ApiService UpdateAPIOrService(ApiService apiService);
         int DeleteAPIOrService(int apiServiceId);
+
+        /*  
+            **********************************************************************************************
+                                     SIDE PROJECT APIS AND SERVICES CRUD
+            **********************************************************************************************
+        */ 
+        ApiService CreateAPIOrServiceBySideProjectId(int projectId, ApiService apiService);
+        List<ApiService> GetAPIsAndServicesBySideProjectId(int projectId);
+        ApiService GetAPIOrServiceBySideProjectId(int projectId, int apiServiceId);
+        ApiService UpdateAPIOrServiceBySideProjectId(int projectId, ApiService updatedApiService);
+        int DeleteAPIOrServiceBySideProjectId(int projectId, int apiServiceId);
     }
 }
