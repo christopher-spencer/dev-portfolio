@@ -10,7 +10,6 @@ namespace Capstone.DAO
 {
     public class DependencyLibraryPostgresDao : IDependencyLibraryDao
     {
-        // TODO Organize Methods By CRUD and BLogPost or SideProject, etc.
         private readonly string connectionString;
         private readonly IImageDao _imageDao;
         private readonly IWebsiteDao _websiteDao;
