@@ -362,7 +362,11 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while deleting the contributor.", ex);
             }
         }
-
+        /*  
+            **********************************************************************************************
+                                            CONTRIBUTOR MAP ROW
+            **********************************************************************************************
+        */
         private Contributor MapRowToContributor(NpgsqlDataReader reader)
         {
             Contributor contributor = new Contributor
