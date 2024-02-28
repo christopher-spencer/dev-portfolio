@@ -229,7 +229,7 @@ namespace Capstone.DAO
             SetSideProjectWebsiteIdProperties(reader, sideProject, projectId);
             SetSideProjectGitHubRepoLinkIdProperties(reader, sideProject, projectId);
 
-            sideProject.GoalsAndObjectives = _goalDao.GetGoalsByProjectId(projectId);
+            sideProject.GoalsAndObjectives = _goalDao.GetGoalsBySideProjectId(projectId);
             sideProject.AdditionalImagesUrl = _imageDao.GetImagesBySideProjectId(projectId);
             sideProject.ToolsUsed = _skillDao.GetSkillsBySideProjectId(projectId);
             sideProject.Contributors = _contributorDao.GetContributorsByProjectId(projectId);

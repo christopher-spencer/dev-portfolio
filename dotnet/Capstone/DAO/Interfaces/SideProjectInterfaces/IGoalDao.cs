@@ -5,16 +5,27 @@ namespace Capstone.DAO.Interfaces
 {
     public interface IGoalDao
     {
-        Goal CreateGoalByProjectId(int projectId, Goal goal);
+        /*  
+            **********************************************************************************************
+                                                    GOAL CRUD
+            **********************************************************************************************
+        */    
         Goal CreateGoal(Goal goal);
-        List<Goal> GetGoalsByProjectId(int projectId);
-        Goal GetGoalByProjectId(int projectId, int goalId);
         Goal GetGoalById(int goalId);
         List<Goal> GetAllGoals();
-        Goal UpdateGoalByProjectId(int projectId, Goal updatedGoal);
         Goal UpdateGoal(Goal goal);
-        int DeleteGoalByProjectId(int projectId, int goalId);
         int DeleteGoalById(int goalId);
+        
+        /*  
+            **********************************************************************************************
+                                            SIDE PROJECT GOAL CRUD
+            **********************************************************************************************
+        */       
+        Goal CreateGoalBySideProjectId(int projectId, Goal goal);
+        List<Goal> GetGoalsBySideProjectId(int projectId);
+        Goal GetGoalBySideProjectId(int projectId, int goalId);
+        Goal UpdateGoalBySideProjectId(int projectId, Goal updatedGoal);
+        int DeleteGoalBySideProjectId(int projectId, int goalId);
 
     }
 }
