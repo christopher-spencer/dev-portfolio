@@ -17,6 +17,22 @@ namespace Capstone.Controllers
             this.blogPostsDao = blogPostsDao;
         }
 
+        [Authorize]
+        [HttpPost("/create-blogpost")]
+        public ActionResult CreateBlogPost(BlogPost blogPost)
+        {
+            BlogPost createdBlogPost = blogPostsDao.CreateBlogPost(blogPost);
+
+            if (createdBlogPost == null) 
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return CreatedAtAction(nameof(GetBlogPostById), new { blogPostId = createdBlogPost.Id }, createdBlogPost);
+            }
+        }
+
         [HttpGet("/blogposts")]
         public ActionResult<List<BlogPost>> GetBlogPosts()
         {
@@ -44,22 +60,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(blogPost);
-            }
-        }
-
-        [Authorize]
-        [HttpPost("/create-blogpost")]
-        public ActionResult CreateBlogPost(BlogPost blogPost)
-        {
-            BlogPost createdBlogPost = blogPostsDao.CreateBlogPost(blogPost);
-
-            if (createdBlogPost == null) 
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return CreatedAtAction(nameof(GetBlogPostById), new { blogPostId = createdBlogPost.Id }, createdBlogPost);
             }
         }
 
