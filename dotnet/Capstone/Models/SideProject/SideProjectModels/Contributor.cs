@@ -17,6 +17,7 @@ namespace Capstone.Models
         public Website LinkedIn { get; set; }
         public int GitHubId { get; set; }
         public Website GitHub { get; set; }
+//TODO rename PortfolioLink?
         public int PortfolioId { get; set; }
         public Website Portfolio { get; set; }
 

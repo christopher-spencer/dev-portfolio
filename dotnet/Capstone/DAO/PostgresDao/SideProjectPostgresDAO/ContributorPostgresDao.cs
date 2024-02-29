@@ -385,38 +385,15 @@ namespace Capstone.DAO
                 Id = Convert.ToInt32(reader["id"]),
                 FirstName = Convert.ToString(reader["first_name"]),
                 LastName = Convert.ToString(reader["last_name"]),
-                ContributorImageId = Convert.ToInt32(reader["contributor_image_id"]),
                 Email = Convert.ToString(reader["email"]),
                 Bio = Convert.ToString(reader["bio"]),
-                ContributionDetails = Convert.ToString(reader["contribution_details"]),
-                LinkedInId = Convert.ToInt32(reader["linkedin_id"]),
-                GitHubId = Convert.ToInt32(reader["github_id"]),
-                PortfolioId = Convert.ToInt32(reader["portfolio_id"])
+                ContributionDetails = Convert.ToString(reader["contribution_details"])
             };
 
-            if (reader["contributor_image_id"] != DBNull.Value)
-            {
-                int contributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
-                contributor.ContributorImage = _imageDao.GetImageById(contributorImageId);
-            }
-
-            if (reader["linkedin_id"] != DBNull.Value)
-            {
-                int linkedInId = Convert.ToInt32(reader["linkedin_id"]);
-                contributor.LinkedIn = _websiteDao.GetWebsiteById(linkedInId);
-            }
-
-            if (reader["github_id"] != DBNull.Value)
-            {
-                int githubId = Convert.ToInt32(reader["github_id"]);
-                contributor.GitHub = _websiteDao.GetWebsiteById(githubId);
-            }
-
-            if (reader["portfolio_id"] != DBNull.Value)
-            {
-                int portfolioId = Convert.ToInt32(reader["portfolio_id"]);
-                contributor.Portfolio = _websiteDao.GetWebsiteById(portfolioId);
-            }
+            SetContributorImageIdProperties(reader, contributor);
+            SetContributorLinkedInIdProperties(reader, contributor);
+            SetContributorGitHubIdProperties(reader, contributor);
+            SetContributorPortfolioIdProperties(reader, contributor);
 
             return contributor;
         }
@@ -424,22 +401,62 @@ namespace Capstone.DAO
 // TODO Contrubutor Website CRUD in WebsitePostgresDao
         private void SetContributorImageIdProperties(NpgsqlDataReader reader, Contributor contributor)
         {
+            contributor.ContributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
 
+            if (reader["contributor_image_id"] != DBNull.Value)
+            {
+                int contributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
+                contributor.ContributorImage = _imageDao.GetImageById(contributorImageId);
+            }
+            else
+            {
+                contributor.ContributorImageId = 0;
+            }
         }      
 
         private void SetContributorLinkedInIdProperties(NpgsqlDataReader reader, Contributor contributor)
         {
+            contributor.LinkedInId = Convert.ToInt32(reader["linkedin_id"]);
 
+            if (reader["linkedin_id"] != DBNull.Value)
+            {
+                int linkedInId = Convert.ToInt32(reader["linkedin_id"]);
+                contributor.LinkedIn = _websiteDao.GetWebsiteById(linkedInId);
+            }
+            else
+            {
+                contributor.LinkedInId = 0;
+            }
         }
 
         private void SetContributorGitHubIdProperties(NpgsqlDataReader reader, Contributor contributor)
         {
+            contributor.GitHubId = Convert.ToInt32(reader["github_id"]);
 
+            if (reader["github_id"] != DBNull.Value)
+            {
+                int githubId = Convert.ToInt32(reader["github_id"]);
+                contributor.GitHub = _websiteDao.GetWebsiteById(githubId);
+            }
+            else
+            {
+                contributor.GitHubId = 0;
+            }
         }
 
         private void SetContributorPortfolioIdProperties(NpgsqlDataReader reader, Contributor contributor)
         {
-            
+            contributor.PortfolioId = Convert.ToInt32(reader["portfolio_id"]);
+
+            if (reader["portfolio_id"] != DBNull.Value)
+            {
+                int portfolioId = Convert.ToInt32(reader["portfolio_id"]);
+                contributor.Portfolio = _websiteDao.GetWebsiteById(portfolioId);
+            }
+            else
+            {
+                contributor.PortfolioId = 0;
+            }
         }
     }
 }
