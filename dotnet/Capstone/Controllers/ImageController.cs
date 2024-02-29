@@ -44,7 +44,7 @@ namespace Capstone.Controllers
             }
             catch (DaoException ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, "An error occurred while creating the image.");
             }
         }
 
@@ -97,7 +97,7 @@ namespace Capstone.Controllers
             }
             catch (DaoException ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, "An error occurred while updating the image.");
             }
         }
 
@@ -150,7 +150,7 @@ namespace Capstone.Controllers
             }
             catch (DaoException ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, "An error occurred while creating the side project image.");
             }
         }
 
@@ -257,7 +257,7 @@ namespace Capstone.Controllers
             }
             catch (DaoException ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, "An error occurred while creating blog post image.");
             }
         }
 
@@ -346,72 +346,88 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 // TODO add websiteType (?) for sideproject vs portfolio endpoint paths (?)
-        // [HttpPost("website/{websiteId}")]
-        // public ActionResult<Image> CreateImageByWebsiteId(int websiteId, Image image)
-        // {
-        //     try
-        //     {
-        //         var createdImage = _imageDao.CreateImageByWebsiteId(websiteId, image);
-        //         return Created($"/api/image/{createdImage.Id}", createdImage);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        [Authorize]
+        [HttpPost("create-website-logo/{websiteId}")]
+        public ActionResult CreateImageByWebsiteId(int websiteId, Image image)
+        {
+            try
+            {   
+                Image createdLogo = _imageDao.CreateImageByWebsiteId(websiteId, image);
 
-        // [HttpGet("website/{websiteId}")]
-        // public ActionResult<Image> GetImageByWebsiteId(int websiteId)
-        // {
-        //     var image = _imageDao.GetImageByWebsiteId(websiteId);
-        //     if (image == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //     return image;
-        // }
+                if (createdLogo == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(createdLogo);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while creating the website logo.");
+            }
+        }
 
-        // [HttpGet("website/{websiteId}/all")]
-        // public ActionResult<List<Image>> GetImagesByWebsiteId(int websiteId)
-        // {
-        //     var images = _imageDao.GetImagesByWebsiteId(websiteId);
-        //     return images;
-        // }
+        [HttpGet("website-logo/{websiteId}")]
+        public ActionResult<Image> GetImageByWebsiteId(int websiteId)
+        {
+            Image logo = _imageDao.GetImageByWebsiteId(websiteId);
 
-        // [HttpPut("website/{websiteId}")]
-        // public ActionResult<Image> UpdateImageByWebsiteId(int websiteId, Image updatedImage)
-        // {
-        //     try
-        //     {
-        //         var image = _imageDao.UpdateImageByWebsiteId(websiteId, updatedImage);
-        //         if (image == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         return image;
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+            if (logo == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(logo);
+            }
+        }
 
-        // [HttpDelete("website/{websiteId}/image/{imageId}")]
-        // public IActionResult DeleteImageByWebsiteId(int websiteId, int imageId)
-        // {
-        //     try
-        //     {
-        //         var deletedRows = _imageDao.DeleteImageByWebsiteId(websiteId, imageId);
-        //         if (deletedRows == 0)
-        //         {
-        //             return NotFound();
-        //         }
-        //         return NoContent();
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        [Authorize]
+        [HttpPut("website-logo/{websiteId}")]
+        public ActionResult<Image> UpdateImageByWebsiteId(int websiteId, Image logo)
+        {
+            try
+            {
+                Image updatedLogo = _imageDao.UpdateImageByWebsiteId(websiteId, logo);
+
+                if (updatedLogo == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedLogo);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the website logo.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("website-logo/{websiteId}/{imageId}")]
+        public ActionResult DeleteImageByWebsiteId(int websiteId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByWebsiteId(websiteId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Website logo was deleted successfully.");
+                }
+                else 
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the website logo.");
+            }
+        }
     }
 }

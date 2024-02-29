@@ -663,41 +663,6 @@ namespace Capstone.DAO
             return image;
         }
 
-        public List<Image> GetImagesByWebsiteId(int websiteId)
-        {
-            List<Image> images = new List<Image>();
-
-            string sql = "SELECT i.id, i.name, i.url " +
-                         "FROM images i " +
-                         "JOIN website_images wi ON i.id = wi.image_id " +
-                         "WHERE wi.website_id = @websiteId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        Image image = MapRowToImage(reader);
-                        images.Add(image);
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving images by website ID.", ex);
-            }
-
-            return images;
-        }
-
         public Image UpdateImageByWebsiteId(int websiteId, Image updatedImage)
         {
             string updateImageSql = "UPDATE images " +
