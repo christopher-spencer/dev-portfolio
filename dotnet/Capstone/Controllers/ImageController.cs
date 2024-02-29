@@ -131,7 +131,7 @@ namespace Capstone.Controllers
         */
 
         // TODO check out "ex.Message"
-
+        [Authorize]
         [HttpPost("sideproject/{projectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int projectId, Image image)
         {
@@ -237,94 +237,106 @@ namespace Capstone.Controllers
 
         // FIXME when you create a new image for a project, it replaces the old at mainImageId but the old image stays in database unconnected to anything
 
-        // [HttpPost("/blogpost/{blogPostId}/create-image")]
-        // public IActionResult CreateImageByBlogPostId(int blogPostId, Image image)
-        // {
-        //     try
-        //     {
-        //         Image createdImage = _imageDao.CreateImageByBlogPostId(blogPostId, image);
-        //         return Ok(createdImage);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        
+        [Authorize]
+        [HttpPost("/blogpost/{blogPostId}/create-image")]
+        public ActionResult CreateImageByBlogPostId(int blogPostId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByBlogPostId(blogPostId, image);
 
-        // [HttpGet("/blogpost/{blogPostId}/image/{imageId}")]
-        // public IActionResult GetImageByBlogPostIdAndImageId(int blogPostId, int imageId)
-        // {
-        //     try
-        //     {
-        //         Image image = _imageDao.GetImageByImageIdAndBlogPostId(imageId, blogPostId);
-        //         if (image == null)
-        //         {
-        //             return NotFound();
-        //         }
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(createdImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
-        //         return Ok(image);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, $"Internal server error: {ex.Message}");
-        //     }
-        // }
+        [HttpGet("/blogpost/{blogPostId}/image/{imageId}")]
+        public ActionResult GetImageByBlogPostIdAndImageId(int blogPostId, int imageId)
+        {
+            Image image = _imageDao.GetImageByImageIdAndBlogPostId(imageId, blogPostId);
 
-        // [HttpGet("/blogpost/{blogPostId}/images")]
-        // public IActionResult GetImagesByBlogPostId(int blogPostId)
-        // {
-        //     try
-        //     {
-        //         List<Image> images = _imageDao.GetImagesByBlogPostId(blogPostId);
-        //         return Ok(images);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
 
-        // [HttpPut("/blogpost/{blogPostId}/update-image")]
-        // public IActionResult UpdateImageByBlogPostId(int blogPostId, Image image)
-        // {
-        //     try
-        //     {
-        //         Image updatedImage = _imageDao.UpdateImageByBlogPostId(blogPostId, image);
-        //         if (updatedImage != null)
-        //         {
-        //             return Ok(updatedImage);
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        }
 
-        // [HttpDelete("/blogpost/{blogPostId}/delete-image/{imageId}")]
-        // public IActionResult DeleteImageByBlogPostId(int blogPostId, int imageId)
-        // {
-        //     try
-        //     {
-        //         int rowsAffected = _imageDao.DeleteImageByBlogPostId(blogPostId, imageId);
-        //         if (rowsAffected > 0)
-        //         {
-        //             return Ok();
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        [HttpGet("/blogpost/{blogPostId}/images")]
+        public ActionResult GetImagesByBlogPostId(int blogPostId)
+        {
+            List<Image> images = _imageDao.GetImagesByBlogPostId(blogPostId);
+
+            if (images == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(images);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/update-blogpost/{blogPostId}")]
+        public ActionResult UpdateImageByBlogPostId(int blogPostId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByBlogPostId(blogPostId, image);
+
+                if (updatedImage == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the blog post image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/blogpost/{blogPostId}/delete-image/{imageId}")]
+        public IActionResult DeleteImageByBlogPostId(int blogPostId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByBlogPostId(blogPostId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Blog post image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the blog post image.");
+            }
+        }
 
 
         /*  
