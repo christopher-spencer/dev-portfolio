@@ -29,15 +29,22 @@ namespace Capstone.Controllers
         [HttpPost("/create-image")]
         public ActionResult CreateImage(Image image)
         {
-             Image createdImage = _imageDao.CreateImage(image);
+            try
+            {
+                Image createdImage = _imageDao.CreateImage(image);
             
-            if (createdImage == null)
-            {
-                return BadRequest();
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetImageById), new { imageId = createdImage.Id }, createdImage);
+                }
             }
-            else
+            catch (DaoException ex)
             {
-                return CreatedAtAction(nameof(GetImageById), new { imageId = createdImage.Id }, createdImage);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -75,15 +82,22 @@ namespace Capstone.Controllers
         [HttpPut("/update-image/{imageId}/")]
         public ActionResult UpdateImage(Image image, int imageId)
         {
-            Image updatedImage = _imageDao.UpdateImage(image, imageId);
+            try 
+            {
+                Image updatedImage = _imageDao.UpdateImage(image, imageId);
 
-            if (updatedImage == null)
-            {
-                return BadRequest();
+                if (updatedImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
             }
-            else
+            catch (DaoException ex)
             {
-                return Ok(updatedImage);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -119,19 +133,26 @@ namespace Capstone.Controllers
         [HttpPost("sideproject/{projectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int projectId, Image image)
         {
-            Image createdImage = _imageDao.CreateImageBySideProjectId(projectId, image);
-        
-            if (createdImage == null)
+            try
             {
-                return BadRequest();
+                Image createdImage = _imageDao.CreateImageBySideProjectId(projectId, image);
+            
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetImageBySideProjectId), new { imageId = createdImage.Id}, createdImage);
+                }
             }
-            else
+            catch (DaoException ex)
             {
-                return CreatedAtAction(nameof(GetImageBySideProjectId), new { imageId = createdImage.Id}, createdImage);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        // [HttpGet("project/{projectId}")]
+        // [HttpGet("sideprojects/{projectId}/image")]
         // public IActionResult GetImagesBySideProjectId(int projectId)
         // {
         //     try
