@@ -342,13 +342,25 @@ namespace Capstone.DAO
                 IconId = Convert.ToInt32(reader["icon_id"])
             };
 
+            SetSkillIconIdProperties(reader, skill);
+
+            return skill;
+        }
+
+        private void SetSkillIconIdProperties(NpgsqlDataReader reader, Skill skill)
+        {
             if (reader["logo_id"] != DBNull.Value)
             {
+                skill.IconId = Convert.ToInt32(reader["icon_id"]);
+
                 int iconId = Convert.ToInt32(reader["icon_id"]);
                 skill.Icon = _imageDao.GetImageById(iconId);
             }
+            else
+            {
+                skill.IconId = 0;
+            }
 
-            return skill;
         }
     }
 }
