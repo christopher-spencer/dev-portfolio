@@ -164,7 +164,7 @@ namespace Capstone.DAO
 
         public Skill CreateSkillBySideProjectId(int projectId, Skill skill)
         {
-            string insertSkillSql = "INSERT INTO skills (name, icon_id) VALUES (@name, @iconId) RETURNING id;";
+            string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
             string insertSideProjectSkillSql = "INSERT INTO sideproject_skills (sideproject_id, skill_id) VALUES (@projectId, @skillId);";
 
             try
@@ -175,7 +175,6 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmdInsertSkill = new NpgsqlCommand(insertSkillSql, connection);
                     cmdInsertSkill.Parameters.AddWithValue("@name", skill.Name);
-                    cmdInsertSkill.Parameters.AddWithValue("@iconId", skill.IconId);
 
                     int skillId = (int)cmdInsertSkill.ExecuteScalar();
 
@@ -269,7 +268,7 @@ namespace Capstone.DAO
         public Skill UpdateSkillBySideProjectId(int projectId, Skill skill)
         {
             string sql = "UPDATE skills " +
-                         "SET name = @name, icon_id = @iconId " +
+                         "SET name = @name " +
                          "FROM sideproject_skills " +
                          "WHERE skills.id = sideproject_skills.skill_id " +
                          "AND sideproject_skills.project_id = @projectId " +
@@ -285,7 +284,6 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@projectId", projectId);
                     cmd.Parameters.AddWithValue("@skillId", skill.Id);
                     cmd.Parameters.AddWithValue("@name", skill.Name);
-                    cmd.Parameters.AddWithValue("@iconId", skill.IconId);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)

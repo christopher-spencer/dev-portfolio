@@ -26,7 +26,7 @@ namespace Capstone.DAO
         */    
         public Goal CreateGoal(Goal goal)
         {
-            string sql = "INSERT INTO goals (description, icon_id) VALUES (@description, @iconId) RETURNING id;";
+            string sql = "INSERT INTO goals (description) VALUES (@description) RETURNING id;";
 
             try
             {
@@ -36,7 +36,6 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@description", goal.Description);
-                    cmd.Parameters.AddWithValue("@iconId", goal.Icon.Id);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     goal.Id = id;
@@ -108,7 +107,7 @@ namespace Capstone.DAO
 
         public Goal UpdateGoal(Goal goal)
         {
-            string sql = "UPDATE goals SET description = @description, icon_id = @iconId WHERE id = @id;";
+            string sql = "UPDATE goals SET description = @description WHERE id = @id;";
 
             try
             {
@@ -119,7 +118,6 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@id", goal.Id);
                     cmd.Parameters.AddWithValue("@description", goal.Description);
-                    cmd.Parameters.AddWithValue("@iconId", goal.Icon.Id);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -165,7 +163,7 @@ namespace Capstone.DAO
         */              
         public Goal CreateGoalBySideProjectId(int projectId, Goal goal)
         {
-            string insertGoalSql = "INSERT INTO goals (description, icon_id) VALUES (@description, @iconId) RETURNING id;";
+            string insertGoalSql = "INSERT INTO goals (description) VALUES (@description) RETURNING id;";
             string insertSideProjectGoalSql = "INSERT INTO sideproject_goals (sideproject_id, goal_id) VALUES (@projectId, @goalId);";
 
             try
@@ -176,7 +174,6 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmdInsertGoal = new NpgsqlCommand(insertGoalSql, connection);
                     cmdInsertGoal.Parameters.AddWithValue("@description", goal.Description);
-                    cmdInsertGoal.Parameters.AddWithValue("@iconId", goal.Icon.Id);
 
                     int goalId = (int)cmdInsertGoal.ExecuteScalar();
 
@@ -269,7 +266,7 @@ namespace Capstone.DAO
         public Goal UpdateGoalBySideProjectId(int projectId, Goal updatedGoal)
         {
             string sql = "UPDATE goals " +
-                         "SET description = @description, icon_id = @iconId " +
+                         "SET description = @description " +
                          "FROM sideproject_goals " +
                          "WHERE goals.id = sideproject_goals.goal_id " +
                          "AND sideproject_goals.sideproject_id = @projectId;";
@@ -283,7 +280,6 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
                     cmd.Parameters.AddWithValue("@description", updatedGoal.Description);
-                    cmd.Parameters.AddWithValue("@iconId", updatedGoal.Icon.Id);
 
                     int count = cmd.ExecuteNonQuery();
 
