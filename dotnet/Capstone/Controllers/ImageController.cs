@@ -152,38 +152,33 @@ namespace Capstone.Controllers
             }
         }
 
-        // [HttpGet("sideprojects/{projectId}/image")]
-        // public IActionResult GetImagesBySideProjectId(int projectId)
-        // {
-        //     try
-        //     {
-        //         List<Image> images = _imageDao.GetImagesBySideProjectId(projectId);
-        //         return Ok(images);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        [HttpGet("sideproject/{projectId}/images")]
+        public IActionResult GetImagesBySideProjectId(int projectId)
+        {
+            List<Image> images = _imageDao.GetImagesBySideProjectId(projectId);
+
+            if (images == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(images);               
+            }
+        }
 
         [HttpGet("/sideproject/{projectId}/image/{imageId}")]
         public ActionResult<Image> GetImageBySideProjectId(int projectId, int imageId)
         {
-            try
+            Image image = _imageDao.GetImageBySideProjectId(projectId, imageId);
+            
+            if (image == null)
             {
-                Image image = _imageDao.GetImageBySideProjectId(projectId, imageId);
-                if (image == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return Ok(image);
-                }
+                return NotFound();
             }
-            catch (DaoException ex)
+            else
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return Ok(image);
             }
         }
 
