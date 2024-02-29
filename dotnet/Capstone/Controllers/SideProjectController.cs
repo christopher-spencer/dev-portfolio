@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Capstone.Controllers
 {
-
-// TODO fix controller based on BlogPostController
     [Route("[controller]")]
     [ApiController]
     public class SideProjectController : ControllerBase
