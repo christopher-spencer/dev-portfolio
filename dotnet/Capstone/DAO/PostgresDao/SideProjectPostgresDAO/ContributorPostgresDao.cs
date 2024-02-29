@@ -420,5 +420,26 @@ namespace Capstone.DAO
 
             return contributor;
         }
+// TODO Contributor Image CRUD in ImagePostgresDao   
+// TODO Contrubutor Website CRUD in WebsitePostgresDao
+        private void SetContributorImageIdProperties(NpgsqlDataReader reader, Contributor contributor)
+        {
+
+        }      
+
+        private void SetContributorLinkedInIdProperties(NpgsqlDataReader reader, Contributor contributor)
+        {
+
+        }
+
+        private void SetContributorGitHubIdProperties(NpgsqlDataReader reader, Contributor contributor)
+        {
+
+        }
+
+        private void SetContributorPortfolioIdProperties(NpgsqlDataReader reader, Contributor contributor)
+        {
+            
+        }
     }
 }
