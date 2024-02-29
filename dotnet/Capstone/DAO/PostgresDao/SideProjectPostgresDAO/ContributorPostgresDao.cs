@@ -28,10 +28,10 @@ namespace Capstone.DAO
         */ 
         public Contributor CreateContributor(Contributor contributor)
         {
-            string sql = "INSERT INTO contributors (first_name, last_name, contributor_image_id, email, " +
-                         "bio, contribution_details, linkedin_id, github_id, portfolio_id) " +
-                         "VALUES (@first_name, @last_name, @contributor_image_id, @email, @bio, " +
-                         "@contribution_details, @linkedin_id, @github_id, @portfolio_id) " +
+            string sql = "INSERT INTO contributors (first_name, last_name, email, " +
+                         "bio, contribution_details) " +
+                         "VALUES (@first_name, @last_name, @email, @bio, " +
+                         "@contribution_details) " +
                          "RETURNING id;";
 
             try
@@ -43,13 +43,9 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
                     cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmd.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
                     cmd.Parameters.AddWithValue("@bio", contributor.Bio);
                     cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmd.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
-                    cmd.Parameters.AddWithValue("@github_id", contributor.GitHubId);
-                    cmd.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     contributor.Id = id;
@@ -125,9 +121,8 @@ namespace Capstone.DAO
 
         public Contributor UpdateContributor(Contributor contributor)
         {
-            string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, contributor_image_id = @contributor_image_id, " +
-                         "email = @email, bio = @bio, contribution_details = @contribution_details, " +
-                         "linkedin_id = @linkedin_id, github_id = @github_id, portfolio_id = @portfolio_id " +
+            string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, " +
+                         "email = @email, bio = @bio, contribution_details = @contribution_details " +
                          "WHERE id = @id;";
 
             try
@@ -140,13 +135,9 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@id", contributor.Id);
                     cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
                     cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmd.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
                     cmd.Parameters.AddWithValue("@bio", contributor.Bio);
                     cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmd.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
-                    cmd.Parameters.AddWithValue("@github_id", contributor.GitHubId);
-                    cmd.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -192,10 +183,10 @@ namespace Capstone.DAO
         */          
         public Contributor CreateContributorBySideProjectId(int projectId, Contributor contributor)
         {
-            string insertContributorSql = "INSERT INTO contributors (first_name, last_name, contributor_image_id, email, " +
-                                          "bio, contribution_details, linkedin_id, github_id, portfolio_id) " +
-                                          "VALUES (@first_name, @last_name, @contributor_image_id, @email, @bio, " +
-                                          "@contribution_details, @linkedin_id, @github_id, @portfolio_id) " +
+            string insertContributorSql = "INSERT INTO contributors (first_name, last_name, email, " +
+                                          "bio, contribution_details) " +
+                                          "VALUES (@first_name, @last_name, @email, @bio, " +
+                                          "@contribution_details) " +
                                           "RETURNING id;";
             string insertSideProjectContributorSql = "INSERT INTO sideproject_contributors (sideproject_id, contributor_id) " +
                                                      "VALUES (@projectId, @contributorId);";
@@ -209,13 +200,9 @@ namespace Capstone.DAO
                     NpgsqlCommand cmdInsertContributor = new NpgsqlCommand(insertContributorSql, connection);
                     cmdInsertContributor.Parameters.AddWithValue("@first_name", contributor.FirstName);
                     cmdInsertContributor.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmdInsertContributor.Parameters.AddWithValue("@contributor_image_id", contributor.ContributorImageId);
                     cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email);
                     cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio);
                     cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-                    cmdInsertContributor.Parameters.AddWithValue("@linkedin_id", contributor.LinkedInId);
-                    cmdInsertContributor.Parameters.AddWithValue("@github_id", contributor.GitHubId);
-                    cmdInsertContributor.Parameters.AddWithValue("@portfolio_id", contributor.PortfolioId);
 
                     int contributorId = (int)cmdInsertContributor.ExecuteScalar();
 
@@ -309,9 +296,8 @@ namespace Capstone.DAO
         public Contributor UpdateContributorBySideProjectId(int projectId, Contributor updatedContributor)
         {
             string sql = "UPDATE contributors " +
-                         "SET first_name = @first_name, last_name = @last_name, contributor_image_id = @contributor_image_id, " +
-                         "email = @email, bio = @bio, contribution_details = @contribution_details, " +
-                         "linkedin_id = @linkedin_id, github_id = @github_id, portfolio_id = @portfolio_id " +
+                         "SET first_name = @first_name, last_name = @last_name, " +
+                         "email = @email, bio = @bio, contribution_details = @contribution_details " +
                          "FROM sideproject_contributors " +
                          "WHERE contributors.id = sideproject_contributors.contributor_id " +
                          "AND sideproject_contributors.sideproject_id = @projectId;";
@@ -326,13 +312,9 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@projectId", projectId);
                     cmd.Parameters.AddWithValue("@first_name", updatedContributor.FirstName);
                     cmd.Parameters.AddWithValue("@last_name", updatedContributor.LastName);
-                    cmd.Parameters.AddWithValue("@contributor_image_id", updatedContributor.ContributorImageId);
                     cmd.Parameters.AddWithValue("@email", updatedContributor.Email);
                     cmd.Parameters.AddWithValue("@bio", updatedContributor.Bio);
                     cmd.Parameters.AddWithValue("@contribution_details", updatedContributor.ContributionDetails);
-                    cmd.Parameters.AddWithValue("@linkedin_id", updatedContributor.LinkedInId);
-                    cmd.Parameters.AddWithValue("@github_id", updatedContributor.GitHubId);
-                    cmd.Parameters.AddWithValue("@portfolio_id", updatedContributor.PortfolioId);
 
                     int count = cmd.ExecuteNonQuery();
 
