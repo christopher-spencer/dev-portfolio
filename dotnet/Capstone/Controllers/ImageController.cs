@@ -1,10 +1,9 @@
-using Capstone.DAO;
+using System.Collections.Generic;
 using Capstone.DAO.Interfaces;
 using Capstone.Exceptions;
 using Capstone.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 
 namespace Capstone.Controllers
 {
@@ -25,71 +24,67 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        // [HttpPost]
-        // public IActionResult CreateImage(Image image)
-        // {
-        //     try
-        //     {
-        //         Image createdImage = _imageDao.CreateImage(image);
-        //         return Ok(createdImage);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
-
-        // [HttpGet("{imageId}")]
-        // public IActionResult GetImageById(int imageId)
-        // {
-        //     try
-        //     {
-        //         Image image = _imageDao.GetImageById(imageId);
-        //         if (image == null)
-        //         {
-        //             return NotFound();
-        //         }
-
-        //         return Ok(image);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, $"Internal server error: {ex.Message}");
-        //     }
-        // }
-
-        [HttpGet("/get-all-images")]
-        public IActionResult GetAllImages()
+        [Authorize]
+        [HttpPost("/create-image")]
+        public ActionResult CreateImage(Image image)
         {
-            try
+             Image createdImage = _imageDao.CreateImage(image);
+            
+            if (createdImage == null)
             {
-                List<Image> images = _imageDao.GetAllImages();
-                return Ok(images);
+                return BadRequest();
             }
-            catch (DaoException ex)
+            else
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return CreatedAtAction(nameof(GetImageById), new { imageId = createdImage.Id }, createdImage);
             }
         }
 
-        // [HttpPut]
-        // public IActionResult UpdateImage(Image image)
-        // {
-        //     try
-        //     {
-        //         Image updatedImage = _imageDao.UpdateImage(image);
-        //         if (updatedImage == null)
-        //         {
-        //             return NotFound();
-        //         }
+        [HttpGet("/image/{imageId}")]
+        public ActionResult<Image> GetImageById(int imageId)
+        {
+            Image image = _imageDao.GetImageById(imageId);
 
-        //         return Ok(updatedImage);
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, $"Internal server error: {ex.Message}");
-        //     }
-        // }
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [HttpGet("/get-all-images")]
+        public ActionResult<List<Image>> GetAllImages()
+        {
+            List<Image> images = _imageDao.GetAllImages();
+
+            if (images == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(images);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/update-image/{imageId}/")]
+        public ActionResult UpdateImage(Image image, int imageId)
+        {
+            Image updatedImage = _imageDao.UpdateImage(image, imageId);
+
+            if (updatedImage == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(updatedImage);
+            }
+        }
 
         // [HttpDelete("{imageId}")]
         // public IActionResult DeleteImageById(int imageId)

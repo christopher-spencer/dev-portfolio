@@ -105,7 +105,7 @@ namespace Capstone.DAO
             return images;
         }
 
-        public Image UpdateImage(Image image)
+        public Image UpdateImage(Image image, int imageId)
         {
             string sql = "UPDATE images SET name = @name, url = @url WHERE id = @id;";
 
@@ -116,7 +116,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", image.Id);
+                    cmd.Parameters.AddWithValue("@id", imageId);
                     cmd.Parameters.AddWithValue("@name", image.Name);
                     cmd.Parameters.AddWithValue("@url", image.Url);
 
