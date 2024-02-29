@@ -26,7 +26,7 @@ namespace Capstone.DAO
         */
         public Skill CreateSkill(Skill skill)
         {
-            string sql = "INSERT INTO skills (name, icon_id) VALUES (@name, @iconId) RETURNING id;";
+            string sql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
 
             try
             {
@@ -36,7 +36,6 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", skill.Name);
-                    cmd.Parameters.AddWithValue("@iconId", skill.Icon.Id);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     skill.Id = id;
@@ -108,7 +107,7 @@ namespace Capstone.DAO
 
         public Skill UpdateSkill(Skill skill)
         {
-            string sql = "UPDATE skills SET name = @name, icon_id = @iconId WHERE id = @id;";
+            string sql = "UPDATE skills SET name = @name WHERE id = @id;";
 
             try
             {
@@ -119,7 +118,6 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@id", skill.Id);
                     cmd.Parameters.AddWithValue("@name", skill.Name);
-                    cmd.Parameters.AddWithValue("@iconId", skill.Icon.Id);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -338,8 +336,7 @@ namespace Capstone.DAO
             Skill skill = new Skill
             {
                 Id = Convert.ToInt32(reader["id"]),
-                Name = Convert.ToString(reader["name"]),
-                IconId = Convert.ToInt32(reader["icon_id"])
+                Name = Convert.ToString(reader["name"])
             };
 
             SetSkillIconIdProperties(reader, skill);

@@ -334,17 +334,28 @@ namespace Capstone.DAO
             Goal goal = new Goal
             {
                 Id = Convert.ToInt32(reader["id"]),
-                Description = Convert.ToString(reader["description"]),
-                IconId = Convert.ToInt32(reader["icon_id"])
+                Description = Convert.ToString(reader["description"])
             };
 
-            if (reader["icon_id"] != DBNull.Value)
-            {
-                int iconId = Convert.ToInt32(reader["icon_id"]);
-                goal.Icon = _imageDao.GetImageById(iconId);
-            }
+            SetGoalIconIdProperties(reader, goal);
 
             return goal;
         }
+// TODO Goal Image CRUD in ImagePostgresDao 
+        private void SetGoalIconIdProperties(NpgsqlDataReader reader, Goal goal)
+        {
+            if (reader["icon_id"] != DBNull.Value)
+            {
+                goal.IconId = Convert.ToInt32(reader["icon_id"]);
+
+                int iconId = Convert.ToInt32(reader["icon_id"]);
+                goal.Icon = _imageDao.GetImageById(iconId);
+            }
+            else
+            {
+                goal.IconId = 0;
+            }
+        }
+
     }
 }
