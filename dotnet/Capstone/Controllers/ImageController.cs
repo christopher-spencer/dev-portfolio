@@ -17,7 +17,8 @@ namespace Capstone.Controllers
         {
             _imageDao = imageDao;
         }
-        // TODO uncomment and test out all IMAGE CONTROLLER METHODS
+// TODO uncomment and test out all IMAGE CONTROLLER METHODS
+//TODO wrap all CREATE/UPDATE/DELETE in try catch
         /*  
             **********************************************************************************************
                                                 IMAGE CRUD CONTROLLER
@@ -144,7 +145,6 @@ namespace Capstone.Controllers
         //     }
         // }
 
-//TODO wrap all in try catch
         [HttpGet("/sideproject/{projectId}/image/{imageId}")]
         public ActionResult<Image> GetImageBySideProjectId(int projectId, int imageId)
         {
