@@ -60,7 +60,6 @@ namespace Capstone.Controllers
             else
             {
                 return CreatedAtAction(nameof(GetBlogPostById), new { blogPostId = createdBlogPost.Id }, createdBlogPost);
-
             }
         }
 
@@ -72,7 +71,7 @@ namespace Capstone.Controllers
 
             if (updatedBlogPost == null)
             {
-                 return BadRequest();
+                return BadRequest();
             }
             else 
             {
@@ -90,7 +89,7 @@ namespace Capstone.Controllers
         
                 if (rowsAffected > 0)
                 {
-                    return Ok("Blog post deleted successfully");
+                    return Ok("Blog post deleted successfully.");
                 }
                 else
                 {

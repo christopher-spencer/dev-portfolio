@@ -23,14 +23,15 @@ namespace Capstone.Controllers
         [HttpGet("/sideprojects")]
         public ActionResult<List<SideProject>> GetSideProjects()
         {
-            try
+            List<SideProject> sideProjects = _sideProjectDao.GetSideProjects();
+
+            if (sideProjects == null)
             {
-                var sideProjects = _sideProjectDao.GetSideProjects();
-                return Ok(sideProjects);
+                return BadRequest();
             }
-            catch (DaoException ex)
+            else
             {
-                return StatusCode(500, ex.Message);
+                return Ok(sideProjects);
             }
         }
 
@@ -62,46 +63,45 @@ namespace Capstone.Controllers
             else
             {
                 return CreatedAtAction(nameof(GetSideProjectById), new { sideProjectId = createdSideProject.Id }, createdSideProject);
-
             }
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{id}")]
-        public ActionResult<SideProject> UpdateSideProject(int id, [FromBody] SideProject sideProject)
+        [HttpPut("/update-sideproject/{sideProjectId}")]
+        public ActionResult UpdateSideProject(SideProject sideProject, int sideProjectId)
         {
-            try
-            {
-                var updatedSideProject = _sideProjectDao.UpdateSideProject(sideProject, id);
+            SideProject updatedSideProject = _sideProjectDao.UpdateSideProject(sideProject, sideProjectId);
 
-                if (updatedSideProject == null)
-                {
-                    return NotFound();
-                }
+            if (updatedSideProject == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
                 return Ok(updatedSideProject);
             }
-            catch (DaoException ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/delete/{id}")]
-        public ActionResult<int> DeleteSideProject(int id)
+        [HttpDelete("/sideproject/delete/{sideProjectId}")]
+        public ActionResult<int> DeleteSideProject(int sideProjectId)
         {
             try
             {
-                var numberOfRowsAffected = _sideProjectDao.DeleteSideProjectBySideProjectId(id);
-                if (numberOfRowsAffected == 0)
+                int rowsAffected = _sideProjectDao.DeleteSideProjectBySideProjectId(sideProjectId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Side Project deleted successfully.");
+                }
+                else
                 {
                     return NotFound();
                 }
-                return Ok(numberOfRowsAffected);
             }
             catch (DaoException ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, "An error occurred while deleting the side project.");
             }
         }
     }
