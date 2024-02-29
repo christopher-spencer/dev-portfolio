@@ -21,15 +21,22 @@ namespace Capstone.Controllers
         [HttpPost("/create-blogpost")]
         public ActionResult CreateBlogPost(BlogPost blogPost)
         {
-            BlogPost createdBlogPost = blogPostsDao.CreateBlogPost(blogPost);
+            try
+            {
+                BlogPost createdBlogPost = blogPostsDao.CreateBlogPost(blogPost);
 
-            if (createdBlogPost == null) 
-            {
-                return BadRequest();
+                if (createdBlogPost == null) 
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetBlogPostById), new { blogPostId = createdBlogPost.Id }, createdBlogPost);
+                }
             }
-            else
+            catch (DaoException ex)
             {
-                return CreatedAtAction(nameof(GetBlogPostById), new { blogPostId = createdBlogPost.Id }, createdBlogPost);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -67,15 +74,22 @@ namespace Capstone.Controllers
         [HttpPut("/update-blogpost/{blogPostId}/")]
         public ActionResult UpdateBlogPost(BlogPost blogPost, int blogPostId)
         {
-            BlogPost updatedBlogPost = blogPostsDao.UpdateBlogPost(blogPost, blogPostId);
+            try
+            {
+                BlogPost updatedBlogPost = blogPostsDao.UpdateBlogPost(blogPost, blogPostId);
 
-            if (updatedBlogPost == null)
-            {
-                return BadRequest();
+                if (updatedBlogPost == null)
+                {
+                    return BadRequest();
+                }
+                else 
+                {
+                    return Ok(updatedBlogPost);
+                }
             }
-            else 
+            catch (DaoException ex)
             {
-                return Ok(updatedBlogPost);
+                return StatusCode(500, "An error occurred while updating the blog post.");
             }
         }
 

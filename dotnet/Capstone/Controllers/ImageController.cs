@@ -130,6 +130,8 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
+        // TODO check out "ex.Message"
+
         [HttpPost("sideproject/{projectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int projectId, Image image)
         {
@@ -182,47 +184,50 @@ namespace Capstone.Controllers
             }
         }
 
-        // [HttpPut("project/{projectId}")]
-        // public IActionResult UpdateImageBySideProjectId(int projectId, Image image)
-        // {
-        //     try
-        //     {
-        //         Image updatedImage = _imageDao.UpdateImageBySideProjectId(projectId, image);
-        //         if (updatedImage != null)
-        //         {
-        //             return Ok(updatedImage);
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        [Authorize]
+        [HttpPut("update-sideproject/{projectId}")]
+        public ActionResult UpdateImageBySideProjectId(int projectId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageBySideProjectId(projectId, image);
+                if (updatedImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the side project image.");
+            }
+        }
 
-        // [HttpDelete("project/{projectId}/{imageId}")]
-        // public IActionResult DeleteImageBySideProjectId(int projectId, int imageId)
-        // {
-        //     try
-        //     {
-        //         int rowsAffected = _imageDao.DeleteImageBySideProjectId(projectId, imageId);
-        //         if (rowsAffected > 0)
-        //         {
-        //             return Ok();
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException ex)
-        //     {
-        //         return StatusCode(500, ex.Message);
-        //     }
-        // }
+        [Authorize]
+        [HttpDelete("sideproject/{projectId}/delete-image/{imageId}")]
+        public IActionResult DeleteImageBySideProjectId(int projectId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageBySideProjectId(projectId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the blog post.");
+            }
+        }
 
         /*  
             **********************************************************************************************
