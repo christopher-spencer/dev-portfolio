@@ -345,7 +345,7 @@ namespace Capstone.Controllers
                                              WEBSITE IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-
+// TODO add websiteType (?) for sideproject vs portfolio endpoint paths (?)
         // [HttpPost("website/{websiteId}")]
         // public ActionResult<Image> CreateImageByWebsiteId(int websiteId, Image image)
         // {
