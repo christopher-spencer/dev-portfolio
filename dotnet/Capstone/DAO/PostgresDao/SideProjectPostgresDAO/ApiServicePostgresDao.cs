@@ -375,24 +375,44 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
-                Description = Convert.ToString(reader["description"]),
-                WebsiteId = Convert.ToInt32(reader["website_id"]),
-                LogoId = Convert.ToInt32(reader["logo_id"])
+                Description = Convert.ToString(reader["description"])
             };
 
+            SetApiServiceWebsiteIdProperties(reader, apiService);
+            SetApiServiceLogoIdProperties(reader, apiService);
+
+            return apiService;
+        }
+// TODO ApiService Image CRUD in ImagePostgresDao   
+// TODO ApiService Website CRUD in WebsitePostgresDao
+        private void SetApiServiceWebsiteIdProperties(NpgsqlDataReader reader, ApiService apiService)
+        {
             if (reader["website_id"] != DBNull.Value)
             {
+                apiService.WebsiteId = Convert.ToInt32(reader["website_id"]);
+
                 int websiteId = Convert.ToInt32(reader["website_id"]);
                 apiService.Website = _websiteDao.GetWebsiteById(websiteId);
             }
+            else
+            {
+                apiService.WebsiteId = 0;
+            }
+        }
+
+        private void SetApiServiceLogoIdProperties(NpgsqlDataReader reader, ApiService apiService)
+        {
+            apiService.LogoId = Convert.ToInt32(reader["logo_id"]);
 
             if (reader["logo_id"] != DBNull.Value)
             {
                 int logoId = Convert.ToInt32(reader["logo_id"]);
                 apiService.Logo = _imageDao.GetImageById(logoId);
             }
-
-            return apiService;
+            else
+            {
+                apiService.LogoId = 0;
+            }
         }
     }
 }
