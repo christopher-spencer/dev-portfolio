@@ -349,24 +349,43 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
-                Description = Convert.ToString(reader["description"]),
-                WebsiteId = Convert.ToInt32(reader["website_id"]),
-                LogoId = Convert.ToInt32(reader["logo_id"])
+                Description = Convert.ToString(reader["description"])
             };
 
+            SetDependencyLibraryWebsiteIdProperties(reader, dependencyLibrary);
+            SetDependencyLibraryLogoIdProperties(reader, dependencyLibrary);
+
+            return dependencyLibrary;
+        }
+
+        private void SetDependencyLibraryWebsiteIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary)
+        {
             if (reader["website_id"] != DBNull.Value)
             {
+                dependencyLibrary.WebsiteId = Convert.ToInt32(reader["website_id"]);
+
                 int websiteId = Convert.ToInt32(reader["website_id"]);
                 dependencyLibrary.Website = _websiteDao.GetWebsiteById(websiteId);
             }
+            else
+            {
+                dependencyLibrary.WebsiteId = 0;
+            }
+        }
 
+        private void SetDependencyLibraryLogoIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary)
+        {
             if (reader["logo_id"] != DBNull.Value)
             {
+                dependencyLibrary.LogoId = Convert.ToInt32(reader["logo_id"]);
+
                 int logoId = Convert.ToInt32(reader["logo_id"]);
                 dependencyLibrary.Logo = _imageDao.GetImageById(logoId);
             }
-
-            return dependencyLibrary;
+            else
+            {
+                dependencyLibrary.LogoId = 0;
+            }
         }
     }
 }

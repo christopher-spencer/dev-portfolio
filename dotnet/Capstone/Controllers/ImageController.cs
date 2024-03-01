@@ -103,7 +103,7 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpDelete("/image/delete/{imageId}")]
-        public IActionResult DeleteImageById(int imageId)
+        public ActionResult DeleteImageById(int imageId)
         {
             try
             {
@@ -130,7 +130,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        // TODO check out "ex.Message"
         [Authorize]
         [HttpPost("sideproject/{projectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int projectId, Image image)
@@ -155,7 +154,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("sideproject/{projectId}/images")]
-        public IActionResult GetImagesBySideProjectId(int projectId)
+        public ActionResult GetImagesBySideProjectId(int projectId)
         {
             List<Image> images = _imageDao.GetImagesBySideProjectId(projectId);
 
@@ -208,7 +207,7 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpDelete("sideproject/{projectId}/delete-image/{imageId}")]
-        public IActionResult DeleteImageBySideProjectId(int projectId, int imageId)
+        public ActionResult DeleteImageBySideProjectId(int projectId, int imageId)
         {
             try
             {
@@ -317,7 +316,7 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpDelete("/blogpost/{blogPostId}/delete-image/{imageId}")]
-        public IActionResult DeleteImageByBlogPostId(int blogPostId, int imageId)
+        public ActionResult DeleteImageByBlogPostId(int blogPostId, int imageId)
         {
             try
             {
