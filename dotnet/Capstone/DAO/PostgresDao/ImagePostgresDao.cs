@@ -890,6 +890,159 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                            GOAL IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        public Image CreateImageByGoalId(int goalId, Image image)
+        {
+            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertGoalImageSql = "INSERT INTO goal_images (goal_id, image_id) VALUES (@goalId, @imageId);";
+            string updateGoalImageIdSql = "UPDATE goals SET icon_id = @imageId WHERE id = @goalId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                    {
+                        cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                        cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+
+                        int id = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                        image.Id = id;
+                    }
+
+                    using (NpgsqlCommand cmdInsertGoalImage = new NpgsqlCommand(insertGoalImageSql, connection))
+                    {
+                        cmdInsertGoalImage.Parameters.AddWithValue("@goalId", goalId);
+                        cmdInsertGoalImage.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmdInsertGoalImage.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmdUpdateGoalImageId = new NpgsqlCommand(updateGoalImageIdSql, connection))
+                    {
+                        cmdUpdateGoalImageId.Parameters.AddWithValue("@goalId", goalId);
+                        cmdUpdateGoalImageId.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmdUpdateGoalImageId.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the image for the goal.", ex);
+            }
+
+            return image;
+        }
+
+        public Image GetImageByGoalId(int goalId)
+        {
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url FROM images i " +
+                         "JOIN goal_images gi ON i.id = gi.image_id " +
+                         "WHERE gi.goal_id = @goalId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@goalId", goalId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        image = MapRowToImage(reader);
+                    }
+
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image for the goal.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageByGoalId(int goalId, Image updatedImage)
+        {
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url " +
+                                    "FROM goal_images " +
+                                    "WHERE images.id = goal_images.image_id AND goal_images.goal_id = @goalId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
+                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedImage;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by goal ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteImageByGoalId(int goalId, int imageId)
+        {
+            string deleteGoalImageSql = "DELETE FROM goal_images WHERE goal_id = @goalId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteGoalImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the image for the goal.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
                                                 MAP ROW TO IMAGE
             **********************************************************************************************
         */

@@ -341,7 +341,7 @@ namespace Capstone.DAO
 
             return skill;
         }
-// TODO Skill Image CRUD in ImagePostgresDao 
+
         private void SetSkillIconIdProperties(NpgsqlDataReader reader, Skill skill)
         {
             if (reader["logo_id"] != DBNull.Value)
