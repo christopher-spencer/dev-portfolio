@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS blogpost_images;
 DROP TABLE IF EXISTS website_images;
 DROP TABLE IF EXISTS skill_images;
 DROP TABLE IF EXISTS goal_images;
+DROP TABLE IF EXISTS contributor_images;
 
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
@@ -147,6 +148,14 @@ CREATE TABLE goal_images {
     image_id INTEGER,
     PRIMARY KEY (goal_id, image_id),
     FOREIGN KEY (goal_id) REFERENCES goals(id),
+    FOREIGN KEY (image_id) REFERENCES images(id)
+};
+
+CREATE TABLE contributor_images {
+    contributor_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (contributor_id, image_id),
+    FOREIGN KEY (contributor_id) REFERENCES contributors(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
 };
 
