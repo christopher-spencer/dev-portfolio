@@ -28,8 +28,8 @@ namespace Capstone.DAO
         */ 
         public ApiService CreateAPIOrService(ApiService apiService)
         {
-            string sql = "INSERT INTO apis_and_services (name, description, website_id, logo_id) " +
-                         "VALUES (@name, @description, @websiteId, @logoId) RETURNING id;";
+            string sql = "INSERT INTO apis_and_services (name, description) " +
+                         "VALUES (@name, @description) RETURNING id;";
 
             try
             {
@@ -41,8 +41,6 @@ namespace Capstone.DAO
                     {
                         cmd.Parameters.AddWithValue("@name", apiService.Name);
                         cmd.Parameters.AddWithValue("@description", apiService.Description);
-                        cmd.Parameters.AddWithValue("@websiteId", apiService.WebsiteId);
-                        cmd.Parameters.AddWithValue("@logoId", apiService.LogoId);
 
                         int id = Convert.ToInt32(cmd.ExecuteScalar());
                         apiService.Id = id;
@@ -126,7 +124,7 @@ namespace Capstone.DAO
         public ApiService UpdateAPIOrService(ApiService apiService)
         {
             string sql = "UPDATE apis_and_services " +
-                         "SET name = @name, description = @description, website_id = @websiteId, logo_id = @logoId " +
+                         "SET name = @name, description = @description " +
                          "WHERE id = @id;";
 
             try
@@ -140,8 +138,6 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@id", apiService.Id);
                         cmd.Parameters.AddWithValue("@name", apiService.Name);
                         cmd.Parameters.AddWithValue("@description", apiService.Description);
-                        cmd.Parameters.AddWithValue("@websiteId", apiService.WebsiteId);
-                        cmd.Parameters.AddWithValue("@logoId", apiService.LogoId);
 
                         int count = cmd.ExecuteNonQuery();
                         if (count == 1)
@@ -188,8 +184,8 @@ namespace Capstone.DAO
         */ 
         public ApiService CreateAPIOrServiceBySideProjectId(int projectId, ApiService apiService)
         {
-            string insertApiServiceSql = "INSERT INTO apis_and_services (name, description, website_id, logo_id) " +
-                                         "VALUES (@name, @description, @websiteId, @logoId) RETURNING id;";
+            string insertApiServiceSql = "INSERT INTO apis_and_services (name, description) " +
+                                         "VALUES (@name, @description) RETURNING id;";
             string insertSideProjectApiServiceSql = "INSERT INTO sideproject_apis_and_services (sideproject_id, apiservice_id) " +
                                                      "VALUES (@projectId, @apiServiceId);";
 
@@ -203,8 +199,6 @@ namespace Capstone.DAO
                     {
                         cmdInsertApiService.Parameters.AddWithValue("@name", apiService.Name);
                         cmdInsertApiService.Parameters.AddWithValue("@description", apiService.Description);
-                        cmdInsertApiService.Parameters.AddWithValue("@websiteId", apiService.WebsiteId);
-                        cmdInsertApiService.Parameters.AddWithValue("@logoId", apiService.LogoId);
 
                         int apiServiceId = Convert.ToInt32(cmdInsertApiService.ExecuteScalar());
 
@@ -304,7 +298,7 @@ namespace Capstone.DAO
         public ApiService UpdateAPIOrServiceBySideProjectId(int projectId, ApiService updatedApiService)
         {
             string sql = "UPDATE apis_and_services " +
-                         "SET name = @name, description = @description, website_id = @websiteId, logo_id = @logoId " +
+                         "SET name = @name, description = @description " +
                          "FROM sideproject_apis_and_services " +
                          "WHERE apis_and_services.id = sideproject_apis_and_services.apiservice_id " +
                          "AND sideproject_apis_and_services.sideproject_id = @projectId;";
@@ -320,8 +314,6 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@projectId", projectId);
                         cmd.Parameters.AddWithValue("@name", updatedApiService.Name);
                         cmd.Parameters.AddWithValue("@description", updatedApiService.Description);
-                        cmd.Parameters.AddWithValue("@websiteId", updatedApiService.WebsiteId);
-                        cmd.Parameters.AddWithValue("@logoId", updatedApiService.LogoId);
 
                         int count = cmd.ExecuteNonQuery();
                         if (count == 1)
