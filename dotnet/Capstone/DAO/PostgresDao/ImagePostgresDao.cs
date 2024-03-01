@@ -1043,6 +1043,163 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                            CONTRIBUTOR IMAGE CRUD
+            **********************************************************************************************
+        */ 
+
+        public Image CreateImageByContributorId(int contributorId, Image image)
+        {
+            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertContributorImageSql = "INSERT INTO contributor_images (contributor_id, image_id) VALUES (@contributorId, @imageId);";
+            string updateContributorImageIdSql = "UPDATE contributors SET contributor_image_id = @imageId WHERE id = @contributorId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                    {
+                        cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                        cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+
+                        int imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                        image.Id = imageId;
+                    }
+
+                    using (NpgsqlCommand cmdInsertContributorImage = new NpgsqlCommand(insertContributorImageSql, connection))
+                    {
+                        cmdInsertContributorImage.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmdInsertContributorImage.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmdInsertContributorImage.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmdUpdateContributor = new NpgsqlCommand(updateContributorImageIdSql, connection))
+                    {
+                        cmdUpdateContributor.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmdUpdateContributor.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmdUpdateContributor.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the image for the contributor.", ex);
+            }
+
+            return image;
+        }
+
+        public Image GetImageByContributorId(int contributorId)
+        {
+            Image image = null;
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN contributor_images ci ON i.id = ci.image_id " +
+                         "WHERE ci.contributor_id = @contributorId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by contributor ID.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageByContributorId(int contributorId, Image updatedImage)
+        {
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url " +
+                                    "FROM contributor_images " +
+                                    "WHERE images.id = contributor_images.image_id AND contributor_images.contributor_id = @contributorId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedImage;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by contributor ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteImageByContributorId(int contributorId, int imageId)
+        {
+            string deleteContributorImageSql = "DELETE FROM contributor_images WHERE contributor_id = @contributorId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the image by contributor ID.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
                                                 MAP ROW TO IMAGE
             **********************************************************************************************
         */
