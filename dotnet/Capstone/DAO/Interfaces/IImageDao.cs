@@ -44,7 +44,6 @@ namespace Capstone.DAO.Interfaces
                                              WEBSITE IMAGE CRUD
             **********************************************************************************************
         */
-
         Image CreateImageByWebsiteId(int websiteId, Image image);
         Image GetImageByWebsiteId(int websiteId);
         Image UpdateImageByWebsiteId(int websiteId, Image updatedImage);
@@ -55,7 +54,6 @@ namespace Capstone.DAO.Interfaces
                                             SKILL IMAGE CRUD
             **********************************************************************************************
         */
-
         Image CreateImageBySkillId(int skillId, Image image);
         Image GetImageBySkillId(int skillId);
         Image UpdateImageBySkillId(int skillId, Image updatedImage);
@@ -66,7 +64,6 @@ namespace Capstone.DAO.Interfaces
                                             GOAL IMAGE CRUD
             **********************************************************************************************
         */
-
         Image CreateImageByGoalId(int goalId, Image image);
         Image GetImageByGoalId(int goalId);
         Image UpdateImageByGoalId(int goalId, Image updatedImage);
@@ -77,13 +74,20 @@ namespace Capstone.DAO.Interfaces
                                             CONTRIBUTOR IMAGE CRUD
             **********************************************************************************************
         */ 
-
         Image CreateImageByContributorId(int contributorId, Image image);
         Image GetImageByContributorId(int contributorId);
         Image UpdateImageByContributorId(int contributorId, Image updatedImage);
         int DeleteImageByContributorId(int contributorId, int imageId);
 
-
+        /*  
+            **********************************************************************************************
+                                        API AND SERVICE IMAGE CRUD
+            **********************************************************************************************
+        */
+        Image CreateImageByApiServiceId(int apiServiceId, Image image);
+        Image GetImageByApiServiceId(int apiServiceId);
+        Image UpdateImageByApiServiceId(int apiServiceId, Image updatedImage);
+        int DeleteImageByApiServiceId(int apiServiceId, int imageId);
 
     }
 }
