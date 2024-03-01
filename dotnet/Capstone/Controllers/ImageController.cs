@@ -341,7 +341,7 @@ namespace Capstone.Controllers
 
         /*  
             **********************************************************************************************
-                                             WEBSITE IMAGE CRUD CONTROLLER
+                                          WEBSITE IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
 // TODO add websiteType (?) for sideproject vs portfolio endpoint paths (?)

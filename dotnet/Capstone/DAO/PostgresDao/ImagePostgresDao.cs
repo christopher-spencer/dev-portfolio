@@ -732,6 +732,161 @@ namespace Capstone.DAO
             }
         }
 
+        /*  
+            **********************************************************************************************
+                                            SKILL IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        public Image CreateImageBySkillId(int skillId, Image image)
+        {
+            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertSkillImageSql = "INSERT INTO skill_images (skill_id, image_id) VALUES (@skillId, @imageId);";
+            string updateSkillImageIdSql = "UPDATE skills SET icon_id = @imageId WHERE id = @skillId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                    {
+                        cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                        cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+
+                        int id = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                        image.Id = id;
+                    }
+
+                    using (NpgsqlCommand cmdInsertSkillImage = new NpgsqlCommand(insertSkillImageSql, connection))
+                    {
+                        cmdInsertSkillImage.Parameters.AddWithValue("@skillId", skillId);
+                        cmdInsertSkillImage.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmdInsertSkillImage.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmdUpdateSkillImageId = new NpgsqlCommand(updateSkillImageIdSql, connection))
+                    {
+                        cmdUpdateSkillImageId.Parameters.AddWithValue("@skillId", skillId);
+                        cmdUpdateSkillImageId.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmdUpdateSkillImageId.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the image for the skill.", ex);
+            }
+
+            return image;
+        }
+
+
+        public Image GetImageBySkillId(int skillId)
+        {
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN skill_images si ON i.id = si.image_id " +
+                         "WHERE si.skill_id = @skillId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@skillId", skillId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        image = MapRowToImage(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by skill ID.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageBySkillId(int skillId, Image updatedImage)
+        {
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url " +
+                                    "FROM skill_images " +
+                                    "WHERE images.id = skill_images.image_id AND skill_images.skill_id = @skillId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@skillId", skillId);
+                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedImage;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by skill ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteImageBySkillId(int skillId, int imageId)
+        {
+            string deleteSkillImageSql = "DELETE FROM skill_images WHERE skill_id = @skillId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSkillImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@skillId", skillId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the image by skill ID.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
