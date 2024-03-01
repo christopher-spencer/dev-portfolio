@@ -131,7 +131,7 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("sideproject/{projectId}/create-image")]
+        [HttpPost("/sideproject/{projectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int projectId, Image image)
         {
             try
@@ -153,7 +153,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("sideproject/{projectId}/images")]
+        [HttpGet("/sideproject/{projectId}/images")]
         public ActionResult GetImagesBySideProjectId(int projectId)
         {
             List<Image> images = _imageDao.GetImagesBySideProjectId(projectId);
@@ -184,7 +184,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("update-sideproject/{projectId}")]
+        [HttpPut("/update-sideproject/{projectId}")]
         public ActionResult UpdateImageBySideProjectId(int projectId, Image image)
         {
             try
@@ -206,7 +206,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("sideproject/{projectId}/delete-image/{imageId}")]
+        [HttpDelete("/sideproject/{projectId}/delete-image/{imageId}")]
         public ActionResult DeleteImageBySideProjectId(int projectId, int imageId)
         {
             try
@@ -346,7 +346,7 @@ namespace Capstone.Controllers
         */
 // TODO add websiteType (?) for sideproject vs portfolio endpoint paths (?)
         [Authorize]
-        [HttpPost("create-website-logo/{websiteId}")]
+        [HttpPost("/image/create-website-logo/{websiteId}")]
         public ActionResult CreateImageByWebsiteId(int websiteId, Image image)
         {
             try
@@ -368,7 +368,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("website-logo/{websiteId}")]
+        [HttpGet("/image/website-logo/{websiteId}")]
         public ActionResult<Image> GetImageByWebsiteId(int websiteId)
         {
             Image logo = _imageDao.GetImageByWebsiteId(websiteId);
@@ -384,7 +384,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("website-logo/{websiteId}")]
+        [HttpPut("/image/update-website-logo/{websiteId}")]
         public ActionResult<Image> UpdateImageByWebsiteId(int websiteId, Image logo)
         {
             try
@@ -407,7 +407,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("website-logo/{websiteId}/{imageId}")]
+        [HttpDelete("/image/{imageId}/delete-website-logo/{websiteId}")]
         public ActionResult DeleteImageByWebsiteId(int websiteId, int imageId)
         {
             try
