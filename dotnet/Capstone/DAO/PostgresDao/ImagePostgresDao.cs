@@ -417,7 +417,6 @@ namespace Capstone.DAO
                         cmd.ExecuteNonQuery();
                     }
 
-                    // Set the main_image_id in the blogposts table
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateBlogPostMainImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
@@ -1045,7 +1044,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                             CONTRIBUTOR IMAGE CRUD
             **********************************************************************************************
-        */ 
+        */
 
         public Image CreateImageByContributorId(int contributorId, Image image)
         {
@@ -1197,6 +1196,135 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while deleting the image by contributor ID.", ex);
             }
         }
+
+        /*  
+            **********************************************************************************************
+                                            CONTRIBUTOR IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        public Image CreateImageByApiServiceId(int apiServiceId, Image image)
+        {
+            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertApiServiceImageSql = "INSERT INTO api_service_images (api_service_id, image_id) VALUES (@apiServiceId, @imageId);";
+            string updateApiServiceLogoIdSql = "UPDATE apis_and_services SET logo_id = @imageId WHERE id = @apiServiceId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                    {
+                        cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                        cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+
+                        int imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+
+                        using (NpgsqlCommand cmdInsertApiServiceImage = new NpgsqlCommand(insertApiServiceImageSql, connection))
+                        {
+                            cmdInsertApiServiceImage.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                            cmdInsertApiServiceImage.Parameters.AddWithValue("@imageId", imageId);
+
+                            cmdInsertApiServiceImage.ExecuteNonQuery();
+
+                            using (NpgsqlCommand cmdUpdateApiServiceLogo = new NpgsqlCommand(updateApiServiceLogoIdSql, connection))
+                            {
+                                cmdUpdateApiServiceLogo.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                                cmdUpdateApiServiceLogo.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmdUpdateApiServiceLogo.ExecuteNonQuery();
+
+                                image.Id = imageId;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the image for the API service.", ex);
+            }
+
+            return image;
+        }
+
+        public Image GetImageByApiServiceId(int apiServiceId)
+        {
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN api_service_images asi ON i.id = asi.image_id " +
+                         "WHERE asi.api_service_id = @apiServiceId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by API service ID.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageByApiServiceId(int apiServiceId, Image updatedImage)
+        {
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url " +
+                                    "FROM api_service_images " +
+                                    "WHERE images.id = api_service_images.image_id AND api_service_images.api_service_id = @apiServiceId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedImage;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by API service ID.", ex);
+            }
+
+            return null;
+        }
+
+        
+
 
         /*  
             **********************************************************************************************

@@ -379,7 +379,7 @@ namespace Capstone.DAO
 
             return contributor;
         }
-// TODO Contrubutor Website CRUD in WebsitePostgresDao
+// TODO Contributor Website CRUD in WebsitePostgresDao
         private void SetContributorImageIdProperties(NpgsqlDataReader reader, Contributor contributor)
         {
             contributor.ContributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
