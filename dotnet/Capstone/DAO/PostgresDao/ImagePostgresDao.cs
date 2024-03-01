@@ -1244,7 +1244,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the image for the API service.", ex);
+                throw new DaoException("An error occurred while creating the image for the API/Service.", ex);
             }
 
             return image;
@@ -1281,7 +1281,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the image by API service ID.", ex);
+                throw new DaoException("An error occurred while retrieving the image by API/Service ID.", ex);
             }
 
             return image;
@@ -1317,7 +1317,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the image by API service ID.", ex);
+                throw new DaoException("An error occurred while updating the image by API/Service ID.", ex);
             }
 
             return null;
@@ -1352,7 +1352,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the image by API service ID.", ex);
+                throw new DaoException("An error occurred while deleting the image by API/Service ID.", ex);
             }
         }
 
