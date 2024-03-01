@@ -27,5 +27,7 @@ namespace Capstone.Models
             like bio, profile picture, or contact details.
         Featured Post Flag - Mark a post as featured, which could be used for highlighting important or noteworthy content.
         Attachments - Allow for the attachment of files or documents related to posts, such as PDFs, images, or other media.
+        Slug - A URL-friendly version of the blog post title, which can be used for SEO-friendly URLs.
+        Excerpt - A short summary or teaser of the blog post content.
     */
 }
