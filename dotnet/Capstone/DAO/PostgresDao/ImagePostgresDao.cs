@@ -1323,7 +1323,39 @@ namespace Capstone.DAO
             return null;
         }
 
-        
+        public int DeleteImageByApiServiceId(int apiServiceId, int imageId)
+        {
+            string deleteApiServiceImageSql = "DELETE FROM api_service_images WHERE api_service_id = @apiServiceId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the image by API service ID.", ex);
+            }
+        }
+
 
 
         /*  
