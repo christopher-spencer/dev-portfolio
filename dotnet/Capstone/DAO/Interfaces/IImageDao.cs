@@ -49,5 +49,16 @@ namespace Capstone.DAO.Interfaces
         Image GetImageByWebsiteId(int websiteId);
         Image UpdateImageByWebsiteId(int websiteId, Image updatedImage);
         int DeleteImageByWebsiteId(int websiteId, int imageId);
+
+        /*  
+            **********************************************************************************************
+                                            SKILL IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        Image CreateImageBySkillId(int skillId, Image image);
+        Image GetImageBySkillId(int skillId);
+        Image UpdateImageBySkillId(int skillId, Image updatedImage);
+        int DeleteImageBySkillId(int skillId, int imageId);
     }
 }

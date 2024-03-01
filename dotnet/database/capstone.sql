@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS sideproject_goals;
 DROP TABLE IF EXISTS sideproject_images;
 DROP TABLE IF EXISTS blogpost_images;
 DROP TABLE IF EXISTS website_images;
--- DROP TABLE IF EXISTS skill_images;
+DROP TABLE IF EXISTS skill_images;
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
 DROP TABLE IF EXISTS users;
