@@ -28,8 +28,8 @@ namespace Capstone.DAO
         */ 
         public DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
         {
-            string sql = "INSERT INTO dependencies_and_libraries (name, description, website_id, logo_id) " +
-                "VALUES (@name, @description, @websiteId, @logoId) " +
+            string sql = "INSERT INTO dependencies_and_libraries (name, description) " +
+                "VALUES (@name, @description) " +
                 "RETURNING id;";
 
             try
@@ -41,8 +41,6 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@websiteId", dependencyLibrary.WebsiteId);
-                    cmd.Parameters.AddWithValue("@logoId", dependencyLibrary.LogoId);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     dependencyLibrary.Id = id;
@@ -114,8 +112,8 @@ namespace Capstone.DAO
 
         public DependencyLibrary UpdateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
         {
-            string sql = "UPDATE dependencies_and_libraries SET name = @name, description = @description, " +
-                         "website_id = @websiteId, logo_id = @logoId WHERE id = @id;";
+            string sql = "UPDATE dependencies_and_libraries SET name = @name, description = @description " +
+                         "WHERE id = @id;";
 
             try
             {
@@ -127,8 +125,6 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@id", dependencyLibrary.Id);
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@websiteId", dependencyLibrary.WebsiteId);
-                    cmd.Parameters.AddWithValue("@logoId", dependencyLibrary.LogoId);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -175,8 +171,8 @@ namespace Capstone.DAO
         */ 
         public DependencyLibrary CreateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary)
         {
-            string sql = "INSERT INTO dependencies_and_libraries (name, description, website_id, logo_id) " +
-                         "VALUES (@name, @description, @websiteId, @logoId) RETURNING id;";
+            string sql = "INSERT INTO dependencies_and_libraries (name, description) " +
+                         "VALUES (@name, @description) RETURNING id;";
             
             string insertAssociationSql = "INSERT INTO sideproject_dependencies_and_libraries (sideproject_id, dependencylibrary_id) " +
                                                 "VALUES (@projectId, @dependencyLibraryId);";
@@ -190,8 +186,6 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@websiteId", dependencyLibrary.WebsiteId);
-                    cmd.Parameters.AddWithValue("@logoId", dependencyLibrary.LogoId);
 
                     int id = Convert.ToInt32(cmd.ExecuteScalar());
                     dependencyLibrary.Id = id;
@@ -282,7 +276,7 @@ namespace Capstone.DAO
         public DependencyLibrary UpdateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary updatedDependencyLibrary)
         {
             string sql = "UPDATE dependencies_and_libraries dl " +
-                         "SET name = @name, description = @description, website_id = @websiteId, logo_id = @logoId " +
+                         "SET name = @name, description = @description " +
                          "FROM sideproject_dependencies_and_libraries pdl " +
                          "WHERE dl.id = pdl.dependencylibrary_id AND pdl.sideproject_id = @projectId AND dl.id = @dependencyLibraryId;";
 
@@ -297,8 +291,6 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@dependencyLibraryId", updatedDependencyLibrary.Id);
                     cmd.Parameters.AddWithValue("@name", updatedDependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", updatedDependencyLibrary.Description);
-                    cmd.Parameters.AddWithValue("@websiteId", updatedDependencyLibrary.WebsiteId);
-                    cmd.Parameters.AddWithValue("@logoId", updatedDependencyLibrary.LogoId);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
@@ -357,7 +349,8 @@ namespace Capstone.DAO
 
             return dependencyLibrary;
         }
-
+// TODO DependencyLibrary Logo CRUD in ImagePostgresDao   
+// TODO DependencyLibrary Website CRUD in WebsitePostgresDao
         private void SetDependencyLibraryWebsiteIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary)
         {
             if (reader["website_id"] != DBNull.Value)
