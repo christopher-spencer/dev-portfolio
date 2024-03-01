@@ -337,7 +337,7 @@ namespace Capstone.DAO
 
             return goal;
         }
-// TODO Goal Image CRUD in ImagePostgresDao 
+        
         private void SetGoalIconIdProperties(NpgsqlDataReader reader, Goal goal)
         {
             if (reader["icon_id"] != DBNull.Value)
