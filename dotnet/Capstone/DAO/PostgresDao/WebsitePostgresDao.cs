@@ -525,6 +525,170 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                         API AND SERVICE WEBSITE CRUD
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                        DEPENDENCY AND LIBRARY WEBSITE CRUD
+            **********************************************************************************************
+        */
+
+        public Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website)
+        {
+            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertDependencyLibraryWebsiteSql = "INSERT INTO dependency_library_websites (dependencylibrary_id, website_id) VALUES (@dependencyLibraryId, @websiteId);";
+            string updateDependencyLibraryWebsiteIdSql = "UPDATE dependencies_and_libraries SET website_id = @websiteId WHERE id = @dependencyLibraryId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                    {
+                        cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                        cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+
+                        int websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                        website.Id = websiteId;
+                    }
+
+                    using (NpgsqlCommand cmdInsertDependencyLibraryWebsite = new NpgsqlCommand(insertDependencyLibraryWebsiteSql, connection))
+                    {
+                        cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@websiteId", website.Id);
+
+                        cmdInsertDependencyLibraryWebsite.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmdUpdateDependencyLibrary = new NpgsqlCommand(updateDependencyLibraryWebsiteIdSql, connection))
+                    {
+                        cmdUpdateDependencyLibrary.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmdUpdateDependencyLibrary.Parameters.AddWithValue("@websiteId", website.Id);
+
+                        cmdUpdateDependencyLibrary.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the website for the dependency/library.", ex);
+            }
+
+            return website;
+        }
+
+        public Website GetWebsiteByDependencyLibraryId(int dependencyLibraryId)
+        {
+            Website website = null;
+            string sql = "SELECT w.id, w.name, w.url " +
+                         "FROM websites w " +
+                         "JOIN dependency_library_websites dw ON w.id = dw.website_id " +
+                         "WHERE dw.dependencylibrary_id = @dependencyLibraryId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website by dependency/library ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website UpdateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website updatedWebsite)
+        {
+            string updateWebsiteSql = "UPDATE websites " +
+                                      "SET name = @name, url = @url " +
+                                      "FROM dependency_library_websites " +
+                                      "WHERE websites.id = dependency_library_websites.website_id " +
+                                      "AND dependency_library_websites.dependencylibrary_id = @dependencyLibraryId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedWebsite;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website by dependency/library ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId)
+        {
+            string deleteDependencyLibraryWebsiteSql = "DELETE FROM dependency_library_websites WHERE dependencylibrary_id = @dependencyLibraryId AND website_id = @websiteId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteDependencyLibraryWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the website by dependency/library ID.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
                                                 WEBSITE MAP ROW
             **********************************************************************************************
         */

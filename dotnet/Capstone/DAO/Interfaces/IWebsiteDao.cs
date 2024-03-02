@@ -36,11 +36,23 @@ namespace Capstone.DAO.Interfaces
                                             CONTRIBUTOR WEBSITE CRUD
             **********************************************************************************************
         */
-
         Website CreateWebsiteByContributorId(int controllerId, Website website);
         Website GetWebsiteByContributorId(int contributorId);
         Website UpdateWebsiteByContributorId(int contributorId, Website updatedWebsite);
         int DeleteWebsiteByContributorId(int contributorId, int websiteId);
+
+        /*  
+            **********************************************************************************************
+                                         API AND SERVICE WEBSITE CRUD
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                      DEPENDENCY AND LIBRARY WEBSITE CRUD
+            **********************************************************************************************
+        */
+
 
     }
 }
