@@ -52,6 +52,10 @@ namespace Capstone.DAO.Interfaces
                                       DEPENDENCY AND LIBRARY WEBSITE CRUD
             **********************************************************************************************
         */
+        Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website);
+        Website GetWebsiteByDependencyLibraryId(int dependencyLibraryId);
+        Website UpdateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website updatedWebsite);
+        int DeleteWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId);
 
 
     }
