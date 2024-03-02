@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS api_service_images;
 DROP TABLE IF EXISTS dependency_library_images;
 
 DROP TABLE IF EXISTS contributor_websites;
+DROP TABLE IF EXISTS dependency_library_websites;
 
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
@@ -185,6 +186,16 @@ CREATE TABLE contributor_websites {
     website_id INTEGER,
     PRIMARY KEY (contributor_id, website_id),
     FOREIGN KEY (contributor_id) REFERENCES contributors(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)
+}
+
+
+
+CREATE TABLE dependency_library_websites {
+    dependencylibrary_id INTEGER,
+    website_id INTEGER,
+    PRIMARY KEY (dependencylibrary_id, website_id),
+    FOREIGN KEY (dependencylibrary_id) REFERENCES dependencies_and_libraries(id),
     FOREIGN KEY (website_id) REFERENCES websites(id)
 }
 
