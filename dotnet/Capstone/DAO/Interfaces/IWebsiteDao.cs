@@ -46,6 +46,10 @@ namespace Capstone.DAO.Interfaces
                                          API AND SERVICE WEBSITE CRUD
             **********************************************************************************************
         */
+        Website CreateWebsiteByApiServiceId(int apiServiceId, Website website);
+        Website GetWebsiteByApiServiceId(int apiServiceId);
+        Website UpdateWebsiteByApiServiceId(int apiServiceId, Website updatedWebsite);
+        int DeleteWebsiteByApiServiceId(int apiServiceId, int websiteId);
 
         /*  
             **********************************************************************************************
