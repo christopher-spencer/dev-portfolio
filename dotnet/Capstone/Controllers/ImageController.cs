@@ -17,7 +17,6 @@ namespace Capstone.Controllers
         {
             _imageDao = imageDao;
         }
-// TODO uncomment and test out all IMAGE CONTROLLER METHODS
 //TODO wrap all CREATE/UPDATE/DELETE in try catch
         /*  
             **********************************************************************************************

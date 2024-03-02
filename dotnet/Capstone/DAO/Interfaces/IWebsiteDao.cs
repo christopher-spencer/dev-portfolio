@@ -19,7 +19,6 @@ namespace Capstone.DAO.Interfaces
         Website UpdateWebsite(Website websiteLink);
         int DeleteWebsiteById(int websiteLinkId);
 
-
         /*  
             **********************************************************************************************
                                             SIDE PROJECT WEBSITE CRUD
