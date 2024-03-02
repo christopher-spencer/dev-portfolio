@@ -95,7 +95,9 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 
-        // TODO Add DL CRUD methods and update SQL TABLE
-
+        Image CreateImageByDependencyLibraryId(int dependencyLibraryId, Image image);
+        Image GetImageByDependencyLibraryId(int dependencyLibraryId);
+        Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, Image updatedImage);
+        int DeleteImageByDependencyLibraryId(int dependencyLibraryId, int imageId);
     }
 }

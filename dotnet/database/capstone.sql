@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS skill_images;
 DROP TABLE IF EXISTS goal_images;
 DROP TABLE IF EXISTS contributor_images;
 DROP TABLE IF EXISTS api_service_images;
+DROP TABLE IF EXISTS dependency_library_images;
 
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
@@ -167,6 +168,14 @@ CREATE TABLE api_service_images {
     FOREIGN KEY (apiservice_id) REFERENCES apis_and_services(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
 };
+
+CREATE TABLE dependency_library_images {
+    dependencylibrary_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (dependencylibrary_id, image_id),
+    FOREIGN KEY (dependencylibrary_id) REFERENCES dependencies_and_libraries(id),
+    FOREIGN KEY (image_id) REFERENCES images(id)    
+}
 
 CREATE TABLE blogpost_images (
     blogpost_id INTEGER,
