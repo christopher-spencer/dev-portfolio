@@ -529,6 +529,157 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        public Website CreateWebsiteByApiServiceId(int apiServiceId, Website website)
+        {
+            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertApiServiceWebsiteSql = "INSERT INTO api_service_websites (apiservice_id, website_id) VALUES (@apiServiceId, @websiteId);";
+            string updateApiServiceWebsiteIdSql = "UPDATE apis_and_services SET website_id = @websiteId WHERE id = @apiServiceId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                    {
+                        cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                        cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+
+                        int websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                        website.Id = websiteId;
+                    }
+
+                    using (NpgsqlCommand cmdInsertApiServiceWebsite = new NpgsqlCommand(insertApiServiceWebsiteSql, connection))
+                    {
+                        cmdInsertApiServiceWebsite.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                        cmdInsertApiServiceWebsite.Parameters.AddWithValue("@websiteId", website.Id);
+
+                        cmdInsertApiServiceWebsite.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmdUpdateApiService = new NpgsqlCommand(updateApiServiceWebsiteIdSql, connection))
+                    {
+                        cmdUpdateApiService.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                        cmdUpdateApiService.Parameters.AddWithValue("@websiteId", website.Id);
+
+                        cmdUpdateApiService.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the website for the API/Service.", ex);
+            }
+
+            return website;
+        }
+
+        public Website GetWebsiteByApiServiceId(int apiServiceId)
+        {
+            Website website = null;
+            string sql = "SELECT w.id, w.name, w.url " +
+                         "FROM websites w " +
+                         "JOIN api_service_websites aw ON w.id = aw.website_id " +
+                         "WHERE aw.apiservice_id = @apiServiceId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website by API/Service ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website UpdateWebsiteByApiServiceId(int apiServiceId, Website updatedWebsite)
+        {
+            string updateWebsiteSql = "UPDATE websites " +
+                                      "SET name = @name, url = @url " +
+                                      "FROM api_service_websites " +
+                                      "WHERE websites.id = api_service_websites.website_id AND api_service_websites.apiservice_id = @apiServiceId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                        cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedWebsite;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website by API/Service ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteWebsiteByApiServiceId(int apiServiceId, int websiteId)
+        {
+            string deleteApiServiceWebsiteSql = "DELETE FROM api_service_websites WHERE apiservice_id = @apiServiceId AND website_id = @websiteId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the website by API/Service ID.", ex);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         DEPENDENCY AND LIBRARY WEBSITE CRUD
