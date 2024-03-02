@@ -1408,6 +1408,110 @@ namespace Capstone.DAO
             return image;
         }
 
+        public Image GetImageByDependencyLibraryId(int dependencyLibraryId)
+        {
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url " +
+                         "FROM images i " +
+                         "JOIN dependency_library_images dli ON i.id = dli.image_id " +
+                         "WHERE dli.dependencylibrary_id = @dependencyLibraryId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        image = MapRowToImage(reader);
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by dependency library ID.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, Image updatedImage)
+        {
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url " +
+                                    "FROM dependency_library_images " +
+                                    "WHERE images.id = dependency_library_images.image_id AND " +
+                                    "dependency_library_images.dependencylibrary_id = @dependencyLibraryId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedImage;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by dependency library ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteImageByDependencyLibraryId(int dependencyLibraryId, int imageId)
+        {
+            string deleteLibraryImageSql = "DELETE FROM dependency_library_images WHERE dependencylibrary_id = @dependencyLibraryId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteLibraryImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the image by dependency library ID.", ex);
+            }
+        }
+
 
         /*  
             **********************************************************************************************
