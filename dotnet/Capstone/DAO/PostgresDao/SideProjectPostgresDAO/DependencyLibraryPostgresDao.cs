@@ -349,7 +349,6 @@ namespace Capstone.DAO
 
             return dependencyLibrary;
         }
-// TODO DependencyLibrary Logo CRUD in ImagePostgresDao   
 // TODO DependencyLibrary Website CRUD in WebsitePostgresDao
         private void SetDependencyLibraryWebsiteIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary)
         {
