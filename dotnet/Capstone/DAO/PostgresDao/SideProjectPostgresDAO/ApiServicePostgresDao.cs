@@ -375,7 +375,6 @@ namespace Capstone.DAO
 
             return apiService;
         }
-// TODO ApiService Image CRUD in ImagePostgresDao   
 // TODO ApiService Website CRUD in WebsitePostgresDao
         private void SetApiServiceWebsiteIdProperties(NpgsqlDataReader reader, ApiService apiService)
         {
