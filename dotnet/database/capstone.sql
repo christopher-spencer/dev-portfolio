@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS api_service_images;
 DROP TABLE IF EXISTS dependency_library_images;
 
 DROP TABLE IF EXISTS contributor_websites;
+DROP TABLE IF EXISTS api_service_websites;
 DROP TABLE IF EXISTS dependency_library_websites;
 
 DROP TABLE IF EXISTS sideprojects;
@@ -189,7 +190,13 @@ CREATE TABLE contributor_websites {
     FOREIGN KEY (website_id) REFERENCES websites(id)
 }
 
-
+CREATE TABLE api_service_websites {
+    apiservice_id INTEGER, 
+    website_id INTEGER,
+    PRIMARY KEY (apiservice_id, website_id),
+    FOREIGN KEY (apiservice_id) REFERENCES apis_and_services(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)   
+}
 
 CREATE TABLE dependency_library_websites {
     dependencylibrary_id INTEGER,
