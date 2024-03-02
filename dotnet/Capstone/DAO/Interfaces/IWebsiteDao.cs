@@ -31,12 +31,16 @@ namespace Capstone.DAO.Interfaces
         Website UpdateWebsiteByProjectId(int projectId, Website updatedWebsite);
         int DeleteWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId);
 
-        
         /*  
             **********************************************************************************************
-                                           EVENTUAL BLOG POST WEBSITE CRUD
+                                            CONTRIBUTOR WEBSITE CRUD
             **********************************************************************************************
         */
+
+        Website CreateWebsiteByControllerId(int controllerId, Website website);
+        Website GetWebsiteByContributorId(int contributorId);
+        Website UpdateWebsiteByContributorId(int contributorId, Website updatedWebsite);
+        int DeleteWebsiteByContributorId(int contributorId, int websiteId);
 
     }
 }

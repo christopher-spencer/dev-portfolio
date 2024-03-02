@@ -18,7 +18,7 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
             this._imageDao = imageDao;
         }
-
+        // TODO add Blog Post Website CRUD eventually after links set up in BP Model
         /*  
             **********************************************************************************************
                                                     WEBSITE CRUD
@@ -368,9 +368,160 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
-                                           EVENTUAL BLOG POST WEBSITE CRUD
+                                            CONTRIBUTOR WEBSITE CRUD
             **********************************************************************************************
         */
+
+        public Website CreateWebsiteByControllerId(int controllerId, Website website)
+        {
+            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertControllerWebsiteSql = "INSERT INTO controller_websites (controller_id, website_id) VALUES (@controllerId, @websiteId);";
+            string updateControllerWebsiteIdSql = "UPDATE controllers SET website_id = @websiteId WHERE id = @controllerId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                    {
+                        cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                        cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+
+                        int websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                        website.Id = websiteId;
+                    }
+
+                    using (NpgsqlCommand cmdInsertControllerWebsite = new NpgsqlCommand(insertControllerWebsiteSql, connection))
+                    {
+                        cmdInsertControllerWebsite.Parameters.AddWithValue("@controllerId", controllerId);
+                        cmdInsertControllerWebsite.Parameters.AddWithValue("@websiteId", website.Id);
+
+                        cmdInsertControllerWebsite.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmdUpdateController = new NpgsqlCommand(updateControllerWebsiteIdSql, connection))
+                    {
+                        cmdUpdateController.Parameters.AddWithValue("@controllerId", controllerId);
+                        cmdUpdateController.Parameters.AddWithValue("@websiteId", website.Id);
+
+                        cmdUpdateController.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the website for the controller.", ex);
+            }
+
+            return website;
+        }
+
+        public Website GetWebsiteByContributorId(int contributorId)
+        {
+            Website website = null;
+            string sql = "SELECT w.id, w.name, w.url " +
+                         "FROM websites w " +
+                         "JOIN contributor_websites cw ON w.id = cw.website_id " +
+                         "WHERE cw.contributor_id = @contributorId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website by contributor ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website UpdateWebsiteByContributorId(int contributorId, Website updatedWebsite)
+        {
+            string updateWebsiteSql = "UPDATE websites " +
+                                      "SET name = @name, url = @url " +
+                                      "FROM contributor_websites " +
+                                      "WHERE websites.id = contributor_websites.website_id AND contributor_websites.contributor_id = @contributorId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
+                        cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return updatedWebsite;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website by contributor ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteWebsiteByContributorId(int contributorId, int websiteId)
+        {
+            string deleteContributorWebsiteSql = "DELETE FROM contributor_websites WHERE contributor_id = @contributorId AND website_id = @websiteId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        return cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while deleting the website by contributor ID.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
@@ -392,7 +543,7 @@ namespace Capstone.DAO
             return website;
         }
 
-       private void SetWebsiteLogoIdProperties(NpgsqlDataReader reader, Website website)
+        private void SetWebsiteLogoIdProperties(NpgsqlDataReader reader, Website website)
         {
             if (reader["logo_id"] != DBNull.Value)
             {
