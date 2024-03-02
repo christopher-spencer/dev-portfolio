@@ -372,11 +372,11 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public Website CreateWebsiteByControllerId(int controllerId, Website website)
+        public Website CreateWebsiteByContributorId(int contributorId, Website website)
         {
             string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
-            string insertControllerWebsiteSql = "INSERT INTO controller_websites (controller_id, website_id) VALUES (@controllerId, @websiteId);";
-            string updateControllerWebsiteIdSql = "UPDATE controllers SET website_id = @websiteId WHERE id = @controllerId;";
+            string insertContributorWebsiteSql = "INSERT INTO contributor_websites (contributor_id, website_id) VALUES (@contributorId, @websiteId);";
+            string updateContributorWebsiteIdSql = "UPDATE contributors SET website_id = @websiteId WHERE id = @contributorId;";
 
             try
             {
@@ -393,17 +393,17 @@ namespace Capstone.DAO
                         website.Id = websiteId;
                     }
 
-                    using (NpgsqlCommand cmdInsertControllerWebsite = new NpgsqlCommand(insertControllerWebsiteSql, connection))
+                    using (NpgsqlCommand cmdInsertControllerWebsite = new NpgsqlCommand(insertContributorWebsiteSql, connection))
                     {
-                        cmdInsertControllerWebsite.Parameters.AddWithValue("@controllerId", controllerId);
+                        cmdInsertControllerWebsite.Parameters.AddWithValue("@contributorId", contributorId);
                         cmdInsertControllerWebsite.Parameters.AddWithValue("@websiteId", website.Id);
 
                         cmdInsertControllerWebsite.ExecuteNonQuery();
                     }
 
-                    using (NpgsqlCommand cmdUpdateController = new NpgsqlCommand(updateControllerWebsiteIdSql, connection))
+                    using (NpgsqlCommand cmdUpdateController = new NpgsqlCommand(updateContributorWebsiteIdSql, connection))
                     {
-                        cmdUpdateController.Parameters.AddWithValue("@controllerId", controllerId);
+                        cmdUpdateController.Parameters.AddWithValue("@contributorId", contributorId);
                         cmdUpdateController.Parameters.AddWithValue("@websiteId", website.Id);
 
                         cmdUpdateController.ExecuteNonQuery();
@@ -412,7 +412,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the website for the controller.", ex);
+                throw new DaoException("An error occurred while creating the website for the contributor.", ex);
             }
 
             return website;

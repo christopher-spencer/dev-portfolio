@@ -1,13 +1,14 @@
 BEGIN TRANSACTION;
 
 DROP TABLE IF EXISTS sideproject_websites;
+
 DROP TABLE IF EXISTS sideproject_dependencies_and_libraries;
 DROP TABLE IF EXISTS sideproject_apis_and_services;
 DROP TABLE IF EXISTS sideproject_contributors;
 DROP TABLE IF EXISTS sideproject_skills;
 DROP TABLE IF EXISTS sideproject_goals;
-DROP TABLE IF EXISTS sideproject_images;
 
+DROP TABLE IF EXISTS sideproject_images;
 DROP TABLE IF EXISTS blogpost_images;
 
 DROP TABLE IF EXISTS website_images;
@@ -16,6 +17,8 @@ DROP TABLE IF EXISTS goal_images;
 DROP TABLE IF EXISTS contributor_images;
 DROP TABLE IF EXISTS api_service_images;
 DROP TABLE IF EXISTS dependency_library_images;
+
+DROP TABLE IF EXISTS contributor_websites;
 
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
@@ -175,6 +178,14 @@ CREATE TABLE dependency_library_images {
     PRIMARY KEY (dependencylibrary_id, image_id),
     FOREIGN KEY (dependencylibrary_id) REFERENCES dependencies_and_libraries(id),
     FOREIGN KEY (image_id) REFERENCES images(id)    
+}
+
+CREATE TABLE contributor_websites {
+    contributor_id INTEGER,
+    website_id INTEGER,
+    PRIMARY KEY (contributor_id, website_id),
+    FOREIGN KEY (contributor_id) REFERENCES contributors(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)
 }
 
 CREATE TABLE blogpost_images (
