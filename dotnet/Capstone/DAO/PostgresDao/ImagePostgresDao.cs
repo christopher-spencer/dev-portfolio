@@ -1356,6 +1356,57 @@ namespace Capstone.DAO
             }
         }
 
+        /*  
+            **********************************************************************************************
+                                        DEPENDENCY AND LIBRARY IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        public Image CreateImageByDependencyLibraryId(int dependencyLibraryId, Image image)
+        {
+            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertLibraryImageSql = "INSERT INTO dependency_library_images (dependencylibrary_id, image_id) VALUES (@dependencyLibraryId, @imageId);";
+            string updateLibraryLogoIdSql = "UPDATE dependencies_and_libraries SET logo_id = @imageId WHERE id = @dependencyLibraryId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+
+                        int id = Convert.ToInt32(cmd.ExecuteScalar());
+                        image.Id = id;
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertLibraryImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateLibraryLogoIdSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the image for the dependency library.", ex);
+            }
+
+            return image;
+        }
 
 
         /*  

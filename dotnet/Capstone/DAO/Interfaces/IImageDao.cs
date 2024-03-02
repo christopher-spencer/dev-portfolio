@@ -89,5 +89,13 @@ namespace Capstone.DAO.Interfaces
         Image UpdateImageByApiServiceId(int apiServiceId, Image updatedImage);
         int DeleteImageByApiServiceId(int apiServiceId, int imageId);
 
+        /*  
+            **********************************************************************************************
+                                        DEPENDENCY AND LIBRARY IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        
+
     }
 }
