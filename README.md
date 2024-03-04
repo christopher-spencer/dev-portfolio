@@ -1,6 +1,7 @@
 # Dev Portfolio
 
-* A full-stack C#/.NET application, which dynamically accesses/modifies information in the PostgreSQL database based on selection, with future plans to feature JavaScript via React on the front end.
-* A Developer Portfolio in the works, with plans to feature a Portfolio page, Side Projects page, Blog Posts page, and some other exciting, dynamic capabilities in the near future.
+* A full-stack C#/.NET application, utilizing an MVC pattern on the backend with ASP.NET Web API and ADO.NET, to dynamically access data in the PostgreSQL database based on user selection.
+* A Dev Portfolio builder, with plans for users to be able to add and modify Portfolios, Side Projects, and Blog Posts.
 
-(**Tools:** C#/.NET, ASP.NET Web API, ADO.NET, JavaScript, CSS, HTML, Vue.js, Postman, VSCode, Unit Testing, Integration Testing, PostgreSQL, MVC, DAO, REST APIs, Git)
+(**Tools:** C#/.NET, ASP.NET Web API, ADO.NET, Postman, Visual Studio Code, Unit Testing, Integration Testing, PostgreSQL, MVC,
+DAO, REST APIs, Git)
