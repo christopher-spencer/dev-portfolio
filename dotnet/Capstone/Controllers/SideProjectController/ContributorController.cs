@@ -24,7 +24,8 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */ 
 
-        [HttpPost]
+        [Authorize]
+        [HttpPost("/create-contributor")]
         public ActionResult CreateContributor(Contributor contributor)
         {
             try
@@ -46,7 +47,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("{contributorId}")]
+        [HttpGet("/contributor/{contributorId}")]
         public ActionResult<Contributor> GetContributorById(int contributorId)
         {
             Contributor contributor = _contributorDao.GetContributorById(contributorId);
@@ -61,7 +62,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("get-all-contributors")]
         public ActionResult<List<Contributor>> GetAllContributors()
         {
             List<Contributor> contributors = _contributorDao.GetAllContributors();
@@ -76,7 +77,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpPut("{contributorId}")]
+        [Authorize]
+        [HttpPut("/update-contributor/{contributorId}")]
         public ActionResult UpdateContributor(int contributorId, Contributor contributor)
         {
             try
@@ -98,7 +100,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpDelete("{contributorId}")]
+        [Authorize]
+        [HttpDelete("/delete-contributor/{contributorId}")]
         public ActionResult DeleteContributorById(int contributorId)
         {
             try
@@ -126,7 +129,8 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */ 
 
-        [HttpPost("/sideproject/{projectId}")]
+        [Authorize]
+        [HttpPost("/sideproject/{projectId}/create-contributor")]
         public ActionResult CreateContributorBySideProjectId(int projectId, Contributor contributor)
         {
             try
@@ -178,7 +182,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpPut("/sideproject/{projectId}/contributor/{contributorId}")]
+        [Authorize]
+        [HttpPut("/update-sideproject/{projectId}/update-contributor/{contributorId}")]
         public ActionResult UpdateContributorBySideProjectId(int projectId, int contributorId, Contributor updatedContributor)
         {
             try
@@ -200,7 +205,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpDelete("/sideproject/{projectId}/contributor/{contributorId}")]
+        [Authorize]
+        [HttpDelete("/sideproject/{projectId}/delete-contributor/{contributorId}")]
         public ActionResult DeleteContributorBySideProjectId(int projectId, int contributorId)
         {
             try
