@@ -24,6 +24,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */ 
 
+        [Authorize]
         [HttpPost("/create-api-or-service")]
         public ActionResult CreateAPIOrService(ApiService apiService)
         {
@@ -76,6 +77,7 @@ namespace Capstone.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("/update-api-or-service/{apiServiceId}")]
         public ActionResult UpdateAPIOrService(int apiServiceId, ApiService apiService)
         {
@@ -98,6 +100,7 @@ namespace Capstone.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("/delete-api-or-service/{apiServiceId}")]
         public ActionResult DeleteAPIOrService(int apiServiceId)
         {
@@ -126,6 +129,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */ 
 
+        [Authorize]
         [HttpPost("/sideproject/{projectId}/create-api-or-service")]
         public ActionResult CreateAPIOrServiceBySideProjectId(int projectId, ApiService apiService)
         {
@@ -178,6 +182,7 @@ namespace Capstone.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("/update-sideproject/{projectId}/update-api-or-service/{apiServiceId}")]
         public ActionResult UpdateAPIOrServiceBySideProjectId(int projectId, int apiServiceId, ApiService updatedApiService)
         {
@@ -200,6 +205,7 @@ namespace Capstone.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("/sideproject/{projectId}/delete-api-or-service/{apiServiceId}")]
         public ActionResult DeleteAPIOrServiceBySideProjectId(int projectId, int apiServiceId)
         {
