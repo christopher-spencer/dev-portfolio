@@ -24,6 +24,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
+        [Authorize]
         [HttpPost("/create-skill")]
         public ActionResult CreateSkill(Skill skill)
         {
@@ -76,6 +77,7 @@ namespace Capstone.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("/update-skill/{skillId}")]
         public ActionResult UpdateSkill(int skillId, Skill skill)
         {
@@ -98,6 +100,7 @@ namespace Capstone.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("/delete-skill/{skillId}")]
         public ActionResult DeleteSkill(int skillId)
         {
@@ -126,6 +129,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
+        [Authorize]
         [HttpPost("/sideproject/{projectId}/create-skill")]
         public ActionResult CreateSkillBySideProjectId(int projectId, Skill skill)
         {
@@ -178,6 +182,7 @@ namespace Capstone.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("/update-sideproject/{projectId}/update-skill/{skillId}")]
         public ActionResult UpdateSkillBySideProjectId(int projectId, int skillId, Skill skill)
         {
@@ -200,6 +205,7 @@ namespace Capstone.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("/sideproject/{projectId}/delete-skill/{skillId}")]
         public ActionResult DeleteSkillBySideProjectId(int projectId, int skillId)
         {

@@ -1,0 +1,225 @@
+using System.Collections.Generic;
+using Capstone.DAO.Interfaces;
+using Capstone.Exceptions;
+using Capstone.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Capstone.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class ContributorController : ControllerBase
+    {
+        private readonly IContributorDao _contributorDao;
+
+        public ContributorController(IContributorDao contributorDao)
+        {
+            _contributorDao = contributorDao;
+        }
+
+        /*  
+            **********************************************************************************************
+                                                CONTRIBUTOR CRUD CONTROLLER
+            **********************************************************************************************
+        */ 
+
+        [HttpPost]
+        public ActionResult CreateContributor(Contributor contributor)
+        {
+            try
+            {
+                Contributor createdContributor = _contributorDao.CreateContributor(contributor);
+
+                if (createdContributor == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetContributorById), new { contributorId = createdContributor.Id }, createdContributor);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while creating the contributor.");
+            }
+        }
+
+        [HttpGet("{contributorId}")]
+        public ActionResult<Contributor> GetContributorById(int contributorId)
+        {
+            Contributor contributor = _contributorDao.GetContributorById(contributorId);
+
+            if (contributor == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(contributor);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<List<Contributor>> GetAllContributors()
+        {
+            List<Contributor> contributors = _contributorDao.GetAllContributors();
+
+            if (contributors == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(contributors);
+            }
+        }
+
+        [HttpPut("{contributorId}")]
+        public ActionResult UpdateContributor(int contributorId, Contributor contributor)
+        {
+            try
+            {
+                Contributor updatedContributor = _contributorDao.UpdateContributor(contributor);
+
+                if (updatedContributor == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedContributor);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the contributor.");
+            }
+        }
+
+        [HttpDelete("{contributorId}")]
+        public ActionResult DeleteContributorById(int contributorId)
+        {
+            try
+            {
+                int rowsAffected = _contributorDao.DeleteContributorById(contributorId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Contributor deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the contributor.");
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                            SIDE PROJECT CONTRIBUTOR CRUD CONTROLLER
+            **********************************************************************************************
+        */ 
+
+        [HttpPost("/sideproject/{projectId}")]
+        public ActionResult CreateContributorBySideProjectId(int projectId, Contributor contributor)
+        {
+            try
+            {
+                Contributor createdContributor = _contributorDao.CreateContributorBySideProjectId(projectId, contributor);
+
+                if (createdContributor == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetContributorBySideProjectId), new { projectId = projectId, contributorId = createdContributor.Id }, createdContributor);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while creating the side project contributor.");
+            }
+        }
+
+        [HttpGet("/sideproject/{projectId}/contributors")]
+        public ActionResult GetContributorsBySideProjectId(int projectId)
+        {
+            List<Contributor> contributors = _contributorDao.GetContributorsBySideProjectId(projectId);
+
+            if (contributors == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(contributors);
+            }
+        }
+
+        [HttpGet("/sideproject/{projectId}/contributor/{contributorId}")]
+        public ActionResult<Contributor> GetContributorBySideProjectId(int projectId, int contributorId)
+        {
+            Contributor contributor = _contributorDao.GetContributorBySideProjectId(projectId, contributorId);
+
+            if (contributor == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(contributor);
+            }
+        }
+
+        [HttpPut("/sideproject/{projectId}/contributor/{contributorId}")]
+        public ActionResult UpdateContributorBySideProjectId(int projectId, int contributorId, Contributor updatedContributor)
+        {
+            try
+            {
+                Contributor updatedContributor = _contributorDao.UpdateContributorBySideProjectId(projectId, updatedContributor);
+
+                if (updatedContributor == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedContributor);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the side project contributor.");
+            }
+        }
+
+        [HttpDelete("/sideproject/{projectId}/contributor/{contributorId}")]
+        public ActionResult DeleteContributorBySideProjectId(int projectId, int contributorId)
+        {
+            try
+            {
+                int rowsAffected = _contributorDao.DeleteContributorBySideProjectId(projectId, contributorId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Side project contributor deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the side project contributor.");
+            }
+        }
+    }
+}
