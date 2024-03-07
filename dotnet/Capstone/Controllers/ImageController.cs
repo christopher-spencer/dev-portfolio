@@ -427,5 +427,515 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while deleting the website logo.");
             }
         }
+
+        /*  
+            **********************************************************************************************
+                                            SKILL IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        [Authorize]
+        [HttpPost("/skill/{skillId}/create-image")]
+        public ActionResult CreateImageBySkillId(int skillId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageBySkillId(skillId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetImageBySkillId), new { skillId = skillId, imageId = createdImage.Id }, createdImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while creating the skill image.");
+            }
+        }
+
+        [HttpGet("/skill/{skillId}/image/{imageId}")]
+        public ActionResult<Image> GetImageBySkillId(int skillId, int imageId)
+        {
+            Image image = _imageDao.GetImageBySkillId(skillId, imageId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/skill/{skillId}/update-image/{imageId}")]
+        public ActionResult<Image> UpdateImageBySkillId(int skillId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageBySkillId(skillId, image);
+
+                if (updatedImage == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the skill image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/skill/{skillId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageBySkillId(int skillId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageBySkillId(skillId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Skill image deleted successfully.");
+                }
+                else 
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the skill image.");
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                        GOAL IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        [Authorize]
+        [HttpPost("/goal/{goalId}/create-image")]
+        public ActionResult CreateImageByGoalId(int goalId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByGoalId(goalId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(createdImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while creating the goal image.");
+            }
+        }
+
+        [HttpGet("/goal/{goalId}/image/{imageId}")]
+        public ActionResult<Image> GetImageByGoalId(int goalId, int imageId)
+        {
+            Image image = _imageDao.GetImageByGoalId(goalId, imageId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [HttpGet("/goal/{goalId}/images")]
+        public ActionResult GetImagesByGoalId(int goalId)
+        {
+            List<Image> images = _imageDao.GetImagesByGoalId(goalId);
+
+            if (images == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(images);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/goal/{goalId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByGoalId(int goalId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByGoalId(goalId, image);
+
+                if (updatedImage == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the goal image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/goal/{goalId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByGoalId(int goalId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByGoalId(goalId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Goal image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the goal image.");
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                        CONTRIBUTOR IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        [Authorize]
+        [HttpPost("/contributor/{contributorId}/create-image")]
+        public ActionResult CreateImageByContributorId(int contributorId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByContributorId(contributorId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(createdImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while creating the contributor image.");
+            }
+        }
+
+        [HttpGet("/contributor/{contributorId}/image/{imageId}")]
+        public ActionResult<Image> GetImageByContributorId(int contributorId, int imageId)
+        {
+            Image image = _imageDao.GetImageByContributorId(contributorId, imageId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [HttpGet("/contributor/{contributorId}/images")]
+        public ActionResult GetImagesByContributorId(int contributorId)
+        {
+            List<Image> images = _imageDao.GetImagesByContributorId(contributorId);
+
+            if (images == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(images);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/contributor/{contributorId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByContributorId(int contributorId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByContributorId(contributorId, image);
+
+                if (updatedImage == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the contributor image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/contributor/{contributorId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByContributorId(int contributorId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByContributorId(contributorId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Contributor image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the contributor image.");
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                        API AND SERVICE IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        [Authorize]
+        [HttpPost("/api-service/{apiServiceId}/create-image")]
+        public ActionResult CreateImageByApiServiceId(int apiServiceId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByApiServiceId(apiServiceId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(createdImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while creating the API/service image.");
+            }
+        }
+
+        [HttpGet("/api-service/{apiServiceId}/image/{imageId}")]
+        public ActionResult<Image> GetImageByApiServiceId(int apiServiceId, int imageId)
+        {
+            Image image = _imageDao.GetImageByApiServiceId(apiServiceId, imageId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [HttpGet("/api-service/{apiServiceId}/images")]
+        public ActionResult GetImagesByApiServiceId(int apiServiceId)
+        {
+            List<Image> images = _imageDao.GetImagesByApiServiceId(apiServiceId);
+
+            if (images == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(images);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/api-service/{apiServiceId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByApiServiceId(int apiServiceId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByApiServiceId(apiServiceId, image);
+
+                if (updatedImage == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the API/service image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/api-service/{apiServiceId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByApiServiceId(int apiServiceId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByApiServiceId(apiServiceId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("API/service image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the API/service image.");
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                    DEPENDENCY AND LIBRARY IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        [Authorize]
+        [HttpPost("/dependency-library/{dependencyLibraryId}/create-image")]
+        public ActionResult CreateImageByDependencyLibraryId(int dependencyLibraryId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByDependencyLibraryId(dependencyLibraryId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(createdImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while creating the dependency/library image.");
+            }
+        }
+
+        [HttpGet("/dependency-library/{dependencyLibraryId}/image/{imageId}")]
+        public ActionResult<Image> GetImageByDependencyLibraryId(int dependencyLibraryId, int imageId)
+        {
+            Image image = _imageDao.GetImageByDependencyLibraryId(dependencyLibraryId, imageId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [HttpGet("/dependency-library/{dependencyLibraryId}/images")]
+        public ActionResult GetImagesByDependencyLibraryId(int dependencyLibraryId)
+        {
+            List<Image> images = _imageDao.GetImagesByDependencyLibraryId(dependencyLibraryId);
+
+            if (images == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(images);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/dependency-library/{dependencyLibraryId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByDependencyLibraryId(int dependencyLibraryId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByDependencyLibraryId(dependencyLibraryId, image);
+
+                if (updatedImage == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while updating the dependency/library image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/dependency-library/{dependencyLibraryId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByDependencyLibraryId(int dependencyLibraryId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByDependencyLibraryId(dependencyLibraryId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Dependency/library image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the dependency/library image.");
+            }
+        }
     }
 }
