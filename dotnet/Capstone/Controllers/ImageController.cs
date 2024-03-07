@@ -101,7 +101,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/image/delete/{imageId}")]
+        [HttpDelete("/delete-image/{imageId}")]
         public ActionResult DeleteImageById(int imageId)
         {
             try
