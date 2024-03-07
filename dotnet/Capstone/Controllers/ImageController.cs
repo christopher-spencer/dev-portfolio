@@ -183,7 +183,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}")]
+        [HttpPut("/update-sideproject/{projectId}/update-image")]
         public ActionResult UpdateImageBySideProjectId(int projectId, Image image)
         {
             try
@@ -214,7 +214,7 @@ namespace Capstone.Controllers
 
                 if (rowsAffected > 0)
                 {
-                    return Ok();
+                    return Ok("Image deleted successfully.");
                 }
                 else
                 {
