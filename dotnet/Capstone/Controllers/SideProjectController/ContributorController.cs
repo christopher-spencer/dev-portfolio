@@ -41,7 +41,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetContributorById), new { contributorId = createdContributor.Id }, createdContributor);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the contributor.");
             }
@@ -94,7 +94,7 @@ namespace Capstone.Controllers
                     return Ok(updatedContributor);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the contributor.");
             }
@@ -117,7 +117,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the contributor.");
             }
@@ -146,7 +146,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetContributorBySideProjectId), new { projectId = projectId, contributorId = createdContributor.Id }, createdContributor);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the side project contributor.");
             }
@@ -199,7 +199,7 @@ namespace Capstone.Controllers
                     return Ok(updatedContributor);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the side project contributor.");
             }
@@ -222,7 +222,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the side project contributor.");
             }

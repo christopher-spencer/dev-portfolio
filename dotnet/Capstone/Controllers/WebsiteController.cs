@@ -41,7 +41,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetWebsiteById), new { websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the website.");
             }
@@ -94,7 +94,7 @@ namespace Capstone.Controllers
                     return Ok(updatedWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the website.");
             }
@@ -117,7 +117,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the website.");
             }
@@ -146,7 +146,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetWebsiteByProjectId), new { projectId = projectId, websiteId = createdWebsite.Id}, createdWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the side project website.");
             }
@@ -198,7 +198,7 @@ namespace Capstone.Controllers
                     return Ok(updatedWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the side project website.");
             }
@@ -221,7 +221,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the website.");
             }
@@ -250,7 +250,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetWebsiteByContributorId), new { contributorId = contributorId, websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the contributor website.");
             }
@@ -288,7 +288,7 @@ namespace Capstone.Controllers
                     return Ok(updatedWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the contributor website.");
             }
@@ -311,7 +311,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the contributor website.");
             }
@@ -339,7 +339,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetWebsiteByApiServiceId), new { apiServiceId = apiServiceId, websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the API/service website.");
             }
@@ -377,7 +377,7 @@ namespace Capstone.Controllers
                     return Ok(updatedWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the API/service website.");
             }
@@ -400,7 +400,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the API/service website.");
             }
@@ -428,7 +428,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetWebsiteByDependencyLibraryId), new { dependencyLibraryId = dependencyLibraryId, websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the dependency/library website.");
             }
@@ -466,7 +466,7 @@ namespace Capstone.Controllers
                     return Ok(updatedWebsite);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the dependency/library website.");
             }
@@ -489,7 +489,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the dependency/library website.");
             }

@@ -87,7 +87,7 @@ namespace Capstone.Controllers
                     return Ok(updatedBlogPost);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the blog post.");
             }
@@ -110,7 +110,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the blog post.");
             }

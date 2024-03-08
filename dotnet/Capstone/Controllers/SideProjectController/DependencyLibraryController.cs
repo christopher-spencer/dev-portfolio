@@ -41,7 +41,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetDependencyOrLibraryById), new { dependencyLibraryId = createdDependencyLibrary.Id }, createdDependencyLibrary);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the dependency or library.");
             }
@@ -94,7 +94,7 @@ namespace Capstone.Controllers
                     return Ok(updatedDependencyLibrary);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the dependency or library.");
             }
@@ -117,7 +117,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the dependency or library.");
             }
@@ -146,7 +146,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetDependencyOrLibraryBySideProjectId), new { projectId = projectId, dependencyLibraryId = createdDependencyLibrary.Id }, createdDependencyLibrary);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the side project dependency or library.");
             }
@@ -199,7 +199,7 @@ namespace Capstone.Controllers
                     return Ok(updatedDependencyLibrary);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the side project dependency or library.");
             }
@@ -222,7 +222,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the side project dependency or library.");
             }

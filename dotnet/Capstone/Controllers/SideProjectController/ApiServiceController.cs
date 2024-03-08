@@ -41,7 +41,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetAPIOrServiceById), new { apiServiceId = createdApiService.Id }, createdApiService);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the API/service.");
             }
@@ -94,7 +94,7 @@ namespace Capstone.Controllers
                     return Ok(updatedApiService);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the API/service.");
             }
@@ -117,7 +117,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the API/service.");
             }
@@ -146,7 +146,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetAPIOrServiceBySideProjectId), new { projectId = projectId, apiServiceId = createdApiService.Id }, createdApiService);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the side project API/service.");
             }
@@ -199,7 +199,7 @@ namespace Capstone.Controllers
                     return Ok(updatedApiService);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the side project API/service.");
             }
@@ -222,7 +222,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the side project API/service.");
             }

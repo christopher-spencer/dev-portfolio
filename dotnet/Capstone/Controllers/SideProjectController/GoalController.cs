@@ -41,7 +41,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetGoalById), new { goalId = createdGoal.Id }, createdGoal);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the goal.");
             }
@@ -94,7 +94,7 @@ namespace Capstone.Controllers
                     return Ok(updatedGoal);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the goal.");
             }
@@ -117,7 +117,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the goal.");
             }
@@ -146,7 +146,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetGoalBySideProjectId), new { projectId = projectId, goalId = createdGoal.Id }, createdGoal);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the side project goal.");
             }
@@ -200,7 +200,7 @@ namespace Capstone.Controllers
                     return Ok(updatedGoal);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the side project goal.");
             }
@@ -223,7 +223,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the side project goal.");
             }

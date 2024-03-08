@@ -41,7 +41,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetImageById), new { imageId = createdImage.Id }, createdImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the image.");
             }
@@ -94,7 +94,7 @@ namespace Capstone.Controllers
                     return Ok(updatedImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the image.");
             }
@@ -117,7 +117,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the image.");
             }
@@ -146,7 +146,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetImageBySideProjectId), new { imageId = createdImage.Id}, createdImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the side project image.");
             }
@@ -198,7 +198,7 @@ namespace Capstone.Controllers
                     return Ok(updatedImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the side project image.");
             }
@@ -221,7 +221,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the blog post.");
             }
@@ -253,7 +253,7 @@ namespace Capstone.Controllers
                     return Ok(createdImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating blog post image.");
             }
@@ -307,7 +307,7 @@ namespace Capstone.Controllers
                     return Ok(updatedImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the blog post image.");
             }
@@ -330,7 +330,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the blog post image.");
             }
@@ -361,7 +361,7 @@ namespace Capstone.Controllers
                     return Ok(createdLogo);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the website logo.");
             }
@@ -399,7 +399,7 @@ namespace Capstone.Controllers
                     return Ok(updatedLogo);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the website logo.");
             }
@@ -422,7 +422,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the website logo.");
             }
@@ -451,7 +451,7 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetImageBySkillId), new { skillId = skillId, imageId = createdImage.Id }, createdImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the skill image.");
             }
@@ -489,7 +489,7 @@ namespace Capstone.Controllers
                     return Ok(updatedImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the skill image.");
             }
@@ -512,7 +512,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the skill image.");
             }
@@ -541,7 +541,7 @@ namespace Capstone.Controllers
                     return Ok(createdImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the goal image.");
             }
@@ -579,7 +579,7 @@ namespace Capstone.Controllers
                     return Ok(updatedImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the goal image.");
             }
@@ -602,7 +602,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the goal image.");
             }
@@ -631,7 +631,7 @@ namespace Capstone.Controllers
                     return Ok(createdImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the contributor image.");
             }
@@ -669,7 +669,7 @@ namespace Capstone.Controllers
                     return Ok(updatedImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the contributor image.");
             }
@@ -692,7 +692,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the contributor image.");
             }
@@ -721,7 +721,7 @@ namespace Capstone.Controllers
                     return Ok(createdImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the API/service image.");
             }
@@ -759,7 +759,7 @@ namespace Capstone.Controllers
                     return Ok(updatedImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the API/service image.");
             }
@@ -782,7 +782,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the API/service image.");
             }
@@ -811,7 +811,7 @@ namespace Capstone.Controllers
                     return Ok(createdImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while creating the dependency/library image.");
             }
@@ -849,7 +849,7 @@ namespace Capstone.Controllers
                     return Ok(updatedImage);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while updating the dependency/library image.");
             }
@@ -872,7 +872,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
                 return StatusCode(500, "An error occurred while deleting the dependency/library image.");
             }
