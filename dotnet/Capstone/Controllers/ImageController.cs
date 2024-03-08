@@ -128,7 +128,7 @@ namespace Capstone.Controllers
                                         SIDE PROJECT IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-
+        // FIXME when you create an image via POSTMAN, it sets it in additional images as well
         [Authorize]
         [HttpPost("/sideproject/{projectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int projectId, Image image)
