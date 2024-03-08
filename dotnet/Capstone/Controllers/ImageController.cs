@@ -129,6 +129,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
         // FIXME when you create an image via POSTMAN, it sets it in additional images as well
+        // TODO separate paths for main image and associated images, or separate tables? Or boolean flags?
         [Authorize]
         [HttpPost("/sideproject/{projectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int projectId, Image image)
