@@ -256,25 +256,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/contributor/{contributorId}/websites")]
-        public ActionResult GetWebsitesByContributorId(int contributorId)
+        [HttpGet("/contributor/{contributorId}/website")]
+        public ActionResult<Website> GetWebsiteByContributorId(int contributorId)
         {
-            List<Website> websites = _websiteDao.GetWebsiteByContributorId(contributorId);
-
-            if (websites == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return Ok(websites);               
-            }
-        }
-
-        [HttpGet("/contributor/{contributorId}/website/{websiteId}")]
-        public ActionResult<Website> GetWebsiteByContributorId(int contributorId, int websiteId)
-        {
-            Website website = _websiteDao.GetWebsiteByContributorId(contributorId, websiteId);
+            Website website = _websiteDao.GetWebsiteByContributorId(contributorId);
             
             if (website == null)
             {
@@ -360,25 +345,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/api-service/{apiServiceId}/websites")]
-        public ActionResult GetWebsitesByApiServiceId(int apiServiceId)
-        {
-            List<Website> websites = _websiteDao.GetWebsiteByApiServiceId(apiServiceId);
-
-            if (websites == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return Ok(websites);               
-            }
-        }
-
         [HttpGet("/api-service/{apiServiceId}/website/{websiteId}")]
-        public ActionResult<Website> GetWebsiteByApiServiceId(int apiServiceId, int websiteId)
+        public ActionResult<Website> GetWebsiteByApiServiceId(int apiServiceId)
         {
-            Website website = _websiteDao.GetWebsiteByApiServiceId(apiServiceId, websiteId);
+            Website website = _websiteDao.GetWebsiteByApiServiceId(apiServiceId);
             
             if (website == null)
             {
@@ -464,25 +434,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/dependency-library/{dependencyLibraryId}/websites")]
-        public ActionResult GetWebsitesByDependencyLibraryId(int dependencyLibraryId)
+        [HttpGet("/dependency-library/{dependencyLibraryId}/website")]
+        public ActionResult<Website> GetWebsiteByDependencyLibraryId(int dependencyLibraryId)
         {
-            List<Website> websites = _websiteDao.GetWebsiteByDependencyLibraryId(dependencyLibraryId);
-
-            if (websites == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return Ok(websites);               
-            }
-        }
-
-        [HttpGet("/dependency-library/{dependencyLibraryId}/website/{websiteId}")]
-        public ActionResult<Website> GetWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId)
-        {
-            Website website = _websiteDao.GetWebsiteByDependencyLibraryId(dependencyLibraryId, websiteId);
+            Website website = _websiteDao.GetWebsiteByDependencyLibraryId(dependencyLibraryId);
             
             if (website == null)
             {
