@@ -142,69 +142,69 @@ CREATE TABLE website_images (
     FOREIGN KEY (image_id) REFERENCES images(id)
 );
 
-CREATE TABLE skill_images {
+CREATE TABLE skill_images (
     skill_id INTEGER,
     image_id INTEGER,
     PRIMARY KEY (skill_id, image_id),
     FOREIGN KEY (skill_id) REFERENCES skills(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
-};
+);
 
-CREATE TABLE goal_images {
+CREATE TABLE goal_images (
     goal_id INTEGER,
     image_id INTEGER,
     PRIMARY KEY (goal_id, image_id),
     FOREIGN KEY (goal_id) REFERENCES goals(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
-};
+);
 
-CREATE TABLE contributor_images {
+CREATE TABLE contributor_images (
     contributor_id INTEGER,
     image_id INTEGER,
     PRIMARY KEY (contributor_id, image_id),
     FOREIGN KEY (contributor_id) REFERENCES contributors(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
-};
+);
 
-CREATE TABLE api_service_images {
+CREATE TABLE api_service_images (
     apiservice_id INTEGER,
     image_id INTEGER,
     PRIMARY KEY (apiservice_id, image_id),
     FOREIGN KEY (apiservice_id) REFERENCES apis_and_services(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
-};
+);
 
-CREATE TABLE dependency_library_images {
+CREATE TABLE dependency_library_images (
     dependencylibrary_id INTEGER,
     image_id INTEGER,
     PRIMARY KEY (dependencylibrary_id, image_id),
     FOREIGN KEY (dependencylibrary_id) REFERENCES dependencies_and_libraries(id),
     FOREIGN KEY (image_id) REFERENCES images(id)    
-}
+);
 
-CREATE TABLE contributor_websites {
+CREATE TABLE contributor_websites (
     contributor_id INTEGER,
     website_id INTEGER,
     PRIMARY KEY (contributor_id, website_id),
     FOREIGN KEY (contributor_id) REFERENCES contributors(id),
     FOREIGN KEY (website_id) REFERENCES websites(id)
-}
+);
 
-CREATE TABLE api_service_websites {
+CREATE TABLE api_service_websites (
     apiservice_id INTEGER, 
     website_id INTEGER,
     PRIMARY KEY (apiservice_id, website_id),
     FOREIGN KEY (apiservice_id) REFERENCES apis_and_services(id),
     FOREIGN KEY (website_id) REFERENCES websites(id)   
-}
+);
 
-CREATE TABLE dependency_library_websites {
+CREATE TABLE dependency_library_websites (
     dependencylibrary_id INTEGER,
     website_id INTEGER,
     PRIMARY KEY (dependencylibrary_id, website_id),
     FOREIGN KEY (dependencylibrary_id) REFERENCES dependencies_and_libraries(id),
     FOREIGN KEY (website_id) REFERENCES websites(id)
-}
+);
 
 CREATE TABLE blogpost_images (
     blogpost_id INTEGER,
