@@ -457,10 +457,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/skill/{skillId}/image/{imageId}")]
-        public ActionResult<Image> GetImageBySkillId(int skillId, int imageId)
+        [HttpGet("/skill/{skillId}/image")]
+        public ActionResult<Image> GetImageBySkillId(int skillId)
         {
-            Image image = _imageDao.GetImageBySkillId(skillId, imageId);
+            Image image = _imageDao.GetImageBySkillId(skillId);
 
             if (image == null)
             {
@@ -547,10 +547,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/goal/{goalId}/image/{imageId}")]
-        public ActionResult<Image> GetImageByGoalId(int goalId, int imageId)
+        [HttpGet("/goal/{goalId}/image")]
+        public ActionResult<Image> GetImageByGoalId(int goalId)
         {
-            Image image = _imageDao.GetImageByGoalId(goalId, imageId);
+            Image image = _imageDao.GetImageByGoalId(goalId);
 
             if (image == null)
             {
@@ -559,21 +559,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(image);
-            }
-        }
-
-        [HttpGet("/goal/{goalId}/images")]
-        public ActionResult GetImagesByGoalId(int goalId)
-        {
-            List<Image> images = _imageDao.GetImagesByGoalId(goalId);
-
-            if (images == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(images);
             }
         }
 
@@ -652,10 +637,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/contributor/{contributorId}/image/{imageId}")]
-        public ActionResult<Image> GetImageByContributorId(int contributorId, int imageId)
+        [HttpGet("/contributor/{contributorId}/image")]
+        public ActionResult<Image> GetImageByContributorId(int contributorId)
         {
-            Image image = _imageDao.GetImageByContributorId(contributorId, imageId);
+            Image image = _imageDao.GetImageByContributorId(contributorId);
 
             if (image == null)
             {
@@ -664,21 +649,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(image);
-            }
-        }
-
-        [HttpGet("/contributor/{contributorId}/images")]
-        public ActionResult GetImagesByContributorId(int contributorId)
-        {
-            List<Image> images = _imageDao.GetImagesByContributorId(contributorId);
-
-            if (images == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(images);
             }
         }
 
@@ -757,10 +727,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/api-service/{apiServiceId}/image/{imageId}")]
-        public ActionResult<Image> GetImageByApiServiceId(int apiServiceId, int imageId)
+        [HttpGet("/api-service/{apiServiceId}/image")]
+        public ActionResult<Image> GetImageByApiServiceId(int apiServiceId)
         {
-            Image image = _imageDao.GetImageByApiServiceId(apiServiceId, imageId);
+            Image image = _imageDao.GetImageByApiServiceId(apiServiceId);
 
             if (image == null)
             {
@@ -769,21 +739,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(image);
-            }
-        }
-
-        [HttpGet("/api-service/{apiServiceId}/images")]
-        public ActionResult GetImagesByApiServiceId(int apiServiceId)
-        {
-            List<Image> images = _imageDao.GetImagesByApiServiceId(apiServiceId);
-
-            if (images == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(images);
             }
         }
 
@@ -862,10 +817,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/dependency-library/{dependencyLibraryId}/image/{imageId}")]
-        public ActionResult<Image> GetImageByDependencyLibraryId(int dependencyLibraryId, int imageId)
+        [HttpGet("/dependency-library/{dependencyLibraryId}/image")]
+        public ActionResult<Image> GetImageByDependencyLibraryId(int dependencyLibraryId)
         {
-            Image image = _imageDao.GetImageByDependencyLibraryId(dependencyLibraryId, imageId);
+            Image image = _imageDao.GetImageByDependencyLibraryId(dependencyLibraryId);
 
             if (image == null)
             {
@@ -874,21 +829,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(image);
-            }
-        }
-
-        [HttpGet("/dependency-library/{dependencyLibraryId}/images")]
-        public ActionResult GetImagesByDependencyLibraryId(int dependencyLibraryId)
-        {
-            List<Image> images = _imageDao.GetImagesByDependencyLibraryId(dependencyLibraryId);
-
-            if (images == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(images);
             }
         }
 
