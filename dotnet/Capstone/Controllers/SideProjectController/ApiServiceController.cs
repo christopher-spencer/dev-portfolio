@@ -76,10 +76,10 @@ namespace Capstone.Controllers
                 return Ok(apiServices);
             }
         }
-
+        //FIXME needs apiServiceId?
         [Authorize]
-        [HttpPut("/update-api-or-service/{apiServiceId}")]
-        public ActionResult UpdateAPIOrService(int apiServiceId, ApiService apiService)
+        [HttpPut("/update-api-or-service")]
+        public ActionResult UpdateAPIOrService(ApiService apiService)
         {
             try
             {

@@ -24,7 +24,7 @@ namespace Capstone.DAO.Interfaces
         Goal CreateGoalBySideProjectId(int projectId, Goal goal);
         List<Goal> GetGoalsBySideProjectId(int projectId);
         Goal GetGoalBySideProjectId(int projectId, int goalId);
-        Goal UpdateGoalBySideProjectId(int projectId, Goal updatedGoal);
+        Goal UpdateGoalBySideProjectId(int projectId, Goal goal);
         int DeleteGoalBySideProjectId(int projectId, int goalId);
 
     }

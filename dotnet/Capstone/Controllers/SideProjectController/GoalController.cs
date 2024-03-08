@@ -182,13 +182,14 @@ namespace Capstone.Controllers
             }
         }
 
+        //FIXME add goalId?
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-goal/{goalId}")]
-        public ActionResult UpdateGoalBySideProjectId(int projectId, int goalId, Goal updatedGoal)
+        [HttpPut("/update-sideproject/{projectId}/update-goal")]
+        public ActionResult UpdateGoalBySideProjectId(int projectId, Goal goal)
         {
             try
             {
-                Goal updatedGoal = _goalDao.UpdateGoalBySideProjectId(projectId, updatedGoal);
+                Goal updatedGoal = _goalDao.UpdateGoalBySideProjectId(projectId, goal);
 
                 if (updatedGoal == null)
                 {

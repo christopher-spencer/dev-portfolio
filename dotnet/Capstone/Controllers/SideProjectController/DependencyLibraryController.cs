@@ -181,14 +181,14 @@ namespace Capstone.Controllers
                 return Ok(dependencyLibrary);
             }
         }
-
+        // FIXME add dependencyLibraryId?
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-dependency-or-library/{dependencyLibraryId}")]
-        public ActionResult UpdateDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId, DependencyLibrary updatedDependencyLibrary)
+        [HttpPut("/update-sideproject/{projectId}/update-dependency-or-library")]
+        public ActionResult UpdateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary)
         {
             try
             {
-                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibraryBySideProjectId(projectId, updatedDependencyLibrary);
+                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibraryBySideProjectId(projectId, dependencyLibrary);
 
                 if (updatedDependencyLibrary == null)
                 {

@@ -76,10 +76,10 @@ namespace Capstone.Controllers
                 return Ok(contributors);
             }
         }
-
+        //FIXME needs contributorId?
         [Authorize]
-        [HttpPut("/update-contributor/{contributorId}")]
-        public ActionResult UpdateContributor(int contributorId, Contributor contributor)
+        [HttpPut("/update-contributor")]
+        public ActionResult UpdateContributor(Contributor contributor)
         {
             try
             {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-contributor/{contributorId}")]
-        public ActionResult UpdateContributorBySideProjectId(int projectId, int contributorId, Contributor updatedContributor)
+        [HttpPut("/update-sideproject/{projectId}/update-contributor")]
+        public ActionResult UpdateContributorBySideProjectId(int projectId, Contributor contributor)
         {
             try
             {
-                Contributor updatedContributor = _contributorDao.UpdateContributorBySideProjectId(projectId, updatedContributor);
+                Contributor updatedContributor = _contributorDao.UpdateContributorBySideProjectId(projectId, contributor);
 
                 if (updatedContributor == null)
                 {
