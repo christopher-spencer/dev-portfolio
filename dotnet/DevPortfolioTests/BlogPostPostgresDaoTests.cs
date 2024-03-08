@@ -11,6 +11,8 @@ namespace Capstone.UnitTests.DAO
     [TestClass]
     public class BlogPostsPostgresDaoTests : PostgresDaoTestBase
     {
+
+        //FIXME fix these tests
         [TestMethod]
         public void GetBlogPosts_Returns_All_Blog_Posts()
         {
