@@ -24,7 +24,7 @@ namespace Capstone.DAO.Interfaces
         ApiService CreateAPIOrServiceBySideProjectId(int projectId, ApiService apiService);
         List<ApiService> GetAPIsAndServicesBySideProjectId(int projectId);
         ApiService GetAPIOrServiceBySideProjectId(int projectId, int apiServiceId);
-        ApiService UpdateAPIOrServiceBySideProjectId(int projectId, ApiService updatedApiService);
+        ApiService UpdateAPIOrServiceBySideProjectId(int projectId, ApiService apiService);
         int DeleteAPIOrServiceBySideProjectId(int projectId, int apiServiceId);
     }
 }

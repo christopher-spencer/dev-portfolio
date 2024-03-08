@@ -25,7 +25,7 @@ namespace Capstone.DAO.Interfaces
         List<Image> GetImagesBySideProjectId(int projectId);
         Image GetImageBySideProjectId(int sideProjectId, int imageId);
         Image GetImageBySideProjectIdAndImageId(int projectId, int imageId);
-        Image UpdateImageBySideProjectId(int projectId, Image updatedImage);
+        Image UpdateImageBySideProjectId(int projectId, Image image);
         int DeleteImageBySideProjectId(int projectId, int imageId);
 
         /*  
@@ -36,7 +36,7 @@ namespace Capstone.DAO.Interfaces
         Image CreateImageByBlogPostId(int blogPostId, Image image);
         Image GetImageByImageIdAndBlogPostId(int imageId, int blogPostId);
         List<Image> GetImagesByBlogPostId(int blogPostId);
-        Image UpdateImageByBlogPostId(int blogPostId, Image updatedImage);
+        Image UpdateImageByBlogPostId(int blogPostId, Image image);
         int DeleteImageByBlogPostId(int blogPostId, int imageId);
 
           /*  
@@ -46,7 +46,7 @@ namespace Capstone.DAO.Interfaces
         */
         Image CreateImageByWebsiteId(int websiteId, Image image);
         Image GetImageByWebsiteId(int websiteId);
-        Image UpdateImageByWebsiteId(int websiteId, Image updatedImage);
+        Image UpdateImageByWebsiteId(int websiteId, Image image);
         int DeleteImageByWebsiteId(int websiteId, int imageId);
 
         /*  
@@ -56,7 +56,7 @@ namespace Capstone.DAO.Interfaces
         */
         Image CreateImageBySkillId(int skillId, Image image);
         Image GetImageBySkillId(int skillId);
-        Image UpdateImageBySkillId(int skillId, Image updatedImage);
+        Image UpdateImageBySkillId(int skillId, Image image);
         int DeleteImageBySkillId(int skillId, int imageId);
 
         /*  
@@ -66,7 +66,7 @@ namespace Capstone.DAO.Interfaces
         */
         Image CreateImageByGoalId(int goalId, Image image);
         Image GetImageByGoalId(int goalId);
-        Image UpdateImageByGoalId(int goalId, Image updatedImage);
+        Image UpdateImageByGoalId(int goalId, Image image);
         int DeleteImageByGoalId(int goalId, int imageId);
 
         /*  
@@ -76,7 +76,7 @@ namespace Capstone.DAO.Interfaces
         */ 
         Image CreateImageByContributorId(int contributorId, Image image);
         Image GetImageByContributorId(int contributorId);
-        Image UpdateImageByContributorId(int contributorId, Image updatedImage);
+        Image UpdateImageByContributorId(int contributorId, Image image);
         int DeleteImageByContributorId(int contributorId, int imageId);
 
         /*  
@@ -86,7 +86,7 @@ namespace Capstone.DAO.Interfaces
         */
         Image CreateImageByApiServiceId(int apiServiceId, Image image);
         Image GetImageByApiServiceId(int apiServiceId);
-        Image UpdateImageByApiServiceId(int apiServiceId, Image updatedImage);
+        Image UpdateImageByApiServiceId(int apiServiceId, Image image);
         int DeleteImageByApiServiceId(int apiServiceId, int imageId);
 
         /*  
@@ -97,7 +97,7 @@ namespace Capstone.DAO.Interfaces
 
         Image CreateImageByDependencyLibraryId(int dependencyLibraryId, Image image);
         Image GetImageByDependencyLibraryId(int dependencyLibraryId);
-        Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, Image updatedImage);
+        Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, Image image);
         int DeleteImageByDependencyLibraryId(int dependencyLibraryId, int imageId);
     }
 }

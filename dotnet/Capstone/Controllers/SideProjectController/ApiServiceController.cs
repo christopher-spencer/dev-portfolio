@@ -184,11 +184,11 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpPut("/update-sideproject/{projectId}/update-api-or-service/{apiServiceId}")]
-        public ActionResult UpdateAPIOrServiceBySideProjectId(int projectId, int apiServiceId, ApiService updatedApiService)
+        public ActionResult UpdateAPIOrServiceBySideProjectId(int projectId, ApiService apiService)
         {
             try
             {
-                ApiService updatedApiService = _apiServiceDao.UpdateAPIOrServiceBySideProjectId(projectId, updatedApiService);
+                ApiService updatedApiService = _apiServiceDao.UpdateAPIOrServiceBySideProjectId(projectId, apiService);
 
                 if (updatedApiService == null)
                 {
