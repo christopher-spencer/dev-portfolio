@@ -295,7 +295,7 @@ namespace Capstone.DAO
             return apiService;
         }
 
-        public ApiService UpdateAPIOrServiceBySideProjectId(int projectId, ApiService updatedApiService)
+        public ApiService UpdateAPIOrServiceBySideProjectId(int projectId, ApiService apiService)
         {
             string sql = "UPDATE apis_and_services " +
                          "SET name = @name, description = @description " +
@@ -312,13 +312,13 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@projectId", projectId);
-                        cmd.Parameters.AddWithValue("@name", updatedApiService.Name);
-                        cmd.Parameters.AddWithValue("@description", updatedApiService.Description);
+                        cmd.Parameters.AddWithValue("@name", apiService.Name);
+                        cmd.Parameters.AddWithValue("@description", apiService.Description);
 
                         int count = cmd.ExecuteNonQuery();
                         if (count == 1)
                         {
-                            return updatedApiService;
+                            return apiService;
                         }
                     }
                 }
