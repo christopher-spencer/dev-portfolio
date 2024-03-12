@@ -145,7 +145,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetImageBySideProjectId), new { imageId = createdImage.Id}, createdImage);
+                    return CreatedAtAction(nameof(GetImageBySideProjectId), new { projectId, imageId = createdImage.Id}, createdImage);
                 }
             }
             catch (DaoException)
