@@ -66,7 +66,7 @@ namespace Capstone.DAO.Interfaces
         */
         Image CreateImageByGoalId(int goalId, Image image);
         Image GetImageByGoalId(int goalId);
-        Image UpdateImageByGoalId(int goalId, Image image);
+        Image UpdateImageByGoalId(int goalId, int imageId, Image image);
         int DeleteImageByGoalId(int goalId, int imageId);
 
         /*  

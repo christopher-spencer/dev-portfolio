@@ -566,7 +566,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageByGoalId(goalId, image);
+                Image updatedImage = _imageDao.UpdateImageByGoalId(goalId, imageId, image);
 
                 if (updatedImage == null)
                 {
