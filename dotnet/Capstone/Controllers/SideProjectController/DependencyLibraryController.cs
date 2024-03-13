@@ -22,7 +22,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
                                         DEPENDENCIES AND LIBRARIES CRUD CONTROLLER
             **********************************************************************************************
-        */    
+        */
 
         [Authorize]
         [HttpPost("/create-dependency-or-library")]
@@ -127,7 +127,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
                                     SIDE PROJECT DEPENDENCIES AND LIBRARIES CRUD CONTROLLER
             **********************************************************************************************
-        */ 
+        */
 
         [Authorize]
         [HttpPost("/sideproject/{projectId}/create-dependency-or-library")]
@@ -181,14 +181,14 @@ namespace Capstone.Controllers
                 return Ok(dependencyLibrary);
             }
         }
-        // FIXME add dependencyLibraryId?
+
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-dependency-or-library")]
-        public ActionResult UpdateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary)
+        [HttpPut("/update-sideproject/{projectId}/update-dependency-or-library/{dependencyLibraryId}")]
+        public ActionResult UpdateDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId, DependencyLibrary dependencyLibrary)
         {
             try
             {
-                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibraryBySideProjectId(projectId, dependencyLibrary);
+                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibraryBySideProjectId(projectId, dependencyLibraryId, dependencyLibrary);
 
                 if (updatedDependencyLibrary == null)
                 {

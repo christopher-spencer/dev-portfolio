@@ -24,7 +24,7 @@ namespace Capstone.DAO.Interfaces
         DependencyLibrary CreateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary);
         List<DependencyLibrary> GetDependenciesAndLibrariesBySideProjectId(int projectId);
         DependencyLibrary GetDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId);
-        DependencyLibrary UpdateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary);
+        DependencyLibrary UpdateDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId, DependencyLibrary dependencyLibrary);
         int DeleteDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId);
 
     }

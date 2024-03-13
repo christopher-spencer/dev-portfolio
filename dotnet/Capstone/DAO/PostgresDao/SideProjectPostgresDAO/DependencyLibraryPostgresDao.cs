@@ -122,7 +122,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId); 
+                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
 
@@ -272,9 +272,8 @@ namespace Capstone.DAO
 
             return dependencyLibrary;
         }
-        //FIXME add depLibraryId
 
-        public DependencyLibrary UpdateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary)
+        public DependencyLibrary UpdateDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId, DependencyLibrary dependencyLibrary)
         {
             string sql = "UPDATE dependencies_and_libraries dl " +
                          "SET name = @name, description = @description " +
@@ -289,7 +288,7 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibrary.Id);
+                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId); 
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
 
