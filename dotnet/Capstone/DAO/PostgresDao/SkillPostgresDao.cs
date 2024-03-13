@@ -18,7 +18,6 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
             this._imageDao = imageDao;
         }
-        // FIXME use WEBSITE POSTGRES DAO CRUD AS TEMPLATE FOR IMPROVING CRUD METHODS
 
         /*  
             **********************************************************************************************
@@ -27,6 +26,11 @@ namespace Capstone.DAO
         */
         public Skill CreateSkill(Skill skill)
         {
+            if (string.IsNullOrEmpty(skill.Name))
+            {
+                throw new ArgumentException("Skill name cannot be null or empty.");
+            }
+
             string sql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
 
             try
@@ -35,11 +39,13 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@name", skill.Name);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", skill.Name);
 
-                    int id = Convert.ToInt32(cmd.ExecuteScalar());
-                    skill.Id = id;
+                        int id = Convert.ToInt32(cmd.ExecuteScalar());
+                        skill.Id = id;
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -52,6 +58,11 @@ namespace Capstone.DAO
 
         public Skill GetSkillById(int skillId)
         {
+            if (skillId <= 0)
+            {
+                throw new ArgumentException("SkillId must be greater than zero.");
+            }
+
             string sql = "SELECT name, icon_id FROM skills WHERE id = @id;";
 
             try
@@ -60,13 +71,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", skillId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return MapRowToSkill(reader);
+                        cmd.Parameters.AddWithValue("@id", skillId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapRowToSkill(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -81,6 +96,7 @@ namespace Capstone.DAO
         public List<Skill> GetAllSkills()
         {
             List<Skill> skills = new List<Skill>();
+
             string sql = "SELECT id, name, icon_id FROM skills;";
 
             try
@@ -89,12 +105,15 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        skills.Add(MapRowToSkill(reader));
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                skills.Add(MapRowToSkill(reader));
+                            }
+                        }
                     }
                 }
             }
@@ -108,6 +127,16 @@ namespace Capstone.DAO
 
         public Skill UpdateSkill(int skillId, Skill skill)
         {
+            if (string.IsNullOrEmpty(skill.Name))
+            {
+                throw new ArgumentException("Skill name cannot be null or empty.");
+            }
+
+            if (skillId <= 0)
+            {
+                throw new ArgumentException("SkillId must be greater than zero.");
+            }
+
             string sql = "UPDATE skills SET name = @name WHERE id = @skillId;";
 
             try
@@ -116,14 +145,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@skillId", skillId);
-                    cmd.Parameters.AddWithValue("@name", skill.Name);
-
-                    int count = cmd.ExecuteNonQuery();
-                    if (count == 1)
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return skill;
+                        cmd.Parameters.AddWithValue("@skillId", skillId);
+                        cmd.Parameters.AddWithValue("@name", skill.Name);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return skill;
+                        }
                     }
                 }
             }
@@ -137,6 +169,11 @@ namespace Capstone.DAO
 
         public int DeleteSkill(int skillId)
         {
+            if (skillId <= 0)
+            {
+                throw new ArgumentException("SkillId must be greater than zero.");
+            }
+
             string sql = "DELETE FROM skills WHERE id = @id;";
 
             try
@@ -145,10 +182,12 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", skillId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@id", skillId);
 
-                    return cmd.ExecuteNonQuery();
+                        return cmd.ExecuteNonQuery();
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -165,6 +204,16 @@ namespace Capstone.DAO
 
         public Skill CreateSkillBySideProjectId(int projectId, Skill skill)
         {
+            if (projectId <= 0)
+            {
+                throw new ArgumentException("ProjectId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(skill.Name))
+            {
+                throw new ArgumentException("Skill name cannot be null or empty.");
+            }
+
             string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
             string insertSideProjectSkillSql = "INSERT INTO sideproject_skills (sideproject_id, skill_id) VALUES (@projectId, @skillId);";
 
@@ -174,30 +223,54 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmdInsertSkill = new NpgsqlCommand(insertSkillSql, connection);
-                    cmdInsertSkill.Parameters.AddWithValue("@name", skill.Name);
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int skillId;
 
-                    int skillId = (int)cmdInsertSkill.ExecuteScalar();
+                            using (NpgsqlCommand cmdInsertSkill = new NpgsqlCommand(insertSkillSql, connection))
+                            {
+                                cmdInsertSkill.Parameters.AddWithValue("@name", skill.Name);
 
-                    NpgsqlCommand cmdInsertSideProjectSkill = new NpgsqlCommand(insertSideProjectSkillSql, connection);
-                    cmdInsertSideProjectSkill.Parameters.AddWithValue("@projectId", projectId);
-                    cmdInsertSideProjectSkill.Parameters.AddWithValue("@skillId", skillId);
+                                skillId = Convert.ToInt32(cmdInsertSkill.ExecuteScalar());
+                            }
 
-                    cmdInsertSideProjectSkill.ExecuteNonQuery();
+                            using (NpgsqlCommand cmdInsertSideProjectSkill = new NpgsqlCommand(insertSideProjectSkillSql, connection))
+                            {
+                                cmdInsertSideProjectSkill.Parameters.AddWithValue("@projectId", projectId);
+                                cmdInsertSideProjectSkill.Parameters.AddWithValue("@skillId", skillId);
+                                cmdInsertSideProjectSkill.ExecuteNonQuery();
+                            }
 
-                    skill.Id = skillId;
+                            transaction.Commit();
+
+                            skill.Id = skillId;
+
+                            return skill;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the skill by project ID.", ex);
+                        }
+                    }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the skill by project ID.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return skill;
         }
 
         public List<Skill> GetSkillsBySideProjectId(int projectId)
         {
+            if (projectId <= 0)
+            {
+                throw new ArgumentException("ProjectId must be greater than zero.");
+            }
+
             List<Skill> skills = new List<Skill>();
 
             string sql = "SELECT s.id, s.name, s.icon_id " +
@@ -211,15 +284,18 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@projectId", projectId);
 
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        Skill skill = MapRowToSkill(reader);
-                        skills.Add(skill);
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Skill skill = MapRowToSkill(reader);
+                                skills.Add(skill);
+                            }
+                        }
                     }
                 }
             }
@@ -233,6 +309,11 @@ namespace Capstone.DAO
 
         public Skill GetSkillBySideProjectId(int projectId, int skillId)
         {
+            if (projectId <= 0 || skillId <= 0)
+            {
+                throw new ArgumentException("ProjectId and SkillId must be greater than zero.");
+            }
+
             Skill skill = null;
 
             string sql = "SELECT s.id, s.name, s.icon_id " +
@@ -246,15 +327,18 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@skillId", skillId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@skillId", skillId);
 
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        skill = MapRowToSkill(reader);
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                skill = MapRowToSkill(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -268,6 +352,11 @@ namespace Capstone.DAO
 
         public Skill UpdateSkillBySideProjectId(int projectId, int skillId, Skill skill)
         {
+            if (projectId <= 0 || skillId <= 0)
+            {
+                throw new ArgumentException("ProjectId and skillId must be greater than zero.");
+            }
+
             string sql = "UPDATE skills " +
                          "SET name = @name " +
                          "FROM sideproject_skills " +
@@ -281,15 +370,18 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@skillId", skillId); 
-                    cmd.Parameters.AddWithValue("@name", skill.Name);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@skillId", skillId);
+                        cmd.Parameters.AddWithValue("@name", skill.Name);
 
-                    int count = cmd.ExecuteNonQuery();
-                    if (count == 1)
-                    {
-                        return skill;
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return skill;
+                        }
                     }
                 }
             }
@@ -303,6 +395,11 @@ namespace Capstone.DAO
 
         public int DeleteSkillBySideProjectId(int projectId, int skillId)
         {
+            if (projectId <= 0 || skillId <= 0)
+            {
+                throw new ArgumentException("ProjectId and skillId must be greater than zero.");
+            }
+
             string sql = "DELETE FROM sideproject_skills WHERE sideproject_id = @projectId AND skill_id = @skillId;";
 
             try
@@ -311,11 +408,15 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@skillId", skillId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@skillId", skillId);
 
-                    return cmd.ExecuteNonQuery();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        return rowsAffected;
+                    }
                 }
             }
             catch (NpgsqlException ex)

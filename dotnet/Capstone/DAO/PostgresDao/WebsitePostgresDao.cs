@@ -172,7 +172,7 @@ namespace Capstone.DAO
 
                         int count = cmd.ExecuteNonQuery();
 
-                        if (count > 0)
+                        if (count == 1)
                         {
                             return website;
                         }
@@ -187,7 +187,7 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteWebsiteById(int websiteId)
+        public int DeleteWebsite(int websiteId)
         {
             if (websiteId <= 0)
             {

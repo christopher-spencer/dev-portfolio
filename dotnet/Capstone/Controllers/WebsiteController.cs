@@ -106,7 +106,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                int rowsAffected = _websiteDao.DeleteWebsiteById(websiteId);
+                int rowsAffected = _websiteDao.DeleteWebsite(websiteId);
 
                 if (rowsAffected > 0)
                 {
