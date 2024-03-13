@@ -13,6 +13,7 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
         }
 // TODO will need to model after SP and BP Daos
+        // FIXME use WEBSITE POSTGRES DAO CRUD AS TEMPLATE FOR IMPROVING CRUD METHODS
 
         private Portfolio MapRowToPortfolio(NpgsqlDataReader reader)
         {
