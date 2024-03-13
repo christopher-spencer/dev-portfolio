@@ -46,7 +46,7 @@ namespace Capstone.DAO.Interfaces
         */
         Website CreateWebsiteByApiServiceId(int apiServiceId, Website website);
         Website GetWebsiteByApiServiceId(int apiServiceId);
-        Website UpdateWebsiteByApiServiceId(int apiServiceId, Website website);
+        Website UpdateWebsiteByApiServiceId(int apiServiceId, int websiteId, Website website);
         int DeleteWebsiteByApiServiceId(int apiServiceId, int websiteId);
 
         /*  
@@ -56,7 +56,7 @@ namespace Capstone.DAO.Interfaces
         */
         Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website);
         Website GetWebsiteByDependencyLibraryId(int dependencyLibraryId);
-        Website UpdateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website);
+        Website UpdateWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId, Website website);
         int DeleteWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId);
 
 

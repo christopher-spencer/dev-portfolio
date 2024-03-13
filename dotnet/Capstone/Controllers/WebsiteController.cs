@@ -367,7 +367,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Website updatedWebsite = _websiteDao.UpdateWebsiteByApiServiceId(apiServiceId, website);
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByApiServiceId(apiServiceId, websiteId, website);
 
                 if (updatedWebsite == null)
                 {
@@ -456,7 +456,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Website updatedWebsite = _websiteDao.UpdateWebsiteByDependencyLibraryId(dependencyLibraryId, website);
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByDependencyLibraryId(dependencyLibraryId, websiteId, website);
 
                 if (updatedWebsite == null)
                 {
