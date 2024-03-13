@@ -125,7 +125,7 @@ namespace Capstone.DAO
         {
             string sql = "UPDATE apis_and_services " +
                          "SET name = @name, description = @description " +
-                         "WHERE id = @id;";
+                         "WHERE id = @apiServiceId;";
 
             try
             {
@@ -135,7 +135,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@id", apiServiceId); // Use the provided apiServiceId parameter
+                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
                         cmd.Parameters.AddWithValue("@name", apiService.Name);
                         cmd.Parameters.AddWithValue("@description", apiService.Description);
 
@@ -295,13 +295,14 @@ namespace Capstone.DAO
             return apiService;
         }
 
-        public ApiService UpdateAPIOrServiceBySideProjectId(int projectId, ApiService apiService)
+        public ApiService UpdateAPIOrServiceBySideProjectId(int projectId, int apiServiceId, ApiService apiService)
         {
             string sql = "UPDATE apis_and_services " +
                          "SET name = @name, description = @description " +
                          "FROM sideproject_apis_and_services " +
                          "WHERE apis_and_services.id = sideproject_apis_and_services.apiservice_id " +
-                         "AND sideproject_apis_and_services.sideproject_id = @projectId;";
+                         "AND sideproject_apis_and_services.sideproject_id = @projectId " +
+                         "AND apis_and_services.id = @apiServiceId;";
 
             try
             {
@@ -312,6 +313,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId); 
                         cmd.Parameters.AddWithValue("@name", apiService.Name);
                         cmd.Parameters.AddWithValue("@description", apiService.Description);
 
@@ -330,6 +332,7 @@ namespace Capstone.DAO
 
             return null;
         }
+
         public int DeleteAPIOrServiceBySideProjectId(int projectId, int apiServiceId)
         {
             string sql = "DELETE FROM sideproject_apis_and_services " +

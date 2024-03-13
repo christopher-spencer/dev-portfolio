@@ -181,14 +181,14 @@ namespace Capstone.Controllers
                 return Ok(apiService);
             }
         }
-// TODO NEEDS apiServiceId as seen in URL
+
         [Authorize]
         [HttpPut("/update-sideproject/{projectId}/update-api-or-service/{apiServiceId}")]
-        public ActionResult UpdateAPIOrServiceBySideProjectId(int projectId, ApiService apiService)
+        public ActionResult UpdateAPIOrServiceBySideProjectId(int projectId, int apiServiceId, ApiService apiService)
         {
             try
             {
-                ApiService updatedApiService = _apiServiceDao.UpdateAPIOrServiceBySideProjectId(projectId, apiService);
+                ApiService updatedApiService = _apiServiceDao.UpdateAPIOrServiceBySideProjectId(projectId, apiServiceId, apiService);
 
                 if (updatedApiService == null)
                 {
