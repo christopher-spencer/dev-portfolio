@@ -42,7 +42,7 @@ CREATE TABLE images (
 CREATE TABLE websites (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    url VARCHAR(2000),
+    url VARCHAR(2000) NOT NULL,
     logo_id INTEGER,
     FOREIGN KEY (logo_id) REFERENCES images(id)
 );
