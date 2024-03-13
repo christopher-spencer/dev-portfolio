@@ -92,9 +92,9 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the blog post.");
             }
         }
-//TODO update path name
+
         [Authorize]
-        [HttpDelete("/blogpost/delete/{blogPostId}")]
+        [HttpDelete("/delete-blogpost/{blogPostId}")]
         public ActionResult DeleteBlogPostByBlogPostId(int blogPostId)
         {
             try
