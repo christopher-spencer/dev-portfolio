@@ -386,7 +386,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Image updatedLogo = _imageDao.UpdateImageByWebsiteId(websiteId, imageId, logo); // Pass imageId parameter
+                Image updatedLogo = _imageDao.UpdateImageByWebsiteId(websiteId, imageId, logo); 
 
                 if (updatedLogo == null)
                 {
@@ -476,7 +476,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageBySkillId(skillId, image);
+                Image updatedImage = _imageDao.UpdateImageBySkillId(skillId, imageId, image);
 
                 if (updatedImage == null)
                 {
