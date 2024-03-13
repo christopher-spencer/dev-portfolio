@@ -24,7 +24,7 @@ namespace Capstone.DAO.Interfaces
         Contributor CreateContributorBySideProjectId(int projectId, Contributor contributor);
         List<Contributor> GetContributorsBySideProjectId(int projectId);
         Contributor GetContributorBySideProjectId(int projectId, int contributorId);
-        Contributor UpdateContributorBySideProjectId(int projectId, Contributor contributor);
+        Contributor UpdateContributorBySideProjectId(int projectId, int contributorId, Contributor contributor);
         int DeleteContributorBySideProjectId(int projectId, int contributorId);
 
     }

@@ -76,14 +76,14 @@ namespace Capstone.Controllers
                 return Ok(contributors);
             }
         }
- 
+
         [Authorize]
         [HttpPut("/update-contributor/{contributorId}")]
         public ActionResult UpdateContributor(int contributorId, Contributor contributor)
         {
             try
             {
-                Contributor updatedContributor = _contributorDao.UpdateContributor(contributorId, contributor); 
+                Contributor updatedContributor = _contributorDao.UpdateContributor(contributorId, contributor);
 
                 if (updatedContributor == null)
                 {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-contributor")]
-        public ActionResult UpdateContributorBySideProjectId(int projectId, Contributor contributor)
+        [HttpPut("/update-sideproject/{projectId}/update-contributor/{contributorId}")]
+        public ActionResult UpdateContributorBySideProjectId(int projectId, int contributorId, Contributor contributor)
         {
             try
             {
-                Contributor updatedContributor = _contributorDao.UpdateContributorBySideProjectId(projectId, contributor);
+                Contributor updatedContributor = _contributorDao.UpdateContributorBySideProjectId(projectId, contributorId, contributor);
 
                 if (updatedContributor == null)
                 {

@@ -132,7 +132,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@contributorId", contributorId); 
+                    cmd.Parameters.AddWithValue("@contributorId", contributorId);
                     cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
                     cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
@@ -292,16 +292,16 @@ namespace Capstone.DAO
 
             return contributor;
         }
-        //FIXME add contributorId
 
-        public Contributor UpdateContributorBySideProjectId(int projectId, Contributor contributor)
+        public Contributor UpdateContributorBySideProjectId(int projectId, int contributorId, Contributor contributor)
         {
             string sql = "UPDATE contributors " +
                          "SET first_name = @first_name, last_name = @last_name, " +
                          "email = @email, bio = @bio, contribution_details = @contribution_details " +
                          "FROM sideproject_contributors " +
                          "WHERE contributors.id = sideproject_contributors.contributor_id " +
-                         "AND sideproject_contributors.sideproject_id = @projectId;";
+                         "AND sideproject_contributors.sideproject_id = @projectId " +
+                         "AND contributors.id = @contributorId;";
 
             try
             {
@@ -311,6 +311,7 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@contributorId", contributorId); 
                     cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
                     cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
