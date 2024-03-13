@@ -1304,7 +1304,7 @@ namespace Capstone.DAO
                                     "SET name = @name, url = @url " +
                                     "FROM api_service_images " +
                                     "WHERE images.id = api_service_images.image_id AND api_service_images.api_service_id = @apiServiceId " +
-                                    "AND images.id = @imageId;"; 
+                                    "AND images.id = @imageId;";
 
             try
             {
@@ -1315,7 +1315,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                        cmd.Parameters.AddWithValue("@imageId", imageId); 
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
 
@@ -1454,14 +1454,15 @@ namespace Capstone.DAO
 
             return image;
         }
-        //FIXME add imageId
-        public Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, Image image)
+
+        public Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, int imageId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM dependency_library_images " +
                                     "WHERE images.id = dependency_library_images.image_id AND " +
-                                    "dependency_library_images.dependencylibrary_id = @dependencyLibraryId;";
+                                    "dependency_library_images.dependencylibrary_id = @dependencyLibraryId " +
+                                    "AND images.id = @imageId;"; 
 
             try
             {
@@ -1472,6 +1473,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId); 
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
 

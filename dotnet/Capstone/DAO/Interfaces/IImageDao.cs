@@ -97,7 +97,7 @@ namespace Capstone.DAO.Interfaces
 
         Image CreateImageByDependencyLibraryId(int dependencyLibraryId, Image image);
         Image GetImageByDependencyLibraryId(int dependencyLibraryId);
-        Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, Image image);
+        Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, int imageId, Image image);
         int DeleteImageByDependencyLibraryId(int dependencyLibraryId, int imageId);
     }
 }

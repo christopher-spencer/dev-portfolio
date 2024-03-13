@@ -836,7 +836,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageByDependencyLibraryId(dependencyLibraryId, image);
+                Image updatedImage = _imageDao.UpdateImageByDependencyLibraryId(dependencyLibraryId, imageId, image);
 
                 if (updatedImage == null)
                 {
