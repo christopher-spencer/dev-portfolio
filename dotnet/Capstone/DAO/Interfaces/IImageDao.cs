@@ -46,7 +46,7 @@ namespace Capstone.DAO.Interfaces
         */
         Image CreateImageByWebsiteId(int websiteId, Image image);
         Image GetImageByWebsiteId(int websiteId);
-        Image UpdateImageByWebsiteId(int websiteId, Image image);
+        Image UpdateImageByWebsiteId(int websiteId, int imageId, Image image);
         int DeleteImageByWebsiteId(int websiteId, int imageId);
 
         /*  

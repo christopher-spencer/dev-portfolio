@@ -296,7 +296,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageByBlogPostId(blogPostId, imageId, image); 
+                Image updatedImage = _imageDao.UpdateImageByBlogPostId(blogPostId, imageId, image);
 
                 if (updatedImage == null)
                 {
@@ -335,8 +335,6 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while deleting the blog post image.");
             }
         }
-
-        // TODO double check website image controller methods
 
         /*  
             **********************************************************************************************
@@ -383,12 +381,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/image/update-website-logo/{websiteId}")]
-        public ActionResult<Image> UpdateImageByWebsiteId(int websiteId, Image logo)
+        [HttpPut("/image/{imageId}/update-website-logo/{websiteId}")]
+        public ActionResult<Image> UpdateImageByWebsiteId(int websiteId, int imageId, Image logo)
         {
             try
             {
-                Image updatedLogo = _imageDao.UpdateImageByWebsiteId(websiteId, logo);
+                Image updatedLogo = _imageDao.UpdateImageByWebsiteId(websiteId, imageId, logo); // Pass imageId parameter
 
                 if (updatedLogo == null)
                 {

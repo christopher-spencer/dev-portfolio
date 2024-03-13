@@ -514,7 +514,7 @@ namespace Capstone.DAO
                                     "SET name = @name, url = @url " +
                                     "FROM blogpost_images " +
                                     "WHERE images.id = blogpost_images.image_id AND blogpost_images.blogpost_id = @blogPostId " +
-                                    "AND images.id = @imageId;"; 
+                                    "AND images.id = @imageId;";
 
             try
             {
@@ -664,13 +664,14 @@ namespace Capstone.DAO
 
             return image;
         }
-        //FIXME add imageId
-        public Image UpdateImageByWebsiteId(int websiteId, Image image)
+
+        public Image UpdateImageByWebsiteId(int websiteId, int imageId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM website_images " +
-                                    "WHERE images.id = website_images.image_id AND website_images.website_id = @websiteId;";
+                                    "WHERE images.id = website_images.image_id AND website_images.website_id = @websiteId " +
+                                    "AND images.id = @imageId;"; 
 
             try
             {
@@ -681,6 +682,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId); 
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
 
