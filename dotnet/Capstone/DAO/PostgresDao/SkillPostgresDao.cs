@@ -104,10 +104,10 @@ namespace Capstone.DAO
 
             return skills;
         }
-        //FIXME add skillId
-        public Skill UpdateSkill(Skill skill)
+
+        public Skill UpdateSkill(int skillId, Skill skill)
         {
-            string sql = "UPDATE skills SET name = @name WHERE id = @id;";
+            string sql = "UPDATE skills SET name = @name WHERE id = @skillId;";
 
             try
             {
@@ -116,7 +116,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", skill.Id);
+                    cmd.Parameters.AddWithValue("@skillId", skillId); 
                     cmd.Parameters.AddWithValue("@name", skill.Name);
 
                     int count = cmd.ExecuteNonQuery();
@@ -160,7 +160,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                             SIDE PROJECT SKILL CRUD
             **********************************************************************************************
-        */        
+        */
 
         public Skill CreateSkillBySideProjectId(int projectId, Skill skill)
         {

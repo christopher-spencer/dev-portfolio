@@ -83,7 +83,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Skill updatedSkill = _skillDao.UpdateSkill(skill);
+                Skill updatedSkill = _skillDao.UpdateSkill(skillId, skill);
 
                 if (updatedSkill == null)
                 {

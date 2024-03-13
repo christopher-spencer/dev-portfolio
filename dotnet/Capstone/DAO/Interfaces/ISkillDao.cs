@@ -14,7 +14,7 @@ namespace Capstone.DAO.Interfaces
         Skill CreateSkill(Skill skill);
         Skill GetSkillById(int skillId);
         List<Skill> GetAllSkills();
-        Skill UpdateSkill(Skill skill);
+        Skill UpdateSkill(int skillId, Skill skill);
         int DeleteSkill(int skillId);
 
         /*  
