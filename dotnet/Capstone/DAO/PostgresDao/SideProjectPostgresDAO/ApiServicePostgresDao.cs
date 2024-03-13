@@ -25,7 +25,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                             APIS AND SERVICES CRUD
             **********************************************************************************************
-        */ 
+        */
         public ApiService CreateAPIOrService(ApiService apiService)
         {
             string sql = "INSERT INTO apis_and_services (name, description) " +
@@ -121,7 +121,7 @@ namespace Capstone.DAO
             return apiServices;
         }
 
-        public ApiService UpdateAPIOrService(ApiService apiService)
+        public ApiService UpdateAPIOrService(int apiServiceId, ApiService apiService)
         {
             string sql = "UPDATE apis_and_services " +
                          "SET name = @name, description = @description " +
@@ -135,7 +135,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@id", apiService.Id);
+                        cmd.Parameters.AddWithValue("@id", apiServiceId); // Use the provided apiServiceId parameter
                         cmd.Parameters.AddWithValue("@name", apiService.Name);
                         cmd.Parameters.AddWithValue("@description", apiService.Description);
 
@@ -181,7 +181,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                      SIDE PROJECT APIS AND SERVICES CRUD
             **********************************************************************************************
-        */ 
+        */
         public ApiService CreateAPIOrServiceBySideProjectId(int projectId, ApiService apiService)
         {
             string insertApiServiceSql = "INSERT INTO apis_and_services (name, description) " +
@@ -360,7 +360,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                       APIS AND SERVICES MAP ROW
             **********************************************************************************************
-        */ 
+        */
         private ApiService MapRowToAPIsAndServices(NpgsqlDataReader reader)
         {
             ApiService apiService = new ApiService

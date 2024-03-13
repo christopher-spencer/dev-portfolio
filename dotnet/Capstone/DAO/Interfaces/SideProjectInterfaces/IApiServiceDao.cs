@@ -13,7 +13,7 @@ namespace Capstone.DAO.Interfaces
         ApiService CreateAPIOrService(ApiService apiService);
         ApiService GetAPIOrServiceById(int apiServiceId);
         List<ApiService> GetAllAPIsAndServices();
-        ApiService UpdateAPIOrService(ApiService apiService);
+        ApiService UpdateAPIOrService(int apiServiceId, ApiService apiService);
         int DeleteAPIOrService(int apiServiceId);
 
         /*  
