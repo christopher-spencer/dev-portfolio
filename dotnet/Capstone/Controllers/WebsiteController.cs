@@ -278,7 +278,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Website updatedWebsite = _websiteDao.UpdateWebsiteByContributorId(contributorId, website);
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByContributorId(contributorId, websiteId, website);
 
                 if (updatedWebsite == null)
                 {

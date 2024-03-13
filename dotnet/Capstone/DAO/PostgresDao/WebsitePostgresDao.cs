@@ -295,7 +295,7 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@websiteId", websiteId); 
+                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
                     cmd.Parameters.AddWithValue("@name", website.Name);
                     cmd.Parameters.AddWithValue("@url", website.Url);
 
@@ -425,14 +425,14 @@ namespace Capstone.DAO
 
             return website;
         }
-        //FIXME add websiteId
 
-        public Website UpdateWebsiteByContributorId(int contributorId, Website website)
+        public Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
         {
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
                                       "FROM contributor_websites " +
-                                      "WHERE websites.id = contributor_websites.website_id AND contributor_websites.contributor_id = @contributorId;";
+                                      "WHERE websites.id = contributor_websites.website_id AND contributor_websites.contributor_id = @contributorId " +
+                                      "AND websites.id = @websiteId;"; 
 
             try
             {
@@ -443,6 +443,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId); 
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
 

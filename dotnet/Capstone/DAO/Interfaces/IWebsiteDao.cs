@@ -36,7 +36,7 @@ namespace Capstone.DAO.Interfaces
         */
         Website CreateWebsiteByContributorId(int controllerId, Website website);
         Website GetWebsiteByContributorId(int contributorId);
-        Website UpdateWebsiteByContributorId(int contributorId, Website website);
+        Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website);
         int DeleteWebsiteByContributorId(int contributorId, int websiteId);
 
         /*  
