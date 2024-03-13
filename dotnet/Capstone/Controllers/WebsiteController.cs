@@ -78,7 +78,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-website/{websiteId}/")]
+        [HttpPut("/update-website/{websiteId}")]
         public ActionResult UpdateWebsite(Website website, int websiteId)
         {
             try 
@@ -189,6 +189,7 @@ namespace Capstone.Controllers
             try
             {
                 Website updatedWebsite = _websiteDao.UpdateWebsiteByProjectId(projectId, website);
+                
                 if (updatedWebsite == null)
                 {
                     return BadRequest();

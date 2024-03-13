@@ -118,6 +118,7 @@ namespace Capstone.DAO
 
             return contributors;
         }
+        //FIXME add contributorId
 
         public Contributor UpdateContributor(Contributor contributor)
         {
@@ -292,8 +293,9 @@ namespace Capstone.DAO
 
             return contributor;
         }
+        //FIXME add contributorId
 
-        public Contributor UpdateContributorBySideProjectId(int projectId, Contributor updatedContributor)
+        public Contributor UpdateContributorBySideProjectId(int projectId, Contributor contributor)
         {
             string sql = "UPDATE contributors " +
                          "SET first_name = @first_name, last_name = @last_name, " +
@@ -310,17 +312,17 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@first_name", updatedContributor.FirstName);
-                    cmd.Parameters.AddWithValue("@last_name", updatedContributor.LastName);
-                    cmd.Parameters.AddWithValue("@email", updatedContributor.Email);
-                    cmd.Parameters.AddWithValue("@bio", updatedContributor.Bio);
-                    cmd.Parameters.AddWithValue("@contribution_details", updatedContributor.ContributionDetails);
+                    cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
+                    cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
+                    cmd.Parameters.AddWithValue("@email", contributor.Email);
+                    cmd.Parameters.AddWithValue("@bio", contributor.Bio);
+                    cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
 
                     int count = cmd.ExecuteNonQuery();
 
                     if (count > 0)
                     {
-                        return updatedContributor;
+                        return contributor;
                     }
                 }
             }

@@ -192,7 +192,6 @@ namespace Capstone.DAO
                         cmd.ExecuteNonQuery();
                     }
 
-                    // Set the main_image_id in the sideprojects table
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateSideProjectMainImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
@@ -314,8 +313,8 @@ namespace Capstone.DAO
 
             return image;
         }
-
-        public Image UpdateImageBySideProjectId(int sideProjectId, Image updatedImage)
+        //FIXME add imageId
+        public Image UpdateImageBySideProjectId(int sideProjectId, Image image)
         {
             string sql = "UPDATE images " +
                          "SET name = @name, url = @url " +
@@ -330,14 +329,14 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                    cmd.Parameters.AddWithValue("@name", updatedImage.Name);
-                    cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+                    cmd.Parameters.AddWithValue("@name", image.Name);
+                    cmd.Parameters.AddWithValue("@url", image.Url);
 
                     int count = cmd.ExecuteNonQuery();
 
                     if (count > 0)
                     {
-                        return updatedImage;
+                        return image;
                     }
                 }
             }
@@ -506,8 +505,8 @@ namespace Capstone.DAO
 
             return images;
         }
-
-        public Image UpdateImageByBlogPostId(int blogPostId, Image updatedImage)
+        //FIXME add imageId
+        public Image UpdateImageByBlogPostId(int blogPostId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
@@ -523,14 +522,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
-                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedImage;
+                            return image;
                         }
                     }
                 }
@@ -661,8 +660,8 @@ namespace Capstone.DAO
 
             return image;
         }
-
-        public Image UpdateImageByWebsiteId(int websiteId, Image updatedImage)
+        //FIXME add imageId
+        public Image UpdateImageByWebsiteId(int websiteId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
@@ -678,14 +677,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
-                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedImage;
+                            return image;
                         }
                     }
                 }
@@ -817,8 +816,8 @@ namespace Capstone.DAO
 
             return image;
         }
-
-        public Image UpdateImageBySkillId(int skillId, Image updatedImage)
+        //FIXME add imageId
+        public Image UpdateImageBySkillId(int skillId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
@@ -834,14 +833,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@skillId", skillId);
-                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedImage;
+                            return image;
                         }
                     }
                 }
@@ -972,8 +971,8 @@ namespace Capstone.DAO
 
             return image;
         }
-
-        public Image UpdateImageByGoalId(int goalId, Image updatedImage)
+        //FIXME add imageId
+        public Image UpdateImageByGoalId(int goalId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
@@ -989,14 +988,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@goalId", goalId);
-                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedImage;
+                            return image;
                         }
                     }
                 }
@@ -1127,8 +1126,8 @@ namespace Capstone.DAO
 
             return image;
         }
-
-        public Image UpdateImageByContributorId(int contributorId, Image updatedImage)
+        //FIXME add imageId
+        public Image UpdateImageByContributorId(int contributorId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
@@ -1144,14 +1143,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedImage;
+                            return image;
                         }
                     }
                 }
@@ -1286,8 +1285,8 @@ namespace Capstone.DAO
 
             return image;
         }
-
-        public Image UpdateImageByApiServiceId(int apiServiceId, Image updatedImage)
+        //FIXME add imageId
+        public Image UpdateImageByApiServiceId(int apiServiceId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
@@ -1303,14 +1302,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedImage;
+                            return image;
                         }
                     }
                 }
@@ -1441,8 +1440,8 @@ namespace Capstone.DAO
 
             return image;
         }
-
-        public Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, Image updatedImage)
+        //FIXME add imageId
+        public Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
@@ -1459,14 +1458,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmd.Parameters.AddWithValue("@name", updatedImage.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedImage.Url);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedImage;
+                            return image;
                         }
                     }
                 }

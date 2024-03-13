@@ -104,7 +104,7 @@ namespace Capstone.DAO
 
             return skills;
         }
-
+        //FIXME add skillId
         public Skill UpdateSkill(Skill skill)
         {
             string sql = "UPDATE skills SET name = @name WHERE id = @id;";
@@ -264,7 +264,7 @@ namespace Capstone.DAO
 
             return skill;
         }
-
+        //FIXME add skillId
         public Skill UpdateSkillBySideProjectId(int projectId, Skill skill)
         {
             string sql = "UPDATE skills " +

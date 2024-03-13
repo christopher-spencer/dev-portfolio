@@ -112,7 +112,7 @@ namespace Capstone.DAO
             return websiteLinks;
         }
 
-        public Website UpdateWebsiteByWebsiteId(int websiteId, Website updatedWebsite)
+        public Website UpdateWebsiteByWebsiteId(int websiteId, Website website)
         {
             string sql = "UPDATE websites " +
                          "SET name = @name, url = @url " +
@@ -126,14 +126,14 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@websiteId", websiteId);
-                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
-                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+                    cmd.Parameters.AddWithValue("@name", website.Name);
+                    cmd.Parameters.AddWithValue("@url", website.Url);
 
                     int count = cmd.ExecuteNonQuery();
 
                     if (count > 0)
                     {
-                        return updatedWebsite;
+                        return website;
                     }
                 }
             }
@@ -144,8 +144,8 @@ namespace Capstone.DAO
 
             return null;
         }
-
-        public Website UpdateWebsite(Website updatedWebsite)
+        //FIXME delete
+        public Website UpdateWebsite(Website website)
         {
             string sql = "UPDATE websites SET name = @name, url = @url WHERE id = @id;";
 
@@ -156,14 +156,14 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", updatedWebsite.Id);
-                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
-                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+                    cmd.Parameters.AddWithValue("@id", website.Id);
+                    cmd.Parameters.AddWithValue("@name", website.Name);
+                    cmd.Parameters.AddWithValue("@url", website.Url);
 
                     int count = cmd.ExecuteNonQuery();
                     if (count == 1)
                     {
-                        return updatedWebsite;
+                        return website;
                     }
                 }
             }
@@ -307,8 +307,8 @@ namespace Capstone.DAO
 
             return website;
         }
-
-        public Website UpdateWebsiteByProjectId(int projectId, Website updatedWebsite)
+        //FIXME add websiteId
+        public Website UpdateWebsiteByProjectId(int projectId, Website website)
         {
             string sql = "UPDATE websites " +
                          "SET name = @name, url = @url " +
@@ -324,14 +324,14 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
-                    cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+                    cmd.Parameters.AddWithValue("@name", website.Name);
+                    cmd.Parameters.AddWithValue("@url", website.Url);
 
                     int count = cmd.ExecuteNonQuery();
 
                     if (count > 0)
                     {
-                        return updatedWebsite;
+                        return website;
                     }
                 }
             }
@@ -453,8 +453,9 @@ namespace Capstone.DAO
 
             return website;
         }
+        //FIXME add websiteId
 
-        public Website UpdateWebsiteByContributorId(int contributorId, Website updatedWebsite)
+        public Website UpdateWebsiteByContributorId(int contributorId, Website website)
         {
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
@@ -470,14 +471,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedWebsite;
+                            return website;
                         }
                     }
                 }
@@ -610,8 +611,9 @@ namespace Capstone.DAO
 
             return website;
         }
+        //FIXME add websiteId
 
-        public Website UpdateWebsiteByApiServiceId(int apiServiceId, Website updatedWebsite)
+        public Website UpdateWebsiteByApiServiceId(int apiServiceId, Website website)
         {
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
@@ -627,14 +629,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                        cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedWebsite;
+                            return website;
                         }
                     }
                 }
@@ -767,8 +769,9 @@ namespace Capstone.DAO
 
             return website;
         }
+        //FIXME add websiteId
 
-        public Website UpdateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website updatedWebsite)
+        public Website UpdateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website)
         {
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
@@ -785,14 +788,14 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmd.Parameters.AddWithValue("@name", updatedWebsite.Name);
-                        cmd.Parameters.AddWithValue("@url", updatedWebsite.Url);
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
 
                         int count = cmd.ExecuteNonQuery();
 
                         if (count > 0)
                         {
-                            return updatedWebsite;
+                            return website;
                         }
                     }
                 }

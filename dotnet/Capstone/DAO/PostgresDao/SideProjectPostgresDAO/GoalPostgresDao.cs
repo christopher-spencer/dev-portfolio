@@ -104,6 +104,7 @@ namespace Capstone.DAO
 
             return goals;
         }
+        //FIXME add goalId
 
         public Goal UpdateGoal(Goal goal)
         {
@@ -262,8 +263,9 @@ namespace Capstone.DAO
 
             return goal;
         }
+        //FIXME add goalId
 
-        public Goal UpdateGoalBySideProjectId(int projectId, Goal updatedGoal)
+        public Goal UpdateGoalBySideProjectId(int projectId, Goal goal)
         {
             string sql = "UPDATE goals " +
                          "SET description = @description " +
@@ -279,13 +281,13 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@description", updatedGoal.Description);
+                    cmd.Parameters.AddWithValue("@description", goal.Description);
 
                     int count = cmd.ExecuteNonQuery();
 
                     if (count > 0)
                     {
-                        return updatedGoal;
+                        return goal;
                     }
                 }
             }
