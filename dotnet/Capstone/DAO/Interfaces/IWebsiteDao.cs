@@ -15,8 +15,7 @@ namespace Capstone.DAO.Interfaces
         Website CreateWebsiteLink(Website websiteLink);
         Website GetWebsiteById(int websiteLinkId);
         List<Website> GetAllWebsites();
-        Website UpdateWebsiteByWebsiteId(int websiteId, Website website);
-        Website UpdateWebsite(Website websiteLink);
+        Website UpdateWebsite(Website website, int websiteId);
         int DeleteWebsiteById(int websiteLinkId);
 
         /*  
@@ -27,7 +26,7 @@ namespace Capstone.DAO.Interfaces
         Website CreateWebsiteByProjectId(int projectId, Website website);
         Website GetWebsiteByProjectId(int projectId);
         Website GetWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId);    
-        Website UpdateWebsiteByProjectId(int projectId, Website website);
+        Website UpdateWebsiteByProjectId(int projectId, int websiteId, Website website);
         int DeleteWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId);
 
         /*  

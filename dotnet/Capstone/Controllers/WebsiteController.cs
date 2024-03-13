@@ -81,9 +81,9 @@ namespace Capstone.Controllers
         [HttpPut("/update-website/{websiteId}")]
         public ActionResult UpdateWebsite(Website website, int websiteId)
         {
-            try 
+            try
             {
-                Website updatedWebsite = _websiteDao.UpdateWebsiteByWebsiteId(websiteId, website);
+                Website updatedWebsite = _websiteDao.UpdateWebsite(website, websiteId);
 
                 if (updatedWebsite == null)
                 {
@@ -136,14 +136,14 @@ namespace Capstone.Controllers
             try
             {
                 Website createdWebsite = _websiteDao.CreateWebsiteByProjectId(projectId, website);
-            
+
                 if (createdWebsite == null)
                 {
                     return BadRequest();
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetWebsiteByProjectId), new { projectId = projectId, websiteId = createdWebsite.Id}, createdWebsite);
+                    return CreatedAtAction(nameof(GetWebsiteByProjectId), new { projectId = projectId, websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
             catch (DaoException)
@@ -183,13 +183,13 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-website")]
-        public ActionResult UpdateWebsiteByProjectId(int projectId, Website website)
+        [HttpPut("/update-sideproject/{projectId}/update-website/{websiteId}")]
+        public ActionResult UpdateWebsiteByProjectId(int projectId, int websiteId, Website website)
         {
             try
             {
-                Website updatedWebsite = _websiteDao.UpdateWebsiteByProjectId(projectId, website);
-                
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByProjectId(projectId, websiteId, website);
+
                 if (updatedWebsite == null)
                 {
                     return BadRequest();
@@ -241,7 +241,7 @@ namespace Capstone.Controllers
             try
             {
                 Website createdWebsite = _websiteDao.CreateWebsiteByContributorId(contributorId, website);
-            
+
                 if (createdWebsite == null)
                 {
                     return BadRequest();
@@ -261,7 +261,7 @@ namespace Capstone.Controllers
         public ActionResult<Website> GetWebsiteByContributorId(int contributorId)
         {
             Website website = _websiteDao.GetWebsiteByContributorId(contributorId);
-            
+
             if (website == null)
             {
                 return NotFound();
@@ -330,7 +330,7 @@ namespace Capstone.Controllers
             try
             {
                 Website createdWebsite = _websiteDao.CreateWebsiteByApiServiceId(apiServiceId, website);
-            
+
                 if (createdWebsite == null)
                 {
                     return BadRequest();
@@ -350,7 +350,7 @@ namespace Capstone.Controllers
         public ActionResult<Website> GetWebsiteByApiServiceId(int apiServiceId)
         {
             Website website = _websiteDao.GetWebsiteByApiServiceId(apiServiceId);
-            
+
             if (website == null)
             {
                 return NotFound();
@@ -419,7 +419,7 @@ namespace Capstone.Controllers
             try
             {
                 Website createdWebsite = _websiteDao.CreateWebsiteByDependencyLibraryId(dependencyLibraryId, website);
-            
+
                 if (createdWebsite == null)
                 {
                     return BadRequest();
@@ -439,7 +439,7 @@ namespace Capstone.Controllers
         public ActionResult<Website> GetWebsiteByDependencyLibraryId(int dependencyLibraryId)
         {
             Website website = _websiteDao.GetWebsiteByDependencyLibraryId(dependencyLibraryId);
-            
+
             if (website == null)
             {
                 return NotFound();
@@ -494,5 +494,6 @@ namespace Capstone.Controllers
             {
                 return StatusCode(500, "An error occurred while deleting the dependency/library website.");
             }
-        }    }
+        }
+    }
 }

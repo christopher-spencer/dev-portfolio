@@ -112,7 +112,7 @@ namespace Capstone.DAO
             return websiteLinks;
         }
 
-        public Website UpdateWebsiteByWebsiteId(int websiteId, Website website)
+        public Website UpdateWebsite(Website website, int websiteId)
         {
             string sql = "UPDATE websites " +
                          "SET name = @name, url = @url " +
@@ -140,36 +140,6 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while updating the website.", ex);
-            }
-
-            return null;
-        }
-        //FIXME delete
-        public Website UpdateWebsite(Website website)
-        {
-            string sql = "UPDATE websites SET name = @name, url = @url WHERE id = @id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", website.Id);
-                    cmd.Parameters.AddWithValue("@name", website.Name);
-                    cmd.Parameters.AddWithValue("@url", website.Url);
-
-                    int count = cmd.ExecuteNonQuery();
-                    if (count == 1)
-                    {
-                        return website;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the website link.", ex);
             }
 
             return null;
@@ -307,14 +277,15 @@ namespace Capstone.DAO
 
             return website;
         }
-        //FIXME add websiteId
-        public Website UpdateWebsiteByProjectId(int projectId, Website website)
+
+        public Website UpdateWebsiteByProjectId(int projectId, int websiteId, Website website)
         {
             string sql = "UPDATE websites " +
                          "SET name = @name, url = @url " +
                          "FROM sideproject_websites " +
                          "WHERE websites.id = sideproject_websites.website_id " +
-                         "AND sideproject_websites.sideproject_id = @projectId;";
+                         "AND sideproject_websites.sideproject_id = @projectId " +
+                         "AND websites.id = @websiteId;";
 
             try
             {
@@ -324,6 +295,7 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@websiteId", websiteId); 
                     cmd.Parameters.AddWithValue("@name", website.Name);
                     cmd.Parameters.AddWithValue("@url", website.Url);
 
