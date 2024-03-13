@@ -746,7 +746,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageByApiServiceId(apiServiceId, image);
+                Image updatedImage = _imageDao.UpdateImageByApiServiceId(apiServiceId, imageId, image);
 
                 if (updatedImage == null)
                 {

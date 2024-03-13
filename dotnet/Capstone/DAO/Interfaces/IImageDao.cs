@@ -86,7 +86,7 @@ namespace Capstone.DAO.Interfaces
         */
         Image CreateImageByApiServiceId(int apiServiceId, Image image);
         Image GetImageByApiServiceId(int apiServiceId);
-        Image UpdateImageByApiServiceId(int apiServiceId, Image image);
+        Image UpdateImageByApiServiceId(int apiServiceId, int imageId, Image image);
         int DeleteImageByApiServiceId(int apiServiceId, int imageId);
 
         /*  

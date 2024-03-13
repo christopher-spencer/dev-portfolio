@@ -1143,7 +1143,7 @@ namespace Capstone.DAO
                                     "SET name = @name, url = @url " +
                                     "FROM contributor_images " +
                                     "WHERE images.id = contributor_images.image_id AND contributor_images.contributor_id = @contributorId " +
-                                    "AND images.id = @imageId;"; 
+                                    "AND images.id = @imageId;";
 
             try
             {
@@ -1154,7 +1154,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmd.Parameters.AddWithValue("@imageId", imageId); 
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
 
@@ -1297,13 +1297,14 @@ namespace Capstone.DAO
 
             return image;
         }
-        //FIXME add imageId
-        public Image UpdateImageByApiServiceId(int apiServiceId, Image image)
+
+        public Image UpdateImageByApiServiceId(int apiServiceId, int imageId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM api_service_images " +
-                                    "WHERE images.id = api_service_images.image_id AND api_service_images.api_service_id = @apiServiceId;";
+                                    "WHERE images.id = api_service_images.image_id AND api_service_images.api_service_id = @apiServiceId " +
+                                    "AND images.id = @imageId;"; 
 
             try
             {
@@ -1314,6 +1315,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId); 
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
 
