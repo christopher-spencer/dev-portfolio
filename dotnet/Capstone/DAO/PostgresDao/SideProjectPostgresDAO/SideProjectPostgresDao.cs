@@ -37,7 +37,47 @@ namespace Capstone.DAO
             **********************************************************************************************
                                             SIDE PROJECT CRUD
             **********************************************************************************************
-        */        
+        */   
+
+        public SideProject CreateSideProject(SideProject sideProject)
+        {
+            SideProject newSideProject = null;
+
+            string sql = "INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, " +
+                        "start_date, finish_date) " +
+                         "VALUES (@name, @description, @video_walkthrough_url, @project_status, @start_date, " +
+                         "@finish_date) " +
+                         "RETURNING id";
+
+            int newSideProjectId = 0;
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+
+                    cmd.Parameters.AddWithValue("@name", sideProject.Name);
+                    cmd.Parameters.AddWithValue("@description", sideProject.Description);
+                    cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
+                    cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
+                    cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
+                    cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+
+                    newSideProjectId = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+
+                newSideProject = GetSideProjectById(newSideProjectId);
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("SQL exception occurred", ex);
+            }
+
+            return newSideProject;
+        }     
 
         public List<SideProject> GetSideProjects()
         {
@@ -105,45 +145,6 @@ namespace Capstone.DAO
             return sideProject;
         }
 
-        public SideProject CreateSideProject(SideProject sideProject)
-        {
-            SideProject newSideProject = null;
-
-            string sql = "INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, " +
-                        "start_date, finish_date) " +
-                         "VALUES (@name, @description, @video_walkthrough_url, @project_status, @start_date, " +
-                         "@finish_date) " +
-                         "RETURNING id";
-
-            int newSideProjectId = 0;
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-
-                    cmd.Parameters.AddWithValue("@name", sideProject.Name);
-                    cmd.Parameters.AddWithValue("@description", sideProject.Description);
-                    cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
-                    cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
-                    cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
-                    cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
-
-                    newSideProjectId = Convert.ToInt32(cmd.ExecuteScalar());
-                }
-
-                newSideProject = GetSideProjectById(newSideProjectId);
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("SQL exception occurred", ex);
-            }
-
-            return newSideProject;
-        }
         public SideProject UpdateSideProject(SideProject sideProject, int sideProjectId)
         {
             string sql = "UPDATE sideprojects SET name = @name, description = @description, " +

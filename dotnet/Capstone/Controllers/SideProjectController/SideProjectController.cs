@@ -18,6 +18,29 @@ namespace Capstone.Controllers
             _sideProjectDao = sideProjectDao;
         }
 
+        [Authorize]
+        [HttpPost("/create-sideproject")]
+        public ActionResult CreateSideProject(SideProject sideProject)
+        {
+            try
+            {
+                SideProject createdSideProject = _sideProjectDao.CreateSideProject(sideProject);
+
+                if (createdSideProject == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetSideProjectById), new { sideProjectId = createdSideProject.Id }, createdSideProject);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the side project.");
+            }
+        }
+
         [HttpGet("/sideprojects")]
         public ActionResult<List<SideProject>> GetSideProjects()
         {
@@ -38,29 +61,13 @@ namespace Capstone.Controllers
         {
             SideProject sideProject = _sideProjectDao.GetSideProjectById(sideProjectId);
 
-            if (sideProject == null) 
+            if (sideProject == null)
             {
                 return NotFound();
             }
-            else 
-            {
-                return Ok(sideProject);
-            }
-        }
-
-        [Authorize]
-        [HttpPost("/create-sideproject")]
-        public ActionResult CreateSideProject(SideProject sideProject)
-        {
-            SideProject createdSideProject = _sideProjectDao.CreateSideProject(sideProject);
-
-            if (createdSideProject == null) 
-            {
-                return BadRequest();
-            }
             else
             {
-                return CreatedAtAction(nameof(GetSideProjectById), new { sideProjectId = createdSideProject.Id }, createdSideProject);
+                return Ok(sideProject);
             }
         }
 
@@ -68,15 +75,22 @@ namespace Capstone.Controllers
         [HttpPut("/update-sideproject/{sideProjectId}")]
         public ActionResult UpdateSideProject(SideProject sideProject, int sideProjectId)
         {
-            SideProject updatedSideProject = _sideProjectDao.UpdateSideProject(sideProject, sideProjectId);
+            try
+            {
+                SideProject updatedSideProject = _sideProjectDao.UpdateSideProject(sideProject, sideProjectId);
 
-            if (updatedSideProject == null)
-            {
-                return BadRequest();
+                if (updatedSideProject == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedSideProject);
+                }
             }
-            else
+            catch (DaoException)
             {
-                return Ok(updatedSideProject);
+                return StatusCode(500, "An error occurred while updating the side project.");
             }
         }
 

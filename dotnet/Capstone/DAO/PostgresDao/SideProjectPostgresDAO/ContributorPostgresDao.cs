@@ -434,7 +434,7 @@ namespace Capstone.DAO
             if (reader["portfolio_id"] != DBNull.Value)
             {
                 int portfolioId = Convert.ToInt32(reader["portfolio_id"]);
-                contributor.Portfolio = _websiteDao.GetWebsiteById(portfolioId);
+                contributor.PortfolioLink = _websiteDao.GetWebsiteById(portfolioId);
             }
             else
             {

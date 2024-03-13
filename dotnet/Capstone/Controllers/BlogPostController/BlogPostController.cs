@@ -34,9 +34,9 @@ namespace Capstone.Controllers
                     return CreatedAtAction(nameof(GetBlogPostById), new { blogPostId = createdBlogPost.Id }, createdBlogPost);
                 }
             }
-            catch (DaoException ex)
+            catch (DaoException)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, "An error occurred while creating the blog post.");
             }
         }
 

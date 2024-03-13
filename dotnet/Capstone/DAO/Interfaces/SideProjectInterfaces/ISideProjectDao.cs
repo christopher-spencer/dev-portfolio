@@ -11,9 +11,9 @@ namespace Capstone.DAO.Interfaces
                                         SIDE PROJECT CRUD
             **********************************************************************************************
         */
+        SideProject CreateSideProject(SideProject sideProject);
         List<SideProject> GetSideProjects();
         SideProject GetSideProjectById(int sideProjectId);
-        SideProject CreateSideProject(SideProject sideProject);
         SideProject UpdateSideProject(SideProject sideProject, int sideProjectId);
         int DeleteSideProjectBySideProjectId(int sideProjectId);
     }

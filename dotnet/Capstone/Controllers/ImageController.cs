@@ -17,9 +17,7 @@ namespace Capstone.Controllers
         {
             _imageDao = imageDao;
         }
-        // FIXME when creating new project image, replaces old at mainImageId but old img stays in database unconnected to anything or sets it in additional images for models w/ additional images
-        // TODO separate paths for main image and associated images, or separate tables? Or boolean flags?
-        //TODO wrap all CREATE/UPDATE/DELETE in try catch
+        // TODO when creating new project image, replaces old at mainImageId but old img stays in database unconnected to anything or sets it in additional images for models w/ additional images
         /*  
             **********************************************************************************************
                                                 IMAGE CRUD CONTROLLER
@@ -341,7 +339,6 @@ namespace Capstone.Controllers
                                           WEBSITE IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-        // TODO add websiteType (?) for sideproject vs portfolio endpoint paths (?)
         [Authorize]
         [HttpPost("/image/create-website-logo/{websiteId}")]
         public ActionResult CreateImageByWebsiteId(int websiteId, Image image)
