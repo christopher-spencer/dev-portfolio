@@ -25,7 +25,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                                 CONTRIBUTOR CRUD
             **********************************************************************************************
-        */ 
+        */
         public Contributor CreateContributor(Contributor contributor)
         {
             string sql = "INSERT INTO contributors (first_name, last_name, email, " +
@@ -118,13 +118,12 @@ namespace Capstone.DAO
 
             return contributors;
         }
-        //FIXME add contributorId
 
-        public Contributor UpdateContributor(Contributor contributor)
+        public Contributor UpdateContributor(int contributorId, Contributor contributor)
         {
             string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, " +
                          "email = @email, bio = @bio, contribution_details = @contribution_details " +
-                         "WHERE id = @id;";
+                         "WHERE id = @contributorId;";
 
             try
             {
@@ -133,7 +132,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", contributor.Id);
+                    cmd.Parameters.AddWithValue("@contributorId", contributorId); 
                     cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
                     cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
                     cmd.Parameters.AddWithValue("@email", contributor.Email);
@@ -181,7 +180,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                           SIDE PROJECT CONTRIBUTOR CRUD
             **********************************************************************************************
-        */          
+        */
         public Contributor CreateContributorBySideProjectId(int projectId, Contributor contributor)
         {
             string insertContributorSql = "INSERT INTO contributors (first_name, last_name, email, " +
@@ -395,7 +394,7 @@ namespace Capstone.DAO
             {
                 contributor.ContributorImageId = 0;
             }
-        }      
+        }
 
         private void SetContributorLinkedInIdProperties(NpgsqlDataReader reader, Contributor contributor)
         {

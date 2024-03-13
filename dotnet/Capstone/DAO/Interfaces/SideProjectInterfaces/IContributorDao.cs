@@ -13,7 +13,7 @@ namespace Capstone.DAO.Interfaces
         Contributor CreateContributor(Contributor contributor);
         Contributor GetContributorById(int contributorId);
         List<Contributor> GetAllContributors();
-        Contributor UpdateContributor(Contributor contributor);
+        Contributor UpdateContributor(int contributorId, Contributor contributor);
         int DeleteContributorById(int contributorId);
 
         /*  

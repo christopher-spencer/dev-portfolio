@@ -22,7 +22,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
                                                 CONTRIBUTOR CRUD CONTROLLER
             **********************************************************************************************
-        */ 
+        */
 
         [Authorize]
         [HttpPost("/create-contributor")]
@@ -76,14 +76,14 @@ namespace Capstone.Controllers
                 return Ok(contributors);
             }
         }
-        //FIXME needs contributorId?
+ 
         [Authorize]
-        [HttpPut("/update-contributor")]
-        public ActionResult UpdateContributor(Contributor contributor)
+        [HttpPut("/update-contributor/{contributorId}")]
+        public ActionResult UpdateContributor(int contributorId, Contributor contributor)
         {
             try
             {
-                Contributor updatedContributor = _contributorDao.UpdateContributor(contributor);
+                Contributor updatedContributor = _contributorDao.UpdateContributor(contributorId, contributor); 
 
                 if (updatedContributor == null)
                 {
@@ -127,7 +127,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
                                             SIDE PROJECT CONTRIBUTOR CRUD CONTROLLER
             **********************************************************************************************
-        */ 
+        */
 
         [Authorize]
         [HttpPost("/sideproject/{projectId}/create-contributor")]

@@ -25,7 +25,7 @@ namespace Capstone.DAO.Interfaces
         Skill CreateSkillBySideProjectId(int projectId, Skill skill);
         List<Skill> GetSkillsBySideProjectId(int projectId);
         Skill GetSkillBySideProjectId(int projectId, int skillId);
-        Skill UpdateSkillBySideProjectId(int projectId, Skill skill);
+        Skill UpdateSkillBySideProjectId(int projectId, int skillId, Skill skill);
         int DeleteSkillBySideProjectId(int projectId, int skillId);
     }
 }
