@@ -23,7 +23,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                                     GOAL CRUD
             **********************************************************************************************
-        */    
+        */
         public Goal CreateGoal(Goal goal)
         {
             string sql = "INSERT INTO goals (description) VALUES (@description) RETURNING id;";
@@ -104,11 +104,10 @@ namespace Capstone.DAO
 
             return goals;
         }
-        //FIXME add goalId
 
-        public Goal UpdateGoal(Goal goal)
+        public Goal UpdateGoal(int goalId, Goal goal)
         {
-            string sql = "UPDATE goals SET description = @description WHERE id = @id;";
+            string sql = "UPDATE goals SET description = @description WHERE id = @goalId;";
 
             try
             {
@@ -117,7 +116,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", goal.Id);
+                    cmd.Parameters.AddWithValue("@goalId", goalId); 
                     cmd.Parameters.AddWithValue("@description", goal.Description);
 
                     int count = cmd.ExecuteNonQuery();
@@ -161,7 +160,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                             SIDE PROJECT GOAL CRUD
             **********************************************************************************************
-        */              
+        */
         public Goal CreateGoalBySideProjectId(int projectId, Goal goal)
         {
             string insertGoalSql = "INSERT INTO goals (description) VALUES (@description) RETURNING id;";
@@ -339,7 +338,7 @@ namespace Capstone.DAO
 
             return goal;
         }
-        
+
         private void SetGoalIconIdProperties(NpgsqlDataReader reader, Goal goal)
         {
             if (reader["icon_id"] != DBNull.Value)

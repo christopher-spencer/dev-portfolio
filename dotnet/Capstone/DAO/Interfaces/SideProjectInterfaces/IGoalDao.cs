@@ -13,7 +13,7 @@ namespace Capstone.DAO.Interfaces
         Goal CreateGoal(Goal goal);
         Goal GetGoalById(int goalId);
         List<Goal> GetAllGoals();
-        Goal UpdateGoal(Goal goal);
+        Goal UpdateGoal(int goalId, Goal goal);
         int DeleteGoalById(int goalId);
         
         /*  

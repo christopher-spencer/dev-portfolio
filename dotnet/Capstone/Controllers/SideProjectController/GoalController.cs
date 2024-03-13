@@ -83,7 +83,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Goal updatedGoal = _goalDao.UpdateGoal(goal);
+                Goal updatedGoal = _goalDao.UpdateGoal(goalId, goal);
 
                 if (updatedGoal == null)
                 {
