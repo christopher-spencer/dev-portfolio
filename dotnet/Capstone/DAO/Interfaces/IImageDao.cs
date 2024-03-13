@@ -76,7 +76,7 @@ namespace Capstone.DAO.Interfaces
         */ 
         Image CreateImageByContributorId(int contributorId, Image image);
         Image GetImageByContributorId(int contributorId);
-        Image UpdateImageByContributorId(int contributorId, Image image);
+        Image UpdateImageByContributorId(int contributorId, int imageId, Image image);
         int DeleteImageByContributorId(int contributorId, int imageId);
 
         /*  
