@@ -1,3 +1,6 @@
+// FIXME RERUN DATABASE WITH UPDATES
+// TODO Figure out how to auto connect db updates
+
 BEGIN TRANSACTION;
 
 DROP TABLE IF EXISTS sideproject_websites;

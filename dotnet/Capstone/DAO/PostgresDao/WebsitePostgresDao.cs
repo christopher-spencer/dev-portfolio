@@ -258,7 +258,8 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                                websiteId = (int)cmdInsertWebsite.ExecuteScalar();
+
+                                websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
 
                             using (NpgsqlCommand cmdInsertSideProjectWebsite = new NpgsqlCommand(insertSideProjectWebsiteSql, connection))
@@ -485,43 +486,66 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
-                        cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                        try
+                        {
+                            int websiteId;
 
-                        int websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
-                        website.Id = websiteId;
-                    }
+                            using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                            {
+                                cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                                cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
 
-                    using (NpgsqlCommand cmdInsertControllerWebsite = new NpgsqlCommand(insertContributorWebsiteSql, connection))
-                    {
-                        cmdInsertControllerWebsite.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmdInsertControllerWebsite.Parameters.AddWithValue("@websiteId", website.Id);
+                                websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                            }
 
-                        cmdInsertControllerWebsite.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertContributorWebsite = new NpgsqlCommand(insertContributorWebsiteSql, connection))
+                            {
+                                cmdInsertContributorWebsite.Parameters.AddWithValue("@contributorId", contributorId);
+                                cmdInsertContributorWebsite.Parameters.AddWithValue("@websiteId", websiteId);
 
-                    using (NpgsqlCommand cmdUpdateController = new NpgsqlCommand(updateContributorWebsiteIdSql, connection))
-                    {
-                        cmdUpdateController.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmdUpdateController.Parameters.AddWithValue("@websiteId", website.Id);
+                                cmdInsertContributorWebsite.ExecuteNonQuery();
+                            }
 
-                        cmdUpdateController.ExecuteNonQuery();
+                            using (NpgsqlCommand cmdUpdateContributor = new NpgsqlCommand(updateContributorWebsiteIdSql, connection))
+                            {
+                                cmdUpdateContributor.Parameters.AddWithValue("@contributorId", contributorId);
+                                cmdUpdateContributor.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmdUpdateContributor.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            website.Id = websiteId;
+
+                            return website;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the website for the contributor.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the website for the contributor.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return website;
         }
 
         public Website GetWebsiteByContributorId(int contributorId)
         {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
             Website website = null;
+
             string sql = "SELECT w.id, w.name, w.url " +
                          "FROM websites w " +
                          "JOIN contributor_websites cw ON w.id = cw.website_id " +
@@ -557,6 +581,11 @@ namespace Capstone.DAO
 
         public Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
         {
+            if (contributorId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ContributorId and websiteId must be greater than zero.");
+            }
+
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
                                       "FROM contributor_websites " +
@@ -595,6 +624,11 @@ namespace Capstone.DAO
 
         public int DeleteWebsiteByContributorId(int contributorId, int websiteId)
         {
+            if (contributorId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ContributorId and websiteId must be greater than zero.");
+            }
+
             string deleteContributorWebsiteSql = "DELETE FROM contributor_websites WHERE contributor_id = @contributorId AND website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
@@ -634,6 +668,21 @@ namespace Capstone.DAO
 
         public Website CreateWebsiteByApiServiceId(int apiServiceId, Website website)
         {
+            if (apiServiceId <= 0)
+            {
+                throw new ArgumentException("API Service Id must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
             string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
             string insertApiServiceWebsiteSql = "INSERT INTO api_service_websites (apiservice_id, website_id) VALUES (@apiServiceId, @websiteId);";
             string updateApiServiceWebsiteIdSql = "UPDATE apis_and_services SET website_id = @websiteId WHERE id = @apiServiceId;";
@@ -644,43 +693,66 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
-                        cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                        try
+                        {
+                            int websiteId;
 
-                        int websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
-                        website.Id = websiteId;
-                    }
+                            using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                            {
+                                cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                                cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
 
-                    using (NpgsqlCommand cmdInsertApiServiceWebsite = new NpgsqlCommand(insertApiServiceWebsiteSql, connection))
-                    {
-                        cmdInsertApiServiceWebsite.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                        cmdInsertApiServiceWebsite.Parameters.AddWithValue("@websiteId", website.Id);
+                                websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                            }
 
-                        cmdInsertApiServiceWebsite.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertApiServiceWebsite = new NpgsqlCommand(insertApiServiceWebsiteSql, connection))
+                            {
+                                cmdInsertApiServiceWebsite.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                                cmdInsertApiServiceWebsite.Parameters.AddWithValue("@websiteId", websiteId);
 
-                    using (NpgsqlCommand cmdUpdateApiService = new NpgsqlCommand(updateApiServiceWebsiteIdSql, connection))
-                    {
-                        cmdUpdateApiService.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                        cmdUpdateApiService.Parameters.AddWithValue("@websiteId", website.Id);
+                                cmdInsertApiServiceWebsite.ExecuteNonQuery();
+                            }
 
-                        cmdUpdateApiService.ExecuteNonQuery();
+                            using (NpgsqlCommand cmdUpdateApiService = new NpgsqlCommand(updateApiServiceWebsiteIdSql, connection))
+                            {
+                                cmdUpdateApiService.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                                cmdUpdateApiService.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmdUpdateApiService.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            website.Id = websiteId;
+
+                            return website;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the website for the API/Service.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the website for the API/Service.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return website;
         }
 
         public Website GetWebsiteByApiServiceId(int apiServiceId)
         {
+            if (apiServiceId <= 0)
+            {
+                throw new ArgumentException("ApiServiceId must be greater than zero.");
+            }
+
             Website website = null;
+
             string sql = "SELECT w.id, w.name, w.url " +
                          "FROM websites w " +
                          "JOIN api_service_websites aw ON w.id = aw.website_id " +
@@ -716,6 +788,11 @@ namespace Capstone.DAO
 
         public Website UpdateWebsiteByApiServiceId(int apiServiceId, int websiteId, Website website)
         {
+            if (apiServiceId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ApiServiceId and websiteId must be greater than zero.");
+            }
+
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
                                       "FROM api_service_websites " +
@@ -754,6 +831,11 @@ namespace Capstone.DAO
 
         public int DeleteWebsiteByApiServiceId(int apiServiceId, int websiteId)
         {
+            if (apiServiceId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ApiServiceId and websiteId must be greater than zero.");
+            }
+
             string deleteApiServiceWebsiteSql = "DELETE FROM api_service_websites WHERE apiservice_id = @apiServiceId AND website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
@@ -793,6 +875,21 @@ namespace Capstone.DAO
 
         public Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website)
         {
+            if (dependencyLibraryId <= 0)
+            {
+                throw new ArgumentException("Dependency Library Id must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
             string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
             string insertDependencyLibraryWebsiteSql = "INSERT INTO dependency_library_websites (dependencylibrary_id, website_id) VALUES (@dependencyLibraryId, @websiteId);";
             string updateDependencyLibraryWebsiteIdSql = "UPDATE dependencies_and_libraries SET website_id = @websiteId WHERE id = @dependencyLibraryId;";
@@ -803,43 +900,66 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
-                        cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                        try
+                        {
+                            int websiteId;
 
-                        int websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
-                        website.Id = websiteId;
-                    }
+                            using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                            {
+                                cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                                cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
 
-                    using (NpgsqlCommand cmdInsertDependencyLibraryWebsite = new NpgsqlCommand(insertDependencyLibraryWebsiteSql, connection))
-                    {
-                        cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@websiteId", website.Id);
+                                websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                            }
 
-                        cmdInsertDependencyLibraryWebsite.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertDependencyLibraryWebsite = new NpgsqlCommand(insertDependencyLibraryWebsiteSql, connection))
+                            {
+                                cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                                cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@websiteId", website.Id);
 
-                    using (NpgsqlCommand cmdUpdateDependencyLibrary = new NpgsqlCommand(updateDependencyLibraryWebsiteIdSql, connection))
-                    {
-                        cmdUpdateDependencyLibrary.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmdUpdateDependencyLibrary.Parameters.AddWithValue("@websiteId", website.Id);
+                                cmdInsertDependencyLibraryWebsite.ExecuteNonQuery();
+                            }
 
-                        cmdUpdateDependencyLibrary.ExecuteNonQuery();
+                            using (NpgsqlCommand cmdUpdateDependencyLibrary = new NpgsqlCommand(updateDependencyLibraryWebsiteIdSql, connection))
+                            {
+                                cmdUpdateDependencyLibrary.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                                cmdUpdateDependencyLibrary.Parameters.AddWithValue("@websiteId", website.Id);
+
+                                cmdUpdateDependencyLibrary.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            website.Id = websiteId;
+
+                            return website;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the website for the dependency/library.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the website for the dependency/library.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return website;
         }
 
         public Website GetWebsiteByDependencyLibraryId(int dependencyLibraryId)
         {
+            if (dependencyLibraryId <= 0)
+            {
+                throw new ArgumentException("DependencyLibraryId must be greater than zero.");
+            }
+
             Website website = null;
+
             string sql = "SELECT w.id, w.name, w.url " +
                          "FROM websites w " +
                          "JOIN dependency_library_websites dw ON w.id = dw.website_id " +
@@ -875,6 +995,11 @@ namespace Capstone.DAO
 
         public Website UpdateWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId, Website website)
         {
+            if (dependencyLibraryId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("DependencyLibraryId and websiteId must be greater than zero.");
+            }
+
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
                                       "FROM dependency_library_websites " +
@@ -914,6 +1039,11 @@ namespace Capstone.DAO
 
         public int DeleteWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId)
         {
+            if (dependencyLibraryId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("DependencyLibraryId and websiteId must be greater than zero.");
+            }
+
             string deleteDependencyLibraryWebsiteSql = "DELETE FROM dependency_library_websites WHERE dependencylibrary_id = @dependencyLibraryId AND website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
