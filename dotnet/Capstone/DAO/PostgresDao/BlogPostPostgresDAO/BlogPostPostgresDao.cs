@@ -18,13 +18,69 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
             this._imageDao = imageDao;
         }
-        // FIXME use WEBSITE POSTGRES DAO CRUD AS TEMPLATE FOR IMPROVING CRUD METHODS
 
         /*  
             **********************************************************************************************
                                                     BLOG POST CRUD
             **********************************************************************************************
         */
+
+        public BlogPost CreateBlogPost(BlogPost blogPost)
+        {
+            if (string.IsNullOrEmpty(blogPost.Name))
+            {
+                throw new ArgumentException("BlogPost name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(blogPost.Author))
+            {
+                throw new ArgumentException("BlogPost author cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(blogPost.Description))
+            {
+                throw new ArgumentException("BlogPost description cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(blogPost.Content))
+            {
+                throw new ArgumentException("BlogPost content cannot be null or empty.");
+            }
+
+            BlogPost newBlogPost = null;
+
+            string sql = "INSERT into blogposts (name, author, description, content) " +
+                         "VALUES (@name, @author, @description, @content) " +
+                         "RETURNING id;";
+
+            int newBlogPostId = 0;
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", blogPost.Name);
+                        cmd.Parameters.AddWithValue("@author", blogPost.Author);
+                        cmd.Parameters.AddWithValue("@description", blogPost.Description);
+                        cmd.Parameters.AddWithValue("@content", blogPost.Content);
+
+                        newBlogPostId = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
+
+                newBlogPost = GetBlogPost(newBlogPostId);
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the blog post.", ex);
+            }
+
+            return newBlogPost;
+        }
 
         public List<BlogPost> GetBlogPosts()
         {
@@ -40,26 +96,34 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        BlogPost blogPost = MapRowToBlogPost(reader);
-                        blogPosts.Add(blogPost);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                BlogPost blogPost = MapRowToBlogPost(reader);
+                                blogPosts.Add(blogPost);
+                            }
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("SQL exception occurred", ex);
+                throw new DaoException("An error occurred while retrieving the blog posts.", ex);
             }
 
             return blogPosts;
         }
 
-        public BlogPost GetBlogPostById(int blogPostId)
+        public BlogPost GetBlogPost(int blogPostId)
         {
+            if (blogPostId <= 0)
+            {
+                throw new ArgumentException("BlogPostId must be greater than zero.");
+            }
+
             BlogPost blogPost = null;
 
             string sql = "SELECT id, name, author, description, content, " +
@@ -72,63 +136,55 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-
-                    cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        blogPost = MapRowToBlogPost(reader);
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                blogPost = MapRowToBlogPost(reader);
+                            }
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("SQL exception occurred", ex);
+                throw new DaoException("An error occurred while retrieving the blog post.", ex);
             }
 
             return blogPost;
         }
 
-        public BlogPost CreateBlogPost(BlogPost blogPost)
-        {
-            BlogPost newBlogPost = null;
-
-            string sql = "INSERT into blogposts (name, author, description, content) " +
-                         "VALUES (@name, @author, @description, @content) " +
-                         "RETURNING id;";
-
-            int newBlogPostId = 0;
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-
-                    cmd.Parameters.AddWithValue("@name", blogPost.Name);
-                    cmd.Parameters.AddWithValue("@author", blogPost.Author);
-                    cmd.Parameters.AddWithValue("@description", blogPost.Description);
-                    cmd.Parameters.AddWithValue("@content", blogPost.Content);
-
-                    newBlogPostId = Convert.ToInt32(cmd.ExecuteScalar());
-                }
-
-                newBlogPost = GetBlogPostById(newBlogPostId);
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("SQL exception occurred", ex);
-            }
-            return newBlogPost;
-        }
-
         public BlogPost UpdateBlogPost(BlogPost blogPost, int blogPostId)
         {
+            if (string.IsNullOrEmpty(blogPost.Name))
+            {
+                throw new ArgumentException("BlogPost name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(blogPost.Author))
+            {
+                throw new ArgumentException("BlogPost author cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(blogPost.Description))
+            {
+                throw new ArgumentException("BlogPost description cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(blogPost.Content))
+            {
+                throw new ArgumentException("BlogPost content cannot be null or empty.");
+            }
+
+            if (blogPostId <= 0)
+            {
+                throw new ArgumentException("BlogPostId must be greater than zero.");
+            }
+
             string sql = "UPDATE blogposts SET name = @name, author = @author, " +
                          "description = @description, content = @content " +
                          "WHERE id = @blogPostId;";
@@ -139,23 +195,24 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-
-                    cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
-                    cmd.Parameters.AddWithValue("@name", blogPost.Name);
-                    cmd.Parameters.AddWithValue("@author", blogPost.Author);
-                    cmd.Parameters.AddWithValue("@description", blogPost.Description);
-                    cmd.Parameters.AddWithValue("@content", blogPost.Content);
-
-                    int count = cmd.ExecuteNonQuery();
-
-                    if (count == 1)
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return blogPost;
-                    }
-                    else
-                    {
-                        return null;
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+                        cmd.Parameters.AddWithValue("@name", blogPost.Name);
+                        cmd.Parameters.AddWithValue("@author", blogPost.Author);
+                        cmd.Parameters.AddWithValue("@description", blogPost.Description);
+                        cmd.Parameters.AddWithValue("@content", blogPost.Content);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return blogPost;
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -165,9 +222,12 @@ namespace Capstone.DAO
             }
         }
 
-        public int DeleteBlogPostByBlogPostId(int blogPostId)
+        public int DeleteBlogPost(int blogPostId)
         {
-            int numberOfRowsAffected = 0;
+            if (blogPostId <= 0)
+            {
+                throw new ArgumentException("BlogPostId must be greater than zero.");
+            }
 
             string sql = "DELETE FROM blogposts WHERE id = @blogPostId;";
 
@@ -177,19 +237,27 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
 
-                    numberOfRowsAffected = cmd.ExecuteNonQuery();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        return rowsAffected;
+                    }
                 }
             }
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while deleting the blog post.", ex);
             }
-
-            return numberOfRowsAffected;
         }
+
+        /*  
+            **********************************************************************************************
+                                                BLOGPOST MAP ROW
+            **********************************************************************************************
+        */
 
         private BlogPost MapRowToBlogPost(NpgsqlDataReader reader)
         {

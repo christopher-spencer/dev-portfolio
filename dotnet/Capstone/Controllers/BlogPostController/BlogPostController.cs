@@ -58,7 +58,7 @@ namespace Capstone.Controllers
         [HttpGet("/blogpost/{blogPostId}")]
         public ActionResult<BlogPost> GetBlogPostById(int blogPostId)
         {
-            BlogPost blogPost = blogPostsDao.GetBlogPostById(blogPostId);
+            BlogPost blogPost = blogPostsDao.GetBlogPost(blogPostId);
 
             if (blogPost == null) 
             {
@@ -99,7 +99,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                int rowsAffected = blogPostsDao.DeleteBlogPostByBlogPostId(blogPostId);
+                int rowsAffected = blogPostsDao.DeleteBlogPost(blogPostId);
         
                 if (rowsAffected > 0)
                 {

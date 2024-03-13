@@ -387,7 +387,7 @@ namespace Capstone.DAO
                 apiService.WebsiteId = Convert.ToInt32(reader["website_id"]);
 
                 int websiteId = Convert.ToInt32(reader["website_id"]);
-                apiService.Website = _websiteDao.GetWebsiteById(websiteId);
+                apiService.Website = _websiteDao.GetWebsite(websiteId);
             }
             else
             {

@@ -63,7 +63,7 @@ namespace Capstone.DAO
             return website;
         }
 
-        public Website GetWebsiteById(int websiteId)
+        public Website GetWebsite(int websiteId)
         {
             if (websiteId <= 0)
             {
@@ -103,9 +103,9 @@ namespace Capstone.DAO
             return null;
         }
 
-        public List<Website> GetAllWebsites()
+        public List<Website> GetWebsites()
         {
-            List<Website> websiteLinks = new List<Website>();
+            List<Website> websites = new List<Website>();
 
             string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
                          "FROM websites w " +
@@ -123,7 +123,7 @@ namespace Capstone.DAO
                         {
                             while (reader.Read())
                             {
-                                websiteLinks.Add(MapRowToWebsite(reader));
+                                websites.Add(MapRowToWebsite(reader));
                             }
                         }
                     }
@@ -134,7 +134,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while retrieving the website links.", ex);
             }
 
-            return websiteLinks;
+            return websites;
         }
 
         public Website UpdateWebsite(Website website, int websiteId)
@@ -206,7 +206,9 @@ namespace Capstone.DAO
                     {
                         cmd.Parameters.AddWithValue("@id", websiteId);
 
-                        return cmd.ExecuteNonQuery();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        return rowsAffected;
                     }
                 }
             }

@@ -50,7 +50,7 @@ namespace Capstone.Controllers
         [HttpGet("/website/{websiteId}")]
         public ActionResult<Website> GetWebsiteById(int websiteId)
         {
-            Website website = _websiteDao.GetWebsiteById(websiteId);
+            Website website = _websiteDao.GetWebsite(websiteId);
 
             if (website == null)
             {
@@ -65,7 +65,7 @@ namespace Capstone.Controllers
         [HttpGet("/get-all-websites")]
         public ActionResult<List<Website>> GetAllWebsites()
         {
-            List<Website> websites = _websiteDao.GetAllWebsites();
+            List<Website> websites = _websiteDao.GetWebsites();
 
             if (websites == null)
             {

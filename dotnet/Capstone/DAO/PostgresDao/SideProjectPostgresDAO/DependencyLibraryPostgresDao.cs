@@ -358,7 +358,7 @@ namespace Capstone.DAO
                 dependencyLibrary.WebsiteId = Convert.ToInt32(reader["website_id"]);
 
                 int websiteId = Convert.ToInt32(reader["website_id"]);
-                dependencyLibrary.Website = _websiteDao.GetWebsiteById(websiteId);
+                dependencyLibrary.Website = _websiteDao.GetWebsite(websiteId);
             }
             else
             {

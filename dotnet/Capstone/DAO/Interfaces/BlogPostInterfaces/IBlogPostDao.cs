@@ -11,10 +11,10 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
         List<BlogPost> GetBlogPosts();
-        BlogPost GetBlogPostById(int blogPostId);
+        BlogPost GetBlogPost(int blogPostId);
         BlogPost CreateBlogPost(BlogPost blogPost);
         BlogPost UpdateBlogPost(BlogPost blogPost, int blogPostId);
-        int DeleteBlogPostByBlogPostId(int blogPostId);
+        int DeleteBlogPost(int blogPostId);
 
     }
 }

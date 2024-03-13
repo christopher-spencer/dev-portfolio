@@ -405,7 +405,7 @@ namespace Capstone.DAO
             if (reader["linkedin_id"] != DBNull.Value)
             {
                 int linkedInId = Convert.ToInt32(reader["linkedin_id"]);
-                contributor.LinkedIn = _websiteDao.GetWebsiteById(linkedInId);
+                contributor.LinkedIn = _websiteDao.GetWebsite(linkedInId);
             }
             else
             {
@@ -420,7 +420,7 @@ namespace Capstone.DAO
             if (reader["github_id"] != DBNull.Value)
             {
                 int githubId = Convert.ToInt32(reader["github_id"]);
-                contributor.GitHub = _websiteDao.GetWebsiteById(githubId);
+                contributor.GitHub = _websiteDao.GetWebsite(githubId);
             }
             else
             {
@@ -435,7 +435,7 @@ namespace Capstone.DAO
             if (reader["portfolio_id"] != DBNull.Value)
             {
                 int portfolioId = Convert.ToInt32(reader["portfolio_id"]);
-                contributor.PortfolioLink = _websiteDao.GetWebsiteById(portfolioId);
+                contributor.PortfolioLink = _websiteDao.GetWebsite(portfolioId);
             }
             else
             {

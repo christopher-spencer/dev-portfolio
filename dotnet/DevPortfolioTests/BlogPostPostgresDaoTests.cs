@@ -50,7 +50,7 @@ namespace Capstone.UnitTests.DAO
             BlogPostPostgresDao dao = new BlogPostPostgresDao(ConnectionString, imageDaoMock.Object);
 
             // Act
-            BlogPost blogPost = dao.GetBlogPostById(1);
+            BlogPost blogPost = dao.GetBlogPost(1);
 
             // Assert
             Assert.IsNotNull(blogPost);
@@ -143,7 +143,7 @@ namespace Capstone.UnitTests.DAO
             BlogPostPostgresDao dao = new BlogPostPostgresDao(ConnectionString, imageDaoMock.Object);
 
             // Act
-            int rowsAffected = dao.DeleteBlogPostByBlogPostId(1);
+            int rowsAffected = dao.DeleteBlogPost(1);
 
             // Assert
             Assert.AreEqual(1, rowsAffected);
