@@ -16,7 +16,6 @@ namespace Capstone.DAO
         {
             connectionString = dbConnectionString;
         }
-        // FIXME use WEBSITE POSTGRES DAO CRUD AS TEMPLATE FOR IMPROVING CRUD METHODS
 
         /*  
             **********************************************************************************************
@@ -354,7 +353,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -397,7 +396,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@imageId", imageId);
 
@@ -439,7 +438,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
@@ -508,6 +507,21 @@ namespace Capstone.DAO
 
         public Image CreateImageByBlogPostId(int blogPostId, Image image)
         {
+            if (blogPostId <= 0)
+            {
+                throw new ArgumentException("BlogPostId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
             string insertBlogPostImageSql = "INSERT INTO blogpost_images (blogpost_id, image_id) VALUES (@blogPostId, @imageId);";
             string updateBlogPostMainImageSql = "UPDATE blogposts SET main_image_id = @imageId WHERE id = @blogPostId;";
@@ -518,42 +532,62 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertImageSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@name", image.Name);
-                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        try
+                        {
+                            int imageId;
 
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        image.Id = id;
-                    }
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertBlogPostImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
-                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertBlogPostImage = new NpgsqlCommand(insertBlogPostImageSql, connection))
+                            {
+                                cmdInsertBlogPostImage.Parameters.AddWithValue("@blogPostId", blogPostId);
+                                cmdInsertBlogPostImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertBlogPostImage.ExecuteNonQuery();
+                            }
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateBlogPostMainImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
-                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+                            using (NpgsqlCommand cmdUpdateBlogPost = new NpgsqlCommand(updateBlogPostMainImageSql, connection))
+                            {
+                                cmdUpdateBlogPost.Parameters.AddWithValue("@blogPostId", blogPostId);
+                                cmdUpdateBlogPost.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateBlogPost.ExecuteNonQuery();
+                            }
 
-                        cmd.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the image.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return image;
         }
 
         public Image GetImageByImageIdAndBlogPostId(int imageId, int blogPostId)
         {
+            if (blogPostId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("BlogPostId and imageId must be greater than zero.");
+            }
+
             Image image = null;
 
             string sql = "SELECT i.id, i.name, i.url " +
@@ -567,15 +601,18 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@imageId", imageId);
-                    cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        image = MapRowToImage(reader);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -589,6 +626,11 @@ namespace Capstone.DAO
 
         public List<Image> GetImagesByBlogPostId(int blogPostId)
         {
+            if (blogPostId <= 0)
+            {
+                throw new ArgumentException("BlogPostId must be greater than zero.");
+            }
+
             List<Image> images = new List<Image>();
 
             string sql = "SELECT i.id, i.name, i.url " +
@@ -627,6 +669,11 @@ namespace Capstone.DAO
 
         public Image UpdateImageByBlogPostId(int blogPostId, int imageId, Image image)
         {
+            if (blogPostId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("BlogPostId and imageId must be greater than zero.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM blogpost_images " +
@@ -665,6 +712,11 @@ namespace Capstone.DAO
 
         public int DeleteImageByBlogPostId(int blogPostId, int imageId)
         {
+            if (blogPostId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("BlogPostId and imageId must be greater than zero.");
+            }
+
             string deleteBlogPostImageSql = "DELETE FROM blogpost_images WHERE blogpost_id = @blogPostId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -704,6 +756,21 @@ namespace Capstone.DAO
 
         public Image CreateImageByWebsiteId(int websiteId, Image image)
         {
+            if (websiteId <= 0)
+            {
+                throw new ArgumentException("WebsiteId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
             string insertWebsiteImageSql = "INSERT INTO website_images (website_id, image_id) VALUES (@websiteId, @imageId);";
             string updateWebsiteLogoIdSql = "UPDATE websites SET logo_id = @imageId WHERE id = @websiteId;";
@@ -714,42 +781,62 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertImageSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@name", image.Name);
-                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        try
+                        {
+                            int imageId;
 
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        image.Id = id;
-                    }
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertWebsiteImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
-                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertWebsiteImage = new NpgsqlCommand(insertWebsiteImageSql, connection))
+                            {
+                                cmdInsertWebsiteImage.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdInsertWebsiteImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertWebsiteImage.ExecuteNonQuery();
+                            }
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteLogoIdSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
-                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+                            using (NpgsqlCommand cmdUpdateWebsiteLogoId = new NpgsqlCommand(updateWebsiteLogoIdSql, connection))
+                            {
+                                cmdUpdateWebsiteLogoId.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdUpdateWebsiteLogoId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateWebsiteLogoId.ExecuteNonQuery();
+                            }
 
-                        cmd.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image for the website.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the image for the website.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return image;
         }
 
         public Image GetImageByWebsiteId(int websiteId)
         {
+            if (websiteId <= 0)
+            {
+                throw new ArgumentException("WebsiteId must be greater than zero.");
+            }
+
             Image image = null;
 
             string sql = "SELECT i.id, i.name, i.url " +
@@ -763,14 +850,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        image = MapRowToImage(reader);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -784,6 +874,11 @@ namespace Capstone.DAO
 
         public Image UpdateImageByWebsiteId(int websiteId, int imageId, Image image)
         {
+            if (imageId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM website_images " +
@@ -822,6 +917,11 @@ namespace Capstone.DAO
 
         public int DeleteImageByWebsiteId(int websiteId, int imageId)
         {
+            if (imageId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ImageId and websiteId must be greater than zero.");
+            }
+
             string deleteWebsiteImageSql = "DELETE FROM website_images WHERE website_id = @websiteId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -861,6 +961,21 @@ namespace Capstone.DAO
 
         public Image CreateImageBySkillId(int skillId, Image image)
         {
+            if (skillId <= 0)
+            {
+                throw new ArgumentException("SkillId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
             string insertSkillImageSql = "INSERT INTO skill_images (skill_id, image_id) VALUES (@skillId, @imageId);";
             string updateSkillImageIdSql = "UPDATE skills SET icon_id = @imageId WHERE id = @skillId;";
@@ -871,43 +986,62 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
-                        cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                        try
+                        {
+                            int imageId;
 
-                        int id = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
-                        image.Id = id;
-                    }
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
 
-                    using (NpgsqlCommand cmdInsertSkillImage = new NpgsqlCommand(insertSkillImageSql, connection))
-                    {
-                        cmdInsertSkillImage.Parameters.AddWithValue("@skillId", skillId);
-                        cmdInsertSkillImage.Parameters.AddWithValue("@imageId", image.Id);
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
 
-                        cmdInsertSkillImage.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertSkillImage = new NpgsqlCommand(insertSkillImageSql, connection))
+                            {
+                                cmdInsertSkillImage.Parameters.AddWithValue("@skillId", skillId);
+                                cmdInsertSkillImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertSkillImage.ExecuteNonQuery();
+                            }
 
-                    using (NpgsqlCommand cmdUpdateSkillImageId = new NpgsqlCommand(updateSkillImageIdSql, connection))
-                    {
-                        cmdUpdateSkillImageId.Parameters.AddWithValue("@skillId", skillId);
-                        cmdUpdateSkillImageId.Parameters.AddWithValue("@imageId", image.Id);
+                            using (NpgsqlCommand cmdUpdateSkillImageId = new NpgsqlCommand(updateSkillImageIdSql, connection))
+                            {
+                                cmdUpdateSkillImageId.Parameters.AddWithValue("@skillId", skillId);
+                                cmdUpdateSkillImageId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateSkillImageId.ExecuteNonQuery();
+                            }
 
-                        cmdUpdateSkillImageId.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image for the skill.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the image for the skill.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return image;
         }
-
 
         public Image GetImageBySkillId(int skillId)
         {
+            if (skillId <= 0)
+            {
+                throw new ArgumentException("SkillId must be greater than zero.");
+            }
+
             Image image = null;
 
             string sql = "SELECT i.id, i.name, i.url " +
@@ -921,14 +1055,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@skillId", skillId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        image = MapRowToImage(reader);
+                        cmd.Parameters.AddWithValue("@skillId", skillId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -942,6 +1079,11 @@ namespace Capstone.DAO
 
         public Image UpdateImageBySkillId(int skillId, int imageId, Image image)
         {
+            if (skillId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("SkillId and imageId must be greater than zero.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM skill_images " +
@@ -980,6 +1122,11 @@ namespace Capstone.DAO
 
         public int DeleteImageBySkillId(int skillId, int imageId)
         {
+            if (skillId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("SkillId and imageId must be greater than zero.");
+            }
+
             string deleteSkillImageSql = "DELETE FROM skill_images WHERE skill_id = @skillId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -1019,6 +1166,21 @@ namespace Capstone.DAO
 
         public Image CreateImageByGoalId(int goalId, Image image)
         {
+            if (goalId <= 0)
+            {
+                throw new ArgumentException("GoalId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
             string insertGoalImageSql = "INSERT INTO goal_images (goal_id, image_id) VALUES (@goalId, @imageId);";
             string updateGoalImageIdSql = "UPDATE goals SET icon_id = @imageId WHERE id = @goalId;";
@@ -1029,42 +1191,62 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
-                        cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                        try
+                        {
+                            int imageId;
 
-                        int id = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
-                        image.Id = id;
-                    }
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
 
-                    using (NpgsqlCommand cmdInsertGoalImage = new NpgsqlCommand(insertGoalImageSql, connection))
-                    {
-                        cmdInsertGoalImage.Parameters.AddWithValue("@goalId", goalId);
-                        cmdInsertGoalImage.Parameters.AddWithValue("@imageId", image.Id);
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
 
-                        cmdInsertGoalImage.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertGoalImage = new NpgsqlCommand(insertGoalImageSql, connection))
+                            {
+                                cmdInsertGoalImage.Parameters.AddWithValue("@goalId", goalId);
+                                cmdInsertGoalImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertGoalImage.ExecuteNonQuery();
+                            }
 
-                    using (NpgsqlCommand cmdUpdateGoalImageId = new NpgsqlCommand(updateGoalImageIdSql, connection))
-                    {
-                        cmdUpdateGoalImageId.Parameters.AddWithValue("@goalId", goalId);
-                        cmdUpdateGoalImageId.Parameters.AddWithValue("@imageId", image.Id);
+                            using (NpgsqlCommand cmdUpdateGoalImageId = new NpgsqlCommand(updateGoalImageIdSql, connection))
+                            {
+                                cmdUpdateGoalImageId.Parameters.AddWithValue("@goalId", goalId);
+                                cmdUpdateGoalImageId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateGoalImageId.ExecuteNonQuery();
+                            }
 
-                        cmdUpdateGoalImageId.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image for the goal.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the image for the goal.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return image;
         }
 
         public Image GetImageByGoalId(int goalId)
         {
+            if (goalId <= 0)
+            {
+                throw new ArgumentException("GoalId must be greater than zero.");
+            }
+
             Image image = null;
 
             string sql = "SELECT i.id, i.name, i.url FROM images i " +
@@ -1077,16 +1259,18 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@goalId", goalId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        image = MapRowToImage(reader);
-                    }
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
 
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -1099,6 +1283,11 @@ namespace Capstone.DAO
 
         public Image UpdateImageByGoalId(int goalId, int imageId, Image image)
         {
+            if (goalId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("GoalId and imageId must be greater than zero.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM goal_images " +
@@ -1137,6 +1326,11 @@ namespace Capstone.DAO
 
         public int DeleteImageByGoalId(int goalId, int imageId)
         {
+            if (goalId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("GoalId and imageId must be greater than zero.");
+            }
+
             string deleteGoalImageSql = "DELETE FROM goal_images WHERE goal_id = @goalId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -1174,6 +1368,21 @@ namespace Capstone.DAO
 
         public Image CreateImageByContributorId(int contributorId, Image image)
         {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
             string insertContributorImageSql = "INSERT INTO contributor_images (contributor_id, image_id) VALUES (@contributorId, @imageId);";
             string updateContributorImageIdSql = "UPDATE contributors SET contributor_image_id = @imageId WHERE id = @contributorId;";
@@ -1184,42 +1393,63 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
-                        cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                        try
+                        {
+                            int imageId;
 
-                        int imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
-                        image.Id = imageId;
-                    }
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
 
-                    using (NpgsqlCommand cmdInsertContributorImage = new NpgsqlCommand(insertContributorImageSql, connection))
-                    {
-                        cmdInsertContributorImage.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmdInsertContributorImage.Parameters.AddWithValue("@imageId", image.Id);
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
 
-                        cmdInsertContributorImage.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertContributorImage = new NpgsqlCommand(insertContributorImageSql, connection))
+                            {
+                                cmdInsertContributorImage.Parameters.AddWithValue("@contributorId", contributorId);
+                                cmdInsertContributorImage.Parameters.AddWithValue("@imageId", imageId);
 
-                    using (NpgsqlCommand cmdUpdateContributor = new NpgsqlCommand(updateContributorImageIdSql, connection))
-                    {
-                        cmdUpdateContributor.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmdUpdateContributor.Parameters.AddWithValue("@imageId", image.Id);
+                                cmdInsertContributorImage.ExecuteNonQuery();
+                            }
 
-                        cmdUpdateContributor.ExecuteNonQuery();
+                            using (NpgsqlCommand cmdUpdateContributor = new NpgsqlCommand(updateContributorImageIdSql, connection))
+                            {
+                                cmdUpdateContributor.Parameters.AddWithValue("@contributorId", contributorId);
+                                cmdUpdateContributor.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmdUpdateContributor.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw new DaoException("An error occurred while creating the image for the contributor.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the image for the contributor.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return image;
         }
 
         public Image GetImageByContributorId(int contributorId)
         {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
             Image image = null;
             string sql = "SELECT i.id, i.name, i.url " +
                          "FROM images i " +
@@ -1256,6 +1486,11 @@ namespace Capstone.DAO
 
         public Image UpdateImageByContributorId(int contributorId, int imageId, Image image)
         {
+            if (contributorId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("ContributorId and imageId must be greater than zero.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM contributor_images " +
@@ -1294,6 +1529,11 @@ namespace Capstone.DAO
 
         public int DeleteImageByContributorId(int contributorId, int imageId)
         {
+            if (contributorId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("ContributorId and imageId must be greater than zero.");
+            }
+
             string deleteContributorImageSql = "DELETE FROM contributor_images WHERE contributor_id = @contributorId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -1333,6 +1573,21 @@ namespace Capstone.DAO
 
         public Image CreateImageByApiServiceId(int apiServiceId, Image image)
         {
+            if (apiServiceId <= 0)
+            {
+                throw new ArgumentException("ApiServiceId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
             string insertApiServiceImageSql = "INSERT INTO api_service_images (api_service_id, image_id) VALUES (@apiServiceId, @imageId);";
             string updateApiServiceLogoIdSql = "UPDATE apis_and_services SET logo_id = @imageId WHERE id = @apiServiceId;";
@@ -1343,43 +1598,62 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
-                        cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
-
-                        int imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
-
-                        using (NpgsqlCommand cmdInsertApiServiceImage = new NpgsqlCommand(insertApiServiceImageSql, connection))
+                        try
                         {
-                            cmdInsertApiServiceImage.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                            cmdInsertApiServiceImage.Parameters.AddWithValue("@imageId", imageId);
+                            int imageId;
 
-                            cmdInsertApiServiceImage.ExecuteNonQuery();
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertApiServiceImage = new NpgsqlCommand(insertApiServiceImageSql, connection))
+                            {
+                                cmdInsertApiServiceImage.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                                cmdInsertApiServiceImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertApiServiceImage.ExecuteNonQuery();
+                            }
 
                             using (NpgsqlCommand cmdUpdateApiServiceLogo = new NpgsqlCommand(updateApiServiceLogoIdSql, connection))
                             {
                                 cmdUpdateApiServiceLogo.Parameters.AddWithValue("@apiServiceId", apiServiceId);
                                 cmdUpdateApiServiceLogo.Parameters.AddWithValue("@imageId", imageId);
-
                                 cmdUpdateApiServiceLogo.ExecuteNonQuery();
-
-                                image.Id = imageId;
                             }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image for the API/Service.", ex);
                         }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the image for the API/Service.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return image;
         }
 
         public Image GetImageByApiServiceId(int apiServiceId)
         {
+            if (apiServiceId <= 0)
+            {
+                throw new ArgumentException("ApiServiceId must be greater than zero.");
+            }
+
             Image image = null;
 
             string sql = "SELECT i.id, i.name, i.url " +
@@ -1417,6 +1691,11 @@ namespace Capstone.DAO
 
         public Image UpdateImageByApiServiceId(int apiServiceId, int imageId, Image image)
         {
+            if (apiServiceId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("ApiServiceId and imageId must be greater than zero.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM api_service_images " +
@@ -1455,6 +1734,11 @@ namespace Capstone.DAO
 
         public int DeleteImageByApiServiceId(int apiServiceId, int imageId)
         {
+            if (apiServiceId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("ApiServiceId and imageId must be greater than zero.");
+            }
+
             string deleteApiServiceImageSql = "DELETE FROM api_service_images WHERE api_service_id = @apiServiceId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -1494,6 +1778,21 @@ namespace Capstone.DAO
 
         public Image CreateImageByDependencyLibraryId(int dependencyLibraryId, Image image)
         {
+            if (dependencyLibraryId <= 0)
+            {
+                throw new ArgumentException("DependencyLibraryId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
             string insertLibraryImageSql = "INSERT INTO dependency_library_images (dependencylibrary_id, image_id) VALUES (@dependencyLibraryId, @imageId);";
             string updateLibraryLogoIdSql = "UPDATE dependencies_and_libraries SET logo_id = @imageId WHERE id = @dependencyLibraryId;";
@@ -1504,42 +1803,62 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertImageSql, connection))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@name", image.Name);
-                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        try
+                        {
+                            int imageId;
 
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        image.Id = id;
-                    }
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertLibraryImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmdInsertLibraryImage = new NpgsqlCommand(insertLibraryImageSql, connection))
+                            {
+                                cmdInsertLibraryImage.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                                cmdInsertLibraryImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertLibraryImage.ExecuteNonQuery();
+                            }
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateLibraryLogoIdSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmd.Parameters.AddWithValue("@imageId", image.Id);
+                            using (NpgsqlCommand cmdUpdateLibraryLogoId = new NpgsqlCommand(updateLibraryLogoIdSql, connection))
+                            {
+                                cmdUpdateLibraryLogoId.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                                cmdUpdateLibraryLogoId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateLibraryLogoId.ExecuteNonQuery();
+                            }
 
-                        cmd.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image for the dependency library.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the image for the dependency library.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return image;
         }
 
         public Image GetImageByDependencyLibraryId(int dependencyLibraryId)
         {
+            if (dependencyLibraryId <= 0)
+            {
+                throw new ArgumentException("DependencyLibraryId must be greater than zero.");
+            }
+
             Image image = null;
 
             string sql = "SELECT i.id, i.name, i.url " +
@@ -1553,14 +1872,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
 
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        image = MapRowToImage(reader);
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -1574,6 +1896,11 @@ namespace Capstone.DAO
 
         public Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, int imageId, Image image)
         {
+            if (dependencyLibraryId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("DependencyLibraryId and imageId must be greater than zero.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM dependency_library_images " +
@@ -1613,6 +1940,11 @@ namespace Capstone.DAO
 
         public int DeleteImageByDependencyLibraryId(int dependencyLibraryId, int imageId)
         {
+            if (dependencyLibraryId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("DependencyLibraryId and imageId must be greater than zero.");
+            }
+
             string deleteLibraryImageSql = "DELETE FROM dependency_library_images WHERE dependencylibrary_id = @dependencyLibraryId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
