@@ -25,8 +25,18 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public Website CreateWebsiteLink(Website websiteLink)
+        public Website CreateWebsite(Website website)
         {
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
             string sql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
 
             try
@@ -35,12 +45,14 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@name", websiteLink.Name);
-                    cmd.Parameters.AddWithValue("@url", websiteLink.Url);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
 
-                    int id = Convert.ToInt32(cmd.ExecuteScalar());
-                    websiteLink.Id = id;
+                        int id = Convert.ToInt32(cmd.ExecuteScalar());
+                        website.Id = id;
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -48,11 +60,16 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while creating the website link.", ex);
             }
 
-            return websiteLink;
+            return website;
         }
 
         public Website GetWebsiteById(int websiteId)
         {
+            if (websiteId <= 0)
+            {
+                throw new ArgumentException("WebsiteId must be greater than zero.");
+            }
+
             string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
                          "FROM websites w " +
                          "JOIN images i ON w.logo_id = i.id " +
@@ -64,13 +81,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", websiteId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return MapRowToWebsite(reader);
+                        cmd.Parameters.AddWithValue("@id", websiteId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapRowToWebsite(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -85,6 +106,7 @@ namespace Capstone.DAO
         public List<Website> GetAllWebsites()
         {
             List<Website> websiteLinks = new List<Website>();
+
             string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
                          "FROM websites w " +
                          "JOIN images i ON w.logo_id = i.id;";
@@ -95,12 +117,15 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        websiteLinks.Add(MapRowToWebsite(reader));
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                websiteLinks.Add(MapRowToWebsite(reader));
+                            }
+                        }
                     }
                 }
             }
@@ -114,6 +139,21 @@ namespace Capstone.DAO
 
         public Website UpdateWebsite(Website website, int websiteId)
         {
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (websiteId <= 0)
+            {
+                throw new ArgumentException("WebsiteId must be greater than zero.");
+            }
+
             string sql = "UPDATE websites " +
                          "SET name = @name, url = @url " +
                          "WHERE id = @websiteId;";
@@ -124,16 +164,18 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
-                    cmd.Parameters.AddWithValue("@name", website.Name);
-                    cmd.Parameters.AddWithValue("@url", website.Url);
-
-                    int count = cmd.ExecuteNonQuery();
-
-                    if (count > 0)
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return website;
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return website;
+                        }
                     }
                 }
             }
@@ -147,6 +189,11 @@ namespace Capstone.DAO
 
         public int DeleteWebsiteById(int websiteId)
         {
+            if (websiteId <= 0)
+            {
+                throw new ArgumentException("WebsiteId must be greater than zero.");
+            }
+
             string sql = "DELETE FROM websites WHERE id = @id;";
 
             try
@@ -155,10 +202,12 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", websiteId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@id", websiteId);
 
-                    return cmd.ExecuteNonQuery();
+                        return cmd.ExecuteNonQuery();
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -172,7 +221,7 @@ namespace Capstone.DAO
                                             SIDE PROJECT WEBSITE CRUD
             **********************************************************************************************
         */
-// FIXME use SIDE PROJECT WEBSITE CRUD AS A TEMPLATE FOR IMPROVING CRUD ELSEWHERE
+        // FIXME use SIDE PROJECT WEBSITE CRUD AS A TEMPLATE FOR IMPROVING CRUD ELSEWHERE
         public Website CreateWebsiteByProjectId(int projectId, Website website)
         {
             if (projectId <= 0)
@@ -411,6 +460,21 @@ namespace Capstone.DAO
 
         public Website CreateWebsiteByContributorId(int contributorId, Website website)
         {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("Contributor Id must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
             string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
             string insertContributorWebsiteSql = "INSERT INTO contributor_websites (contributor_id, website_id) VALUES (@contributorId, @websiteId);";
             string updateContributorWebsiteIdSql = "UPDATE contributors SET website_id = @websiteId WHERE id = @contributorId;";

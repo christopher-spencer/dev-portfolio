@@ -30,7 +30,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Website createdWebsite = _websiteDao.CreateWebsiteLink(website);
+                Website createdWebsite = _websiteDao.CreateWebsite(website);
 
                 if (createdWebsite == null)
                 {

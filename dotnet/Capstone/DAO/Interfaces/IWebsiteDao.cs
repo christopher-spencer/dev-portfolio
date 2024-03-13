@@ -12,7 +12,7 @@ namespace Capstone.DAO.Interfaces
                                                     WEBSITE CRUD
             **********************************************************************************************
         */
-        Website CreateWebsiteLink(Website websiteLink);
+        Website CreateWebsite(Website websiteLink);
         Website GetWebsiteById(int websiteLinkId);
         List<Website> GetAllWebsites();
         Website UpdateWebsite(Website website, int websiteId);
