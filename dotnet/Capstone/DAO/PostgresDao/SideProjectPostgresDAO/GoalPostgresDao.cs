@@ -116,7 +116,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@goalId", goalId); 
+                    cmd.Parameters.AddWithValue("@goalId", goalId);
                     cmd.Parameters.AddWithValue("@description", goal.Description);
 
                     int count = cmd.ExecuteNonQuery();
@@ -262,15 +262,15 @@ namespace Capstone.DAO
 
             return goal;
         }
-        //FIXME add goalId
 
-        public Goal UpdateGoalBySideProjectId(int projectId, Goal goal)
+        public Goal UpdateGoalBySideProjectId(int projectId, int goalId, Goal goal)
         {
             string sql = "UPDATE goals " +
                          "SET description = @description " +
                          "FROM sideproject_goals " +
                          "WHERE goals.id = sideproject_goals.goal_id " +
-                         "AND sideproject_goals.sideproject_id = @projectId;";
+                         "AND sideproject_goals.sideproject_id = @projectId " +
+                         "AND goals.id = @goalId;";
 
             try
             {
@@ -280,6 +280,7 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@projectId", projectId);
+                    cmd.Parameters.AddWithValue("@goalId", goalId); 
                     cmd.Parameters.AddWithValue("@description", goal.Description);
 
                     int count = cmd.ExecuteNonQuery();

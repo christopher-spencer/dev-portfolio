@@ -22,7 +22,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
                                                     GOAL CRUD CONTROLLER
             **********************************************************************************************
-        */    
+        */
 
         [Authorize]
         [HttpPost("/create-goal")]
@@ -127,7 +127,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
                                             SIDE PROJECT GOAL CRUD CONTROLLER
             **********************************************************************************************
-        */ 
+        */
 
         [Authorize]
         [HttpPost("/sideproject/{projectId}/create-goal")]
@@ -182,14 +182,13 @@ namespace Capstone.Controllers
             }
         }
 
-        //FIXME add goalId?
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-goal")]
-        public ActionResult UpdateGoalBySideProjectId(int projectId, Goal goal)
+        [HttpPut("/update-sideproject/{projectId}/update-goal/{goalId}")]
+        public ActionResult UpdateGoalBySideProjectId(int projectId, int goalId, Goal goal)
         {
             try
             {
-                Goal updatedGoal = _goalDao.UpdateGoalBySideProjectId(projectId, goal);
+                Goal updatedGoal = _goalDao.UpdateGoalBySideProjectId(projectId, goalId, goal);
 
                 if (updatedGoal == null)
                 {
