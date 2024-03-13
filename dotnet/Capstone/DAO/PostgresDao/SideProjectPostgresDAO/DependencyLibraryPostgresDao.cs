@@ -25,7 +25,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                         DEPENDENCIES AND LIBRARIES CRUD
             **********************************************************************************************
-        */ 
+        */
         public DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
         {
             string sql = "INSERT INTO dependencies_and_libraries (name, description) " +
@@ -109,12 +109,11 @@ namespace Capstone.DAO
 
             return dependencyLibraries;
         }
-        //FIXME add depLibraryId
 
-        public DependencyLibrary UpdateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
+        public DependencyLibrary UpdateDependencyOrLibrary(int dependencyLibraryId, DependencyLibrary dependencyLibrary)
         {
             string sql = "UPDATE dependencies_and_libraries SET name = @name, description = @description " +
-                         "WHERE id = @id;";
+                         "WHERE id = @dependencyLibraryId;";
 
             try
             {
@@ -123,7 +122,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", dependencyLibrary.Id);
+                    cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId); 
                     cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                     cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
 
@@ -169,12 +168,12 @@ namespace Capstone.DAO
             **********************************************************************************************
                                     SIDE PROJECT DEPENDENCIES AND LIBRARIES CRUD
             **********************************************************************************************
-        */ 
+        */
         public DependencyLibrary CreateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary)
         {
             string sql = "INSERT INTO dependencies_and_libraries (name, description) " +
                          "VALUES (@name, @description) RETURNING id;";
-            
+
             string insertAssociationSql = "INSERT INTO sideproject_dependencies_and_libraries (sideproject_id, dependencylibrary_id) " +
                                                 "VALUES (@projectId, @dependencyLibraryId);";
 
@@ -336,7 +335,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                     DEPENDENCIES AND LIBRARIES MAP ROW
             **********************************************************************************************
-        */ 
+        */
         private DependencyLibrary MapRowToDependencyLibrary(NpgsqlDataReader reader)
         {
             DependencyLibrary dependencyLibrary = new DependencyLibrary
@@ -351,7 +350,7 @@ namespace Capstone.DAO
 
             return dependencyLibrary;
         }
-        
+
         private void SetDependencyLibraryWebsiteIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary)
         {
             if (reader["website_id"] != DBNull.Value)

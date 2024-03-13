@@ -83,7 +83,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibrary(dependencyLibrary);
+                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibrary(dependencyLibraryId, dependencyLibrary);
 
                 if (updatedDependencyLibrary == null)
                 {
