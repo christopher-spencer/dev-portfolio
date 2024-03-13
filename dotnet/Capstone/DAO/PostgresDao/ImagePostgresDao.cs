@@ -313,13 +313,14 @@ namespace Capstone.DAO
 
             return image;
         }
-        //FIXME add imageId
-        public Image UpdateImageBySideProjectId(int sideProjectId, Image image)
+
+        public Image UpdateImageBySideProjectId(int projectId, int imageId, Image image)
         {
             string sql = "UPDATE images " +
                          "SET name = @name, url = @url " +
                          "FROM sideproject_images " +
-                         "WHERE images.id = sideproject_images.image_id AND sideproject_images.sideproject_id = @sideProjectId;";
+                         "WHERE images.id = sideproject_images.image_id AND sideproject_images.sideproject_id = @sideProjectId " +
+                         "AND images.id = @imageId;"; 
 
             try
             {
@@ -328,7 +329,8 @@ namespace Capstone.DAO
                     connection.Open();
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                    cmd.Parameters.AddWithValue("@sideProjectId", projectId);
+                    cmd.Parameters.AddWithValue("@imageId", imageId); 
                     cmd.Parameters.AddWithValue("@name", image.Name);
                     cmd.Parameters.AddWithValue("@url", image.Url);
 

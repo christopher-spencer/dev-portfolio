@@ -17,9 +17,9 @@ namespace Capstone.Controllers
         {
             _imageDao = imageDao;
         }
-// FIXME when creating new project image, replaces old at mainImageId but old img stays in database unconnected to anything or sets it in additional images for models w/ additional images
-// TODO separate paths for main image and associated images, or separate tables? Or boolean flags?
-//TODO wrap all CREATE/UPDATE/DELETE in try catch
+        // FIXME when creating new project image, replaces old at mainImageId but old img stays in database unconnected to anything or sets it in additional images for models w/ additional images
+        // TODO separate paths for main image and associated images, or separate tables? Or boolean flags?
+        //TODO wrap all CREATE/UPDATE/DELETE in try catch
         /*  
             **********************************************************************************************
                                                 IMAGE CRUD CONTROLLER
@@ -33,7 +33,7 @@ namespace Capstone.Controllers
             try
             {
                 Image createdImage = _imageDao.CreateImage(image);
-            
+
                 if (createdImage == null)
                 {
                     return BadRequest();
@@ -83,7 +83,7 @@ namespace Capstone.Controllers
         [HttpPut("/update-image/{imageId}/")]
         public ActionResult UpdateImage(Image image, int imageId)
         {
-            try 
+            try
             {
                 Image updatedImage = _imageDao.UpdateImage(image, imageId);
 
@@ -138,14 +138,14 @@ namespace Capstone.Controllers
             try
             {
                 Image createdImage = _imageDao.CreateImageBySideProjectId(projectId, image);
-            
+
                 if (createdImage == null)
                 {
                     return BadRequest();
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetImageBySideProjectId), new { projectId, imageId = createdImage.Id}, createdImage);
+                    return CreatedAtAction(nameof(GetImageBySideProjectId), new { projectId, imageId = createdImage.Id }, createdImage);
                 }
             }
             catch (DaoException)
@@ -165,7 +165,7 @@ namespace Capstone.Controllers
             }
             else
             {
-                return Ok(images);               
+                return Ok(images);
             }
         }
 
@@ -173,7 +173,7 @@ namespace Capstone.Controllers
         public ActionResult<Image> GetImageBySideProjectId(int projectId, int imageId)
         {
             Image image = _imageDao.GetImageBySideProjectId(projectId, imageId);
-            
+
             if (image == null)
             {
                 return NotFound();
@@ -185,12 +185,13 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-image")]
-        public ActionResult UpdateImageBySideProjectId(int projectId, Image image)
+        [HttpPut("/update-sideproject/{projectId}/update-image/{imageId}")]
+        public ActionResult UpdateImageBySideProjectId(int projectId, int imageId, Image image)
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageBySideProjectId(projectId, image);
+                Image updatedImage = _imageDao.UpdateImageBySideProjectId(projectId, imageId, image); 
+
                 if (updatedImage == null)
                 {
                     return BadRequest();
@@ -234,7 +235,7 @@ namespace Capstone.Controllers
                                         BLOG POST IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-        
+
         [Authorize]
         [HttpPost("/blogpost/{blogPostId}/create-image")]
         public ActionResult CreateImageByBlogPostId(int blogPostId, Image image)
@@ -335,20 +336,20 @@ namespace Capstone.Controllers
             }
         }
 
-// TODO double check website image controller methods
+        // TODO double check website image controller methods
 
         /*  
             **********************************************************************************************
                                           WEBSITE IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO add websiteType (?) for sideproject vs portfolio endpoint paths (?)
+        // TODO add websiteType (?) for sideproject vs portfolio endpoint paths (?)
         [Authorize]
         [HttpPost("/image/create-website-logo/{websiteId}")]
         public ActionResult CreateImageByWebsiteId(int websiteId, Image image)
         {
             try
-            {   
+            {
                 Image createdLogo = _imageDao.CreateImageByWebsiteId(websiteId, image);
 
                 if (createdLogo == null)
@@ -416,7 +417,7 @@ namespace Capstone.Controllers
                 {
                     return Ok("Website logo was deleted successfully.");
                 }
-                else 
+                else
                 {
                     return NotFound();
                 }
@@ -506,7 +507,7 @@ namespace Capstone.Controllers
                 {
                     return Ok("Skill image deleted successfully.");
                 }
-                else 
+                else
                 {
                     return NotFound();
                 }
