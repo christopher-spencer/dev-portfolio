@@ -221,11 +221,11 @@ namespace Capstone.DAO
                                             SIDE PROJECT WEBSITE CRUD
             **********************************************************************************************
         */
-        public Website CreateWebsiteByProjectId(int projectId, Website website)
+        public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
-            if (projectId <= 0)
+            if (sideProjectId <= 0)
             {
-                throw new ArgumentException("ProjectId must be greater than zero.");
+                throw new ArgumentException("SideProjectId must be greater than zero.");
             }
 
             if (string.IsNullOrEmpty(website.Name))
@@ -263,7 +263,7 @@ namespace Capstone.DAO
 
                             using (NpgsqlCommand cmdInsertSideProjectWebsite = new NpgsqlCommand(insertSideProjectWebsiteSql, connection))
                             {
-                                cmdInsertSideProjectWebsite.Parameters.AddWithValue("@projectId", projectId);
+                                cmdInsertSideProjectWebsite.Parameters.AddWithValue("@projectId", sideProjectId);
                                 cmdInsertSideProjectWebsite.Parameters.AddWithValue("@websiteId", websiteId);
                                 cmdInsertSideProjectWebsite.ExecuteNonQuery();
                             }
@@ -289,11 +289,11 @@ namespace Capstone.DAO
             }
         }
 
-        public Website GetWebsiteByProjectId(int projectId)
+        public Website GetWebsiteBySideProjectId(int sideProjectId)
         {
-            if (projectId <= 0)
+            if (sideProjectId <= 0)
             {
-                throw new ArgumentException("ProjectId must be greater than zero.");
+                throw new ArgumentException("SideProjectId must be greater than zero.");
             }
 
             Website website = null;
@@ -312,7 +312,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@projectId", sideProjectId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -326,17 +326,17 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the website by project ID.", ex);
+                throw new DaoException("An error occurred while retrieving the website by SideProjectId.", ex);
             }
 
             return website;
         }
 
-        public Website GetWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId)
+        public Website GetWebsiteBySideProjectIdAndWebsiteId(int sideProjectId, int websiteId)
         {
-            if (projectId <= 0 || websiteId <= 0)
+            if (sideProjectId <= 0 || websiteId <= 0)
             {
-                throw new ArgumentException("ProjectId and websiteId must be greater than zero.");
+                throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
             }
 
             Website website = null;
@@ -355,7 +355,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@projectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -370,17 +370,17 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the website by project ID and website ID.", ex);
+                throw new DaoException("An error occurred while retrieving the website by SideProject Id and website ID.", ex);
             }
 
             return website;
         }
 
-        public Website UpdateWebsiteByProjectId(int projectId, int websiteId, Website website)
+        public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
-            if (projectId <= 0 || websiteId <= 0)
+            if (sideProjectId <= 0 || websiteId <= 0)
             {
-                throw new ArgumentException("ProjectId and websiteId must be greater than zero.");
+                throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
             }
 
             string sql = "UPDATE websites " +
@@ -398,7 +398,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@projectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
@@ -420,11 +420,11 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId)
+        public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
-            if (projectId <= 0 || websiteId <= 0)
+            if (sideProjectId <= 0 || websiteId <= 0)
             {
-                throw new ArgumentException("ProjectId and websiteId must be greater than zero.");
+                throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
             }
 
             string sql = "DELETE FROM sideproject_websites WHERE sideproject_id = @projectId AND website_id = @websiteId;";
@@ -437,7 +437,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@projectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                         int rowsAffected = cmd.ExecuteNonQuery();

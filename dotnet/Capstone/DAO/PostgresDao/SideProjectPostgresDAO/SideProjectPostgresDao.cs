@@ -263,7 +263,7 @@ namespace Capstone.DAO
                 sideProject.WebsiteId = Convert.ToInt32(reader["website_id"]);
 
                 int websiteId = Convert.ToInt32(reader["website_id"]);
-                sideProject.Website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+                sideProject.Website = _websiteDao.GetWebsiteBySideProjectIdAndWebsiteId(projectId, websiteId);
             }
             else
             {
@@ -278,7 +278,7 @@ namespace Capstone.DAO
                 sideProject.GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
 
                 int githubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
-                sideProject.GitHubRepoLink = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, githubRepoLinkId);
+                sideProject.GitHubRepoLink = _websiteDao.GetWebsiteBySideProjectIdAndWebsiteId(projectId, githubRepoLinkId);
             }
             else
             {

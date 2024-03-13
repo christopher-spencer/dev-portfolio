@@ -135,7 +135,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Website createdWebsite = _websiteDao.CreateWebsiteByProjectId(projectId, website);
+                Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(projectId, website);
 
                 if (createdWebsite == null)
                 {
@@ -155,7 +155,7 @@ namespace Capstone.Controllers
         [HttpGet("/sideproject/{projectId}/website")]
         public ActionResult<Website> GetWebsiteByProjectId(int projectId)
         {
-            Website website = _websiteDao.GetWebsiteByProjectId(projectId);
+            Website website = _websiteDao.GetWebsiteBySideProjectId(projectId);
 
             if (website == null)
             {
@@ -170,7 +170,7 @@ namespace Capstone.Controllers
         [HttpGet("/sideproject/{projectId}/website/{websiteId}")]
         public ActionResult<Website> GetWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId)
         {
-            Website website = _websiteDao.GetWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+            Website website = _websiteDao.GetWebsiteBySideProjectIdAndWebsiteId(projectId, websiteId);
 
             if (website == null)
             {
@@ -188,7 +188,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Website updatedWebsite = _websiteDao.UpdateWebsiteByProjectId(projectId, websiteId, website);
+                Website updatedWebsite = _websiteDao.UpdateWebsiteBySideProjectId(projectId, websiteId, website);
 
                 if (updatedWebsite == null)
                 {
@@ -211,7 +211,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                int rowsAffected = _websiteDao.DeleteWebsiteByProjectIdAndWebsiteId(projectId, websiteId);
+                int rowsAffected = _websiteDao.DeleteWebsiteBySideProjectId(projectId, websiteId);
 
                 if (rowsAffected > 0)
                 {

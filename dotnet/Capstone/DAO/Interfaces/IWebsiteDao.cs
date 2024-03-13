@@ -23,11 +23,11 @@ namespace Capstone.DAO.Interfaces
                                             SIDE PROJECT WEBSITE CRUD
             **********************************************************************************************
         */
-        Website CreateWebsiteByProjectId(int projectId, Website website);
-        Website GetWebsiteByProjectId(int projectId);
-        Website GetWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId);    
-        Website UpdateWebsiteByProjectId(int projectId, int websiteId, Website website);
-        int DeleteWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId);
+        Website CreateWebsiteBySideProjectId(int projectId, Website website);
+        Website GetWebsiteBySideProjectId(int projectId);
+        Website GetWebsiteBySideProjectIdAndWebsiteId(int projectId, int websiteId);    
+        Website UpdateWebsiteBySideProjectId(int projectId, int websiteId, Website website);
+        int DeleteWebsiteBySideProjectId(int projectId, int websiteId);
 
         /*  
             **********************************************************************************************

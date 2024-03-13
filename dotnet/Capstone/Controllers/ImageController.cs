@@ -106,7 +106,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                int rowsAffected = _imageDao.DeleteImageById(imageId);
+                int rowsAffected = _imageDao.DeleteImage(imageId);
 
                 if (rowsAffected > 0)
                 {
