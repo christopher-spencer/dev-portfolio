@@ -36,7 +36,7 @@ namespace Capstone.DAO.Interfaces
         Image CreateImageByBlogPostId(int blogPostId, Image image);
         Image GetImageByImageIdAndBlogPostId(int imageId, int blogPostId);
         List<Image> GetImagesByBlogPostId(int blogPostId);
-        Image UpdateImageByBlogPostId(int blogPostId, Image image);
+        Image UpdateImageByBlogPostId(int blogPostId, int imageId, Image image);
         int DeleteImageByBlogPostId(int blogPostId, int imageId);
 
           /*  

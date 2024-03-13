@@ -320,7 +320,7 @@ namespace Capstone.DAO
                          "SET name = @name, url = @url " +
                          "FROM sideproject_images " +
                          "WHERE images.id = sideproject_images.image_id AND sideproject_images.sideproject_id = @sideProjectId " +
-                         "AND images.id = @imageId;"; 
+                         "AND images.id = @imageId;";
 
             try
             {
@@ -330,7 +330,7 @@ namespace Capstone.DAO
 
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@sideProjectId", projectId);
-                    cmd.Parameters.AddWithValue("@imageId", imageId); 
+                    cmd.Parameters.AddWithValue("@imageId", imageId);
                     cmd.Parameters.AddWithValue("@name", image.Name);
                     cmd.Parameters.AddWithValue("@url", image.Url);
 
@@ -507,13 +507,14 @@ namespace Capstone.DAO
 
             return images;
         }
-        //FIXME add imageId
-        public Image UpdateImageByBlogPostId(int blogPostId, Image image)
+
+        public Image UpdateImageByBlogPostId(int blogPostId, int imageId, Image image)
         {
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM blogpost_images " +
-                                    "WHERE images.id = blogpost_images.image_id AND blogpost_images.blogpost_id = @blogPostId;";
+                                    "WHERE images.id = blogpost_images.image_id AND blogpost_images.blogpost_id = @blogPostId " +
+                                    "AND images.id = @imageId;"; 
 
             try
             {
@@ -524,6 +525,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
                     {
                         cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
 

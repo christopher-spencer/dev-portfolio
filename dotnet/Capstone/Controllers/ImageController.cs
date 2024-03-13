@@ -190,7 +190,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageBySideProjectId(projectId, imageId, image); 
+                Image updatedImage = _imageDao.UpdateImageBySideProjectId(projectId, imageId, image);
 
                 if (updatedImage == null)
                 {
@@ -291,12 +291,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-blogpost/{blogPostId}")]
-        public ActionResult UpdateImageByBlogPostId(int blogPostId, Image image)
+        [HttpPut("/update-blogpost/{blogPostId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByBlogPostId(int blogPostId, int imageId, Image image)
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageByBlogPostId(blogPostId, image);
+                Image updatedImage = _imageDao.UpdateImageByBlogPostId(blogPostId, imageId, image); 
 
                 if (updatedImage == null)
                 {
