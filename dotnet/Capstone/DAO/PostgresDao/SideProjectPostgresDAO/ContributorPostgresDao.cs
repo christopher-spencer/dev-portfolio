@@ -20,7 +20,6 @@ namespace Capstone.DAO
             this._imageDao = imageDao;
             this._websiteDao = websiteDao;
         }
-        // FIXME use WEBSITE POSTGRES DAO CRUD AS TEMPLATE FOR IMPROVING CRUD METHODS
 
         /*  
             **********************************************************************************************
@@ -29,6 +28,16 @@ namespace Capstone.DAO
         */
         public Contributor CreateContributor(Contributor contributor)
         {
+            if (string.IsNullOrEmpty(contributor.FirstName))
+            {
+                throw new ArgumentException("Contributor first name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(contributor.LastName))
+            {
+                throw new ArgumentException("Contributor last name cannot be null or empty.");
+            }
+
             string sql = "INSERT INTO contributors (first_name, last_name, email, " +
                          "bio, contribution_details) " +
                          "VALUES (@first_name, @last_name, @email, @bio, " +
@@ -41,15 +50,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
-                    cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmd.Parameters.AddWithValue("@email", contributor.Email);
-                    cmd.Parameters.AddWithValue("@bio", contributor.Bio);
-                    cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
+                        cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
+                        cmd.Parameters.AddWithValue("@email", contributor.Email);
+                        cmd.Parameters.AddWithValue("@bio", contributor.Bio);
+                        cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
 
-                    int id = Convert.ToInt32(cmd.ExecuteScalar());
-                    contributor.Id = id;
+                        int id = Convert.ToInt32(cmd.ExecuteScalar());
+                        contributor.Id = id;
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -60,8 +71,13 @@ namespace Capstone.DAO
             return contributor;
         }
 
-        public Contributor GetContributorById(int contributorId)
+        public Contributor GetContributor(int contributorId)
         {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
             string sql = "SELECT first_name, last_name, contributor_image_id, email, bio, contribution_details, " +
                          "linkedin_id, github_id, portfolio_id " +
                          "FROM contributors WHERE id = @id;";
@@ -72,13 +88,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", contributorId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return MapRowToContributor(reader);
+                        cmd.Parameters.AddWithValue("@id", contributorId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapRowToContributor(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -90,9 +110,10 @@ namespace Capstone.DAO
             return null;
         }
 
-        public List<Contributor> GetAllContributors()
+        public List<Contributor> GetContributors()
         {
             List<Contributor> contributors = new List<Contributor>();
+
             string sql = "SELECT id, first_name, last_name, contributor_image_id, email, bio, " +
                          "contribution_details, linkedin_id, github_id, portfolio_id " +
                          "FROM contributors;";
@@ -103,12 +124,15 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        contributors.Add(MapRowToContributor(reader));
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                contributors.Add(MapRowToContributor(reader));
+                            }
+                        }
                     }
                 }
             }
@@ -122,6 +146,21 @@ namespace Capstone.DAO
 
         public Contributor UpdateContributor(int contributorId, Contributor contributor)
         {
+            if (string.IsNullOrEmpty(contributor.FirstName))
+            {
+                throw new ArgumentException("Contributor first name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(contributor.LastName))
+            {
+                throw new ArgumentException("Contributor last name cannot be null or empty.");
+            }
+
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
             string sql = "UPDATE contributors SET first_name = @first_name, last_name = @last_name, " +
                          "email = @email, bio = @bio, contribution_details = @contribution_details " +
                          "WHERE id = @contributorId;";
@@ -132,18 +171,21 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@contributorId", contributorId);
-                    cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
-                    cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmd.Parameters.AddWithValue("@email", contributor.Email);
-                    cmd.Parameters.AddWithValue("@bio", contributor.Bio);
-                    cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-
-                    int count = cmd.ExecuteNonQuery();
-                    if (count == 1)
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return contributor;
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
+                        cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
+                        cmd.Parameters.AddWithValue("@email", contributor.Email);
+                        cmd.Parameters.AddWithValue("@bio", contributor.Bio);
+                        cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return contributor;
+                        }
                     }
                 }
             }
@@ -155,8 +197,13 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteContributorById(int contributorId)
+        public int DeleteContributor(int contributorId)
         {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
             string sql = "DELETE FROM contributors WHERE id = @id;";
 
             try
@@ -165,10 +212,14 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", contributorId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@id", contributorId);
 
-                    return cmd.ExecuteNonQuery();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        return rowsAffected;
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -182,15 +233,30 @@ namespace Capstone.DAO
                                           SIDE PROJECT CONTRIBUTOR CRUD
             **********************************************************************************************
         */
-        public Contributor CreateContributorBySideProjectId(int projectId, Contributor contributor)
+        public Contributor CreateContributorBySideProjectId(int sideProjectId, Contributor contributor)
         {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(contributor.FirstName))
+            {
+                throw new ArgumentException("Contributor first name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(contributor.LastName))
+            {
+                throw new ArgumentException("Contributor last name cannot be null or empty.");
+            }
+
             string insertContributorSql = "INSERT INTO contributors (first_name, last_name, email, " +
                                           "bio, contribution_details) " +
                                           "VALUES (@first_name, @last_name, @email, @bio, " +
                                           "@contribution_details) " +
                                           "RETURNING id;";
             string insertSideProjectContributorSql = "INSERT INTO sideproject_contributors (sideproject_id, contributor_id) " +
-                                                     "VALUES (@projectId, @contributorId);";
+                                                     "VALUES (@sideProjectId, @contributorId);";
 
             try
             {
@@ -198,41 +264,65 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmdInsertContributor = new NpgsqlCommand(insertContributorSql, connection);
-                    cmdInsertContributor.Parameters.AddWithValue("@first_name", contributor.FirstName);
-                    cmdInsertContributor.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email);
-                    cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio);
-                    cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int contributorId;
 
-                    int contributorId = (int)cmdInsertContributor.ExecuteScalar();
+                            using (NpgsqlCommand cmdInsertContributor = new NpgsqlCommand(insertContributorSql, connection))
+                            {
+                                cmdInsertContributor.Parameters.AddWithValue("@first_name", contributor.FirstName);
+                                cmdInsertContributor.Parameters.AddWithValue("@last_name", contributor.LastName);
+                                cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email);
+                                cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio);
+                                cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
 
-                    NpgsqlCommand cmdInsertSideProjectContributor = new NpgsqlCommand(insertSideProjectContributorSql, connection);
-                    cmdInsertSideProjectContributor.Parameters.AddWithValue("@projectId", projectId);
-                    cmdInsertSideProjectContributor.Parameters.AddWithValue("@contributorId", contributorId);
+                                contributorId = Convert.ToInt32(cmdInsertContributor.ExecuteScalar());
+                            }
 
-                    cmdInsertSideProjectContributor.ExecuteNonQuery();
+                            using (NpgsqlCommand cmdInsertSideProjectContributor = new NpgsqlCommand(insertSideProjectContributorSql, connection))
+                            {
+                                cmdInsertSideProjectContributor.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmdInsertSideProjectContributor.Parameters.AddWithValue("@contributorId", contributorId);
+                                cmdInsertSideProjectContributor.ExecuteNonQuery();
+                            }
 
-                    contributor.Id = contributorId;
+                            transaction.Commit();
+
+                            contributor.Id = contributorId;
+
+                            return contributor;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the contributor for the side project.", ex);
+                        }
+                    }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the contributor for the project.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return contributor;
         }
 
-        public List<Contributor> GetContributorsBySideProjectId(int projectId)
+        public List<Contributor> GetContributorsBySideProjectId(int sideProjectId)
         {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
             List<Contributor> contributors = new List<Contributor>();
 
             string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_id, c.email, c.bio, c.contribution_details, " +
                          "c.linkedin_id, c.github_id, c.portfolio_id " +
                          "FROM contributors c " +
                          "JOIN sideproject_contributors pc ON c.id = pc.contributor_id " +
-                         "WHERE pc.sideproject_id = @projectId;";
+                         "WHERE pc.sideproject_id = @sideProjectId;";
 
             try
             {
@@ -240,33 +330,41 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        contributors.Add(MapRowToContributor(reader));
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                contributors.Add(MapRowToContributor(reader));
+                            }
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving contributors by project ID.", ex);
+                throw new DaoException("An error occurred while retrieving contributors by SideProjectId.", ex);
             }
 
             return contributors;
         }
 
-        public Contributor GetContributorBySideProjectId(int projectId, int contributorId)
+        public Contributor GetContributorBySideProjectId(int sideProjectId, int contributorId)
         {
+            if (sideProjectId <= 0 || contributorId <= 0)
+            {
+                throw new ArgumentException("SideProjectId and contributorId must be greater than zero.");
+            }
+
             Contributor contributor = null;
 
             string sql = "SELECT c.id, c.first_name, c.last_name, c.contributor_image_id, c.email, c.bio, c.contribution_details, " +
                          "c.linkedin_id, c.github_id, c.portfolio_id FROM contributors c " +
                          "JOIN sideproject_contributors pc ON c.id = pc.contributor_id " +
-                         "WHERE pc.sideproject_id = @projectId AND c.id = @contributorId;";
+                         "WHERE pc.sideproject_id = @sideProjectId AND c.id = @contributorId;";
 
             try
             {
@@ -274,34 +372,42 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
 
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        contributor = MapRowToContributor(reader);
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                contributor = MapRowToContributor(reader);
+                            }
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the contributor for the project.", ex);
+                throw new DaoException("An error occurred while retrieving the contributor for the side project.", ex);
             }
 
             return contributor;
         }
 
-        public Contributor UpdateContributorBySideProjectId(int projectId, int contributorId, Contributor contributor)
+        public Contributor UpdateContributorBySideProjectId(int sideProjectId, int contributorId, Contributor contributor)
         {
+            if (sideProjectId <= 0 || contributorId <= 0)
+            {
+                throw new ArgumentException("SideProjectId and contributorId must be greater than zero.");
+            }
+
             string sql = "UPDATE contributors " +
                          "SET first_name = @first_name, last_name = @last_name, " +
                          "email = @email, bio = @bio, contribution_details = @contribution_details " +
                          "FROM sideproject_contributors " +
                          "WHERE contributors.id = sideproject_contributors.contributor_id " +
-                         "AND sideproject_contributors.sideproject_id = @projectId " +
+                         "AND sideproject_contributors.sideproject_id = @sideProjectId " +
                          "AND contributors.id = @contributorId;";
 
             try
@@ -310,34 +416,41 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@contributorId", contributorId); 
-                    cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
-                    cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                    cmd.Parameters.AddWithValue("@email", contributor.Email);
-                    cmd.Parameters.AddWithValue("@bio", contributor.Bio);
-                    cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
+                        cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
+                        cmd.Parameters.AddWithValue("@email", contributor.Email);
+                        cmd.Parameters.AddWithValue("@bio", contributor.Bio);
+                        cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
 
-                    int count = cmd.ExecuteNonQuery();
+                        int count = cmd.ExecuteNonQuery();
 
-                    if (count > 0)
-                    {
-                        return contributor;
+                        if (count == 1)
+                        {
+                            return contributor;
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the contributor for the project.", ex);
+                throw new DaoException("An error occurred while updating the contributor for the side project.", ex);
             }
 
             return null;
         }
 
-        public int DeleteContributorBySideProjectId(int projectId, int contributorId)
+        public int DeleteContributorBySideProjectId(int sideProjectId, int contributorId)
         {
-            string sql = "DELETE FROM sideproject_contributors WHERE sideproject_id = @projectId AND contributor_id = @contributorId;";
+            if (sideProjectId <= 0 || contributorId <= 0)
+            {
+                throw new ArgumentException("SideProjectId and contributorId must be greater than zero.");
+            }
+
+            string sql = "DELETE FROM sideproject_contributors WHERE sideproject_id = @sideProjectId AND contributor_id = @contributorId;";
 
             try
             {
@@ -345,16 +458,19 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                  using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
 
-                    return cmd.ExecuteNonQuery();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        return rowsAffected;                    }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the contributor from the project.", ex);
+                throw new DaoException("An error occurred while deleting the contributor from the side project.", ex);
             }
         }
 

@@ -11,10 +11,10 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */ 
         Contributor CreateContributor(Contributor contributor);
-        Contributor GetContributorById(int contributorId);
-        List<Contributor> GetAllContributors();
+        Contributor GetContributor(int contributorId);
+        List<Contributor> GetContributors();
         Contributor UpdateContributor(int contributorId, Contributor contributor);
-        int DeleteContributorById(int contributorId);
+        int DeleteContributor(int contributorId);
 
         /*  
             **********************************************************************************************

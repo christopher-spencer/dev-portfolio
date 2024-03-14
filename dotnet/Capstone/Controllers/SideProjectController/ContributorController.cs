@@ -50,7 +50,7 @@ namespace Capstone.Controllers
         [HttpGet("/contributor/{contributorId}")]
         public ActionResult<Contributor> GetContributorById(int contributorId)
         {
-            Contributor contributor = _contributorDao.GetContributorById(contributorId);
+            Contributor contributor = _contributorDao.GetContributor(contributorId);
 
             if (contributor == null)
             {
@@ -65,7 +65,7 @@ namespace Capstone.Controllers
         [HttpGet("get-all-contributors")]
         public ActionResult<List<Contributor>> GetAllContributors()
         {
-            List<Contributor> contributors = _contributorDao.GetAllContributors();
+            List<Contributor> contributors = _contributorDao.GetContributors();
 
             if (contributors == null)
             {
@@ -106,7 +106,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                int rowsAffected = _contributorDao.DeleteContributorById(contributorId);
+                int rowsAffected = _contributorDao.DeleteContributor(contributorId);
 
                 if (rowsAffected > 0)
                 {
