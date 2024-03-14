@@ -59,7 +59,7 @@ namespace Capstone.Controllers
         [HttpGet("/sideproject/{sideProjectId}")]
         public ActionResult<SideProject> GetSideProjectById(int sideProjectId)
         {
-            SideProject sideProject = _sideProjectDao.GetSideProjectById(sideProjectId);
+            SideProject sideProject = _sideProjectDao.GetSideProject(sideProjectId);
 
             if (sideProject == null)
             {
@@ -100,7 +100,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                int rowsAffected = _sideProjectDao.DeleteSideProjectBySideProjectId(sideProjectId);
+                int rowsAffected = _sideProjectDao.DeleteSideProject(sideProjectId);
 
                 if (rowsAffected > 0)
                 {

@@ -70,6 +70,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("WebsiteId must be greater than zero.");
             }
 
+            Website website = null;
+
             string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
                          "FROM websites w " +
                          "JOIN images i ON w.logo_id = i.id " +
@@ -89,7 +91,7 @@ namespace Capstone.DAO
                         {
                             if (reader.Read())
                             {
-                                return MapRowToWebsite(reader);
+                                website = MapRowToWebsite(reader);
                             }
                         }
                     }
@@ -100,7 +102,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while retrieving the website link.", ex);
             }
 
-            return null;
+            return website;
         }
 
         public List<Website> GetWebsites()
@@ -123,7 +125,8 @@ namespace Capstone.DAO
                         {
                             while (reader.Read())
                             {
-                                websites.Add(MapRowToWebsite(reader));
+                                Website website = MapRowToWebsite(reader);
+                                websites.Add(website);
                             }
                         }
                     }
@@ -194,7 +197,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("WebsiteId must be greater than zero.");
             }
 
-            string sql = "DELETE FROM websites WHERE id = @id;";
+            string sql = "DELETE FROM websites WHERE id = @websiteId;";
 
             try
             {
@@ -204,7 +207,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@id", websiteId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                         int rowsAffected = cmd.ExecuteNonQuery();
 

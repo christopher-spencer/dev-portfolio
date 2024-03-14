@@ -13,8 +13,8 @@ namespace Capstone.DAO.Interfaces
         */
         SideProject CreateSideProject(SideProject sideProject);
         List<SideProject> GetSideProjects();
-        SideProject GetSideProjectById(int sideProjectId);
+        SideProject GetSideProject(int sideProjectId);
         SideProject UpdateSideProject(SideProject sideProject, int sideProjectId);
-        int DeleteSideProjectBySideProjectId(int sideProjectId);
+        int DeleteSideProject(int sideProjectId);
     }
 }

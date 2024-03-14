@@ -32,7 +32,6 @@ namespace Capstone.DAO
             this._dependencyLibraryDao = dependencyLibraryDao;
             this._websiteDao = websiteDao;
         }
-        // FIXME use WEBSITE POSTGRES DAO CRUD AS TEMPLATE FOR IMPROVING CRUD METHODS
 
         /*  
             **********************************************************************************************
@@ -42,7 +41,15 @@ namespace Capstone.DAO
 
         public SideProject CreateSideProject(SideProject sideProject)
         {
-            SideProject newSideProject = null;
+            if (string.IsNullOrEmpty(sideProject.Name))
+            {
+                throw new ArgumentException("SideProject name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(sideProject.Description))
+            {
+                throw new ArgumentException("SideProject description cannot be null or empty.");
+            }
 
             string sql = "INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, " +
                         "start_date, finish_date) " +
@@ -50,34 +57,32 @@ namespace Capstone.DAO
                          "@finish_date) " +
                          "RETURNING id";
 
-            int newSideProjectId = 0;
-
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", sideProject.Name);
+                        cmd.Parameters.AddWithValue("@description", sideProject.Description);
+                        cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
+                        cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
+                        cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
+                        cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
 
-                    cmd.Parameters.AddWithValue("@name", sideProject.Name);
-                    cmd.Parameters.AddWithValue("@description", sideProject.Description);
-                    cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
-                    cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
-                    cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
-                    cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
-
-                    newSideProjectId = Convert.ToInt32(cmd.ExecuteScalar());
+                        int id = Convert.ToInt32(cmd.ExecuteScalar());
+                        sideProject.Id = id;
+                    }
                 }
-
-                newSideProject = GetSideProjectById(newSideProjectId);
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("SQL exception occurred", ex);
+                throw new DaoException("An error occurred while creating the side project.", ex);
             }
 
-            return newSideProject;
+            return sideProject;
         }     
 
         public List<SideProject> GetSideProjects()
@@ -94,26 +99,34 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        SideProject sideProject = MapRowToSideProject(reader);
-                        sideProjects.Add(sideProject);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                SideProject sideProject = MapRowToSideProject(reader);
+                                sideProjects.Add(sideProject);
+                            }
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("SQL exception occurred", ex);
+                throw new DaoException("An error occurred while retrieving the side projects.", ex);
             }
 
             return sideProjects;
         }
 
-        public SideProject GetSideProjectById(int sideProjectId)
+        public SideProject GetSideProject(int sideProjectId)
         {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
             SideProject sideProject = null;
 
             string sql = "SELECT id, name, main_image_id, description, video_walkthrough_url, " +
@@ -140,7 +153,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("SQL exception occurred", ex);
+                throw new DaoException("An error occurred while retrieving the side project.", ex);
             }
 
             return sideProject;
@@ -148,6 +161,21 @@ namespace Capstone.DAO
 
         public SideProject UpdateSideProject(SideProject sideProject, int sideProjectId)
         {
+            if (string.IsNullOrEmpty(sideProject.Name))
+            {
+                throw new ArgumentException("SideProject name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(sideProject.Description))
+            {
+                throw new ArgumentException("SideProject description cannot be null or empty.");
+            }
+
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
             string sql = "UPDATE sideprojects SET name = @name, description = @description, " +
                          "video_walkthrough_url = @video_walkthrough_url, project_status = @project_status, " +
                          "start_date = @start_date, finish_date = @finish_date " +
@@ -159,25 +187,26 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-
-                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                    cmd.Parameters.AddWithValue("@name", sideProject.Name);
-                    cmd.Parameters.AddWithValue("@description", sideProject.Description);
-                    cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
-                    cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
-                    cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
-                    cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
-
-                    int count = cmd.ExecuteNonQuery();
-
-                    if (count == 1)
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return sideProject;
-                    }
-                    else
-                    {
-                        return null;
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@name", sideProject.Name);
+                        cmd.Parameters.AddWithValue("@description", sideProject.Description);
+                        cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
+                        cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
+                        cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
+                        cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return sideProject;
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -187,9 +216,12 @@ namespace Capstone.DAO
             }
         }
 
-        public int DeleteSideProjectBySideProjectId(int sideProjectId)
+        public int DeleteSideProject(int sideProjectId)
         {
-            int numberOfRowsAffected = 0;
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
 
             string sql = "DELETE FROM sideprojects WHERE id = @sideProjectId;";
 
@@ -202,7 +234,9 @@ namespace Capstone.DAO
                     NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
                     cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
-                    numberOfRowsAffected = cmd.ExecuteNonQuery();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    return rowsAffected;
                 }
             }
             catch (NpgsqlException ex)
@@ -210,7 +244,6 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while deleting the side project.", ex);
             }
 
-            return numberOfRowsAffected;
         }
         private SideProject MapRowToSideProject(NpgsqlDataReader reader)
         {
