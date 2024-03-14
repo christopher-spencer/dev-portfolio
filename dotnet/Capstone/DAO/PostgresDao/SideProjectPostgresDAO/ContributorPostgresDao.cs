@@ -521,9 +521,7 @@ namespace Capstone.DAO
 
             if (reader["linkedin_id"] != DBNull.Value)
             {
-                int linkedInId = Convert.ToInt32(reader["linkedin_id"]);
-//FIXME going to need methods for GetWebsiteByLinkedInId, GitHubId, PortfolioId WITH contributorID (?)                
-                contributor.LinkedIn = _websiteDao.GetWebsite(linkedInId);
+                contributor.LinkedIn = _websiteDao.GetWebsiteByContributorId(contributorId);
             }
             else
             {
@@ -537,8 +535,7 @@ namespace Capstone.DAO
 
             if (reader["github_id"] != DBNull.Value)
             {
-                int githubId = Convert.ToInt32(reader["github_id"]);
-                contributor.GitHub = _websiteDao.GetWebsite(githubId);
+                contributor.GitHub = _websiteDao.GetWebsiteByContributorId(contributorId);
             }
             else
             {
@@ -552,8 +549,7 @@ namespace Capstone.DAO
 
             if (reader["portfolio_id"] != DBNull.Value)
             {
-                int portfolioId = Convert.ToInt32(reader["portfolio_id"]);
-                contributor.PortfolioLink = _websiteDao.GetWebsite(portfolioId);
+                contributor.PortfolioLink = _websiteDao.GetWebsiteByContributorId(contributorId);
             }
             else
             {
