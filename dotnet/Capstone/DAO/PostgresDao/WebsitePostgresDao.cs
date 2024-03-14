@@ -410,7 +410,7 @@ namespace Capstone.DAO
 
                         int count = cmd.ExecuteNonQuery();
 
-                        if (count > 0)
+                        if (count == 1)
                         {
                             return website;
                         }

@@ -65,7 +65,7 @@ namespace Capstone.Controllers
         [HttpGet("/get-all-apis-and-services")]
         public ActionResult<List<ApiService>> GetAllAPIsAndServices()
         {
-            List<ApiService> apiServices = _apiServiceDao.GetAllAPIsAndServices();
+            List<ApiService> apiServices = _apiServiceDao.GetAPIsAndServices();
 
             if (apiServices == null)
             {
