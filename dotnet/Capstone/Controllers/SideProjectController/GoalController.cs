@@ -50,7 +50,7 @@ namespace Capstone.Controllers
         [HttpGet("/goal/{goalId}")]
         public ActionResult<Goal> GetGoalById(int goalId)
         {
-            Goal goal = _goalDao.GetGoalById(goalId);
+            Goal goal = _goalDao.GetGoal(goalId);
 
             if (goal == null)
             {
@@ -65,7 +65,7 @@ namespace Capstone.Controllers
         [HttpGet("/get-all-goals")]
         public ActionResult<List<Goal>> GetAllGoals()
         {
-            List<Goal> goals = _goalDao.GetAllGoals();
+            List<Goal> goals = _goalDao.GetGoals();
 
             if (goals == null)
             {
@@ -106,7 +106,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                int rowsAffected = _goalDao.DeleteGoalById(goalId);
+                int rowsAffected = _goalDao.DeleteGoal(goalId);
 
                 if (rowsAffected > 0)
                 {

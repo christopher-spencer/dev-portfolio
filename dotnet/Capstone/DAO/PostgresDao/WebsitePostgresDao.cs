@@ -244,7 +244,7 @@ namespace Capstone.DAO
             }
 
             string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
-            string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@projectId, @websiteId);";
+            string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@sideProjectId, @websiteId);";
 
             try
             {
@@ -268,7 +268,7 @@ namespace Capstone.DAO
 
                             using (NpgsqlCommand cmdInsertSideProjectWebsite = new NpgsqlCommand(insertSideProjectWebsiteSql, connection))
                             {
-                                cmdInsertSideProjectWebsite.Parameters.AddWithValue("@projectId", sideProjectId);
+                                cmdInsertSideProjectWebsite.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdInsertSideProjectWebsite.Parameters.AddWithValue("@websiteId", websiteId);
                                 cmdInsertSideProjectWebsite.ExecuteNonQuery();
                             }

@@ -18,7 +18,6 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
             this._imageDao = imageDao;
         }
-        // FIXME use WEBSITE POSTGRES DAO CRUD AS TEMPLATE FOR IMPROVING CRUD METHODS
 
         /*  
             **********************************************************************************************
@@ -27,6 +26,11 @@ namespace Capstone.DAO
         */
         public Goal CreateGoal(Goal goal)
         {
+            if (string.IsNullOrEmpty(goal.Description))
+            {
+                throw new ArgumentException("Goal description cannot be null or empty.");
+            }
+
             string sql = "INSERT INTO goals (description) VALUES (@description) RETURNING id;";
 
             try
@@ -35,11 +39,13 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@description", goal.Description);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@description", goal.Description);
 
-                    int id = Convert.ToInt32(cmd.ExecuteScalar());
-                    goal.Id = id;
+                        int id = Convert.ToInt32(cmd.ExecuteScalar());
+                        goal.Id = id;
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -50,9 +56,14 @@ namespace Capstone.DAO
             return goal;
         }
 
-        public Goal GetGoalById(int goalId)
+        public Goal GetGoal(int goalId)
         {
-            string sql = "SELECT description, icon_id FROM goals WHERE id = @id;";
+            if (goalId <= 0)
+            {
+                throw new ArgumentException("GoalId must be greater than zero.");
+            }
+
+            string sql = "SELECT description, icon_id FROM goals WHERE id = @goalId;";
 
             try
             {
@@ -60,13 +71,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", goalId);
-
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return MapRowToGoal(reader);
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapRowToGoal(reader);
+                            }
+                        }
                     }
                 }
             }
@@ -78,9 +93,10 @@ namespace Capstone.DAO
             return null;
         }
 
-        public List<Goal> GetAllGoals()
+        public List<Goal> GetGoals()
         {
             List<Goal> goals = new List<Goal>();
+
             string sql = "SELECT id, description, icon_id FROM goals;";
 
             try
@@ -89,12 +105,15 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        goals.Add(MapRowToGoal(reader));
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                goals.Add(MapRowToGoal(reader));
+                            }
+                        }
                     }
                 }
             }
@@ -108,6 +127,16 @@ namespace Capstone.DAO
 
         public Goal UpdateGoal(int goalId, Goal goal)
         {
+            if (string.IsNullOrEmpty(goal.Description))
+            {
+                throw new ArgumentException("Goal description cannot be null or empty.");
+            }
+
+            if (goalId <= 0)
+            {
+                throw new ArgumentException("GoalId must be greater than zero.");
+            }
+
             string sql = "UPDATE goals SET description = @description WHERE id = @goalId;";
 
             try
@@ -116,14 +145,17 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@goalId", goalId);
-                    cmd.Parameters.AddWithValue("@description", goal.Description);
-
-                    int count = cmd.ExecuteNonQuery();
-                    if (count == 1)
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        return goal;
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
+                        cmd.Parameters.AddWithValue("@description", goal.Description);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return goal;
+                        }
                     }
                 }
             }
@@ -135,9 +167,14 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteGoalById(int goalId)
+        public int DeleteGoal(int goalId)
         {
-            string sql = "DELETE FROM goals WHERE id = @id;";
+            if (goalId <= 0)
+            {
+                throw new ArgumentException("GoalId must be greater than zero.");
+            }
+
+            string sql = "DELETE FROM goals WHERE id = @goalId;";
 
             try
             {
@@ -145,10 +182,14 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@id", goalId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
 
-                    return cmd.ExecuteNonQuery();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        return rowsAffected;
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -162,10 +203,20 @@ namespace Capstone.DAO
                                             SIDE PROJECT GOAL CRUD
             **********************************************************************************************
         */
-        public Goal CreateGoalBySideProjectId(int projectId, Goal goal)
+        public Goal CreateGoalBySideProjectId(int sideProjectId, Goal goal)
         {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(goal.Description))
+            {
+                throw new ArgumentException("Goal description cannot be null or empty.");
+            }
+
             string insertGoalSql = "INSERT INTO goals (description) VALUES (@description) RETURNING id;";
-            string insertSideProjectGoalSql = "INSERT INTO sideproject_goals (sideproject_id, goal_id) VALUES (@projectId, @goalId);";
+            string insertSideProjectGoalSql = "INSERT INTO sideproject_goals (sideproject_id, goal_id) VALUES (@sideProjectId, @goalId);";
 
             try
             {
@@ -173,36 +224,58 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmdInsertGoal = new NpgsqlCommand(insertGoalSql, connection);
-                    cmdInsertGoal.Parameters.AddWithValue("@description", goal.Description);
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int goalId;
 
-                    int goalId = (int)cmdInsertGoal.ExecuteScalar();
+                            using (NpgsqlCommand cmdInsertGoal = new NpgsqlCommand(insertGoalSql, connection))
+                            {
+                                cmdInsertGoal.Parameters.AddWithValue("@description", goal.Description);
+                                goalId = Convert.ToInt32(cmdInsertGoal.ExecuteScalar());
+                            }
 
-                    NpgsqlCommand cmdInsertSideProjectGoal = new NpgsqlCommand(insertSideProjectGoalSql, connection);
-                    cmdInsertSideProjectGoal.Parameters.AddWithValue("@projectId", projectId);
-                    cmdInsertSideProjectGoal.Parameters.AddWithValue("@goalId", goalId);
+                            using (NpgsqlCommand cmdInsertSideProjectGoal = new NpgsqlCommand(insertSideProjectGoalSql, connection))
+                            {
+                                cmdInsertSideProjectGoal.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmdInsertSideProjectGoal.Parameters.AddWithValue("@goalId", goalId);
+                                cmdInsertSideProjectGoal.ExecuteNonQuery();
+                            }
 
-                    cmdInsertSideProjectGoal.ExecuteNonQuery();
+                            transaction.Commit();
 
-                    goal.Id = goalId;
+                            goal.Id = goalId;
+
+                            return goal;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw new DaoException("An error occurred while creating the goal for the side project.", ex);
+                        }
+                    }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while creating the goal for the project.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
-            return goal;
         }
 
-        public List<Goal> GetGoalsBySideProjectId(int projectId)
+        public List<Goal> GetGoalsBySideProjectId(int sideProjectId)
         {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
             List<Goal> goals = new List<Goal>();
 
             string sql = "SELECT g.id, g.description, g.icon_id " +
                          "FROM goals g " +
                          "JOIN sideproject_goals spg ON g.id = spg.goal_id " +
-                         "WHERE spg.sideproject_id = @projectId;";
+                         "WHERE spg.sideproject_id = @sideProjectId;";
 
             try
             {
@@ -210,33 +283,41 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        goals.Add(MapRowToGoal(reader));
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                goals.Add(MapRowToGoal(reader));
+                            }
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving goals and objectives for the project.", ex);
+                throw new DaoException("An error occurred while retrieving goals and objectives for the side project.", ex);
             }
 
             return goals;
         }
 
-        public Goal GetGoalBySideProjectId(int projectId, int goalId)
+        public Goal GetGoalBySideProjectId(int sideProjectId, int goalId)
         {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
             Goal goal = null;
 
             string sql = "SELECT g.id, g.description, g.icon_id " +
                          "FROM goals g " +
                          "JOIN sideproject_goals spg ON g.id = spg.goal_id " +
-                         "WHERE spg.sideproject_id = @projectId AND g.id = @goalId;";
+                         "WHERE spg.sideproject_id = @sideProjectId AND g.id = @goalId;";
 
             try
             {
@@ -244,33 +325,41 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@goalId", goalId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
 
-                    NpgsqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        goal = MapRowToGoal(reader);
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                goal = MapRowToGoal(reader);
+                            }
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the goal for the project.", ex);
+                throw new DaoException("An error occurred while retrieving the goal for the side project.", ex);
             }
 
             return goal;
         }
 
-        public Goal UpdateGoalBySideProjectId(int projectId, int goalId, Goal goal)
+        public Goal UpdateGoalBySideProjectId(int sideProjectId, int goalId, Goal goal)
         {
+            if (sideProjectId <= 0 || goalId <= 0)
+            {
+                throw new ArgumentException("SideProjectId and goalId must be greater than zero.");
+            }
+
             string sql = "UPDATE goals " +
                          "SET description = @description " +
                          "FROM sideproject_goals " +
                          "WHERE goals.id = sideproject_goals.goal_id " +
-                         "AND sideproject_goals.sideproject_id = @projectId " +
+                         "AND sideproject_goals.sideproject_id = @sideProjectId " +
                          "AND goals.id = @goalId;";
 
             try
@@ -279,30 +368,37 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@goalId", goalId); 
-                    cmd.Parameters.AddWithValue("@description", goal.Description);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
+                        cmd.Parameters.AddWithValue("@description", goal.Description);
 
-                    int count = cmd.ExecuteNonQuery();
+                        int count = cmd.ExecuteNonQuery();
 
-                    if (count > 0)
-                    {
-                        return goal;
+                        if (count == 1)
+                        {
+                            return goal;
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the goal for the project.", ex);
+                throw new DaoException("An error occurred while updating the goal for the side project.", ex);
             }
 
             return null;
         }
 
-        public int DeleteGoalBySideProjectId(int projectId, int goalId)
+        public int DeleteGoalBySideProjectId(int sideProjectId, int goalId)
         {
-            string sql = "DELETE FROM sideproject_goals WHERE sideproject_id = @projectId AND goal_id = @goalId;";
+            if (sideProjectId <= 0 || goalId <= 0)
+            {
+                throw new ArgumentException("SideProjectId and goalId must be greater than zero.");
+            }
+
+            string sql = "DELETE FROM sideproject_goals WHERE sideproject_id = @sideProjectId AND goal_id = @goalId;";
 
             try
             {
@@ -310,16 +406,19 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@projectId", projectId);
-                    cmd.Parameters.AddWithValue("@goalId", goalId);
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {                    
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
 
-                    return cmd.ExecuteNonQuery();
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        return rowsAffected;                    }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the goal from the project.", ex);
+                throw new DaoException("An error occurred while deleting the goal from the side project.", ex);
             }
         }
 
