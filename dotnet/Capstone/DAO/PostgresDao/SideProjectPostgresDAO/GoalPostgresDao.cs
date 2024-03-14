@@ -413,7 +413,8 @@ namespace Capstone.DAO
 
                         int rowsAffected = cmd.ExecuteNonQuery();
 
-                        return rowsAffected;                    }
+                        return rowsAffected;                    
+                    }
                 }
             }
             catch (NpgsqlException ex)
