@@ -78,7 +78,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ContributorId must be greater than zero.");
             }
 
-            string sql = "SELECT first_name, last_name, contributor_image_id, email, bio, contribution_details, " +
+            string sql = "SELECT id, first_name, last_name, contributor_image_id, email, bio, contribution_details, " +
                          "linkedin_id, github_id, portfolio_id " +
                          "FROM contributors WHERE id = @id;";
 

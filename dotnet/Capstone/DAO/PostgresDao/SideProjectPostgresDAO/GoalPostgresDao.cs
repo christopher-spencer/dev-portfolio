@@ -63,7 +63,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("GoalId must be greater than zero.");
             }
 
-            string sql = "SELECT description, icon_id FROM goals WHERE id = @goalId;";
+            string sql = "SELECT id, description, icon_id FROM goals WHERE id = @goalId;";
 
             try
             {

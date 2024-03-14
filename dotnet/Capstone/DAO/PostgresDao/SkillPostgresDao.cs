@@ -63,7 +63,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("SkillId must be greater than zero.");
             }
 
-            string sql = "SELECT name, icon_id FROM skills WHERE id = @id;";
+            string sql = "SELECT id, name, icon_id FROM skills WHERE id = @id;";
 
             try
             {
