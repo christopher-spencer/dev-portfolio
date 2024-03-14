@@ -233,6 +233,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmdInsertGoal = new NpgsqlCommand(insertGoalSql, connection))
                             {
                                 cmdInsertGoal.Parameters.AddWithValue("@description", goal.Description);
+                                
                                 goalId = Convert.ToInt32(cmdInsertGoal.ExecuteScalar());
                             }
 

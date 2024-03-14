@@ -248,7 +248,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetWebsiteByContributorId), new { contributorId = contributorId, websiteId = createdWebsite.Id }, createdWebsite);
+                    return CreatedAtAction(nameof(GetWebsiteByContributorId), new { contributorId, websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
             catch (DaoException)
@@ -337,7 +337,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetWebsiteByApiServiceId), new { apiServiceId = apiServiceId, websiteId = createdWebsite.Id }, createdWebsite);
+                    return CreatedAtAction(nameof(GetWebsiteByApiServiceId), new { apiServiceId, websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
             catch (DaoException)
@@ -426,7 +426,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetWebsiteByDependencyLibraryId), new { dependencyLibraryId = dependencyLibraryId, websiteId = createdWebsite.Id }, createdWebsite);
+                    return CreatedAtAction(nameof(GetWebsiteByDependencyLibraryId), new { dependencyLibraryId, websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
             catch (DaoException)

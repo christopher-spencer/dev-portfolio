@@ -242,10 +242,11 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("Website URL cannot be null or empty.");
             }
-
+// FIXME added third statement????
             string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
             string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@sideProjectId, @websiteId);";
-
+            string updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
+          
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -273,6 +274,13 @@ namespace Capstone.DAO
                                 cmdInsertSideProjectWebsite.ExecuteNonQuery();
                             }
 
+                            using (NpgsqlCommand cmdUpdateSideProjectWebsite = new NpgsqlCommand(updateSideProjectWebsiteSql, connection))
+                            {
+                                cmdUpdateSideProjectWebsite.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmdUpdateSideProjectWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdUpdateSideProjectWebsite.ExecuteNonQuery();
+                            }
+
                             transaction.Commit();
 
                             website.Id = websiteId;
@@ -283,7 +291,7 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the website.", ex);
+                            throw new DaoException("An error occurred while creating the website for the side project.", ex);
                         }
                     }
                 }
