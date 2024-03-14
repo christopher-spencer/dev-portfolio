@@ -447,7 +447,7 @@ namespace Capstone.DAO
             if (reader["icon_id"] != DBNull.Value)
             {
                 goal.IconId = Convert.ToInt32(reader["icon_id"]);
-//FIXME check other files for similar mistake to here
+
                 goal.Icon = _imageDao.GetImageByGoalId(goalId);
             }
             else

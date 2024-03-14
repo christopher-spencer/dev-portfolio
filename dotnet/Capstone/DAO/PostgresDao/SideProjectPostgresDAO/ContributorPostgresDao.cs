@@ -491,22 +491,23 @@ namespace Capstone.DAO
                 ContributionDetails = Convert.ToString(reader["contribution_details"])
             };
 
-            SetContributorImageIdProperties(reader, contributor);
-            SetContributorLinkedInIdProperties(reader, contributor);
-            SetContributorGitHubIdProperties(reader, contributor);
-            SetContributorPortfolioIdProperties(reader, contributor);
+            int contributorId = contributor.Id;
+
+            SetContributorImageIdProperties(reader, contributor, contributorId);
+            SetContributorLinkedInIdProperties(reader, contributor, contributorId);
+            SetContributorGitHubIdProperties(reader, contributor, contributorId);
+            SetContributorPortfolioIdProperties(reader, contributor, contributorId);
 
             return contributor;
         }
 
-        private void SetContributorImageIdProperties(NpgsqlDataReader reader, Contributor contributor)
+        private void SetContributorImageIdProperties(NpgsqlDataReader reader, Contributor contributor, int contributorId)
         {
             contributor.ContributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
 
             if (reader["contributor_image_id"] != DBNull.Value)
             {
-                int contributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
-                contributor.ContributorImage = _imageDao.GetImage(contributorImageId);
+                contributor.ContributorImage = _imageDao.GetImageByContributorId(contributorId);
             }
             else
             {
@@ -514,13 +515,14 @@ namespace Capstone.DAO
             }
         }
 
-        private void SetContributorLinkedInIdProperties(NpgsqlDataReader reader, Contributor contributor)
+        private void SetContributorLinkedInIdProperties(NpgsqlDataReader reader, Contributor contributor, int contributorId)
         {
             contributor.LinkedInId = Convert.ToInt32(reader["linkedin_id"]);
 
             if (reader["linkedin_id"] != DBNull.Value)
             {
                 int linkedInId = Convert.ToInt32(reader["linkedin_id"]);
+//FIXME going to need methods for GetWebsiteByLinkedInId, GitHubId, PortfolioId WITH contributorID (?)                
                 contributor.LinkedIn = _websiteDao.GetWebsite(linkedInId);
             }
             else
@@ -529,7 +531,7 @@ namespace Capstone.DAO
             }
         }
 
-        private void SetContributorGitHubIdProperties(NpgsqlDataReader reader, Contributor contributor)
+        private void SetContributorGitHubIdProperties(NpgsqlDataReader reader, Contributor contributor, int contributorId)
         {
             contributor.GitHubId = Convert.ToInt32(reader["github_id"]);
 
@@ -544,7 +546,7 @@ namespace Capstone.DAO
             }
         }
 
-        private void SetContributorPortfolioIdProperties(NpgsqlDataReader reader, Contributor contributor)
+        private void SetContributorPortfolioIdProperties(NpgsqlDataReader reader, Contributor contributor, int contributorId)
         {
             contributor.PortfolioId = Convert.ToInt32(reader["portfolio_id"]);
 

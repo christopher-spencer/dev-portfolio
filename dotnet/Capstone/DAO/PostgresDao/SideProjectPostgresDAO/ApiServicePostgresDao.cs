@@ -460,20 +460,21 @@ namespace Capstone.DAO
                 Description = Convert.ToString(reader["description"])
             };
 
-            SetApiServiceWebsiteIdProperties(reader, apiService);
-            SetApiServiceLogoIdProperties(reader, apiService);
+            int apiServiceId = apiService.Id;
+
+            SetApiServiceWebsiteIdProperties(reader, apiService, apiServiceId);
+            SetApiServiceLogoIdProperties(reader, apiService, apiServiceId);
 
             return apiService;
         }
 
-        private void SetApiServiceWebsiteIdProperties(NpgsqlDataReader reader, ApiService apiService)
+        private void SetApiServiceWebsiteIdProperties(NpgsqlDataReader reader, ApiService apiService, int apiServiceId)
         {
             if (reader["website_id"] != DBNull.Value)
             {
                 apiService.WebsiteId = Convert.ToInt32(reader["website_id"]);
 
-                int websiteId = Convert.ToInt32(reader["website_id"]);
-                apiService.Website = _websiteDao.GetWebsite(websiteId);
+                apiService.Website = _websiteDao.GetWebsiteByApiServiceId(apiServiceId);
             }
             else
             {
@@ -481,14 +482,13 @@ namespace Capstone.DAO
             }
         }
 
-        private void SetApiServiceLogoIdProperties(NpgsqlDataReader reader, ApiService apiService)
+        private void SetApiServiceLogoIdProperties(NpgsqlDataReader reader, ApiService apiService, int apiServiceId)
         {
             apiService.LogoId = Convert.ToInt32(reader["logo_id"]);
 
             if (reader["logo_id"] != DBNull.Value)
             {
-                int logoId = Convert.ToInt32(reader["logo_id"]);
-                apiService.Logo = _imageDao.GetImage(logoId);
+                apiService.Logo = _imageDao.GetImageByApiServiceId(apiServiceId);
             }
             else
             {

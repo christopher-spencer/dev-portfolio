@@ -449,20 +449,21 @@ namespace Capstone.DAO
                 Description = Convert.ToString(reader["description"])
             };
 
-            SetDependencyLibraryWebsiteIdProperties(reader, dependencyLibrary);
-            SetDependencyLibraryLogoIdProperties(reader, dependencyLibrary);
+            int dependencyLibraryId = dependencyLibrary.Id;
+
+            SetDependencyLibraryWebsiteIdProperties(reader, dependencyLibrary, dependencyLibraryId);
+            SetDependencyLibraryLogoIdProperties(reader, dependencyLibrary, dependencyLibraryId);
 
             return dependencyLibrary;
         }
 
-        private void SetDependencyLibraryWebsiteIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary)
+        private void SetDependencyLibraryWebsiteIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary, int dependencyLibraryId)
         {
             if (reader["website_id"] != DBNull.Value)
             {
                 dependencyLibrary.WebsiteId = Convert.ToInt32(reader["website_id"]);
 
-                int websiteId = Convert.ToInt32(reader["website_id"]);
-                dependencyLibrary.Website = _websiteDao.GetWebsite(websiteId);
+                dependencyLibrary.Website = _websiteDao.GetWebsiteByDependencyLibraryId(dependencyLibraryId);
             }
             else
             {
@@ -470,14 +471,13 @@ namespace Capstone.DAO
             }
         }
 
-        private void SetDependencyLibraryLogoIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary)
+        private void SetDependencyLibraryLogoIdProperties(NpgsqlDataReader reader, DependencyLibrary dependencyLibrary, int dependencyLibraryId)
         {
             if (reader["logo_id"] != DBNull.Value)
             {
                 dependencyLibrary.LogoId = Convert.ToInt32(reader["logo_id"]);
 
-                int logoId = Convert.ToInt32(reader["logo_id"]);
-                dependencyLibrary.Logo = _imageDao.GetImage(logoId);
+                dependencyLibrary.Logo = _imageDao.GetImageByDependencyLibraryId(dependencyLibraryId);
             }
             else
             {

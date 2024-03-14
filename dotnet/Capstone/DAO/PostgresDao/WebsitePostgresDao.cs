@@ -1094,19 +1094,20 @@ namespace Capstone.DAO
                 Url = Convert.ToString(reader["url"])
             };
 
-            SetWebsiteLogoIdProperties(reader, website);
+            int websiteId = website.Id;
+
+            SetWebsiteLogoIdProperties(reader, website, websiteId);
 
             return website;
         }
 
-        private void SetWebsiteLogoIdProperties(NpgsqlDataReader reader, Website website)
+        private void SetWebsiteLogoIdProperties(NpgsqlDataReader reader, Website website, int websiteId)
         {
             if (reader["logo_id"] != DBNull.Value)
             {
                 website.LogoId = Convert.ToInt32(reader["logo_id"]);
 
-                int logoId = Convert.ToInt32(reader["logo_id"]);
-                website.Logo = _imageDao.GetImage(logoId);
+                website.Logo = _imageDao.GetImageByWebsiteId(websiteId);
             }
             else
             {
