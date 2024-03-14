@@ -61,7 +61,7 @@ namespace Capstone.DAO
             return dependencyLibrary;
         }
 
-        public DependencyLibrary GetDependencyOrLibraryById(int dependencyLibraryId)
+        public DependencyLibrary GetDependencyOrLibrary(int dependencyLibraryId)
         {
             if (dependencyLibraryId <= 0)
             {

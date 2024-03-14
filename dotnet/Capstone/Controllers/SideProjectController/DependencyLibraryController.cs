@@ -38,7 +38,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetDependencyOrLibraryById), new { dependencyLibraryId = createdDependencyLibrary.Id }, createdDependencyLibrary);
+                    return CreatedAtAction(nameof(GetDependencyOrLibrary), new { dependencyLibraryId = createdDependencyLibrary.Id }, createdDependencyLibrary);
                 }
             }
             catch (DaoException)
@@ -48,9 +48,9 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/dependency-or-library/{dependencyLibraryId}")]
-        public ActionResult<DependencyLibrary> GetDependencyOrLibraryById(int dependencyLibraryId)
+        public ActionResult<DependencyLibrary> GetDependencyOrLibrary(int dependencyLibraryId)
         {
-            DependencyLibrary dependencyLibrary = _dependencyLibraryDao.GetDependencyOrLibraryById(dependencyLibraryId);
+            DependencyLibrary dependencyLibrary = _dependencyLibraryDao.GetDependencyOrLibrary(dependencyLibraryId);
 
             if (dependencyLibrary == null)
             {
@@ -62,8 +62,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/get-all-dependencies-and-libraries")]
-        public ActionResult<List<DependencyLibrary>> GetAllDependenciesAndLibraries()
+        [HttpGet("/dependencies-and-libraries")]
+        public ActionResult<List<DependencyLibrary>> GetDependenciesAndLibraries()
         {
             List<DependencyLibrary> dependenciesAndLibraries = _dependencyLibraryDao.GetDependenciesAndLibraries();
 
@@ -78,7 +78,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("update-dependency-or-library/{dependencyLibraryId}")]
+        [HttpPut("/update-dependency-or-library/{dependencyLibraryId}")]
         public ActionResult UpdateDependencyOrLibrary(int dependencyLibraryId, DependencyLibrary dependencyLibrary)
         {
             try
@@ -102,7 +102,7 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpDelete("/delete-dependency-or-library/{dependencyLibraryId}")]
-        public ActionResult DeleteDependencyOrLibraryById(int dependencyLibraryId)
+        public ActionResult DeleteDependencyOrLibrary(int dependencyLibraryId)
         {
             try
             {
@@ -130,12 +130,12 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("/sideproject/{projectId}/create-dependency-or-library")]
-        public ActionResult CreateDependencyOrLibraryBySideProjectId(int projectId, DependencyLibrary dependencyLibrary)
+        [HttpPost("/sideproject/{sideProjectId}/create-dependency-or-library")]
+        public ActionResult CreateDependencyOrLibraryBySideProjectId(int sideProjectId, DependencyLibrary dependencyLibrary)
         {
             try
             {
-                DependencyLibrary createdDependencyLibrary = _dependencyLibraryDao.CreateDependencyOrLibraryBySideProjectId(projectId, dependencyLibrary);
+                DependencyLibrary createdDependencyLibrary = _dependencyLibraryDao.CreateDependencyOrLibraryBySideProjectId(sideProjectId, dependencyLibrary);
 
                 if (createdDependencyLibrary == null)
                 {
@@ -143,7 +143,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetDependencyOrLibraryBySideProjectId), new { projectId = projectId, dependencyLibraryId = createdDependencyLibrary.Id }, createdDependencyLibrary);
+                    return CreatedAtAction(nameof(GetDependencyOrLibraryBySideProjectId), new { sideProjectId, dependencyLibraryId = createdDependencyLibrary.Id }, createdDependencyLibrary);
                 }
             }
             catch (DaoException)
@@ -152,10 +152,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/dependencies-and-libraries")]
-        public ActionResult GetDependenciesAndLibrariesBySideProjectId(int projectId)
+        [HttpGet("/sideproject/{sideProjectId}/dependencies-and-libraries")]
+        public ActionResult GetDependenciesAndLibrariesBySideProjectId(int sideProjectId)
         {
-            List<DependencyLibrary> dependenciesAndLibraries = _dependencyLibraryDao.GetDependenciesAndLibrariesBySideProjectId(projectId);
+            List<DependencyLibrary> dependenciesAndLibraries = _dependencyLibraryDao.GetDependenciesAndLibrariesBySideProjectId(sideProjectId);
 
             if (dependenciesAndLibraries == null)
             {
@@ -167,10 +167,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/dependency-or-library/{dependencyLibraryId}")]
-        public ActionResult<DependencyLibrary> GetDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId)
+        [HttpGet("/sideproject/{sideProjectId}/dependency-or-library/{dependencyLibraryId}")]
+        public ActionResult<DependencyLibrary> GetDependencyOrLibraryBySideProjectId(int sideProjectId, int dependencyLibraryId)
         {
-            DependencyLibrary dependencyLibrary = _dependencyLibraryDao.GetDependencyOrLibraryBySideProjectId(projectId, dependencyLibraryId);
+            DependencyLibrary dependencyLibrary = _dependencyLibraryDao.GetDependencyOrLibraryBySideProjectId(sideProjectId, dependencyLibraryId);
 
             if (dependencyLibrary == null)
             {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-dependency-or-library/{dependencyLibraryId}")]
-        public ActionResult UpdateDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId, DependencyLibrary dependencyLibrary)
+        [HttpPut("/update-sideproject/{sideProjectId}/update-dependency-or-library/{dependencyLibraryId}")]
+        public ActionResult UpdateDependencyOrLibraryBySideProjectId(int sideProjectId, int dependencyLibraryId, DependencyLibrary dependencyLibrary)
         {
             try
             {
-                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibraryBySideProjectId(projectId, dependencyLibraryId, dependencyLibrary);
+                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibraryBySideProjectId(sideProjectId, dependencyLibraryId, dependencyLibrary);
 
                 if (updatedDependencyLibrary == null)
                 {
@@ -206,12 +206,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{projectId}/delete-dependency-or-library/{dependencyLibraryId}")]
-        public ActionResult DeleteDependencyOrLibraryBySideProjectId(int projectId, int dependencyLibraryId)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-dependency-or-library/{dependencyLibraryId}")]
+        public ActionResult DeleteDependencyOrLibraryBySideProjectId(int sideProjectId, int dependencyLibraryId)
         {
             try
             {
-                int rowsAffected = _dependencyLibraryDao.DeleteDependencyOrLibraryBySideProjectId(projectId, dependencyLibraryId);
+                int rowsAffected = _dependencyLibraryDao.DeleteDependencyOrLibraryBySideProjectId(sideProjectId, dependencyLibraryId);
 
                 if (rowsAffected > 0)
                 {
