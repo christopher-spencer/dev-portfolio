@@ -38,7 +38,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetWebsiteById), new { websiteId = createdWebsite.Id }, createdWebsite);
+                    return CreatedAtAction(nameof(GetWebsite), new { websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
             catch (DaoException)
@@ -48,7 +48,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/website/{websiteId}")]
-        public ActionResult<Website> GetWebsiteById(int websiteId)
+        public ActionResult<Website> GetWebsite(int websiteId)
         {
             Website website = _websiteDao.GetWebsite(websiteId);
 
@@ -62,8 +62,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/get-all-websites")]
-        public ActionResult<List<Website>> GetAllWebsites()
+        [HttpGet("/websites")]
+        public ActionResult<List<Website>> GetWebsites()
         {
             List<Website> websites = _websiteDao.GetWebsites();
 
@@ -101,8 +101,8 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/website/delete/{websiteId}")]
-        public ActionResult DeleteWebsiteById(int websiteId)
+        [HttpDelete("/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsite(int websiteId)
         {
             try
             {
@@ -130,12 +130,12 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("/sideproject/{projectId}/create-website")]
-        public ActionResult CreateWebsiteByProjectId(int projectId, Website website)
+        [HttpPost("/sideproject/{sideProjectId}/create-website")]
+        public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
             try
             {
-                Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(projectId, website);
+                Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(sideProjectId, website);
 
                 if (createdWebsite == null)
                 {
@@ -143,7 +143,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetWebsiteByProjectId), new { projectId = projectId, websiteId = createdWebsite.Id }, createdWebsite);
+                    return CreatedAtAction(nameof(GetWebsiteBySideProjectId), new { sideProjectId, websiteId = createdWebsite.Id }, createdWebsite);
                 }
             }
             catch (DaoException)
@@ -152,10 +152,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/website")]
-        public ActionResult<Website> GetWebsiteByProjectId(int projectId)
+        [HttpGet("/sideproject/{sideProjectId}/website")]
+        public ActionResult<Website> GetWebsiteBySideProjectId(int sideProjectId)
         {
-            Website website = _websiteDao.GetWebsiteBySideProjectId(projectId);
+            Website website = _websiteDao.GetWebsiteBySideProjectId(sideProjectId);
 
             if (website == null)
             {
@@ -167,10 +167,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/website/{websiteId}")]
-        public ActionResult<Website> GetWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId)
+        [HttpGet("/sideproject/{sideProjectId}/website/{websiteId}")]
+        public ActionResult<Website> GetWebsiteBySideProjectIdAndWebsiteId(int sideProjectId, int websiteId)
         {
-            Website website = _websiteDao.GetWebsiteBySideProjectIdAndWebsiteId(projectId, websiteId);
+            Website website = _websiteDao.GetWebsiteBySideProjectIdAndWebsiteId(sideProjectId, websiteId);
 
             if (website == null)
             {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-website/{websiteId}")]
-        public ActionResult UpdateWebsiteByProjectId(int projectId, int websiteId, Website website)
+        [HttpPut("/update-sideproject/{sideProjectId}/update-website/{websiteId}")]
+        public ActionResult UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
             try
             {
-                Website updatedWebsite = _websiteDao.UpdateWebsiteBySideProjectId(projectId, websiteId, website);
+                Website updatedWebsite = _websiteDao.UpdateWebsiteBySideProjectId(sideProjectId, websiteId, website);
 
                 if (updatedWebsite == null)
                 {
@@ -206,12 +206,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{projectId}/delete-website/{websiteId}")]
-        public ActionResult DeleteWebsiteByProjectIdAndWebsiteId(int projectId, int websiteId)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
             try
             {
-                int rowsAffected = _websiteDao.DeleteWebsiteBySideProjectId(projectId, websiteId);
+                int rowsAffected = _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId);
 
                 if (rowsAffected > 0)
                 {

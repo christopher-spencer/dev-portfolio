@@ -38,7 +38,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetGoalById), new { goalId = createdGoal.Id }, createdGoal);
+                    return CreatedAtAction(nameof(GetGoal), new { goalId = createdGoal.Id }, createdGoal);
                 }
             }
             catch (DaoException)
@@ -48,7 +48,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/goal/{goalId}")]
-        public ActionResult<Goal> GetGoalById(int goalId)
+        public ActionResult<Goal> GetGoal(int goalId)
         {
             Goal goal = _goalDao.GetGoal(goalId);
 
@@ -62,8 +62,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/get-all-goals")]
-        public ActionResult<List<Goal>> GetAllGoals()
+        [HttpGet("/goals")]
+        public ActionResult<List<Goal>> GetGoals()
         {
             List<Goal> goals = _goalDao.GetGoals();
 
@@ -102,7 +102,7 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpDelete("/delete-goal/{goalId}")]
-        public ActionResult DeleteGoalById(int goalId)
+        public ActionResult DeleteGoal(int goalId)
         {
             try
             {
@@ -130,12 +130,12 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("/sideproject/{projectId}/create-goal")]
-        public ActionResult CreateGoalBySideProjectId(int projectId, Goal goal)
+        [HttpPost("/sideproject/{sideProjectId}/create-goal")]
+        public ActionResult CreateGoalBySideProjectId(int sideProjectId, Goal goal)
         {
             try
             {
-                Goal createdGoal = _goalDao.CreateGoalBySideProjectId(projectId, goal);
+                Goal createdGoal = _goalDao.CreateGoalBySideProjectId(sideProjectId, goal);
 
                 if (createdGoal == null)
                 {
@@ -143,7 +143,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetGoalBySideProjectId), new { projectId = projectId, goalId = createdGoal.Id }, createdGoal);
+                    return CreatedAtAction(nameof(GetGoalBySideProjectId), new { sideProjectId, goalId = createdGoal.Id }, createdGoal);
                 }
             }
             catch (DaoException)
@@ -152,10 +152,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/goals")]
-        public ActionResult GetGoalsBySideProjectId(int projectId)
+        [HttpGet("/sideproject/{sideProjectId}/goals")]
+        public ActionResult GetGoalsBySideProjectId(int sideProjectId)
         {
-            List<Goal> goals = _goalDao.GetGoalsBySideProjectId(projectId);
+            List<Goal> goals = _goalDao.GetGoalsBySideProjectId(sideProjectId);
 
             if (goals == null)
             {
@@ -167,10 +167,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/goal/{goalId}")]
-        public ActionResult<Goal> GetGoalBySideProjectId(int projectId, int goalId)
+        [HttpGet("/sideproject/{sideProjectId}/goal/{goalId}")]
+        public ActionResult<Goal> GetGoalBySideProjectId(int sideProjectId, int goalId)
         {
-            Goal goal = _goalDao.GetGoalBySideProjectId(projectId, goalId);
+            Goal goal = _goalDao.GetGoalBySideProjectId(sideProjectId, goalId);
 
             if (goal == null)
             {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-goal/{goalId}")]
-        public ActionResult UpdateGoalBySideProjectId(int projectId, int goalId, Goal goal)
+        [HttpPut("/update-sideproject/{sideProjectId}/update-goal/{goalId}")]
+        public ActionResult UpdateGoalBySideProjectId(int sideProjectId, int goalId, Goal goal)
         {
             try
             {
-                Goal updatedGoal = _goalDao.UpdateGoalBySideProjectId(projectId, goalId, goal);
+                Goal updatedGoal = _goalDao.UpdateGoalBySideProjectId(sideProjectId, goalId, goal);
 
                 if (updatedGoal == null)
                 {
@@ -206,12 +206,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{projectId}/delete-goal/{goalId}")]
-        public ActionResult DeleteGoalBySideProjectId(int projectId, int goalId)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-goal/{goalId}")]
+        public ActionResult DeleteGoalBySideProjectId(int sideProjectId, int goalId)
         {
             try
             {
-                int rowsAffected = _goalDao.DeleteGoalBySideProjectId(projectId, goalId);
+                int rowsAffected = _goalDao.DeleteGoalBySideProjectId(sideProjectId, goalId);
 
                 if (rowsAffected > 0)
                 {

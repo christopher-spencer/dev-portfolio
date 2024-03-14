@@ -56,7 +56,7 @@ namespace Capstone.DAO
             return skill;
         }
 
-        public Skill GetSkillById(int skillId)
+        public Skill GetSkill(int skillId)
         {
             if (skillId <= 0)
             {
@@ -93,7 +93,7 @@ namespace Capstone.DAO
             return null;
         }
 
-        public List<Skill> GetAllSkills()
+        public List<Skill> GetSkills()
         {
             List<Skill> skills = new List<Skill>();
 

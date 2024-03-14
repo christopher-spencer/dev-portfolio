@@ -38,7 +38,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetContributorById), new { contributorId = createdContributor.Id }, createdContributor);
+                    return CreatedAtAction(nameof(GetContributor), new { contributorId = createdContributor.Id }, createdContributor);
                 }
             }
             catch (DaoException)
@@ -48,7 +48,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/contributor/{contributorId}")]
-        public ActionResult<Contributor> GetContributorById(int contributorId)
+        public ActionResult<Contributor> GetContributor(int contributorId)
         {
             Contributor contributor = _contributorDao.GetContributor(contributorId);
 
@@ -62,8 +62,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("get-all-contributors")]
-        public ActionResult<List<Contributor>> GetAllContributors()
+        [HttpGet("/contributors")]
+        public ActionResult<List<Contributor>> GetContributors()
         {
             List<Contributor> contributors = _contributorDao.GetContributors();
 
@@ -102,7 +102,7 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpDelete("/delete-contributor/{contributorId}")]
-        public ActionResult DeleteContributorById(int contributorId)
+        public ActionResult DeleteContributor(int contributorId)
         {
             try
             {
@@ -130,12 +130,12 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("/sideproject/{projectId}/create-contributor")]
-        public ActionResult CreateContributorBySideProjectId(int projectId, Contributor contributor)
+        [HttpPost("/sideproject/{sideProjectId}/create-contributor")]
+        public ActionResult CreateContributorBySideProjectId(int sideProjectId, Contributor contributor)
         {
             try
             {
-                Contributor createdContributor = _contributorDao.CreateContributorBySideProjectId(projectId, contributor);
+                Contributor createdContributor = _contributorDao.CreateContributorBySideProjectId(sideProjectId, contributor);
 
                 if (createdContributor == null)
                 {
@@ -143,7 +143,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetContributorBySideProjectId), new { projectId = projectId, contributorId = createdContributor.Id }, createdContributor);
+                    return CreatedAtAction(nameof(GetContributorBySideProjectId), new { sideProjectId, contributorId = createdContributor.Id }, createdContributor);
                 }
             }
             catch (DaoException)
@@ -152,10 +152,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/contributors")]
-        public ActionResult GetContributorsBySideProjectId(int projectId)
+        [HttpGet("/sideproject/{sideProjectId}/contributors")]
+        public ActionResult GetContributorsBySideProjectId(int sideProjectId)
         {
-            List<Contributor> contributors = _contributorDao.GetContributorsBySideProjectId(projectId);
+            List<Contributor> contributors = _contributorDao.GetContributorsBySideProjectId(sideProjectId);
 
             if (contributors == null)
             {
@@ -167,10 +167,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/contributor/{contributorId}")]
-        public ActionResult<Contributor> GetContributorBySideProjectId(int projectId, int contributorId)
+        [HttpGet("/sideproject/{sideProjectId}/contributor/{contributorId}")]
+        public ActionResult<Contributor> GetContributorBySideProjectId(int sideProjectId, int contributorId)
         {
-            Contributor contributor = _contributorDao.GetContributorBySideProjectId(projectId, contributorId);
+            Contributor contributor = _contributorDao.GetContributorBySideProjectId(sideProjectId, contributorId);
 
             if (contributor == null)
             {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-contributor/{contributorId}")]
-        public ActionResult UpdateContributorBySideProjectId(int projectId, int contributorId, Contributor contributor)
+        [HttpPut("/update-sideproject/{sideProjectId}/update-contributor/{contributorId}")]
+        public ActionResult UpdateContributorBySideProjectId(int sideProjectId, int contributorId, Contributor contributor)
         {
             try
             {
-                Contributor updatedContributor = _contributorDao.UpdateContributorBySideProjectId(projectId, contributorId, contributor);
+                Contributor updatedContributor = _contributorDao.UpdateContributorBySideProjectId(sideProjectId, contributorId, contributor);
 
                 if (updatedContributor == null)
                 {
@@ -206,12 +206,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{projectId}/delete-contributor/{contributorId}")]
-        public ActionResult DeleteContributorBySideProjectId(int projectId, int contributorId)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-contributor/{contributorId}")]
+        public ActionResult DeleteContributorBySideProjectId(int sideProjectId, int contributorId)
         {
             try
             {
-                int rowsAffected = _contributorDao.DeleteContributorBySideProjectId(projectId, contributorId);
+                int rowsAffected = _contributorDao.DeleteContributorBySideProjectId(sideProjectId, contributorId);
 
                 if (rowsAffected > 0)
                 {

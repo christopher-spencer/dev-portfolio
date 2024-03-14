@@ -38,7 +38,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetAPIOrServiceById), new { apiServiceId = createdApiService.Id }, createdApiService);
+                    return CreatedAtAction(nameof(GetAPIOrService), new { apiServiceId = createdApiService.Id }, createdApiService);
                 }
             }
             catch (DaoException)
@@ -48,7 +48,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/api-or-service/{apiServiceId}")]
-        public ActionResult<ApiService> GetAPIOrServiceById(int apiServiceId)
+        public ActionResult<ApiService> GetAPIOrService(int apiServiceId)
         {
             ApiService apiService = _apiServiceDao.GetAPIOrServiceById(apiServiceId);
 
@@ -62,8 +62,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/get-all-apis-and-services")]
-        public ActionResult<List<ApiService>> GetAllAPIsAndServices()
+        [HttpGet("/apis-and-services")]
+        public ActionResult<List<ApiService>> GetAPIsAndServices()
         {
             List<ApiService> apiServices = _apiServiceDao.GetAPIsAndServices();
 
@@ -130,12 +130,12 @@ namespace Capstone.Controllers
         */ 
 
         [Authorize]
-        [HttpPost("/sideproject/{projectId}/create-api-or-service")]
-        public ActionResult CreateAPIOrServiceBySideProjectId(int projectId, ApiService apiService)
+        [HttpPost("/sideproject/{sideProjectId}/create-api-or-service")]
+        public ActionResult CreateAPIOrServiceBySideProjectId(int sideProjectId, ApiService apiService)
         {
             try
             {
-                ApiService createdApiService = _apiServiceDao.CreateAPIOrServiceBySideProjectId(projectId, apiService);
+                ApiService createdApiService = _apiServiceDao.CreateAPIOrServiceBySideProjectId(sideProjectId, apiService);
 
                 if (createdApiService == null)
                 {
@@ -143,7 +143,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetAPIOrServiceBySideProjectId), new { projectId = projectId, apiServiceId = createdApiService.Id }, createdApiService);
+                    return CreatedAtAction(nameof(GetAPIOrServiceBySideProjectId), new { sideProjectId, apiServiceId = createdApiService.Id }, createdApiService);
                 }
             }
             catch (DaoException)
@@ -152,10 +152,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/apis-and-services")]
-        public ActionResult GetAPIsAndServicesBySideProjectId(int projectId)
+        [HttpGet("/sideproject/{sideProjectId}/apis-and-services")]
+        public ActionResult GetAPIsAndServicesBySideProjectId(int sideProjectId)
         {
-            List<ApiService> apiServices = _apiServiceDao.GetAPIsAndServicesBySideProjectId(projectId);
+            List<ApiService> apiServices = _apiServiceDao.GetAPIsAndServicesBySideProjectId(sideProjectId);
 
             if (apiServices == null)
             {
@@ -167,10 +167,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/api-or-service/{apiServiceId}")]
-        public ActionResult<ApiService> GetAPIOrServiceBySideProjectId(int projectId, int apiServiceId)
+        [HttpGet("/sideproject/{sideProjectId}/api-or-service/{apiServiceId}")]
+        public ActionResult<ApiService> GetAPIOrServiceBySideProjectId(int sideProjectId, int apiServiceId)
         {
-            ApiService apiService = _apiServiceDao.GetAPIOrServiceBySideProjectId(projectId, apiServiceId);
+            ApiService apiService = _apiServiceDao.GetAPIOrServiceBySideProjectId(sideProjectId, apiServiceId);
 
             if (apiService == null)
             {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-api-or-service/{apiServiceId}")]
-        public ActionResult UpdateAPIOrServiceBySideProjectId(int projectId, int apiServiceId, ApiService apiService)
+        [HttpPut("/update-sideproject/{sideProjectId}/update-api-or-service/{apiServiceId}")]
+        public ActionResult UpdateAPIOrServiceBySideProjectId(int sideProjectId, int apiServiceId, ApiService apiService)
         {
             try
             {
-                ApiService updatedApiService = _apiServiceDao.UpdateAPIOrServiceBySideProjectId(projectId, apiServiceId, apiService);
+                ApiService updatedApiService = _apiServiceDao.UpdateAPIOrServiceBySideProjectId(sideProjectId, apiServiceId, apiService);
 
                 if (updatedApiService == null)
                 {
@@ -206,12 +206,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{projectId}/delete-api-or-service/{apiServiceId}")]
-        public ActionResult DeleteAPIOrServiceBySideProjectId(int projectId, int apiServiceId)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-api-or-service/{apiServiceId}")]
+        public ActionResult DeleteAPIOrServiceBySideProjectId(int sideProjectId, int apiServiceId)
         {
             try
             {
-                int rowsAffected = _apiServiceDao.DeleteAPIOrServiceBySideProjectId(projectId, apiServiceId);
+                int rowsAffected = _apiServiceDao.DeleteAPIOrServiceBySideProjectId(sideProjectId, apiServiceId);
 
                 if (rowsAffected > 0)
                 {

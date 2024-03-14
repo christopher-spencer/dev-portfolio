@@ -38,7 +38,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetSkillById), new { skillId = createdSkill.Id }, createdSkill);
+                    return CreatedAtAction(nameof(GetSkill), new { skillId = createdSkill.Id }, createdSkill);
                 }
             }
             catch (DaoException)
@@ -48,9 +48,9 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/skill/{skillId}")]
-        public ActionResult<Skill> GetSkillById(int skillId)
+        public ActionResult<Skill> GetSkill(int skillId)
         {
-            Skill skill = _skillDao.GetSkillById(skillId);
+            Skill skill = _skillDao.GetSkill(skillId);
 
             if (skill == null)
             {
@@ -62,10 +62,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/get-all-skills")]
-        public ActionResult<List<Skill>> GetAllSkills()
+        [HttpGet("/skills")]
+        public ActionResult<List<Skill>> GetSkills()
         {
-            List<Skill> skills = _skillDao.GetAllSkills();
+            List<Skill> skills = _skillDao.GetSkills();
 
             if (skills == null)
             {
@@ -130,12 +130,12 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("/sideproject/{projectId}/create-skill")]
-        public ActionResult CreateSkillBySideProjectId(int projectId, Skill skill)
+        [HttpPost("/sideproject/{sideProjectId}/create-skill")]
+        public ActionResult CreateSkillBySideProjectId(int sideProjectId, Skill skill)
         {
             try
             {
-                Skill createdSkill = _skillDao.CreateSkillBySideProjectId(projectId, skill);
+                Skill createdSkill = _skillDao.CreateSkillBySideProjectId(sideProjectId, skill);
 
                 if (createdSkill == null)
                 {
@@ -143,7 +143,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetSkillBySideProjectId), new { projectId = projectId, skillId = createdSkill.Id }, createdSkill);
+                    return CreatedAtAction(nameof(GetSkillBySideProjectId), new { sideProjectId, skillId = createdSkill.Id }, createdSkill);
                 }
             }
             catch (DaoException)
@@ -152,10 +152,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/skills")]
-        public ActionResult GetSkillsBySideProjectId(int projectId)
+        [HttpGet("/sideproject/{sideProjectId}/skills")]
+        public ActionResult GetSkillsBySideProjectId(int sideProjectId)
         {
-            List<Skill> skills = _skillDao.GetSkillsBySideProjectId(projectId);
+            List<Skill> skills = _skillDao.GetSkillsBySideProjectId(sideProjectId);
 
             if (skills == null)
             {
@@ -167,10 +167,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/skill/{skillId}")]
-        public ActionResult<Skill> GetSkillBySideProjectId(int projectId, int skillId)
+        [HttpGet("/sideproject/{sideProjectId}/skill/{skillId}")]
+        public ActionResult<Skill> GetSkillBySideProjectId(int sideProjectId, int skillId)
         {
-            Skill skill = _skillDao.GetSkillBySideProjectId(projectId, skillId);
+            Skill skill = _skillDao.GetSkillBySideProjectId(sideProjectId, skillId);
 
             if (skill == null)
             {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-skill/{skillId}")]
-        public ActionResult UpdateSkillBySideProjectId(int projectId, int skillId, Skill skill)
+        [HttpPut("/update-sideproject/{sideProjectId}/update-skill/{skillId}")]
+        public ActionResult UpdateSkillBySideProjectId(int sideProjectId, int skillId, Skill skill)
         {
             try
             {
-                Skill updatedSkill = _skillDao.UpdateSkillBySideProjectId(projectId, skillId, skill);
+                Skill updatedSkill = _skillDao.UpdateSkillBySideProjectId(sideProjectId, skillId, skill);
 
                 if (updatedSkill == null)
                 {
@@ -206,12 +206,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{projectId}/delete-skill/{skillId}")]
-        public ActionResult DeleteSkillBySideProjectId(int projectId, int skillId)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-skill/{skillId}")]
+        public ActionResult DeleteSkillBySideProjectId(int sideProjectId, int skillId)
         {
             try
             {
-                int rowsAffected = _skillDao.DeleteSkillBySideProjectId(projectId, skillId);
+                int rowsAffected = _skillDao.DeleteSkillBySideProjectId(sideProjectId, skillId);
 
                 if (rowsAffected > 0)
                 {

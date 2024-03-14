@@ -38,7 +38,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetImageById), new { imageId = createdImage.Id }, createdImage);
+                    return CreatedAtAction(nameof(GetImage), new { imageId = createdImage.Id }, createdImage);
                 }
             }
             catch (DaoException)
@@ -48,7 +48,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/image/{imageId}")]
-        public ActionResult<Image> GetImageById(int imageId)
+        public ActionResult<Image> GetImage(int imageId)
         {
             Image image = _imageDao.GetImageById(imageId);
 
@@ -62,8 +62,8 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/get-all-images")]
-        public ActionResult<List<Image>> GetAllImages()
+        [HttpGet("/images")]
+        public ActionResult<List<Image>> GetImages()
         {
             List<Image> images = _imageDao.GetAllImages();
 
@@ -102,7 +102,7 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpDelete("/delete-image/{imageId}")]
-        public ActionResult DeleteImageById(int imageId)
+        public ActionResult DeleteImage(int imageId)
         {
             try
             {
@@ -130,12 +130,12 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("/sideproject/{projectId}/create-image")]
-        public ActionResult CreateImageBySideProjectId(int projectId, Image image)
+        [HttpPost("/sideproject/{sideProjectId}/create-image")]
+        public ActionResult CreateImageBySideProjectId(int sideProjectId, Image image)
         {
             try
             {
-                Image createdImage = _imageDao.CreateImageBySideProjectId(projectId, image);
+                Image createdImage = _imageDao.CreateImageBySideProjectId(sideProjectId, image);
 
                 if (createdImage == null)
                 {
@@ -143,7 +143,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetImageBySideProjectId), new { projectId, imageId = createdImage.Id }, createdImage);
+                    return CreatedAtAction(nameof(GetImageBySideProjectId), new { sideProjectId, imageId = createdImage.Id }, createdImage);
                 }
             }
             catch (DaoException)
@@ -152,10 +152,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/images")]
-        public ActionResult GetImagesBySideProjectId(int projectId)
+        [HttpGet("/sideproject/{sideProjectId}/images")]
+        public ActionResult GetImagesBySideProjectId(int sideProjectId)
         {
-            List<Image> images = _imageDao.GetImagesBySideProjectId(projectId);
+            List<Image> images = _imageDao.GetImagesBySideProjectId(sideProjectId);
 
             if (images == null)
             {
@@ -167,10 +167,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{projectId}/image/{imageId}")]
-        public ActionResult<Image> GetImageBySideProjectId(int projectId, int imageId)
+        [HttpGet("/sideproject/{sideProjectId}/image/{imageId}")]
+        public ActionResult<Image> GetImageBySideProjectId(int sideProjectId, int imageId)
         {
-            Image image = _imageDao.GetImageBySideProjectId(projectId, imageId);
+            Image image = _imageDao.GetImageBySideProjectId(sideProjectId, imageId);
 
             if (image == null)
             {
@@ -183,12 +183,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/update-sideproject/{projectId}/update-image/{imageId}")]
-        public ActionResult UpdateImageBySideProjectId(int projectId, int imageId, Image image)
+        [HttpPut("/update-sideproject/{sideProjectId}/update-image/{imageId}")]
+        public ActionResult UpdateImageBySideProjectId(int sideProjectId, int imageId, Image image)
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImageBySideProjectId(projectId, imageId, image);
+                Image updatedImage = _imageDao.UpdateImageBySideProjectId(sideProjectId, imageId, image);
 
                 if (updatedImage == null)
                 {
@@ -206,12 +206,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{projectId}/delete-image/{imageId}")]
-        public ActionResult DeleteImageBySideProjectId(int projectId, int imageId)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {
             try
             {
-                int rowsAffected = _imageDao.DeleteImageBySideProjectId(projectId, imageId);
+                int rowsAffected = _imageDao.DeleteImageBySideProjectId(sideProjectId, imageId);
 
                 if (rowsAffected > 0)
                 {
@@ -340,7 +340,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
         [Authorize]
-        [HttpPost("/image/create-website-logo/{websiteId}")]
+        [HttpPost("/website/{websiteId}/create-image")]
         public ActionResult CreateImageByWebsiteId(int websiteId, Image image)
         {
             try
@@ -362,7 +362,7 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/image/website-logo/{websiteId}")]
+        [HttpGet("/website/{websiteId}/image")]
         public ActionResult<Image> GetImageByWebsiteId(int websiteId)
         {
             Image logo = _imageDao.GetImageByWebsiteId(websiteId);
@@ -378,7 +378,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/image/{imageId}/update-website-logo/{websiteId}")]
+        [HttpPut("/update-website/{websiteId}/update-image/{imageId}")]
         public ActionResult<Image> UpdateImageByWebsiteId(int websiteId, int imageId, Image logo)
         {
             try
@@ -401,7 +401,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/image/{imageId}/delete-website-logo/{websiteId}")]
+        [HttpDelete("/website/{websiteId}/delete-image/{imageId}")]
         public ActionResult DeleteImageByWebsiteId(int websiteId, int imageId)
         {
             try
@@ -443,7 +443,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetImageBySkillId), new { skillId = skillId, imageId = createdImage.Id }, createdImage);
+                    return CreatedAtAction(nameof(GetImageBySkillId), new { skillId, imageId = createdImage.Id }, createdImage);
                 }
             }
             catch (DaoException)
