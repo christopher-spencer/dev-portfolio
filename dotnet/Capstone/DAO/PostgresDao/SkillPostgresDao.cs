@@ -448,7 +448,7 @@ namespace Capstone.DAO
 
         private void SetSkillIconIdProperties(NpgsqlDataReader reader, Skill skill, int skillId)
         {
-            if (reader["logo_id"] != DBNull.Value)
+            if (reader["icon_id"] != DBNull.Value)
             {
                 skill.IconId = Convert.ToInt32(reader["icon_id"]);
 

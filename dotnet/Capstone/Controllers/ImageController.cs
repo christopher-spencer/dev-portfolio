@@ -204,7 +204,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the side project image.");
             }
         }
-
+// FIXME getting 500 error in postman
         [Authorize]
         [HttpDelete("/sideproject/{sideProjectId}/delete-image/{imageId}")]
         public ActionResult DeleteImageBySideProjectId(int sideProjectId, int imageId)
@@ -489,7 +489,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the skill image.");
             }
         }
-
+//FIXME successfully deleted an image, but gave 500 error (DELETED image FROM skill, but image is still in GETIMAGES***)
         [Authorize]
         [HttpDelete("/skill/{skillId}/delete-image/{imageId}")]
         public ActionResult DeleteImageBySkillId(int skillId, int imageId)
