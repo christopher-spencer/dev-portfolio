@@ -50,7 +50,7 @@ namespace Capstone.Controllers
         [HttpGet("/image/{imageId}")]
         public ActionResult<Image> GetImage(int imageId)
         {
-            Image image = _imageDao.GetImageById(imageId);
+            Image image = _imageDao.GetImage(imageId);
 
             if (image == null)
             {

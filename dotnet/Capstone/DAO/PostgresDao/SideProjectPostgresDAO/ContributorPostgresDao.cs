@@ -506,7 +506,7 @@ namespace Capstone.DAO
             if (reader["contributor_image_id"] != DBNull.Value)
             {
                 int contributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
-                contributor.ContributorImage = _imageDao.GetImageById(contributorImageId);
+                contributor.ContributorImage = _imageDao.GetImage(contributorImageId);
             }
             else
             {

@@ -477,7 +477,7 @@ namespace Capstone.DAO
                 dependencyLibrary.LogoId = Convert.ToInt32(reader["logo_id"]);
 
                 int logoId = Convert.ToInt32(reader["logo_id"]);
-                dependencyLibrary.Logo = _imageDao.GetImageById(logoId);
+                dependencyLibrary.Logo = _imageDao.GetImage(logoId);
             }
             else
             {

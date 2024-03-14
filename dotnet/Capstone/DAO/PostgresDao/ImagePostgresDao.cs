@@ -61,7 +61,7 @@ namespace Capstone.DAO
             return image;
         }
 
-        public Image GetImageById(int imageId)
+        public Image GetImage(int imageId)
         {
             if (imageId <= 0)
             {

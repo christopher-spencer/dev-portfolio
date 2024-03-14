@@ -451,7 +451,7 @@ namespace Capstone.DAO
                 skill.IconId = Convert.ToInt32(reader["icon_id"]);
 
                 int iconId = Convert.ToInt32(reader["icon_id"]);
-                skill.Icon = _imageDao.GetImageById(iconId);
+                skill.Icon = _imageDao.GetImage(iconId);
             }
             else
             {

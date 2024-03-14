@@ -488,7 +488,7 @@ namespace Capstone.DAO
             if (reader["logo_id"] != DBNull.Value)
             {
                 int logoId = Convert.ToInt32(reader["logo_id"]);
-                apiService.Logo = _imageDao.GetImageById(logoId);
+                apiService.Logo = _imageDao.GetImage(logoId);
             }
             else
             {

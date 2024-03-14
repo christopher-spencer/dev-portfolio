@@ -11,7 +11,7 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
         Image CreateImage(Image image);
-        Image GetImageById(int imageId);
+        Image GetImage(int imageId);
         List<Image> GetAllImages();
         Image UpdateImage(Image image, int imageId);
         int DeleteImage(int imageId);

@@ -435,19 +435,20 @@ namespace Capstone.DAO
                 Description = Convert.ToString(reader["description"])
             };
 
-            SetGoalIconIdProperties(reader, goal);
+            int goalId = goal.Id;
+
+            SetGoalIconIdProperties(reader, goal, goalId);
 
             return goal;
         }
 
-        private void SetGoalIconIdProperties(NpgsqlDataReader reader, Goal goal)
+        private void SetGoalIconIdProperties(NpgsqlDataReader reader, Goal goal, int goalId)
         {
             if (reader["icon_id"] != DBNull.Value)
             {
                 goal.IconId = Convert.ToInt32(reader["icon_id"]);
-
-                int iconId = Convert.ToInt32(reader["icon_id"]);
-                goal.Icon = _imageDao.GetImageById(iconId);
+//FIXME check other files for similar mistake to here
+                goal.Icon = _imageDao.GetImageByGoalId(goalId);
             }
             else
             {
