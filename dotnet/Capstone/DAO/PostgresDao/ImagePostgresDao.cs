@@ -67,7 +67,7 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("ImageId must be greater than zero.");
             }
-//FIXME check other files where you may have mistakenly removed id from SELECT
+
             string sql = "SELECT id, name, url FROM images WHERE id = @id;";
 
             try
