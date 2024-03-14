@@ -1103,6 +1103,8 @@ namespace Capstone.DAO
 
         private void SetWebsiteLogoIdProperties(NpgsqlDataReader reader, Website website, int websiteId)
         {
+
+            //FIXME still initializing all logo ids as null instead of setting to 0
             if (reader["logo_id"] != DBNull.Value)
             {
                 website.LogoId = Convert.ToInt32(reader["logo_id"]);
