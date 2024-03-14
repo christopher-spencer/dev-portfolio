@@ -65,7 +65,7 @@ namespace Capstone.Controllers
         [HttpGet("/get-all-dependencies-and-libraries")]
         public ActionResult<List<DependencyLibrary>> GetAllDependenciesAndLibraries()
         {
-            List<DependencyLibrary> dependenciesAndLibraries = _dependencyLibraryDao.GetAllDependenciesAndLibraries();
+            List<DependencyLibrary> dependenciesAndLibraries = _dependencyLibraryDao.GetDependenciesAndLibraries();
 
             if (dependenciesAndLibraries == null)
             {
@@ -106,7 +106,7 @@ namespace Capstone.Controllers
         {
             try
             {
-                int rowsAffected = _dependencyLibraryDao.DeleteDependencyOrLibraryById(dependencyLibraryId);
+                int rowsAffected = _dependencyLibraryDao.DeleteDependencyOrLibrary(dependencyLibraryId);
 
                 if (rowsAffected > 0)
                 {

@@ -12,9 +12,9 @@ namespace Capstone.DAO.Interfaces
         */    
         DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary);
         DependencyLibrary GetDependencyOrLibraryById(int dependencyLibraryId);
-        List<DependencyLibrary> GetAllDependenciesAndLibraries();
+        List<DependencyLibrary> GetDependenciesAndLibraries();
         DependencyLibrary UpdateDependencyOrLibrary(int dependencyLibraryId, DependencyLibrary dependencyLibrary);
-        int DeleteDependencyOrLibraryById(int dependencyLibraryId);
+        int DeleteDependencyOrLibrary(int dependencyLibraryId);
 
         /*  
             **********************************************************************************************

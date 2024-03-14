@@ -307,7 +307,7 @@ namespace Capstone.DAO
                          "FROM websites w " +
                          "JOIN sideproject_websites sw ON w.id = sw.website_id " +
                          "JOIN images i ON w.logo_id = i.id " +
-                         "WHERE sw.sideproject_id = @projectId;";
+                         "WHERE sw.sideproject_id = @sideProjectId;";
 
             try
             {
@@ -317,7 +317,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
