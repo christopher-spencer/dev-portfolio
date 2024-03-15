@@ -162,7 +162,7 @@ namespace Capstone.DAO
             }
 
             string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url, type = @type " +
+                         "SET name = @name, url = @url " +
                          "WHERE id = @websiteId;";
 
             try
@@ -176,7 +176,6 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
-                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
