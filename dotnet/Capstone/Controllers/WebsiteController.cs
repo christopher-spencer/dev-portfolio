@@ -152,25 +152,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{sideProjectId}/website")]
-        public ActionResult<Website> GetWebsiteBySideProjectId(int sideProjectId)
-        {
-            Website website = _websiteDao.GetWebsiteBySideProjectId(sideProjectId);
-
-            if (website == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(website);
-            }
-        }
-
         [HttpGet("/sideproject/{sideProjectId}/website/{websiteId}")]
-        public ActionResult<Website> GetWebsiteBySideProjectIdAndWebsiteId(int sideProjectId, int websiteId)
+        public ActionResult<Website> GetWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
-            Website website = _websiteDao.GetWebsiteBySideProjectIdAndWebsiteId(sideProjectId, websiteId);
+            Website website = _websiteDao.GetWebsiteBySideProjectId(sideProjectId, websiteId);
 
             if (website == null)
             {

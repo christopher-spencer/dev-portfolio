@@ -281,7 +281,7 @@ namespace Capstone.DAO
                 sideProject.MainImageId = Convert.ToInt32(reader["main_image_id"]);
 
                 int mainImageId = Convert.ToInt32(reader["main_image_id"]);
-                sideProject.MainImage = _imageDao.GetImageBySideProjectIdAndImageId(projectId, mainImageId);
+                sideProject.MainImage = _imageDao.GetImageBySideProjectId(projectId, mainImageId);
             }
             else
             {
@@ -296,7 +296,7 @@ namespace Capstone.DAO
                 sideProject.WebsiteId = Convert.ToInt32(reader["website_id"]);
 
                 int websiteId = Convert.ToInt32(reader["website_id"]);
-                sideProject.Website = _websiteDao.GetWebsiteBySideProjectIdAndWebsiteId(projectId, websiteId);
+                sideProject.Website = _websiteDao.GetWebsiteBySideProjectId(projectId, websiteId);
             }
             else
             {
@@ -311,7 +311,7 @@ namespace Capstone.DAO
                 sideProject.GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
 
                 int githubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
-                sideProject.GitHubRepoLink = _websiteDao.GetWebsiteBySideProjectIdAndWebsiteId(projectId, githubRepoLinkId);
+                sideProject.GitHubRepoLink = _websiteDao.GetWebsiteBySideProjectId(projectId, githubRepoLinkId);
             }
             else
             {

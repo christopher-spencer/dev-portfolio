@@ -240,7 +240,7 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("Website URL cannot be null or empty.");
             }
-// FIXME added third statement????
+
             string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
             string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@sideProjectId, @websiteId);";
             string updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
@@ -299,8 +299,8 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-
-        public Website GetWebsiteBySideProjectId(int sideProjectId)
+// FIXME doesnt return the proper website in POSTMAN (Might be related to an issue with it saving ALL sites to SideProject1 before I fixed the sql for CreateWebsiteBySideProjectId)
+        public Website GetWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
             if (sideProjectId <= 0)
             {
@@ -309,11 +309,10 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
+            string sql = "SELECT w.id, w.name, w.url, w.logo_id " +
                          "FROM websites w " +
                          "JOIN sideproject_websites sw ON w.id = sw.website_id " +
-                         "JOIN images i ON w.logo_id = i.id " +
-                         "WHERE sw.sideproject_id = @sideProjectId;";
+                         "WHERE sw.sideproject_id = @sideProjectId AND w.id = @websiteId;";
 
             try
             {
@@ -324,49 +323,6 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-
-                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                website = MapRowToWebsite(reader);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving the website by SideProjectId.", ex);
-            }
-
-            return website;
-        }
-
-        public Website GetWebsiteBySideProjectIdAndWebsiteId(int sideProjectId, int websiteId)
-        {
-            if (sideProjectId <= 0 || websiteId <= 0)
-            {
-                throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
-            }
-
-            Website website = null;
-
-            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
-                         "FROM websites w " +
-                         "JOIN images i ON w.logo_id = i.id " +
-                         "JOIN sideproject_websites sw ON w.id = sw.website_id " +
-                         "WHERE sw.sideproject_id = @projectId AND w.id = @websiteId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@projectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -381,11 +337,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the website by SideProject Id and website ID.", ex);
+                throw new DaoException("An error occurred while retrieving the website by SideProjectId and websiteId.", ex);
             }
 
             return website;
         }
+
+        // TODO create path for GetWebsitesBySideProjectId (?)
 
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
