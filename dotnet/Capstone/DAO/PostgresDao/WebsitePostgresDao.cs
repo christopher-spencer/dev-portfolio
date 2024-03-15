@@ -231,7 +231,7 @@ namespace Capstone.DAO
                                             SIDE PROJECT WEBSITE CRUD
             **********************************************************************************************
         */
-        // FIXME add param for WebsiteType
+// FIXME add WebsiteType param for SIDEPROJECT CREATE
         public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
             if (sideProjectId <= 0)
@@ -254,7 +254,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Website Type cannot be null or empty.");
             }
 
-            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@sideProjectId, @websiteId);";
             //FIXME this sql query is the issue w/ creating website link vs github link (add website type and if statement for diff UPDATES)
             string updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
@@ -275,6 +275,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
 
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -323,7 +324,7 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url, w.logo_id " +
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
                          "FROM websites w " +
                          "JOIN sideproject_websites sw ON w.id = sw.website_id " +
                          "WHERE sw.sideproject_id = @sideProjectId AND w.id = @websiteId;";
@@ -357,8 +358,8 @@ namespace Capstone.DAO
             return website;
         }
 
-        // TODO create path for GetWebsitesBySideProjectId (?)
-
+        // TODO create path for GetWebsite(s) BySideProjectId (?)
+        // TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set the type for CREATE are we good? Consider...
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
@@ -367,7 +368,7 @@ namespace Capstone.DAO
             }
 
             string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url " +
+                         "SET name = @name, url = @url, " +
                          "FROM sideproject_websites " +
                          "WHERE websites.id = sideproject_websites.website_id " +
                          "AND sideproject_websites.sideproject_id = @projectId " +
@@ -440,7 +441,7 @@ namespace Capstone.DAO
                                             CONTRIBUTOR WEBSITE CRUD
             **********************************************************************************************
         */
-
+//FIXME add WebsiteType param to Contributor CREATE
         public Website CreateWebsiteByContributorId(int contributorId, Website website)
         {
             if (contributorId <= 0)
@@ -458,8 +459,14 @@ namespace Capstone.DAO
                 throw new ArgumentException("Website URL cannot be null or empty.");
             }
 
-            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
+            string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertContributorWebsiteSql = "INSERT INTO contributor_websites (contributor_id, website_id) VALUES (@contributorId, @websiteId);";
+            //FIXME if statement here for websitetype
             string updateContributorWebsiteIdSql = "UPDATE contributors SET website_id = @websiteId WHERE id = @contributorId;";
 
             try
@@ -478,6 +485,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
 
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -528,7 +536,7 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url " +
+            string sql = "SELECT w.id, w.name, w.url, w.type " +
                          "FROM websites w " +
                          "JOIN contributor_websites cw ON w.id = cw.website_id " +
                          "WHERE cw.contributor_id = @contributorId";
@@ -647,7 +655,7 @@ namespace Capstone.DAO
                                          API AND SERVICE WEBSITE CRUD
             **********************************************************************************************
         */
-
+//FIXME add websiteType param to APISERVICE CREATE
         public Website CreateWebsiteByApiServiceId(int apiServiceId, Website website)
         {
             if (apiServiceId <= 0)
