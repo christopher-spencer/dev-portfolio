@@ -484,10 +484,10 @@ namespace Capstone.DAO
 
         private void SetApiServiceLogoIdProperties(NpgsqlDataReader reader, ApiService apiService, int apiServiceId)
         {
-            apiService.LogoId = Convert.ToInt32(reader["logo_id"]);
-
             if (reader["logo_id"] != DBNull.Value)
             {
+                apiService.LogoId = Convert.ToInt32(reader["logo_id"]);
+
                 apiService.Logo = _imageDao.GetImageByApiServiceId(apiServiceId);
             }
             else

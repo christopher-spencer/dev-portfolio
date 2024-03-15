@@ -503,10 +503,10 @@ namespace Capstone.DAO
 
         private void SetContributorImageIdProperties(NpgsqlDataReader reader, Contributor contributor, int contributorId)
         {
-            contributor.ContributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
-
             if (reader["contributor_image_id"] != DBNull.Value)
             {
+                contributor.ContributorImageId = Convert.ToInt32(reader["contributor_image_id"]);
+
                 contributor.ContributorImage = _imageDao.GetImageByContributorId(contributorId);
             }
             else
@@ -517,10 +517,10 @@ namespace Capstone.DAO
 
         private void SetContributorLinkedInIdProperties(NpgsqlDataReader reader, Contributor contributor, int contributorId)
         {
-            contributor.LinkedInId = Convert.ToInt32(reader["linkedin_id"]);
-
             if (reader["linkedin_id"] != DBNull.Value)
             {
+                contributor.LinkedInId = Convert.ToInt32(reader["linkedin_id"]);
+
                 contributor.LinkedIn = _websiteDao.GetWebsiteByContributorId(contributorId);
             }
             else
@@ -531,10 +531,10 @@ namespace Capstone.DAO
 
         private void SetContributorGitHubIdProperties(NpgsqlDataReader reader, Contributor contributor, int contributorId)
         {
-            contributor.GitHubId = Convert.ToInt32(reader["github_id"]);
-
             if (reader["github_id"] != DBNull.Value)
             {
+                contributor.GitHubId = Convert.ToInt32(reader["github_id"]);
+
                 contributor.GitHub = _websiteDao.GetWebsiteByContributorId(contributorId);
             }
             else
@@ -545,10 +545,10 @@ namespace Capstone.DAO
 
         private void SetContributorPortfolioIdProperties(NpgsqlDataReader reader, Contributor contributor, int contributorId)
         {
-            contributor.PortfolioId = Convert.ToInt32(reader["portfolio_id"]);
-
             if (reader["portfolio_id"] != DBNull.Value)
             {
+                contributor.PortfolioId = Convert.ToInt32(reader["portfolio_id"]);
+
                 contributor.PortfolioLink = _websiteDao.GetWebsiteByContributorId(contributorId);
             }
             else
