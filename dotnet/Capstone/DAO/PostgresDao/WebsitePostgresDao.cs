@@ -673,8 +673,14 @@ namespace Capstone.DAO
                 throw new ArgumentException("Website URL cannot be null or empty.");
             }
 
-            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
+            string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertApiServiceWebsiteSql = "INSERT INTO api_service_websites (apiservice_id, website_id) VALUES (@apiServiceId, @websiteId);";
+            // FIXME if statement here
             string updateApiServiceWebsiteIdSql = "UPDATE apis_and_services SET website_id = @websiteId WHERE id = @apiServiceId;";
 
             try
@@ -693,6 +699,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
 
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -743,7 +750,7 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url " +
+            string sql = "SELECT w.id, w.name, w.url, w.type " +
                          "FROM websites w " +
                          "JOIN api_service_websites aw ON w.id = aw.website_id " +
                          "WHERE aw.apiservice_id = @apiServiceId";
@@ -862,7 +869,7 @@ namespace Capstone.DAO
                                         DEPENDENCY AND LIBRARY WEBSITE CRUD
             **********************************************************************************************
         */
-
+// FIXME add WebsiteType param for DEPLIB CREATE
         public Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website)
         {
             if (dependencyLibraryId <= 0)
@@ -880,8 +887,14 @@ namespace Capstone.DAO
                 throw new ArgumentException("Website URL cannot be null or empty.");
             }
 
-            string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
+            string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertDependencyLibraryWebsiteSql = "INSERT INTO dependency_library_websites (dependencylibrary_id, website_id) VALUES (@dependencyLibraryId, @websiteId);";
+            // FIXME if statement here
             string updateDependencyLibraryWebsiteIdSql = "UPDATE dependencies_and_libraries SET website_id = @websiteId WHERE id = @dependencyLibraryId;";
 
             try
@@ -900,6 +913,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);                                
 
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -950,7 +964,7 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url " +
+            string sql = "SELECT w.id, w.name, w.url, w.type " +
                          "FROM websites w " +
                          "JOIN dependency_library_websites dw ON w.id = dw.website_id " +
                          "WHERE dw.dependencylibrary_id = @dependencyLibraryId";
