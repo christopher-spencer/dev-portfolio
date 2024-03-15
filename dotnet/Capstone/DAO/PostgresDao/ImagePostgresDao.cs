@@ -1570,7 +1570,6 @@ namespace Capstone.DAO
                                          API AND SERVICE IMAGE CRUD
             **********************************************************************************************
         */
-// FIXME getting "An error occurred while creating the API/service image" in Postman
         public Image CreateImageByApiServiceId(int apiServiceId, Image image)
         {
             if (apiServiceId <= 0)
@@ -1589,7 +1588,7 @@ namespace Capstone.DAO
             }
 
             string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
-            string insertApiServiceImageSql = "INSERT INTO api_service_images (api_service_id, image_id) VALUES (@apiServiceId, @imageId);";
+            string insertApiServiceImageSql = "INSERT INTO api_service_images (apiservice_id, image_id) VALUES (@apiServiceId, @imageId);";
             string updateApiServiceLogoIdSql = "UPDATE apis_and_services SET logo_id = @imageId WHERE id = @apiServiceId;";
 
             try
@@ -1659,7 +1658,7 @@ namespace Capstone.DAO
             string sql = "SELECT i.id, i.name, i.url " +
                          "FROM images i " +
                          "JOIN api_service_images asi ON i.id = asi.image_id " +
-                         "WHERE asi.api_service_id = @apiServiceId";
+                         "WHERE asi.apiservice_id = @apiServiceId";
 
             try
             {
@@ -1699,7 +1698,7 @@ namespace Capstone.DAO
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url " +
                                     "FROM api_service_images " +
-                                    "WHERE images.id = api_service_images.image_id AND api_service_images.api_service_id = @apiServiceId " +
+                                    "WHERE images.id = api_service_images.image_id AND api_service_images.apiservice_id = @apiServiceId " +
                                     "AND images.id = @imageId;";
 
             try
@@ -1739,7 +1738,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ApiServiceId and imageId must be greater than zero.");
             }
 
-            string deleteApiServiceImageSql = "DELETE FROM api_service_images WHERE api_service_id = @apiServiceId AND image_id = @imageId;";
+            string deleteApiServiceImageSql = "DELETE FROM api_service_images WHERE apiservice_id = @apiServiceId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
             try
