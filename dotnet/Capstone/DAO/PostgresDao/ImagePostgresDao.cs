@@ -1570,7 +1570,7 @@ namespace Capstone.DAO
                                          API AND SERVICE IMAGE CRUD
             **********************************************************************************************
         */
-
+// FIXME getting "An error occurred while creating the API/service image" in Postman
         public Image CreateImageByApiServiceId(int apiServiceId, Image image)
         {
             if (apiServiceId <= 0)

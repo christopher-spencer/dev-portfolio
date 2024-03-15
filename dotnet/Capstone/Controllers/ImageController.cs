@@ -698,7 +698,7 @@ namespace Capstone.Controllers
                                         API AND SERVICE IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-
+//FIXME debug this method, getting DaoException & not creating image at all
         [Authorize]
         [HttpPost("/api-service/{apiServiceId}/create-image")]
         public ActionResult CreateImageByApiServiceId(int apiServiceId, Image image)
