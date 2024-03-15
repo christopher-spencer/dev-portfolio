@@ -278,7 +278,7 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the image.", ex);
+                            throw new DaoException("An error occurred while creating the image for the side project.", ex);
                         }
                     }
                 }
@@ -326,7 +326,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the image by sideProject ID.", ex);
+                throw new DaoException("An error occurred while retrieving the image by sideProject ID and image ID.", ex);
             }
 
             return image;
@@ -373,49 +373,6 @@ namespace Capstone.DAO
             }
 
             return images;
-        }
-
-        public Image GetImageBySideProjectIdAndImageId(int sideProjectId, int imageId)
-        {
-            if (sideProjectId <= 0 || imageId <= 0)
-            {
-                throw new ArgumentException("SideProjectId and imageId must be greater than zero.");
-            }
-
-            Image image = null;
-
-            string sql = "SELECT i.id, i.name, i.url " +
-                         "FROM images i " +
-                         "JOIN sideproject_images spi ON i.id = spi.image_id " +
-                         "WHERE spi.sideproject_id = @sideProjectId AND i.id = @imageId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
-
-                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                image = MapRowToImage(reader);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while retrieving the image by sideProject ID and image ID.", ex);
-            }
-
-            return image;
         }
 
         public Image UpdateImageBySideProjectId(int sideProjectId, int imageId, Image image)
