@@ -130,7 +130,7 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("/sideproject/{sideProjectId}/create-website")]
+        [HttpPost("/sideproject/{sideProjectId}/create-website/")]
         public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
             try
