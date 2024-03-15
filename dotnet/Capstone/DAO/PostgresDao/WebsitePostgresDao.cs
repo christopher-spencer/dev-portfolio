@@ -72,10 +72,9 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
-                         "FROM websites w " +
-                         "JOIN images i ON w.logo_id = i.id " +
-                         "WHERE w.id = @id;";
+            string sql = "SELECT id, name, url, logo_id " +
+                         "FROM websites " +
+                         "WHERE id = @id;";
 
             try
             {
@@ -109,9 +108,8 @@ namespace Capstone.DAO
         {
             List<Website> websites = new List<Website>();
 
-            string sql = "SELECT w.id, w.name, w.url, i.name AS logo_name, i.url AS logo_url " +
-                         "FROM websites w " +
-                         "JOIN images i ON w.logo_id = i.id;";
+            string sql = "SELECT id, name, url, logo_id " +
+                         "FROM websites;";
 
             try
             {

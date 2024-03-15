@@ -65,7 +65,7 @@ namespace Capstone.Controllers
         [HttpGet("/images")]
         public ActionResult<List<Image>> GetImages()
         {
-            List<Image> images = _imageDao.GetAllImages();
+            List<Image> images = _imageDao.GetImages();
 
             if (images == null)
             {

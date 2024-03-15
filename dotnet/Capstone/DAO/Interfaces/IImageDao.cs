@@ -12,7 +12,7 @@ namespace Capstone.DAO.Interfaces
         */
         Image CreateImage(Image image);
         Image GetImage(int imageId);
-        List<Image> GetAllImages();
+        List<Image> GetImages();
         Image UpdateImage(Image image, int imageId);
         int DeleteImage(int imageId);
 

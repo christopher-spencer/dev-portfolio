@@ -98,7 +98,7 @@ namespace Capstone.DAO
             return null;
         }
 
-        public List<Image> GetAllImages()
+        public List<Image> GetImages()
         {
             List<Image> images = new List<Image>();
 
