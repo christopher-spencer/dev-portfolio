@@ -37,7 +37,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Website URL cannot be null or empty.");
             }
 
-            string sql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";
+            string sql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
 
             try
             {
@@ -49,6 +49,7 @@ namespace Capstone.DAO
                     {
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int id = Convert.ToInt32(cmd.ExecuteScalar());
                         website.Id = id;
@@ -72,7 +73,7 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT id, name, url, logo_id " +
+            string sql = "SELECT id, name, url, type, logo_id " +
                          "FROM websites " +
                          "WHERE id = @id;";
 
@@ -108,7 +109,7 @@ namespace Capstone.DAO
         {
             List<Website> websites = new List<Website>();
 
-            string sql = "SELECT id, name, url, logo_id " +
+            string sql = "SELECT id, name, url, type, logo_id " +
                          "FROM websites;";
 
             try
@@ -150,13 +151,18 @@ namespace Capstone.DAO
                 throw new ArgumentException("Website URL cannot be null or empty.");
             }
 
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
             if (websiteId <= 0)
             {
                 throw new ArgumentException("WebsiteId must be greater than zero.");
             }
 
             string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url " +
+                         "SET name = @name, url = @url, type = @type " +
                          "WHERE id = @websiteId;";
 
             try
@@ -170,6 +176,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -224,6 +231,7 @@ namespace Capstone.DAO
                                             SIDE PROJECT WEBSITE CRUD
             **********************************************************************************************
         */
+        // FIXME add param for WebsiteType
         public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
             if (sideProjectId <= 0)
@@ -239,6 +247,11 @@ namespace Capstone.DAO
             if (string.IsNullOrEmpty(website.Url))
             {
                 throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
             }
 
             string insertWebsiteSql = "INSERT INTO websites (name, url) VALUES (@name, @url) RETURNING id;";

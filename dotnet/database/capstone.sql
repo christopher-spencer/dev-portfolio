@@ -41,11 +41,12 @@ CREATE TABLE images (
     name VARCHAR(50) NOT NULL,
     url VARCHAR(2000) NOT NULL
 );
-
+//TODO CHECK WEBSITE TYPE IN SQL
 CREATE TABLE websites (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     url VARCHAR(2000) NOT NULL,
+    type VARCHAR(30) NOT NULL,
     logo_id INTEGER,
     FOREIGN KEY (logo_id) REFERENCES images(id)
 );
