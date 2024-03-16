@@ -1408,6 +1408,7 @@ namespace Capstone.DAO
             }
 
             Image image = null;
+            
             string sql = "SELECT i.id, i.name, i.url " +
                          "FROM images i " +
                          "JOIN contributor_images ci ON i.id = ci.image_id " +

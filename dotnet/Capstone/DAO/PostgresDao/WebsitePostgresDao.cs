@@ -313,6 +313,7 @@ namespace Capstone.DAO
                             transaction.Commit();
 
                             website.Id = websiteId;
+                            website.Type = websiteType;
 
                             return website;
                         }
