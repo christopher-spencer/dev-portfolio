@@ -128,11 +128,16 @@ namespace Capstone.Controllers
                                             SIDE PROJECT WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-// FIXME got it setting via websiteType, but in the JSON it is resetting type to null for some reason
+
         [Authorize]
         [HttpPost("/sideproject/{sideProjectId}/create-website/{websiteType}")]
         public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
         {
+//TODO add check like this everywhere with websiteType            
+            if (websiteType != "website" && websiteType != "github")
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'website' and 'github'.");
+            }
             try
             {
                 Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(sideProjectId, website, websiteType);

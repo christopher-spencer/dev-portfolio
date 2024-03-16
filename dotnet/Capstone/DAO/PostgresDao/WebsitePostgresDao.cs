@@ -37,6 +37,11 @@ namespace Capstone.DAO
                 throw new ArgumentException("Website URL cannot be null or empty.");
             }
 
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
             string sql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
 
             try
@@ -230,7 +235,7 @@ namespace Capstone.DAO
                                             SIDE PROJECT WEBSITE CRUD
             **********************************************************************************************
         */
-        // FIXME add WebsiteType param for SIDEPROJECT CREATE
+
         public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
         {
             if (sideProjectId <= 0)
@@ -312,7 +317,6 @@ namespace Capstone.DAO
                             transaction.Commit();
 
                             website.Id = websiteId;
-                            website.Type = websiteType;
 
                             return website;
                         }
@@ -330,7 +334,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-        // FIXME doesnt return the proper website in POSTMAN (Might be related to an issue with it saving ALL sites to SideProject1 before I fixed the sql for CreateWebsiteBySideProjectId)
+
         public Website GetWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
             if (sideProjectId <= 0)
@@ -1107,6 +1111,7 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
+                Type = Convert.ToString(reader["type"]),
                 Url = Convert.ToString(reader["url"])
             };
 
