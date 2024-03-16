@@ -235,7 +235,7 @@ namespace Capstone.Controllers
 
             if (websiteType != "linkedin" && websiteType != "github" && websiteType != "portfoliolink")
             {
-                return BadRequest("Invalid websiteType. Allowed values are 'website' and 'github' and 'portfoliolink'.");
+                return BadRequest("Invalid websiteType. Allowed values are 'linkedin' and 'github' and 'portfoliolink'.");
             }
 
             try

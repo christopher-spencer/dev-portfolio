@@ -330,7 +330,6 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-
         public Website GetWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
             if (sideProjectId <= 0)
@@ -487,7 +486,7 @@ namespace Capstone.DAO
 
             switch (websiteType)
             {
-                case "porfoliolink":
+                case "portfoliolink":
                     updateContributorWebsiteIdSql = "UPDATE contributors SET portfolio_id = @websiteId WHERE id = @contributorId;";
                     break;
                 case "github":
@@ -499,7 +498,6 @@ namespace Capstone.DAO
                 default:
                     throw new ArgumentException("Invalid website type.");
             }
-
 
             try
             {
@@ -566,7 +564,7 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url, w.type " +
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
                          "FROM websites w " +
                          "JOIN contributor_websites cw ON w.id = cw.website_id " +
                          "WHERE cw.contributor_id = @contributorId";
@@ -598,7 +596,7 @@ namespace Capstone.DAO
 
             return website;
         }
-
+// TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set the type for CREATE are we good? Consider...
         public Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
         {
             if (contributorId <= 0 || websiteId <= 0)
