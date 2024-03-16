@@ -1387,7 +1387,7 @@ namespace Capstone.DAO
                         catch (Exception ex)
                         {
                             transaction.Rollback();
-                            
+
                             throw new DaoException("An error occurred while creating the image for the contributor.", ex);
                         }
                     }
@@ -1779,7 +1779,7 @@ namespace Capstone.DAO
                                 cmdInsertLibraryImage.Parameters.AddWithValue("@imageId", imageId);
                                 cmdInsertLibraryImage.ExecuteNonQuery();
                             }
-// FIXME hitting DaoException here
+
                             using (NpgsqlCommand cmdUpdateLibraryLogoId = new NpgsqlCommand(updateLibraryLogoIdSql, connection))
                             {
                                 cmdUpdateLibraryLogoId.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);

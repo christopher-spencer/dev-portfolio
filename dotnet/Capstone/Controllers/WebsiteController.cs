@@ -133,7 +133,6 @@ namespace Capstone.Controllers
         [HttpPost("/sideproject/{sideProjectId}/create-website/{websiteType}")]
         public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
         {
-//TODO add check like this everywhere with websiteType      
             websiteType = websiteType.ToLower();
       //TODO change to "main website" or something
             if (websiteType != "website" && websiteType != "github")

@@ -340,7 +340,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-//FIXME having similair issue from before in another where when i create a new imagebywebsiteid it doesnt link it and put in to websiteid in Dependency Library. The websiteId is linked, but not its associated image*********        
+//FIXME having similar issue from before in another where when i create a new imagebywebsiteid it doesnt link it and put in to websiteid in Dependency Library. The websiteId is linked, but not its associated image*********        
         [Authorize]
         [HttpPost("/website/{websiteId}/create-image")]
         public ActionResult CreateImageByWebsiteId(int websiteId, Image image)
