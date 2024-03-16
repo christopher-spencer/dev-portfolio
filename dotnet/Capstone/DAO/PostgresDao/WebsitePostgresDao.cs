@@ -555,8 +555,9 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-
-        public Website GetWebsiteByContributorId(int contributorId)
+// FIXME add GetWEBSITESByContributorId
+// FIXME add GetWebsiteByContributorIdAndWebsiteId ***
+        public Website GetWebsiteByContributorId(int contributorId, int websiteId)
         {
             if (contributorId <= 0)
             {
@@ -568,7 +569,7 @@ namespace Capstone.DAO
             string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
                          "FROM websites w " +
                          "JOIN contributor_websites cw ON w.id = cw.website_id " +
-                         "WHERE cw.contributor_id = @contributorId";
+                         "WHERE cw.contributor_id = @contributorId AND w.id = @websiteId";
 
             try
             {
@@ -579,6 +580,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);                        
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -778,7 +780,7 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url, w.type " +
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
                          "FROM websites w " +
                          "JOIN api_service_websites aw ON w.id = aw.website_id " +
                          "WHERE aw.apiservice_id = @apiServiceId";
@@ -990,7 +992,7 @@ namespace Capstone.DAO
 
             Website website = null;
 
-            string sql = "SELECT w.id, w.name, w.url, w.type " +
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
                          "FROM websites w " +
                          "JOIN dependency_library_websites dw ON w.id = dw.website_id " +
                          "WHERE dw.dependencylibrary_id = @dependencyLibraryId";

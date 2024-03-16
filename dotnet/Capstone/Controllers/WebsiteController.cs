@@ -258,10 +258,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/contributor/{contributorId}/website")]
-        public ActionResult<Website> GetWebsiteByContributorId(int contributorId)
+        [HttpGet("/contributor/{contributorId}/website/{websiteId}")]
+        public ActionResult<Website> GetWebsiteByContributorId(int contributorId, int websiteId)
         {
-            Website website = _websiteDao.GetWebsiteByContributorId(contributorId);
+            Website website = _websiteDao.GetWebsiteByContributorId(contributorId, websiteId);
 
             if (website == null)
             {
