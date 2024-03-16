@@ -226,7 +226,8 @@ namespace Capstone.Controllers
                                             CONTRIBUTOR WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-
+//FIXME creating portfolioLInk is not resetting initial link in portfoliolink section even tho portfolioid seems to change for SIDEPROJECTS
+//FIXME its same issue for all links, where website id updates in SideProject but it isn't getting new object associated w/ that id******
         [Authorize]
         [HttpPost("/contributor/{contributorId}/create-website/{websiteType}")]
         public ActionResult CreateWebsiteByContributorId(int contributorId, Website website, string websiteType)
