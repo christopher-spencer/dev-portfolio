@@ -262,20 +262,19 @@ namespace Capstone.DAO
             string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@sideProjectId, @websiteId);";
 
             string updateSideProjectWebsiteSql;
-            //FIXME this sql query is the issue w/ creating website link vs github link (add website type and if statement for diff UPDATES)
-            if (websiteType == "website")
-            {
-                updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
-            }
-            else if (websiteType == "github")
-            {
-                updateSideProjectWebsiteSql = "UPDATE sideprojects SET github_repo_link_id = @websiteId WHERE id = @sideProjectId;";
 
-            }
-            else
+            switch (websiteType)
             {
-                throw new ArgumentException("Invalid website type.");
+                case "website":
+                    updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
+                    break;
+                case "github":
+                    updateSideProjectWebsiteSql = "UPDATE sideprojects SET github_repo_link_id = @websiteId WHERE id = @sideProjectId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
             }
+
 
 
 
@@ -462,7 +461,7 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
         //FIXME add WebsiteType param to Contributor CREATE
-        public Website CreateWebsiteByContributorId(int contributorId, Website website)
+        public Website CreateWebsiteByContributorId(int contributorId, Website website, string websiteType)
         {
             if (contributorId <= 0)
             {
@@ -486,8 +485,24 @@ namespace Capstone.DAO
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertContributorWebsiteSql = "INSERT INTO contributor_websites (contributor_id, website_id) VALUES (@contributorId, @websiteId);";
-            //FIXME if statement here for websitetype
-            string updateContributorWebsiteIdSql = "UPDATE contributors SET website_id = @websiteId WHERE id = @contributorId;";
+
+            string updateContributorWebsiteIdSql;
+
+            switch (websiteType)
+            {
+                case "porfoliolink":
+                    updateContributorWebsiteIdSql = "UPDATE contributors SET portfolio_id = @websiteId WHERE id = @contributorId;";
+                    break;
+                case "github":
+                    updateContributorWebsiteIdSql = "UPDATE contributors SET github_id = @websiteId WHERE id = @contributorId;";
+                    break;
+                case "linkedin":
+                    updateContributorWebsiteIdSql = "UPDATE contributors SET linkedin_id = @websiteId WHERE id = @contributorId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
+
 
             try
             {
@@ -514,7 +529,6 @@ namespace Capstone.DAO
                             {
                                 cmdInsertContributorWebsite.Parameters.AddWithValue("@contributorId", contributorId);
                                 cmdInsertContributorWebsite.Parameters.AddWithValue("@websiteId", websiteId);
-
                                 cmdInsertContributorWebsite.ExecuteNonQuery();
                             }
 
@@ -522,7 +536,6 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateContributor.Parameters.AddWithValue("@contributorId", contributorId);
                                 cmdUpdateContributor.Parameters.AddWithValue("@websiteId", websiteId);
-
                                 cmdUpdateContributor.ExecuteNonQuery();
                             }
 

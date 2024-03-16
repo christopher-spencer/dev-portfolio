@@ -133,11 +133,14 @@ namespace Capstone.Controllers
         [HttpPost("/sideproject/{sideProjectId}/create-website/{websiteType}")]
         public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
         {
-//TODO add check like this everywhere with websiteType            
+//TODO add check like this everywhere with websiteType      
+            websiteType = websiteType.ToLower();
+      //TODO change to "main website" or something
             if (websiteType != "website" && websiteType != "github")
             {
                 return BadRequest("Invalid websiteType. Allowed values are 'website' and 'github'.");
             }
+
             try
             {
                 Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(sideProjectId, website, websiteType);
@@ -225,12 +228,19 @@ namespace Capstone.Controllers
         */
 
         [Authorize]
-        [HttpPost("/contributor/{contributorId}/create-website")]
-        public ActionResult CreateWebsiteByContributorId(int contributorId, Website website)
+        [HttpPost("/contributor/{contributorId}/create-website/{websiteType}")]
+        public ActionResult CreateWebsiteByContributorId(int contributorId, Website website, string websiteType)
         {
+            websiteType = websiteType.ToLower();
+
+            if (websiteType != "linkedin" && websiteType != "github" && websiteType != "portfoliolink")
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'website' and 'github' and 'portfoliolink'.");
+            }
+
             try
             {
-                Website createdWebsite = _websiteDao.CreateWebsiteByContributorId(contributorId, website);
+                Website createdWebsite = _websiteDao.CreateWebsiteByContributorId(contributorId, website, websiteType);
 
                 if (createdWebsite == null)
                 {
