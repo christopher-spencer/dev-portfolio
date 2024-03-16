@@ -949,7 +949,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmdInsertDependencyLibraryWebsite = new NpgsqlCommand(insertDependencyLibraryWebsiteSql, connection))
                             {
                                 cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                                cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@websiteId", website.Id);
+                                cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@websiteId", websiteId);
 
                                 cmdInsertDependencyLibraryWebsite.ExecuteNonQuery();
                             }
@@ -957,7 +957,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmdUpdateDependencyLibrary = new NpgsqlCommand(updateDependencyLibraryWebsiteIdSql, connection))
                             {
                                 cmdUpdateDependencyLibrary.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                                cmdUpdateDependencyLibrary.Parameters.AddWithValue("@websiteId", website.Id);
+                                cmdUpdateDependencyLibrary.Parameters.AddWithValue("@websiteId", websiteId);
 
                                 cmdUpdateDependencyLibrary.ExecuteNonQuery();
                             }
