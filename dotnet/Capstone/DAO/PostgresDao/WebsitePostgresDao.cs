@@ -275,9 +275,6 @@ namespace Capstone.DAO
                     throw new ArgumentException("Invalid website type.");
             }
 
-
-
-
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -460,7 +457,7 @@ namespace Capstone.DAO
                                             CONTRIBUTOR WEBSITE CRUD
             **********************************************************************************************
         */
-        //FIXME add WebsiteType param to Contributor CREATE
+
         public Website CreateWebsiteByContributorId(int contributorId, Website website, string websiteType)
         {
             if (contributorId <= 0)
@@ -688,7 +685,7 @@ namespace Capstone.DAO
                                          API AND SERVICE WEBSITE CRUD
             **********************************************************************************************
         */
-        //FIXME add websiteType param to APISERVICE CREATE
+
         public Website CreateWebsiteByApiServiceId(int apiServiceId, Website website)
         {
             if (apiServiceId <= 0)
@@ -713,7 +710,6 @@ namespace Capstone.DAO
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertApiServiceWebsiteSql = "INSERT INTO api_service_websites (apiservice_id, website_id) VALUES (@apiServiceId, @websiteId);";
-            // FIXME if statement here
             string updateApiServiceWebsiteIdSql = "UPDATE apis_and_services SET website_id = @websiteId WHERE id = @apiServiceId;";
 
             try
@@ -902,7 +898,6 @@ namespace Capstone.DAO
                                         DEPENDENCY AND LIBRARY WEBSITE CRUD
             **********************************************************************************************
         */
-        // FIXME add WebsiteType param for DEPLIB CREATE
         public Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website)
         {
             if (dependencyLibraryId <= 0)
@@ -927,7 +922,6 @@ namespace Capstone.DAO
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertDependencyLibraryWebsiteSql = "INSERT INTO dependency_library_websites (dependencylibrary_id, website_id) VALUES (@dependencyLibraryId, @websiteId);";
-            // FIXME if statement here
             string updateDependencyLibraryWebsiteIdSql = "UPDATE dependencies_and_libraries SET website_id = @websiteId WHERE id = @dependencyLibraryId;";
 
             try
