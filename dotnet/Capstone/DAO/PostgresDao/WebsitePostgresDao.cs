@@ -230,8 +230,8 @@ namespace Capstone.DAO
                                             SIDE PROJECT WEBSITE CRUD
             **********************************************************************************************
         */
-// FIXME add WebsiteType param for SIDEPROJECT CREATE
-        public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website)
+        // FIXME add WebsiteType param for SIDEPROJECT CREATE
+        public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
         {
             if (sideProjectId <= 0)
             {
@@ -255,9 +255,25 @@ namespace Capstone.DAO
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@sideProjectId, @websiteId);";
+
+            string updateSideProjectWebsiteSql;
             //FIXME this sql query is the issue w/ creating website link vs github link (add website type and if statement for diff UPDATES)
-            string updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
-          
+            if (websiteType == "website")
+            {
+                updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
+            }
+            else if (websiteType == "github")
+            {
+                updateSideProjectWebsiteSql = "UPDATE sideprojects SET github_repo_link_id = @websiteId WHERE id = @sideProjectId;";
+
+            }
+            else
+            {
+                throw new ArgumentException("Invalid website type.");
+            }
+
+
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -296,6 +312,7 @@ namespace Capstone.DAO
                             transaction.Commit();
 
                             website.Id = websiteId;
+                            website.Type = websiteType;
 
                             return website;
                         }
@@ -313,7 +330,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-// FIXME doesnt return the proper website in POSTMAN (Might be related to an issue with it saving ALL sites to SideProject1 before I fixed the sql for CreateWebsiteBySideProjectId)
+        // FIXME doesnt return the proper website in POSTMAN (Might be related to an issue with it saving ALL sites to SideProject1 before I fixed the sql for CreateWebsiteBySideProjectId)
         public Website GetWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
             if (sideProjectId <= 0)
@@ -440,7 +457,7 @@ namespace Capstone.DAO
                                             CONTRIBUTOR WEBSITE CRUD
             **********************************************************************************************
         */
-//FIXME add WebsiteType param to Contributor CREATE
+        //FIXME add WebsiteType param to Contributor CREATE
         public Website CreateWebsiteByContributorId(int contributorId, Website website)
         {
             if (contributorId <= 0)
@@ -654,7 +671,7 @@ namespace Capstone.DAO
                                          API AND SERVICE WEBSITE CRUD
             **********************************************************************************************
         */
-//FIXME add websiteType param to APISERVICE CREATE
+        //FIXME add websiteType param to APISERVICE CREATE
         public Website CreateWebsiteByApiServiceId(int apiServiceId, Website website)
         {
             if (apiServiceId <= 0)
@@ -868,7 +885,7 @@ namespace Capstone.DAO
                                         DEPENDENCY AND LIBRARY WEBSITE CRUD
             **********************************************************************************************
         */
-// FIXME add WebsiteType param for DEPLIB CREATE
+        // FIXME add WebsiteType param for DEPLIB CREATE
         public Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website)
         {
             if (dependencyLibraryId <= 0)
@@ -912,7 +929,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);                                
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
 
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }

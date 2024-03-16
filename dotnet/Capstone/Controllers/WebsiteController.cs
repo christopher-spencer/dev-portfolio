@@ -128,14 +128,14 @@ namespace Capstone.Controllers
                                             SIDE PROJECT WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-
+// FIXME got it setting via websiteType, but in the JSON it is resetting type to null for some reason
         [Authorize]
-        [HttpPost("/sideproject/{sideProjectId}/create-website/")]
-        public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website)
+        [HttpPost("/sideproject/{sideProjectId}/create-website/{websiteType}")]
+        public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
         {
             try
             {
-                Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(sideProjectId, website);
+                Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(sideProjectId, website, websiteType);
 
                 if (createdWebsite == null)
                 {
