@@ -982,7 +982,7 @@ namespace Capstone.DAO
             }
         }
 
-        public Website GetWebsiteByDependencyLibraryId(int dependencyLibraryId)
+        public Website GetWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId)
         {
             if (dependencyLibraryId <= 0)
             {
@@ -994,7 +994,7 @@ namespace Capstone.DAO
             string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
                          "FROM websites w " +
                          "JOIN dependency_library_websites dw ON w.id = dw.website_id " +
-                         "WHERE dw.dependencylibrary_id = @dependencyLibraryId";
+                         "WHERE dw.dependencylibrary_id = @dependencyLibraryId AND dw.website_id = @websiteId";
 
             try
             {
@@ -1005,6 +1005,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -1136,8 +1137,9 @@ namespace Capstone.DAO
             if (reader["logo_id"] != DBNull.Value)
             {
                 website.LogoId = Convert.ToInt32(reader["logo_id"]);
+                int imageId = website.LogoId;
 
-                website.Logo = _imageDao.GetImageByWebsiteId(websiteId);
+                website.Logo = _imageDao.GetImageByWebsiteId(websiteId, imageId);
             }
             else
             {

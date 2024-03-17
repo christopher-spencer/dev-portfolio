@@ -225,8 +225,7 @@ namespace Capstone.Controllers
                                             CONTRIBUTOR WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-//FIXME creating portfolioLInk is not resetting initial link in portfoliolink section even tho portfolioid seems to change for SIDEPROJECTS
-//FIXME its same issue for all links, where website id updates in SideProject but it isn't getting new object associated w/ that id******
+//FIXME MAY NEED TO SEND ADDITIONAL IDS INTO SOME OF YOUR GET METHODS AND UPDATE MAP ROWS ACCORDINGLY TO ASSOCIATE WITH THE CORRECT OBJECTS
         [Authorize]
         [HttpPost("/contributor/{contributorId}/create-website/{websiteType}")]
         public ActionResult CreateWebsiteByContributorId(int contributorId, Website website, string websiteType)
@@ -435,10 +434,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/dependency-library/{dependencyLibraryId}/website")]
-        public ActionResult<Website> GetWebsiteByDependencyLibraryId(int dependencyLibraryId)
+        [HttpGet("/dependency-library/{dependencyLibraryId}/website/{websiteId}")]
+        public ActionResult<Website> GetWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId)
         {
-            Website website = _websiteDao.GetWebsiteByDependencyLibraryId(dependencyLibraryId);
+            Website website = _websiteDao.GetWebsiteByDependencyLibraryId(dependencyLibraryId, websiteId);
 
             if (website == null)
             {

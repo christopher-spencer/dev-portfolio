@@ -787,11 +787,11 @@ namespace Capstone.DAO
             }
         }
 
-        public Image GetImageByWebsiteId(int websiteId)
+        public Image GetImageByWebsiteId(int websiteId, int imageId)
         {
-            if (websiteId <= 0)
+            if (websiteId <= 0 || imageId <= 0)
             {
-                throw new ArgumentException("WebsiteId must be greater than zero.");
+                throw new ArgumentException("WebsiteId and ImageId must be greater than zero.");
             }
 
             Image image = null;
@@ -799,7 +799,7 @@ namespace Capstone.DAO
             string sql = "SELECT i.id, i.name, i.url " +
                          "FROM images i " +
                          "JOIN website_images wi ON i.id = wi.image_id " +
-                         "WHERE wi.website_id = @websiteId";
+                         "WHERE wi.website_id = @websiteId AND wi.image_id = @imageId";
 
             try
             {
@@ -810,6 +810,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -823,7 +824,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the image by website ID.", ex);
+                throw new DaoException("An error occurred while retrieving the image by website ID and image ID.", ex);
             }
 
             return image;

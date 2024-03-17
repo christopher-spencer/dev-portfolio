@@ -364,10 +364,10 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/website/{websiteId}/image")]
-        public ActionResult<Image> GetImageByWebsiteId(int websiteId)
+        [HttpGet("/website/{websiteId}/image/{imageId}")]
+        public ActionResult<Image> GetImageByWebsiteId(int websiteId, int imageId)
         {
-            Image logo = _imageDao.GetImageByWebsiteId(websiteId);
+            Image logo = _imageDao.GetImageByWebsiteId(websiteId, imageId);
 
             if (logo == null)
             {
