@@ -1078,7 +1078,7 @@ namespace Capstone.DAO
             return null;
         }
 
-        //FIXME add imageId update to zero for deletes and FIX TRANSACTIONS
+        //FIXME add imageId update to NULL for DELETES and FIX TRANSACTIONS
         public int DeleteImageBySkillId(int skillId, int imageId)
         {
             if (skillId <= 0 || imageId <= 0)
@@ -1086,8 +1086,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SkillId and imageId must be greater than zero.");
             }
 
+            string updateSkillIconIdSql = "UPDATE skills SET icon_id = NULL WHERE icon_id = @imageId;";
             string deleteSkillImageSql = "DELETE FROM skill_images WHERE skill_id = @skillId AND image_id = @imageId;";
-            string updateSkillIconIdSql = "UPDATE skills SET icon_id = 0 WHERE icon_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
             try
@@ -1100,6 +1100,14 @@ namespace Capstone.DAO
                         try
                         {
                             int rowsAffected;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateSkillIconIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSkillImageSql, connection))
                             {
@@ -1118,14 +1126,6 @@ namespace Capstone.DAO
                                 rowsAffected = cmd.ExecuteNonQuery();
                             }
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateSkillIconIdSql, connection))
-                            {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@imageId", imageId);
-
-                                cmd.ExecuteNonQuery();
-                            }
-
                             transaction.Commit();
 
                             return rowsAffected;
@@ -1135,7 +1135,7 @@ namespace Capstone.DAO
                             Console.WriteLine(ex.ToString());
 
                             transaction.Rollback();
-                            
+
                             throw new DaoException("An error occurred while deleting the image by skill ID.", ex);
                         }
                     }
