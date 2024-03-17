@@ -1078,16 +1078,17 @@ namespace Capstone.DAO
             return null;
         }
 
+        //FIXME add imageId update to zero for deletes and FIX TRANSACTIONS
         public int DeleteImageBySkillId(int skillId, int imageId)
         {
             if (skillId <= 0 || imageId <= 0)
             {
                 throw new ArgumentException("SkillId and imageId must be greater than zero.");
             }
-//FIXME add imageId update to zero for deletes and FIX TRANSACTIONS
+
             string deleteSkillImageSql = "DELETE FROM skill_images WHERE skill_id = @skillId AND image_id = @imageId;";
+            string updateSkillIconIdSql = "UPDATE skills SET icon_id = 0 WHERE icon_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
-            string updateSkillIconIdSql = "UPDATE skills SET icon_id = 0 WHERE icon_id = @imageId;";  
 
             try
             {
@@ -1131,7 +1132,10 @@ namespace Capstone.DAO
                         }
                         catch (Exception ex)
                         {
+                            Console.WriteLine(ex.ToString());
+
                             transaction.Rollback();
+                            
                             throw new DaoException("An error occurred while deleting the image by skill ID.", ex);
                         }
                     }
@@ -1142,6 +1146,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while deleting the image by skill ID.", ex);
             }
         }
+
 
         /*  
             **********************************************************************************************
