@@ -204,7 +204,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the side project image.");
             }
         }
-// FIXME getting 500 error in postman
+
         [Authorize]
         [HttpDelete("/sideproject/{sideProjectId}/delete-image/{imageId}")]
         public ActionResult DeleteImageBySideProjectId(int sideProjectId, int imageId)
