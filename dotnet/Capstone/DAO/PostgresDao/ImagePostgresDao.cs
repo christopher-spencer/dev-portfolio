@@ -1093,20 +1093,37 @@ namespace Capstone.DAO
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSkillImageSql, connection))
+// FIXME ADD NPGSQL TRANSACTION TO ALL CREATE AND DELETE METHODS (DIDNT REALIZE THERE WAS NPGSQL VERSION!!!!)
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@skillId", skillId);
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        try
+                        {
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSkillImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@skillId", skillId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
 
-                        cmd.ExecuteNonQuery();
-                    }
+                                cmd.ExecuteNonQuery();
+                            }
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
 
-                        return cmd.ExecuteNonQuery();
+                                int rowsAffected = cmd.ExecuteNonQuery();
+
+                                transaction.Commit(); 
+
+                                return rowsAffected;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback(); // Rollback the transaction if an exception occurs
+                            throw new DaoException("An error occurred while deleting the image by skill ID.", ex);
+                        }
                     }
                 }
             }
@@ -1408,7 +1425,7 @@ namespace Capstone.DAO
             }
 
             Image image = null;
-            
+
             string sql = "SELECT i.id, i.name, i.url " +
                          "FROM images i " +
                          "JOIN contributor_images ci ON i.id = ci.image_id " +
@@ -1830,7 +1847,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())

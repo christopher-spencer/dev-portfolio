@@ -340,7 +340,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-//FIXME having similar issue from before in another where when i create a new imagebywebsiteid it doesnt link it and put in to websiteid in Dependency Library. The websiteId is linked, but not its associated image*********        
         [Authorize]
         [HttpPost("/website/{websiteId}/create-image")]
         public ActionResult CreateImageByWebsiteId(int websiteId, Image image)
@@ -492,6 +491,7 @@ namespace Capstone.Controllers
             }
         }
 //FIXME successfully deleted an image, but gave 500 error (DELETED image FROM skill, but image is still in GETIMAGES***)
+
         [Authorize]
         [HttpDelete("/skill/{skillId}/delete-image/{imageId}")]
         public ActionResult DeleteImageBySkillId(int skillId, int imageId)
