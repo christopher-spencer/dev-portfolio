@@ -419,7 +419,7 @@ namespace Capstone.DAO
 
             return null;
         }
-
+//FIXME MAY NEED TO HAVE MAIN IMAGE VS ADDITIONAL IMAGES TYPE CHECKER BEFORE SHIFTING SIDEPROJECT DELETE IMAGE*****
         public int DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {
             if (sideProjectId <= 0 || imageId <= 0)
@@ -670,7 +670,7 @@ namespace Capstone.DAO
 
             return null;
         }
-
+// TODO IMAGE TYPE CHECKER HERE TOO IF EVER MORE THAN JUST MAIN IMAGE
         public int DeleteImageByBlogPostId(int blogPostId, int imageId)
         {
             if (blogPostId <= 0 || imageId <= 0)
