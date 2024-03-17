@@ -350,9 +350,9 @@ namespace Capstone.DAO
             return skill;
         }
 
-        public Skill UpdateSkillBySideProjectId(int projectId, int skillId, Skill skill)
+        public Skill UpdateSkillBySideProjectId(int sideProjectId, int skillId, Skill skill)
         {
-            if (projectId <= 0 || skillId <= 0)
+            if (sideProjectId <= 0 || skillId <= 0)
             {
                 throw new ArgumentException("ProjectId and skillId must be greater than zero.");
             }
@@ -361,7 +361,7 @@ namespace Capstone.DAO
                          "SET name = @name " +
                          "FROM sideproject_skills " +
                          "WHERE skills.id = sideproject_skills.skill_id " +
-                         "AND sideproject_skills.project_id = @projectId " +
+                         "AND sideproject_skills.sideproject_id = @sideProjectId " +
                          "AND skills.id = @skillId;";
 
             try
@@ -372,7 +372,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {                    
-                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@skillId", skillId);
                         cmd.Parameters.AddWithValue("@name", skill.Name);
 
@@ -392,7 +392,11 @@ namespace Capstone.DAO
 
             return null;
         }
-
+        
+// TODO for DELETES like this that include an image, when you delete, 
+// TODO it doesnt DELETE the associated image from database, so either need constraints for 
+// TODO that sort of thing on front end ("SORRY CANT DELETE UNTIL DELETING IMAGE ASSOCIATED") or to 
+// TODO update my deletes on backend to also delete associations (WHICH IS PROB MORE USER FRIENDLY)******
         public int DeleteSkillBySideProjectId(int projectId, int skillId)
         {
             if (projectId <= 0 || skillId <= 0)
