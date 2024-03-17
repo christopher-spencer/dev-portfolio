@@ -490,7 +490,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the skill image.");
             }
         }
-//FIXME successfully deleted an image, but gave 500 error (DELETED image FROM skill, but image is still in GETIMAGES***)
+//FIXME NOT successfully deleted an image, and giving 500 error 
 
         [Authorize]
         [HttpDelete("/skill/{skillId}/delete-image/{imageId}")]
