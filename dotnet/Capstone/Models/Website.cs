@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Capstone.Models
 {
-    //FIXME i think we are going to need Website TYPE to differentiate links to GitHub, LinkedIn, etc
     public class Website
     {
         public int Id { get; set; }
