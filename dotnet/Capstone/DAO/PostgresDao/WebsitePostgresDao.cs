@@ -281,7 +281,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -292,7 +292,7 @@ namespace Capstone.DAO
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
                                 cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
-
+                                cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
 
@@ -300,6 +300,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertSideProjectWebsite.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdInsertSideProjectWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdInsertSideProjectWebsite.Transaction = transaction;
                                 cmdInsertSideProjectWebsite.ExecuteNonQuery();
                             }
 
@@ -307,6 +308,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateSideProjectWebsite.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdUpdateSideProjectWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdUpdateSideProjectWebsite.Transaction = transaction;
                                 cmdUpdateSideProjectWebsite.ExecuteNonQuery();
                             }
 
@@ -506,7 +508,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -517,7 +519,7 @@ namespace Capstone.DAO
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
                                 cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
-
+                                cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
 
@@ -525,6 +527,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertContributorWebsite.Parameters.AddWithValue("@contributorId", contributorId);
                                 cmdInsertContributorWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdInsertContributorWebsite.Transaction = transaction;
                                 cmdInsertContributorWebsite.ExecuteNonQuery();
                             }
 
@@ -532,6 +535,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateContributor.Parameters.AddWithValue("@contributorId", contributorId);
                                 cmdUpdateContributor.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdUpdateContributor.Transaction = transaction;
                                 cmdUpdateContributor.ExecuteNonQuery();
                             }
 
@@ -718,7 +722,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -729,7 +733,7 @@ namespace Capstone.DAO
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
                                 cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
-
+                                cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
 
@@ -737,7 +741,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertApiServiceWebsite.Parameters.AddWithValue("@apiServiceId", apiServiceId);
                                 cmdInsertApiServiceWebsite.Parameters.AddWithValue("@websiteId", websiteId);
-
+                                cmdInsertApiServiceWebsite.Transaction = transaction;
                                 cmdInsertApiServiceWebsite.ExecuteNonQuery();
                             }
 
@@ -745,7 +749,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateApiService.Parameters.AddWithValue("@apiServiceId", apiServiceId);
                                 cmdUpdateApiService.Parameters.AddWithValue("@websiteId", websiteId);
-
+                                cmdUpdateApiService.Transaction = transaction;
                                 cmdUpdateApiService.ExecuteNonQuery();
                             }
 
@@ -930,7 +934,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -941,7 +945,7 @@ namespace Capstone.DAO
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
                                 cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
-
+                                cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
 
@@ -949,7 +953,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
                                 cmdInsertDependencyLibraryWebsite.Parameters.AddWithValue("@websiteId", websiteId);
-
+                                cmdInsertDependencyLibraryWebsite.Transaction = transaction;
                                 cmdInsertDependencyLibraryWebsite.ExecuteNonQuery();
                             }
 
@@ -957,7 +961,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateDependencyLibrary.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
                                 cmdUpdateDependencyLibrary.Parameters.AddWithValue("@websiteId", websiteId);
-
+                                cmdUpdateDependencyLibrary.Transaction = transaction;
                                 cmdUpdateDependencyLibrary.ExecuteNonQuery();
                             }
 

@@ -242,7 +242,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -252,7 +252,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertApiService.Parameters.AddWithValue("@name", apiService.Name);
                                 cmdInsertApiService.Parameters.AddWithValue("@description", apiService.Description);
-
+                                cmdInsertApiService.Transaction = transaction;
                                 apiServiceId = Convert.ToInt32(cmdInsertApiService.ExecuteScalar());
                             }
 
@@ -260,7 +260,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertSideProjectApiService.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdInsertSideProjectApiService.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-
+                                cmdInsertSideProjectApiService.Transaction = transaction;
                                 cmdInsertSideProjectApiService.ExecuteNonQuery();
                             }
 

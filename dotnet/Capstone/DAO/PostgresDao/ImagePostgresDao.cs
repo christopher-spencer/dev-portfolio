@@ -240,7 +240,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -250,7 +250,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
-
+                                cmdInsertImage.Transaction = transaction;    
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
 
@@ -258,6 +258,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertSideProjectImage.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdInsertSideProjectImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertSideProjectImage.Transaction = transaction;
                                 cmdInsertSideProjectImage.ExecuteNonQuery();
                             }
 
@@ -265,6 +266,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateSideProjectMainImage.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdUpdateSideProjectMainImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateSideProjectMainImage.Transaction = transaction;
                                 cmdUpdateSideProjectMainImage.ExecuteNonQuery();
                             }
 
@@ -489,7 +491,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -499,7 +501,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
-
+                                cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
 
@@ -507,6 +509,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertBlogPostImage.Parameters.AddWithValue("@blogPostId", blogPostId);
                                 cmdInsertBlogPostImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertBlogPostImage.Transaction = transaction;
                                 cmdInsertBlogPostImage.ExecuteNonQuery();
                             }
 
@@ -514,6 +517,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateBlogPost.Parameters.AddWithValue("@blogPostId", blogPostId);
                                 cmdUpdateBlogPost.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateBlogPost.Transaction = transaction;
                                 cmdUpdateBlogPost.ExecuteNonQuery();
                             }
 
@@ -738,7 +742,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -748,7 +752,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
-
+                                cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
 
@@ -756,6 +760,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsiteImage.Parameters.AddWithValue("@websiteId", websiteId);
                                 cmdInsertWebsiteImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertWebsiteImage.Transaction = transaction;
                                 cmdInsertWebsiteImage.ExecuteNonQuery();
                             }
 
@@ -763,6 +768,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateWebsiteLogoId.Parameters.AddWithValue("@websiteId", websiteId);
                                 cmdUpdateWebsiteLogoId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateWebsiteLogoId.Transaction = transaction;
                                 cmdUpdateWebsiteLogoId.ExecuteNonQuery();
                             }
 
@@ -1095,6 +1101,7 @@ namespace Capstone.DAO
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
+
                     using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try

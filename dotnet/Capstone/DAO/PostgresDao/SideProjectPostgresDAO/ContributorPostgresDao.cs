@@ -264,7 +264,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -277,7 +277,7 @@ namespace Capstone.DAO
                                 cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email);
                                 cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio);
                                 cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
-
+                                cmdInsertContributor.Transaction = transaction;
                                 contributorId = Convert.ToInt32(cmdInsertContributor.ExecuteScalar());
                             }
 
@@ -285,6 +285,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertSideProjectContributor.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdInsertSideProjectContributor.Parameters.AddWithValue("@contributorId", contributorId);
+                                cmdInsertSideProjectContributor.Transaction = transaction;
                                 cmdInsertSideProjectContributor.ExecuteNonQuery();
                             }
 

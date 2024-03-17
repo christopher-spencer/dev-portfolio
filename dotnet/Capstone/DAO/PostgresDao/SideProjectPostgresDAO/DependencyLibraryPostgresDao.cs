@@ -235,7 +235,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -245,7 +245,7 @@ namespace Capstone.DAO
                             {
                                 cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
                                 cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-
+                                cmd.Transaction = transaction;
                                 dependencyLibraryId = Convert.ToInt32(cmd.ExecuteScalar());
                             }
 
@@ -253,6 +253,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertAssociation.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdInsertAssociation.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                                cmdInsertAssociation.Transaction = transaction;
                                 cmdInsertAssociation.ExecuteNonQuery();
                             }
 

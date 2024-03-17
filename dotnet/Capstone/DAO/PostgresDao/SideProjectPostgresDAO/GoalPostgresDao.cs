@@ -224,7 +224,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -233,7 +233,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmdInsertGoal = new NpgsqlCommand(insertGoalSql, connection))
                             {
                                 cmdInsertGoal.Parameters.AddWithValue("@description", goal.Description);
-                                
+                                cmdInsertGoal.Transaction = transaction;
                                 goalId = Convert.ToInt32(cmdInsertGoal.ExecuteScalar());
                             }
 
@@ -241,6 +241,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertSideProjectGoal.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmdInsertSideProjectGoal.Parameters.AddWithValue("@goalId", goalId);
+                                cmdInsertSideProjectGoal.Transaction = transaction;
                                 cmdInsertSideProjectGoal.ExecuteNonQuery();
                             }
 

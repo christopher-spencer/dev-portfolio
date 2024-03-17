@@ -223,7 +223,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -232,7 +232,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmdInsertSkill = new NpgsqlCommand(insertSkillSql, connection))
                             {
                                 cmdInsertSkill.Parameters.AddWithValue("@name", skill.Name);
-
+                                cmdInsertSkill.Transaction = transaction;
                                 skillId = Convert.ToInt32(cmdInsertSkill.ExecuteScalar());
                             }
 
@@ -240,6 +240,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertSideProjectSkill.Parameters.AddWithValue("@projectId", projectId);
                                 cmdInsertSideProjectSkill.Parameters.AddWithValue("@skillId", skillId);
+                                cmdInsertSideProjectSkill.Transaction = transaction;
                                 cmdInsertSideProjectSkill.ExecuteNonQuery();
                             }
 
@@ -349,7 +350,6 @@ namespace Capstone.DAO
 
             return skill;
         }
-
         public Skill UpdateSkillBySideProjectId(int sideProjectId, int skillId, Skill skill)
         {
             if (sideProjectId <= 0 || skillId <= 0)
@@ -392,11 +392,10 @@ namespace Capstone.DAO
 
             return null;
         }
-        
-// TODO for DELETES like this that include an image, when you delete, 
-// TODO it doesnt DELETE the associated image from database, so either need constraints for 
-// TODO that sort of thing on front end ("SORRY CANT DELETE UNTIL DELETING IMAGE ASSOCIATED") or to 
-// TODO update my deletes on backend to also delete associations (WHICH IS PROB MORE USER FRIENDLY)******
+
+// TODO for DELETES like this that include an OBJECT, when you delete, 
+// TODO it doesnt DELETE the associated OBJECT from database, so on front end you need to
+// TODO DELETE associations when DELETING OBJECTS that include other OBJECTS ******
         public int DeleteSkillBySideProjectId(int projectId, int skillId)
         {
             if (projectId <= 0 || skillId <= 0)
