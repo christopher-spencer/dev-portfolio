@@ -494,7 +494,6 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the skill image.");
             }
         }
-//FIXME NOT successfully deleted an image, and giving 500 error 
 
         [Authorize]
         [HttpDelete("/skill/{skillId}/delete-image/{imageId}")]
