@@ -286,7 +286,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@projectId", projectId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -329,7 +329,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@projectId", projectId);
                         cmd.Parameters.AddWithValue("@skillId", skillId);
 
@@ -371,7 +371,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@skillId", skillId);
                         cmd.Parameters.AddWithValue("@name", skill.Name);
@@ -403,7 +403,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("ProjectId and skillId must be greater than zero.");
             }
 
-            string sql = "DELETE FROM sideproject_skills WHERE sideproject_id = @sideProjectId AND skill_id = @skillId;";
+            string deleteSkillFromSideProjectSql = "DELETE FROM sideproject_skills WHERE sideproject_id = @sideProjectId AND skill_id = @skillId;";
+            string deleteSkillSql = "DELETE FROM skills WHERE id = @skillId;";
 
             try
             {
@@ -411,20 +412,47 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@skillId", skillId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSkillFromSideProjectSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@skillId", skillId);
 
-                        return rowsAffected;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSkillSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@skillId", skillId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the skill by project ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the skill by project ID.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
