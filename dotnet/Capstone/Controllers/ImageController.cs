@@ -17,8 +17,6 @@ namespace Capstone.Controllers
         {
             _imageDao = imageDao;
         }
-// TODO TEST ALL POSTMAN CRUD
-
 // TODO when creating new project image, replaces old at mainImageId but old img stays in database unconnected to anything 
 // TODO or sets it in additional images for models w/ additional images
 // TODO SO NEED FRONT END CHECK TO DELETE OLD IMAGE *****
