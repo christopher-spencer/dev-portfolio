@@ -387,10 +387,10 @@ namespace Capstone.DAO
             }
 
             string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url, " +
+                         "SET name = @name, url = @url " +
                          "FROM sideproject_websites " +
                          "WHERE websites.id = sideproject_websites.website_id " +
-                         "AND sideproject_websites.sideproject_id = @projectId " +
+                         "AND sideproject_websites.sideproject_id = @sideProjectId " +
                          "AND websites.id = @websiteId;";
 
             try
@@ -401,7 +401,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
@@ -417,7 +417,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the website.", ex);
+                throw new DaoException("An error occurred while updating the website by side project id.", ex);
             }
 
             return null;
@@ -664,7 +664,8 @@ namespace Capstone.DAO
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
                                       "FROM contributor_websites " +
-                                      "WHERE websites.id = contributor_websites.website_id AND contributor_websites.contributor_id = @contributorId " +
+                                      "WHERE websites.id = contributor_websites.website_id " +
+                                      "AND contributor_websites.contributor_id = @contributorId " +
                                       "AND websites.id = @websiteId;";
 
             try

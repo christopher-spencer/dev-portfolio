@@ -174,7 +174,7 @@ namespace Capstone.Controllers
                 return Ok(website);
             }
         }
-// FIXME in POSTMAN: "An error occurred while updating the side project website." (Possibly due to websiteType)
+
         [Authorize]
         [HttpPut("/update-sideproject/{sideProjectId}/update-website/{websiteId}")]
         public ActionResult UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
