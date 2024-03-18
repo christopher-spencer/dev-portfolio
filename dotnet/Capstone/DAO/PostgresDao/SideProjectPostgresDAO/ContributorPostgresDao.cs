@@ -332,7 +332,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -374,7 +374,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
 
@@ -418,7 +418,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
                         cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
@@ -451,7 +451,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and contributorId must be greater than zero.");
             }
 
-            string sql = "DELETE FROM sideproject_contributors WHERE sideproject_id = @sideProjectId AND contributor_id = @contributorId;";
+            string deleteContributorFromSideProjectSql = "DELETE FROM sideproject_contributors WHERE sideproject_id = @sideProjectId AND contributor_id = @contributorId;";
+            string deleteContributorSql = "DELETE FROM contributors WHERE id = @contributorId;";
 
             try
             {
@@ -459,19 +460,47 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                  using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
-                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorFromSideProjectSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@contributorId", contributorId);
 
-                        return rowsAffected;                    }
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the contributor by side project ID.", ex);
+                        }
+                    }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the contributor from the side project.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
