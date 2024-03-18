@@ -174,7 +174,7 @@ namespace Capstone.Controllers
                 return Ok(website);
             }
         }
-
+// FIXME in POSTMAN: "An error occurred while updating the side project website." (Possibly due to websiteType)
         [Authorize]
         [HttpPut("/update-sideproject/{sideProjectId}/update-website/{websiteId}")]
         public ActionResult UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
@@ -197,7 +197,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the side project website.");
             }
         }
-
+// FIXME in POSTMAN: "An error occurred while deleting the side project website." 
         [Authorize]
         [HttpDelete("/sideproject/{sideProjectId}/delete-website/{websiteType}/{websiteId}")]
         public ActionResult DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
@@ -278,7 +278,8 @@ namespace Capstone.Controllers
                 return Ok(website);
             }
         }
-
+// NOTE this worked, check it out for above UpdateWebsiteBySideProjectId
+// COMMENT worked without having TYPE in JSON (looked like it was set to null, but on GET, got the correct type)
         [Authorize]
         [HttpPut("/contributor/{contributorId}/update-website/{websiteId}")]
         public ActionResult UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
@@ -301,7 +302,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the contributor website.");
             }
         }
-
+// FIXME in Postman "An error occurred while deleting the contributor website."
         [Authorize]
         [HttpDelete("/contributor/{contributorId}/delete-website/{websiteType}/{websiteId}")]
         public ActionResult DeleteWebsiteByContributorId(int contributorId, int websiteId, string websiteType)
@@ -397,7 +398,8 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the API/service website.");
             }
         }
-
+//FIXME in Postman: "An error occurred while deleting the API/service website."
+// COMMENT IT WORKED WHEN DELETING WHERE THERE WAS NO IMAGE/ASSOCIATED IMAGE ID, SO ISSUE W/ OUR DELETES PROB DEALS WITH THOSE ASSOCIATED OBJECTS
         [Authorize]
         [HttpDelete("/api-service/{apiServiceId}/delete-website/{websiteId}")]
         public ActionResult DeleteWebsiteByApiServiceId(int apiServiceId, int websiteId)
@@ -486,7 +488,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the dependency/library website.");
             }
         }
-
+//FIXME in Postman: "An error occurred while deleting the dependency/library website."
         [Authorize]
         [HttpDelete("/dependency-library/{dependencyLibraryId}/delete-website/{websiteId}")]
         public ActionResult DeleteWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId)
