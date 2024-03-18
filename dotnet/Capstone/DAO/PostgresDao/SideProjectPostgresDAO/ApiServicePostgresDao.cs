@@ -420,8 +420,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and apiServiceId must be greater than zero.");
             }
 
-            string sql = "DELETE FROM sideproject_apis_and_services " +
-                        "WHERE sideproject_id = @sideProjectId AND apiservice_id = @apiServiceId;";
+            string deleteAPIServiceFromSideProjectSql = "DELETE FROM sideproject_apis_and_services WHERE sideproject_id = @sideProjectId AND apiservice_id = @apiServiceId;";
+            string deleteAPIServiceSql = "DELETE FROM apis_and_services WHERE id = @apiServiceId;";
 
             try
             {
@@ -429,20 +429,47 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceFromSideProjectSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
 
-                        return rowsAffected;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the API or Service by SideProjectId.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the API or Service by SideProjectId.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
