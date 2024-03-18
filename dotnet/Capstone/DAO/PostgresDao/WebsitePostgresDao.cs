@@ -438,9 +438,9 @@ namespace Capstone.DAO
                     break;
                 case "github":
                     updateSideProjectWebsiteIdSql = "UPDATE sideprojects SET github_repo_link_id = NULL WHERE github_repo_link_id = @websiteId;";
-                    break; 
+                    break;
                 default:
-                    throw new ArgumentException("Invalid website type.");                                      
+                    throw new ArgumentException("Invalid website type.");
             }
 
             string deleteWebsiteFromSideProjectSql = "DELETE FROM sideproject_websites WHERE sideproject_id = @projectId AND website_id = @websiteId;";
@@ -696,11 +696,28 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteWebsiteByContributorId(int contributorId, int websiteId)
+        public int DeleteWebsiteByContributorId(int contributorId, int websiteId, string websiteType)
         {
             if (contributorId <= 0 || websiteId <= 0)
             {
                 throw new ArgumentException("ContributorId and websiteId must be greater than zero.");
+            }
+
+            string updateContributorWebsiteIdSql;
+
+            switch (websiteType)
+            {
+                case "linkedin":
+                    updateContributorWebsiteIdSql = "UPDATE contributors SET linkedin_id = NULL WHERE linkedin_id = @websiteId;";
+                    break;
+                case "github":
+                    updateContributorWebsiteIdSql = "UPDATE contributors SET github_id = NULL WHERE github_id = @websiteId;";
+                    break;
+                case "portfoliolink":
+                    updateContributorWebsiteIdSql = "UPDATE contributors SET portfolio_id = NULL WHERE portfolio_id = @websiteId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
             }
 
             string deleteContributorWebsiteSql = "DELETE FROM contributor_websites WHERE contributor_id = @contributorId AND website_id = @websiteId;";
@@ -717,6 +734,14 @@ namespace Capstone.DAO
                         try
                         {
                             int rowsAffected;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateContributorWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorWebsiteSql, connection))
                             {

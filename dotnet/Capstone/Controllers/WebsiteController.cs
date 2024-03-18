@@ -208,7 +208,7 @@ namespace Capstone.Controllers
             {
                 return BadRequest("Invalid websiteType. Allowed values are 'website' and 'github'.");
             }
-            
+
             try
             {
                 int rowsAffected = _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId, websiteType);
@@ -303,12 +303,19 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/contributor/{contributorId}/delete-website/{websiteId}")]
-        public ActionResult DeleteWebsiteByContributorId(int contributorId, int websiteId)
+        [HttpDelete("/contributor/{contributorId}/delete-website/{websiteType}/{websiteId}")]
+        public ActionResult DeleteWebsiteByContributorId(int contributorId, int websiteId, string websiteType)
         {
+            websiteType = websiteType.ToLower();
+
+            if (websiteType != "linkedin" && websiteType != "github" && websiteType != "portfoliolink")
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'linkedin' and 'github' and 'portfoliolink'.");
+            }
+
             try
             {
-                int rowsAffected = _websiteDao.DeleteWebsiteByContributorId(contributorId, websiteId);
+                int rowsAffected = _websiteDao.DeleteWebsiteByContributorId(contributorId, websiteId, websiteType);
 
                 if (rowsAffected > 0)
                 {
