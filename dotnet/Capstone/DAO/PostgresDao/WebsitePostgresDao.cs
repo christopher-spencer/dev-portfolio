@@ -424,88 +424,6 @@ namespace Capstone.DAO
         }
         // FIXME foreign key constraint on website_images_website_id foreign key
         // NOTE issue probably that image association with website id also needs deleted
-        // public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
-        // {
-        //     if (sideProjectId <= 0 || websiteId <= 0)
-        //     {
-        //         throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
-        //     }
-
-        //     string updateSideProjectWebsiteIdSql;
-
-        //     switch (websiteType)
-        //     {
-        //         case "website":
-        //             updateSideProjectWebsiteIdSql = "UPDATE sideprojects SET website_id = NULL WHERE website_id = @websiteId;";
-        //             break;
-        //         case "github":
-        //             updateSideProjectWebsiteIdSql = "UPDATE sideprojects SET github_repo_link_id = NULL WHERE github_repo_link_id = @websiteId;";
-        //             break;
-        //         default:
-        //             throw new ArgumentException("Invalid website type.");
-        //     }
-
-        //     string deleteWebsiteFromSideProjectSql = "DELETE FROM sideproject_websites WHERE sideproject_id = @projectId AND website_id = @websiteId;";
-        //     string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
-
-        //     try
-        //     {
-        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-        //         {
-        //             connection.Open();
-
-        //             using (NpgsqlTransaction transaction = connection.BeginTransaction())
-        //             {
-        //                 try
-        //                 {
-        //                     int rowsAffected;
-
-        //                     using (NpgsqlCommand cmd = new NpgsqlCommand(updateSideProjectWebsiteIdSql, connection))
-        //                     {
-        //                         cmd.Transaction = transaction;
-        //                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
-
-        //                         cmd.ExecuteNonQuery();
-        //                     }
-
-        //                     using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteFromSideProjectSql, connection))
-        //                     {
-        //                         cmd.Transaction = transaction;
-        //                         cmd.Parameters.AddWithValue("@projectId", sideProjectId);
-        //                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
-
-        //                         cmd.ExecuteNonQuery();
-        //                     }
-
-        //                     using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
-        //                     {
-        //                         cmd.Transaction = transaction;
-        //                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
-
-        //                         rowsAffected = cmd.ExecuteNonQuery();
-        //                     }
-
-        //                     transaction.Commit();
-
-        //                     return rowsAffected;
-        //                 }
-        //                 catch (Exception ex)
-        //                 {
-        //                     Console.WriteLine(ex.ToString());
-
-        //                     transaction.Rollback();
-
-        //                     throw new DaoException("An error occurred while deleting the website by side project ID.", ex);
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     catch (NpgsqlException ex)
-        //     {
-        //         throw new DaoException("An error occurred while connecting to the database.", ex);
-        //     }
-        // }
-
         public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
@@ -527,10 +445,9 @@ namespace Capstone.DAO
                     throw new ArgumentException("Invalid website type.");
             }
 
-            string deleteWebsiteFromSideProjectSql = "DELETE FROM sideproject_websites WHERE sideproject_id = @projectId AND website_id = @websiteId;";
-            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
+            string deleteWebsiteFromSideProjectSql = "DELETE FROM sideproject_websites WHERE sideproject_id = @sideProjectId AND website_id = @websiteId;";
             string deleteWebsiteImagesSql = "DELETE FROM website_images WHERE website_id = @websiteId;";
-            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
             try
             {
@@ -544,6 +461,7 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            // Update side project websiteId reference to null
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateSideProjectWebsiteIdSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -552,15 +470,17 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
+                            // Delete sideproject_websites table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteFromSideProjectSql, connection))
                             {
                                 cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@projectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                                 cmd.ExecuteNonQuery();
                             }
 
+                            // Delete website_images table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteImagesSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -569,17 +489,23 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
-                            int imageId;
+                            // Get the image ID associated with the website
+                            int? imageId = null;
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT logo_id FROM websites WHERE id = @websiteId;", connection))
                             {
                                 cmd.Parameters.AddWithValue("@websiteId", websiteId);
-                                imageId = Convert.ToInt32(cmd.ExecuteScalar());
+                                object result = cmd.ExecuteScalar();
+                                if (result != null && result != DBNull.Value)
+                                {
+                                    imageId = Convert.ToInt32(result);
+                                }
                             }
 
-                            if (imageId != 0)
+                            // If imageId exists, remove the reference to the image from the websites table
+                            if (imageId != null)
                             {
-                                using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                                using (NpgsqlCommand cmd = new NpgsqlCommand("UPDATE websites SET logo_id = NULL WHERE logo_id = @imageId;", connection))
                                 {
                                     cmd.Transaction = transaction;
                                     cmd.Parameters.AddWithValue("@imageId", imageId);
@@ -588,6 +514,19 @@ namespace Capstone.DAO
                                 }
                             }
 
+                            // If imageId exists, delete the associated image from the images table if it exists
+                            if (imageId != null)
+                            {
+                                using (NpgsqlCommand cmd = new NpgsqlCommand("DELETE FROM images WHERE id = @imageId;", connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            // Delete the website itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
