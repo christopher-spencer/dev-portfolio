@@ -299,7 +299,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -341,7 +341,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
 
@@ -382,7 +382,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
                         cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
@@ -412,7 +412,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and dependencyLibraryId must be greater than zero.");
             }
 
-            string sql = "DELETE FROM sideproject_dependencies_and_libraries WHERE sideproject_id = @sideProjectId AND dependencylibrary_id = @dependencyLibraryId;";
+            string deleteDependencyLibraryFromSideProjectSql = "DELETE FROM sideproject_dependencies_and_libraries WHERE sideproject_id = @sideProjectId AND dependencylibrary_id = @dependencyLibraryId;";
+            string deleteDependencyLibrarySql = "DELETE FROM dependencies_and_libraries WHERE id = @dependencyLibraryId;";
 
             try
             {
@@ -420,19 +421,47 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
-                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteDependencyLibraryFromSideProjectSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
 
-                        return rowsAffected;                    }
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteDependencyLibrarySql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the dependency/library by side project ID.", ex);
+                        }
+                    }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the dependency/library from the side project.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
@@ -463,7 +492,7 @@ namespace Capstone.DAO
             if (reader["website_id"] != DBNull.Value)
             {
                 dependencyLibrary.WebsiteId = Convert.ToInt32(reader["website_id"]);
-                
+
                 int websiteId = dependencyLibrary.WebsiteId;
 
                 dependencyLibrary.Website = _websiteDao.GetWebsiteByDependencyLibraryId(dependencyLibraryId, websiteId);
