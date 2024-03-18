@@ -396,14 +396,14 @@ namespace Capstone.DAO
 // TODO for DELETES like this that include an OBJECT, when you delete, 
 // TODO it doesnt DELETE the associated OBJECT from database, so on front end you need to
 // TODO DELETE associations when DELETING OBJECTS that include other OBJECTS ******
-        public int DeleteSkillBySideProjectId(int projectId, int skillId)
+        public int DeleteSkillBySideProjectId(int sideProjectId, int skillId)
         {
-            if (projectId <= 0 || skillId <= 0)
+            if (sideProjectId <= 0 || skillId <= 0)
             {
                 throw new ArgumentException("ProjectId and skillId must be greater than zero.");
             }
 
-            string sql = "DELETE FROM sideproject_skills WHERE sideproject_id = @projectId AND skill_id = @skillId;";
+            string sql = "DELETE FROM sideproject_skills WHERE sideproject_id = @sideProjectId AND skill_id = @skillId;";
 
             try
             {
@@ -413,7 +413,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("@projectId", projectId);
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@skillId", skillId);
 
                         int rowsAffected = cmd.ExecuteNonQuery();

@@ -286,7 +286,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -328,7 +328,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@goalId", goalId);
 
@@ -371,7 +371,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@goalId", goalId);
                         cmd.Parameters.AddWithValue("@description", goal.Description);
@@ -400,7 +400,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and goalId must be greater than zero.");
             }
 
-            string sql = "DELETE FROM sideproject_goals WHERE sideproject_id = @sideProjectId AND goal_id = @goalId;";
+            string deleteGoalFromSideProjectSql = "DELETE FROM sideproject_goals WHERE sideproject_id = @sideProjectId AND goal_id = @goalId;";
+            string deleteGoalSql = "DELETE FROM goals WHERE id = @goalId;";
 
             try
             {
@@ -408,20 +409,47 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
-                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@goalId", goalId);
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteGoalFromSideProjectSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@goalId", goalId);
 
-                        return rowsAffected;                    
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteGoalSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@goalId", goalId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the goal by side project ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the goal from the side project.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
