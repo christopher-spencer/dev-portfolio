@@ -422,7 +422,8 @@ namespace Capstone.DAO
 
             return null;
         }
-
+// FIXME foreign key constraint on website_images_website_id foreign key
+// NOTE issue probably that image association with website id also needs deleted
         public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
