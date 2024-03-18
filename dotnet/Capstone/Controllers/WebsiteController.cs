@@ -301,7 +301,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the contributor website.");
             }
         }
-// FIXME in Postman "An error occurred while deleting the contributor website."
+
         [Authorize]
         [HttpDelete("/contributor/{contributorId}/delete-website/{websiteType}/{websiteId}")]
         public ActionResult DeleteWebsiteByContributorId(int contributorId, int websiteId, string websiteType)

@@ -497,6 +497,7 @@ namespace Capstone.DAO
                             {
                                 cmd.Parameters.AddWithValue("@websiteId", websiteId);
                                 object result = cmd.ExecuteScalar();
+
                                 if (result != null && result != DBNull.Value)
                                 {
                                     imageId = Convert.ToInt32(result);
@@ -775,6 +776,7 @@ namespace Capstone.DAO
             }
 
             string deleteContributorWebsiteSql = "DELETE FROM contributor_websites WHERE contributor_id = @contributorId AND website_id = @websiteId;";
+            string deleteWebsiteImagesSql = "DELETE FROM website_images WHERE website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
             try
@@ -789,6 +791,7 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            // Update contributor websiteId reference to null
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateContributorWebsiteIdSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -797,6 +800,7 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
+                            // Delete contributor_websites table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -806,6 +810,53 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
+                            // Delete website_images table association
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteImagesSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            // Get the image ID associated with the website
+                            int? imageId = null;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT logo_id FROM websites WHERE id = @websiteId;", connection))
+                            {
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                                object result = cmd.ExecuteScalar();
+                                if (result != null && result != DBNull.Value)
+                                {
+                                    imageId = Convert.ToInt32(result);
+                                }
+                            }
+
+                            // If imageId exists, remove the reference to the image from the websites table
+                            if (imageId != null)
+                            {
+                                using (NpgsqlCommand cmd = new NpgsqlCommand("UPDATE websites SET logo_id = NULL WHERE logo_id = @imageId;", connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            // If imageId exists, delete the associated image from the images table if it exists
+                            if (imageId != null)
+                            {
+                                using (NpgsqlCommand cmd = new NpgsqlCommand("DELETE FROM images WHERE id = @imageId;", connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            // Delete the website itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
