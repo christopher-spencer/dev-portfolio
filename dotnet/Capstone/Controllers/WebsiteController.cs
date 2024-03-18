@@ -197,7 +197,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the side project website.");
             }
         }
-// FIXME in POSTMAN: "An error occurred while deleting the side project website." 
+
         [Authorize]
         [HttpDelete("/sideproject/{sideProjectId}/delete-website/{websiteType}/{websiteId}")]
         public ActionResult DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
@@ -278,8 +278,7 @@ namespace Capstone.Controllers
                 return Ok(website);
             }
         }
-// NOTE this worked, check it out for above UpdateWebsiteBySideProjectId
-// COMMENT worked without having TYPE in JSON (looked like it was set to null, but on GET, got the correct type)
+
         [Authorize]
         [HttpPut("/contributor/{contributorId}/update-website/{websiteId}")]
         public ActionResult UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
