@@ -5,6 +5,7 @@ namespace Capstone.Models
     public class BlogPost
     {
          // TODO: add new Blog Post properties after initial integration testing
+         // TODO add additional Images for CARTOON BLOG POSTS
         public int Id { get; set; }
         public string Name { get; set; }
         public string Author { get; set; }

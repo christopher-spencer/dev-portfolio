@@ -377,7 +377,8 @@ namespace Capstone.DAO
         }
 
         // TODO create path for GetWebsite(s) BySideProjectId (?)
-        // TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set the type for CREATE are we good? Consider...
+        // TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set 
+        // TODO the type for CREATE are we good? ONLY choice to delete it and create new by WebsiteType? Consider...
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
@@ -1223,7 +1224,7 @@ namespace Capstone.DAO
                         try
                         {
                             int rowsAffected;
-                            
+
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateDependencyLibraryWebsiteIdSql, connection))
                             {
                                 cmd.Transaction = transaction;

@@ -212,7 +212,9 @@ namespace Capstone.DAO
                                             SIDE PROJECT IMAGE CRUD
             **********************************************************************************************
         */
-
+        // TODO add isMainImage boolean flag to SideProject model to differentiate CRUD for main image vs additional images
+        // TODO if statement in CRUD to check if isMainImage and do CRUD accordingly
+        // TODO update database, controller, postman with isMainImage when ready
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
             if (sideProjectId <= 0)
@@ -419,7 +421,7 @@ namespace Capstone.DAO
 
             return null;
         }
-        //FIXME MAY NEED TO HAVE MAIN IMAGE VS ADDITIONAL IMAGES TYPE CHECKER BEFORE SHIFTING SIDEPROJECT DELETE IMAGE*****
+        //FIXME ADD ISMAINIMAGE CHECKER BEFORE SHIFTING SIDEPROJECT DELETE IMAGE W/ Transaction and if checker for UPDATESQL*****
         public int DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {
             if (sideProjectId <= 0 || imageId <= 0)
@@ -427,7 +429,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and imageId must be greater than zero.");
             }
 
-            //string updateMainImageIdSql = "UPDATE sideprojects SET main_image_id = NULL WHERE main_image_id = @imageId";
+            string updateMainImageIdSql = "UPDATE sideprojects SET main_image_id = NULL WHERE main_image_id = @imageId;";
             string deleteSideProjectImageSql = "DELETE FROM sideproject_images WHERE sideproject_id = @sideProjectId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -437,25 +439,55 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSideProjectImageSql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateMainImageIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        return cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSideProjectImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image from the side project.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the image from the side project.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
@@ -464,7 +496,7 @@ namespace Capstone.DAO
                                             BLOG POST IMAGE CRUD
             **********************************************************************************************
         */
-
+        // TODO add isMainImage checker and if statement checks for isMainImage
         public Image CreateImageByBlogPostId(int blogPostId, Image image)
         {
             if (blogPostId <= 0)
@@ -671,7 +703,7 @@ namespace Capstone.DAO
 
             return null;
         }
-        // TODO IMAGE TYPE CHECKER HERE TOO IF EVER MORE THAN JUST MAIN IMAGE
+        // TODO IMAGE TYPE CHECKER HERE TOO FOR WHEN MORE THAN JUST MAIN IMAGE (Good to have additionalImages if using CARTOON BLOG POSTS****)
         public int DeleteImageByBlogPostId(int blogPostId, int imageId)
         {
             if (blogPostId <= 0 || imageId <= 0)
@@ -679,7 +711,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("BlogPostId and imageId must be greater than zero.");
             }
 
-            //string updateImageIdSql = "UPDATE blogposts SET main_image_id = NULL WHERE main_image_id = @imageId;";
+            string updateImageIdSql = "UPDATE blogposts SET main_image_id = NULL WHERE main_image_id = @imageId;";
             string deleteBlogPostImageSql = "DELETE FROM blogpost_images WHERE blogpost_id = @blogPostId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -689,25 +721,55 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteBlogPostImageSql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        return cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteBlogPostImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@blogPostId", blogPostId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by blog post ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the image by blog post ID.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
@@ -928,6 +990,7 @@ namespace Capstone.DAO
 
                                 rowsAffected = cmd.ExecuteNonQuery();
                             }
+
                             transaction.Commit();
 
                             return rowsAffected;
@@ -1116,7 +1179,6 @@ namespace Capstone.DAO
             return null;
         }
 
-        //FIXME add imageId update to NULL for DELETES and FIX TRANSACTIONS
         public int DeleteImageBySkillId(int skillId, int imageId)
         {
             if (skillId <= 0 || imageId <= 0)
