@@ -26,7 +26,7 @@ namespace Capstone.DAO.Interfaces
         Website CreateWebsiteBySideProjectId(int projectId, Website website, string websiteType);
         Website GetWebsiteBySideProjectId(int projectId, int websiteId);
         Website UpdateWebsiteBySideProjectId(int projectId, int websiteId, Website website);
-        int DeleteWebsiteBySideProjectId(int projectId, int websiteId);
+        int DeleteWebsiteBySideProjectId(int projectId, int websiteId, string websiteType);
 
         /*  
             **********************************************************************************************

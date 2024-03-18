@@ -422,14 +422,29 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId)
+        public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
             {
                 throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
             }
 
-            string sql = "DELETE FROM sideproject_websites WHERE sideproject_id = @projectId AND website_id = @websiteId;";
+            string updateSideProjectWebsiteIdSql;
+
+            switch (websiteType)
+            {
+                case "website":
+                    updateSideProjectWebsiteIdSql = "UPDATE sideprojects SET website_id = NULL WHERE website_id = @websiteId;";
+                    break;
+                case "github":
+                    updateSideProjectWebsiteIdSql = "UPDATE sideprojects SET github_repo_link_id = NULL WHERE github_repo_link_id = @websiteId;";
+                    break; 
+                default:
+                    throw new ArgumentException("Invalid website type.");                                      
+            }
+
+            string deleteWebsiteFromSideProjectSql = "DELETE FROM sideproject_websites WHERE sideproject_id = @projectId AND website_id = @websiteId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
             try
             {
@@ -437,20 +452,55 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@projectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateSideProjectWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
-                        return rowsAffected;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteFromSideProjectSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@projectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the website by side project ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the website from the side project.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
@@ -559,7 +609,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-// FIXME add GetWEBSITESByContributorId
+        // FIXME add GetWEBSITESByContributorId
         public Website GetWebsiteByContributorId(int contributorId, int websiteId)
         {
             if (contributorId <= 0)
@@ -583,7 +633,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);                        
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -602,7 +652,7 @@ namespace Capstone.DAO
 
             return website;
         }
-// TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set the type for CREATE are we good? Consider...
+        // TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set the type for CREATE are we good? Consider...
         public Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
         {
             if (contributorId <= 0 || websiteId <= 0)
@@ -662,25 +712,47 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorWebsiteSql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        return cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the website by contributor ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the website by contributor ID.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
@@ -875,25 +947,47 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceWebsiteSql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        return cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the website by API/Service ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the website by API/Service ID.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 

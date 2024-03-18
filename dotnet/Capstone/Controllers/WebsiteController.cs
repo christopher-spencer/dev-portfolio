@@ -199,12 +199,19 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{sideProjectId}/delete-website/{websiteId}")]
-        public ActionResult DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-website/{websiteType}/{websiteId}")]
+        public ActionResult DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
         {
+            websiteType = websiteType.ToLower();
+//TODO change to "main website" or something
+            if (websiteType != "website" && websiteType != "github")
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'website' and 'github'.");
+            }
+            
             try
             {
-                int rowsAffected = _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId);
+                int rowsAffected = _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId, websiteType);
 
                 if (rowsAffected > 0)
                 {
