@@ -398,7 +398,6 @@ namespace Capstone.Controllers
             }
         }
 //FIXME in Postman: "An error occurred while deleting the API/service website."
-// COMMENT IT WORKED WHEN DELETING WHERE THERE WAS NO IMAGE/ASSOCIATED IMAGE ID, SO ISSUE W/ OUR DELETES PROB DEALS WITH THOSE ASSOCIATED OBJECTS
         [Authorize]
         [HttpDelete("/api-service/{apiServiceId}/delete-website/{websiteId}")]
         public ActionResult DeleteWebsiteByApiServiceId(int apiServiceId, int websiteId)

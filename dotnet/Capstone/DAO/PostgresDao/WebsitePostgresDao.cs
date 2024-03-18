@@ -447,7 +447,6 @@ namespace Capstone.DAO
             }
 
             string deleteWebsiteFromSideProjectSql = "DELETE FROM sideproject_websites WHERE sideproject_id = @sideProjectId AND website_id = @websiteId;";
-            string deleteWebsiteImagesSql = "DELETE FROM website_images WHERE website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
             try
@@ -476,15 +475,6 @@ namespace Capstone.DAO
                             {
                                 cmd.Transaction = transaction;
                                 cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
-
-                                cmd.ExecuteNonQuery();
-                            }
-
-                            // Delete website_images table association
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteImagesSql, connection))
-                            {
-                                cmd.Transaction = transaction;
                                 cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                                 cmd.ExecuteNonQuery();
@@ -740,7 +730,6 @@ namespace Capstone.DAO
             }
 
             string deleteContributorWebsiteSql = "DELETE FROM contributor_websites WHERE contributor_id = @contributorId AND website_id = @websiteId;";
-            string deleteWebsiteImagesSql = "DELETE FROM website_images WHERE website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
             try
@@ -769,15 +758,6 @@ namespace Capstone.DAO
                             {
                                 cmd.Transaction = transaction;
                                 cmd.Parameters.AddWithValue("@contributorId", contributorId);
-                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
-
-                                cmd.ExecuteNonQuery();
-                            }
-
-                            // Delete website_images table association
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteImagesSql, connection))
-                            {
-                                cmd.Transaction = transaction;
                                 cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
                                 cmd.ExecuteNonQuery();
@@ -1312,6 +1292,15 @@ namespace Capstone.DAO
 
         private void DeleteAssociatedWebsiteImages(NpgsqlConnection connection, NpgsqlTransaction transaction, int websiteId)
         {
+            // Delete website_images table association
+            using (NpgsqlCommand cmd = new NpgsqlCommand("DELETE FROM website_images WHERE website_id = @websiteId;", connection))
+            {
+                cmd.Transaction = transaction;
+                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                cmd.ExecuteNonQuery();
+            }
+
             // Get the image ID associated with the website
             int? imageId = null;
 
