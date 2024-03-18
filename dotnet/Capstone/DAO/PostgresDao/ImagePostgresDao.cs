@@ -1831,6 +1831,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ApiServiceId and imageId must be greater than zero.");
             }
 
+            string updateApiServiceLogoIdSql = "UPDATE apis_and_services SET logo_id = NULL WHERE logo_id = @imageId;";
             string deleteApiServiceImageSql = "DELETE FROM api_service_images WHERE apiservice_id = @apiServiceId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -1840,25 +1841,55 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceImageSql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateApiServiceLogoIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        return cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by API/Service ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the image by API/Service ID.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
@@ -2037,6 +2068,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("DependencyLibraryId and imageId must be greater than zero.");
             }
 
+            string updateDependencyLibraryLogoIdSql = "UPDATE dependencies_and_libraries SET logo_id = NULL WHERE logo_id = @imageId;";
             string deleteLibraryImageSql = "DELETE FROM dependency_library_images WHERE dependencylibrary_id = @dependencyLibraryId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -2046,25 +2078,56 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteLibraryImageSql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        try
+                        {
+                            int rowsAffected;
 
-                        cmd.ExecuteNonQuery();
-                    }
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateDependencyLibraryLogoIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                        return cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteLibraryImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by dependency library ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the image by dependency library ID.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
