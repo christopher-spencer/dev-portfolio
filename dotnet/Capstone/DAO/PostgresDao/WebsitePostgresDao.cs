@@ -963,6 +963,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ApiServiceId and websiteId must be greater than zero.");
             }
 
+            string updateApiServiceWebsiteIdSql = "UPDATE apis_and_services SET website_id = NULL WHERE website_id = @websiteId;";
             string deleteApiServiceWebsiteSql = "DELETE FROM api_service_websites WHERE apiservice_id = @apiServiceId AND website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
@@ -977,6 +978,14 @@ namespace Capstone.DAO
                         try
                         {
                             int rowsAffected;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateApiServiceWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceWebsiteSql, connection))
                             {
@@ -1199,6 +1208,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("DependencyLibraryId and websiteId must be greater than zero.");
             }
 
+            string updateDependencyLibraryWebsiteIdSql = "UPDATE dependencies_and_libraries SET website_id = NULL WHERE website_id = @websiteId;";
             string deleteDependencyLibraryWebsiteSql = "DELETE FROM dependency_library_websites WHERE dependencylibrary_id = @dependencyLibraryId AND website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
@@ -1208,25 +1218,55 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteDependencyLibraryWebsiteSql, connection))
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        try
+                        {
+                            int rowsAffected;
+                            
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateDependencyLibraryWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
-                        cmd.ExecuteNonQuery();
-                    }
+                                cmd.ExecuteNonQuery();
+                            }
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteDependencyLibraryWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
-                        return cmd.ExecuteNonQuery();
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the website by dependency/library ID.", ex);
+                        }
                     }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the website by dependency/library ID.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
 
