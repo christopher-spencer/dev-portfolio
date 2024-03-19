@@ -486,7 +486,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the dependency/library website.");
             }
         }
-//FIXME in Postman: "An error occurred while deleting the dependency/library website."
+
         [Authorize]
         [HttpDelete("/dependency-library/{dependencyLibraryId}/delete-website/{websiteId}")]
         public ActionResult DeleteWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId)
