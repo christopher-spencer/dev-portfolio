@@ -510,8 +510,6 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        // FIXME maybe in WebsitePGDAO need helper method for GetWebsiteTypeByWebsiteId OR GetWebsiteIdByWebsiteType (?)
-
         private int? GetContributorImageIdByContributorId(int contributorId)
         {
             string sql = "SELECT contributor_image_id FROM contributors WHERE id = @contributorId;";
@@ -543,25 +541,10 @@ namespace Capstone.DAO
             }
         }
 
-        private int? GetWebsiteIdByContributorIdAndWebsiteType(int contributorId, string websiteType)
+        private int? GetLinkedInIdByContributorId(int contributorId)
         {
-            string sql;
-
-            switch (websiteType)
-            {
-                case "portfoliolink":
-                    sql = "SELECT portfolio_id FROM contributors WHERE id = @contributorId;";
-                    break;
-                case "github":
-                    sql = "SELECT github_id FROM contributors WHERE id = @contributorId;";
-                    break;
-                case "linkedin":
-                    sql = "SELECT linkedin_id FROM contributors WHERE id = @contributorId;";
-                    break;
-                default:
-                    throw new ArgumentException("Invalid website type.");
-            }
-
+            string sql = "SELECT linkedin_id FROM contributors WHERE id = @contributorId;";
+           
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -584,7 +567,69 @@ namespace Capstone.DAO
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error retrieving website ID: " + ex.Message);
+                Console.WriteLine("Error retrieving LinkedIn ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int? GetGithubIdByContributorId(int contributorId)
+        {
+            string sql = "SELECT github_id FROM contributors WHERE id = @contributorId;";
+           
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving GitHub ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int? GetPortfolioIdByContributorId(int contributorId)
+        {
+            string sql = "SELECT portfolio_id FROM contributors WHERE id = @contributorId;";
+           
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving Portfolio ID: " + ex.Message);
                 return null;
             }
         }
