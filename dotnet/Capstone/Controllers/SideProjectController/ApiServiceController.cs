@@ -205,7 +205,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the side project API/service.");
             }
         }
-
+// FIXME "An error occurred while deleting the side project API/service." (Due to associated nested objects)
         [Authorize]
         [HttpDelete("/sideproject/{sideProjectId}/delete-api-or-service/{apiServiceId}")]
         public ActionResult DeleteAPIOrServiceBySideProjectId(int sideProjectId, int apiServiceId)

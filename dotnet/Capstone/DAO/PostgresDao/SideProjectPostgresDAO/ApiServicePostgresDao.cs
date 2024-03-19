@@ -419,7 +419,8 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("SideProjectId and apiServiceId must be greater than zero.");
             }
-
+            // TODO need to get the websiteId
+            string updateAPIServiceWebsiteIdSql = "UPDATE apis_and_services SET website_id = NULL WHERE website_id = @websiteId;";
             string deleteAPIServiceFromSideProjectSql = "DELETE FROM sideproject_apis_and_services WHERE sideproject_id = @sideProjectId AND apiservice_id = @apiServiceId;";
             string deleteAPIServiceSql = "DELETE FROM apis_and_services WHERE id = @apiServiceId;";
 
@@ -435,6 +436,21 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            // If associated website exists, get the website ID associated with the api service w/ helper method
+                            int? websiteId = null;
+
+                            GetAssociatedWebsiteId(connection, websiteId);
+
+                            // Update api/service websiteId reference to null
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateAPIServiceWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            // Delete sideproject_apis_and_services table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceFromSideProjectSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -444,6 +460,13 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
+                            //  If website image exists, delete associated website images with helper method
+                            if (websiteId.HasValue)
+                            {
+                                DeleteAssociatedWebsiteImages(connection, transaction, websiteId.Value);
+                            }
+
+                            // Delete the api service itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -470,6 +493,76 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                                HELPER METHODS
+            **********************************************************************************************
+        */
+
+        private void GetAssociatedWebsiteId(NpgsqlConnection connection, int? websiteId)
+        {
+            using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT website_id FROM apis_and_services WHERE website_id = @websiteId;", connection))
+            {
+                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                object result = cmd.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    websiteId = Convert.ToInt32(result);
+                }
+            }
+        }
+
+        private void DeleteAssociatedWebsiteImages(NpgsqlConnection connection, NpgsqlTransaction transaction, int websiteId)
+        {
+            // Delete website_images table association
+            using (NpgsqlCommand cmd = new NpgsqlCommand("DELETE FROM website_images WHERE website_id = @websiteId;", connection))
+            {
+                cmd.Transaction = transaction;
+                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                cmd.ExecuteNonQuery();
+            }
+
+            // Get the image ID associated with the website
+            int? imageId = null;
+
+            using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT logo_id FROM websites WHERE id = @websiteId;", connection))
+            {
+                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                object result = cmd.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                {
+                    imageId = Convert.ToInt32(result);
+                }
+            }
+
+            // If imageId exists, remove the reference to the image from the websites table
+            if (imageId != null)
+            {
+                using (NpgsqlCommand cmd = new NpgsqlCommand("UPDATE websites SET logo_id = NULL WHERE logo_id = @imageId;", connection))
+                {
+                    cmd.Transaction = transaction;
+                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            // If imageId exists, delete the associated image from the images table if it exists
+            if (imageId != null)
+            {
+                using (NpgsqlCommand cmd = new NpgsqlCommand("DELETE FROM images WHERE id = @imageId;", connection))
+                {
+                    cmd.Transaction = transaction;
+                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
