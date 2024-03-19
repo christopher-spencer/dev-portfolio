@@ -505,6 +505,13 @@ namespace Capstone.DAO
                                 _websiteDao.DeleteWebsiteByContributorId(contributorId, portfolioLinkId.Value, websiteType);
                             }
 
+                            //Delete Website Image, if exists
+                            //FIXME figure out the nesting here
+                            // if (contributorImageId.HasValue)
+                            // {
+                            //     _imageDao.DeleteImageByWebsiteId(websiteId, contributorImageId.Value);
+                            // }
+
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorSql, connection))
                             {
                                 cmd.Transaction = transaction;
