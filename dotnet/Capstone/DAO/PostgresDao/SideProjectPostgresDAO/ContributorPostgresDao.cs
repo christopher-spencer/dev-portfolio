@@ -443,7 +443,7 @@ namespace Capstone.DAO
 
             return null;
         }
-
+//FIXME seems to be working after restarting the DB but triple double check
         public int DeleteContributorBySideProjectId(int sideProjectId, int contributorId)
         {
             if (sideProjectId <= 0 || contributorId <= 0)
@@ -471,15 +471,6 @@ namespace Capstone.DAO
                             int? gitHubId = GetGithubIdByContributorId(contributorId);
                             int? portfolioLinkId = GetPortfolioLinkIdByContributorId(contributorId);
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorFromSideProjectSql, connection))
-                            {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                                cmd.Parameters.AddWithValue("@contributorId", contributorId);
-
-                                cmd.ExecuteNonQuery();
-                            }
-
                             if (contributorImageId.HasValue)
                             {
                                 _imageDao.DeleteImageByContributorId(contributorId, contributorImageId.Value);
@@ -505,12 +496,14 @@ namespace Capstone.DAO
                                 _websiteDao.DeleteWebsiteByContributorId(contributorId, portfolioLinkId.Value, websiteType);
                             }
 
-                            //Delete Website Image, if exists
-                            //FIXME figure out the nesting here
-                            // if (contributorImageId.HasValue)
-                            // {
-                            //     _imageDao.DeleteImageByWebsiteId(websiteId, contributorImageId.Value);
-                            // }
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorFromSideProjectSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                                cmd.ExecuteNonQuery();
+                            }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorSql, connection))
                             {
