@@ -397,7 +397,7 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while updating the API/service website.");
             }
         }
-//FIXME in Postman: "An error occurred while deleting the API/service website."
+
         [Authorize]
         [HttpDelete("/api-service/{apiServiceId}/delete-website/{websiteId}")]
         public ActionResult DeleteWebsiteByApiServiceId(int apiServiceId, int websiteId)

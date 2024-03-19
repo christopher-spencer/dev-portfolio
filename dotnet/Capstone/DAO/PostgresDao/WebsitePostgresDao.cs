@@ -993,6 +993,7 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            // Update api_service websiteId reference to null
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateApiServiceWebsiteIdSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -1001,6 +1002,7 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
+                            // Delete api_service_websites association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -1010,6 +1012,9 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
+                            DeleteAssociatedWebsiteImages(connection, transaction, websiteId);
+
+                            // Delete the website itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -1238,6 +1243,7 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            // Update dependency/library websiteId reference to null
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateDependencyLibraryWebsiteIdSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -1246,6 +1252,7 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
+                            // Delete dependency_library_websites table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteDependencyLibraryWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -1255,6 +1262,9 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
+                            DeleteAssociatedWebsiteImages(connection, transaction, websiteId);
+
+                            // Delete the website itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
