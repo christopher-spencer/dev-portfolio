@@ -467,6 +467,74 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                                HELPER METHODS
+            **********************************************************************************************
+        */
+
+        private int? GetLogoIdByDependencyLibraryId(int dependencyLibraryId)
+        {
+            string sql = "SELECT logo_id FROM dependencies_and_libraries WHERE id = @dependencyLibraryId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving logo ID by dependencyLibraryId: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int? GetWebsiteIdByDependencyLibraryId(int dependencyLibraryId)
+        {
+            string sql = "SELECT website_id FROM dependencies_and_libraries WHERE id = @dependencyLibraryId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving website ID by dependencyLibraryId: " + ex.Message);
+                return null;
+            }
+        }
+
+        /*  
+            **********************************************************************************************
                                     DEPENDENCIES AND LIBRARIES MAP ROW
             **********************************************************************************************
         */

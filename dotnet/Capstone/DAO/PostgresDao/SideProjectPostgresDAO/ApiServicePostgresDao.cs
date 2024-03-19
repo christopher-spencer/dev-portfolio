@@ -534,7 +534,7 @@ namespace Capstone.DAO
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error retrieving logo ID: " + ex.Message);
+                Console.WriteLine("Error retrieving logo ID by apiServiceId: " + ex.Message);
                 return null;
             }
         }
@@ -565,7 +565,7 @@ namespace Capstone.DAO
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error retrieving website ID: " + ex.Message);
+                Console.WriteLine("Error retrieving website ID by apiServiceId: " + ex.Message);
                 return null;
             }
         }
