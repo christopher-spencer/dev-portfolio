@@ -2194,6 +2194,42 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                                HELPER METHODS
+            **********************************************************************************************
+        */
+        public int? GetImageIdByWebsiteId(int websiteId)
+        {
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string sql = "SELECT logo_id FROM websites WHERE id = @websiteId;";
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving image ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        /*  
+            **********************************************************************************************
                                                 MAP ROW TO IMAGE
             **********************************************************************************************
         */

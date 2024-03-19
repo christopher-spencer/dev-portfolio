@@ -442,7 +442,7 @@ namespace Capstone.DAO
                             int? websiteId = GetWebsiteIdByApiServiceId(apiServiceId);
 
                             // Get the image ID associated with the website
-                            int? imageId = websiteId.HasValue ? GetImageIdByWebsiteId(websiteId.Value) : null;
+                            int? imageId = websiteId.HasValue ? _imageDao.GetImageIdByWebsiteId(websiteId.Value) : null;
 
                             // Delete sideproject_apis_and_services table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceFromSideProjectSql, connection))
@@ -566,37 +566,6 @@ namespace Capstone.DAO
             catch (Exception ex)
             {
                 Console.WriteLine("Error retrieving website ID: " + ex.Message);
-                return null;
-            }
-        }
-// TODO move this helper method to Website or Image PGDAO?
-        private int? GetImageIdByWebsiteId(int websiteId)
-        {
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string sql = "SELECT logo_id FROM websites WHERE id = @websiteId;";
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
-
-                        object result = cmd.ExecuteScalar();
-
-                        if (result != null && result != DBNull.Value)
-                        {
-                            return Convert.ToInt32(result);
-                        }
-                        return null;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error retrieving image ID: " + ex.Message);
                 return null;
             }
         }

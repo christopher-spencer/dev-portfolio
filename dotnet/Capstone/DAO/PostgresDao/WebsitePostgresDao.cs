@@ -1243,6 +1243,9 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            // Get the image ID associated with the website
+                            int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
+
                             // Update dependency/library websiteId reference to null
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateDependencyLibraryWebsiteIdSql, connection))
                             {
@@ -1262,7 +1265,12 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
-                            DeleteAssociatedWebsiteImages(connection, transaction, websiteId);
+                           // DeleteAssociatedWebsiteImages(connection, transaction, websiteId);
+
+                            if (imageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByWebsiteId(websiteId, imageId.Value);
+                            }
 
                             // Delete the website itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
