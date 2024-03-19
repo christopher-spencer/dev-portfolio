@@ -506,6 +506,45 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                                HELPER METHODS
+            **********************************************************************************************
+        */
+
+        // FIXME maybe in WebsitePGDAO need helper method for GetWebsiteTypeByWebsiteId OR GetWebsiteIdByWebsiteType (?)
+
+        private int? GetContributorImageIdByContributorId(int contributorId)
+        {
+            string sql = "SELECT contributor_image_id FROM contributors WHERE id = @contributorId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving Contributor Image ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        /*  
+            **********************************************************************************************
                                             CONTRIBUTOR MAP ROW
             **********************************************************************************************
         */

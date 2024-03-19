@@ -376,7 +376,6 @@ namespace Capstone.DAO
             return website;
         }
 
-        // TODO create path for GetWebsite(s) BySideProjectId (?)
         // TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set 
         // TODO the type for CREATE are we good? ONLY choice to delete it and create new by WebsiteType? Consider...
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
@@ -422,9 +421,7 @@ namespace Capstone.DAO
 
             return null;
         }
-        // NOTE fixed foreign key constraint on website_images_website_id foreign key here
-        // NOTE NEED TO UPDATE OTHER DELETE METHODS W/ ISSUES LIKE THIS, TO DELETE ASSOCIATED OBJECTS
-        // FIXME CHECK ADDITIONAL PLACES WHERE ASSOCIATED OBJECTS SHOULD BE DELETED WHEN OBJECT HOLDING THEM DELETED******
+        // FIXME NEED TO UPDATE ALL DELETE METHODS TO DELETE ASSOCIATED OBJECTS*****
         public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
@@ -624,7 +621,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-        // TODO add GetWEBSITESByContributorId (?)
+        
         public Website GetWebsiteByContributorId(int contributorId, int websiteId)
         {
             if (contributorId <= 0)
@@ -1348,7 +1345,6 @@ namespace Capstone.DAO
         private void SetWebsiteLogoIdProperties(NpgsqlDataReader reader, Website website, int websiteId)
         {
 
-            //FIXME still initializing all logo ids as null instead of setting to 0
             if (reader["logo_id"] != DBNull.Value)
             {
                 website.LogoId = Convert.ToInt32(reader["logo_id"]);

@@ -392,10 +392,7 @@ namespace Capstone.DAO
 
             return null;
         }
-
-// TODO for DELETES like this that include an OBJECT, when you delete, 
-// TODO it doesn't DELETE the associated OBJECT from database, so on front end you need to
-// TODO DELETE associations when DELETING OBJECTS that include other OBJECTS ******
+// FIXME delete associated logo
         public int DeleteSkillBySideProjectId(int sideProjectId, int skillId)
         {
             if (sideProjectId <= 0 || skillId <= 0)
