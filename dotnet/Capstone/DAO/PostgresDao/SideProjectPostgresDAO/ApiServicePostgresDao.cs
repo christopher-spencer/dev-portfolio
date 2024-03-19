@@ -442,7 +442,7 @@ namespace Capstone.DAO
                             int? websiteId = GetWebsiteIdByApiServiceId(apiServiceId);
 
                             // Get the image ID associated with the website
-                            int? imageId = GetImageIdByWebsiteId(websiteId.Value);
+                            int? imageId = websiteId.HasValue ? GetImageIdByWebsiteId(websiteId.Value) : null;
 
                             // Delete sideproject_apis_and_services table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceFromSideProjectSql, connection))
@@ -454,21 +454,21 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
-                            // If Api/Service logo exists, delete the logo by apiServiceId
+                            // If Api/Service logo exists, delete the logo
                             if (logoId.HasValue)
                             {
                                 _imageDao.DeleteImageByApiServiceId(apiServiceId, logoId.Value);
                             }
 
-                            //  If website image exists, delete the image by website id
-                            if (websiteId.HasValue && imageId.HasValue)
-                            {
-                                _imageDao.DeleteImageByWebsiteId(websiteId.Value, imageId.Value);
-                            }
-
-                            // If Api/Service website exists, delete the website by apiServiceId
                             if (websiteId.HasValue)
-                            {
+                            {   
+                                //  If website image exists, delete the image
+                                if (imageId.HasValue)
+                                {
+                                _imageDao.DeleteImageByWebsiteId(websiteId.Value, imageId.Value);
+                                }
+
+                                // If Api/Service website exists, delete the website
                                 _websiteDao.DeleteWebsiteByApiServiceId(apiServiceId, websiteId.Value);
                             }
 
