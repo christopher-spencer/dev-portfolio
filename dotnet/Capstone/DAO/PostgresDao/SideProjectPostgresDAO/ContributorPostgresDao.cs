@@ -543,6 +543,52 @@ namespace Capstone.DAO
             }
         }
 
+        private int? GetWebsiteIdByContributorIdAndWebsiteType(int contributorId, string websiteType)
+        {
+            string sql;
+
+            switch (websiteType)
+            {
+                case "portfoliolink":
+                    sql = "SELECT portfolio_id FROM contributors WHERE id = @contributorId;";
+                    break;
+                case "github":
+                    sql = "SELECT github_id FROM contributors WHERE id = @contributorId;";
+                    break;
+                case "linkedin":
+                    sql = "SELECT linkedin_id FROM contributors WHERE id = @contributorId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving website ID: " + ex.Message);
+                return null;
+            }
+        }
+
         /*  
             **********************************************************************************************
                                             CONTRIBUTOR MAP ROW
