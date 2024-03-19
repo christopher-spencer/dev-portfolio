@@ -466,6 +466,11 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            int? contributorImageId = GetContributorImageIdByContributorId(contributorId);
+                            int? linkedInId = GetLinkedInIdByContributorId(contributorId);
+                            int? gitHubId = GetGithubIdByContributorId(contributorId);
+                            int? portfolioLinkId = GetPortfolioLinkIdByContributorId(contributorId);
+
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorFromSideProjectSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -473,6 +478,31 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@contributorId", contributorId);
 
                                 cmd.ExecuteNonQuery();
+                            }
+
+                            if (contributorImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByContributorId(contributorId, contributorImageId.Value);
+                            }
+
+                            string websiteType;
+
+                            if (linkedInId.HasValue)
+                            {
+                                websiteType = "linkedin";
+                                _websiteDao.DeleteWebsiteByContributorId(contributorId, linkedInId.Value, websiteType);
+                            }
+
+                            if (gitHubId.HasValue)
+                            {
+                                websiteType = "github";
+                                _websiteDao.DeleteWebsiteByContributorId(contributorId, gitHubId.Value, websiteType);
+                            }
+
+                            if (portfolioLinkId.HasValue)
+                            {
+                                websiteType = "portfoliolink";
+                                _websiteDao.DeleteWebsiteByContributorId(contributorId, portfolioLinkId.Value, websiteType);
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorSql, connection))
@@ -603,7 +633,7 @@ namespace Capstone.DAO
             }
         }
 
-        private int? GetPortfolioIdByContributorId(int contributorId)
+        private int? GetPortfolioLinkIdByContributorId(int contributorId)
         {
             string sql = "SELECT portfolio_id FROM contributors WHERE id = @contributorId;";
            
