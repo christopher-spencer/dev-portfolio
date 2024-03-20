@@ -464,6 +464,30 @@ namespace Capstone.DAO
             return apisAndServicesDeleteCount;
         }
 
+        private int DeleteDependenciesAndLibrariesUsedBySideProjectId(int sideProjectId)
+        {
+            List<DependencyLibrary> dependenciesAndLibraries = _dependencyLibraryDao.GetDependenciesAndLibrariesBySideProjectId(sideProjectId);
+
+            int dependenciesAndLibrariesDeleteCount = 0;
+
+            foreach (DependencyLibrary dependencyLibrary in dependenciesAndLibraries)
+            {
+                int dependencyLibraryId = dependencyLibrary.Id;
+
+                try
+                {
+                    _dependencyLibraryDao.DeleteDependencyOrLibraryBySideProjectId(sideProjectId, dependencyLibraryId);
+                    dependenciesAndLibrariesDeleteCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting Dependency/Library from SideProject with side project ID:{sideProjectId} and Dependency/Library ID:{dependencyLibraryId}: {ex.Message}");
+                }
+            }
+
+            return dependenciesAndLibrariesDeleteCount;
+        }
+
         /*  
             **********************************************************************************************
                                             SIDE PROJECT MAP ROW
