@@ -214,7 +214,7 @@ namespace Capstone.DAO
                                             SIDE PROJECT IMAGE CRUD
             **********************************************************************************************
         */
-        
+
 //FIXME do we need a check in place so that only one image in SideProject can be set to MainImage w/ isMainImage?
 
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
@@ -511,7 +511,7 @@ namespace Capstone.DAO
                                             BLOG POST IMAGE CRUD
             **********************************************************************************************
         */
-        // TODO add isMainImage checker and if statement checks for isMainImage
+        // TODO add BLOGPOST isMainImage checker and if statement checks for isMainImage
         public Image CreateImageByBlogPostId(int blogPostId, Image image)
         {
             if (blogPostId <= 0)
@@ -718,7 +718,7 @@ namespace Capstone.DAO
 
             return null;
         }
-        // TODO IMAGE TYPE CHECKER HERE TOO FOR WHEN MORE THAN JUST MAIN IMAGE (Good to have additionalImages if using CARTOON BLOG POSTS****)
+
         public int DeleteImageByBlogPostId(int blogPostId, int imageId)
         {
             if (blogPostId <= 0 || imageId <= 0)
