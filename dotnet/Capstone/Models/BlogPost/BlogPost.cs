@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Net.Mail;
 
 namespace Capstone.Models
 {
     public class BlogPost
     {
-         // TODO: add new Blog Post properties after initial integration testing
-         // TODO add additional Images for CARTOON BLOG POSTS
+         // TODO add AdditionalImages for CARTOON BLOG POSTS
         public int Id { get; set; }
         public string Name { get; set; }
         public string Author { get; set; }
@@ -13,8 +14,21 @@ namespace Capstone.Models
         public string Content { get; set; }
         public int MainImageId { get; set; }
         public Image MainImage { get; set; }
+// NOTE rename ALLIMAGES or something to reflect it includes the Main Image as well
+        // public List<Image> AdditionalImages { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+// TODO: add new Blog Post properties after initial integration testing
+        // public List<string> Tags { get; set; }
+        // public List<string> Comments { get; set; }
+        // public bool IsLikedOrUpVoted { get; set; }
+        // public int PageViews { get; set; }
+        // public string Status { get; set; }
+        // public List<BlogPost> RelatedBlogPosts { get; set; }
+        // public bool IsFeaturedPost { get; set; }
+        // public List<string> Attachments { get; set; }
+        // public string Excerpt { get; set; }
     }
     /*
         Categories or Tags - Allow categorization or tagging of blog posts to make them easier to organize and search.
