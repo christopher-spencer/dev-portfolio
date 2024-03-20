@@ -421,7 +421,7 @@ namespace Capstone.DAO
 
         private int DeleteAdditionalImagesBySideProjectId(int sideProjectId)
         {
-            List<Image> additionalImages = _imageDao.GetImagesBySideProjectId(sideProjectId);
+            List<Image> additionalImages = _imageDao.GetMainImageAndAdditionalImagesBySideProjectId(sideProjectId);
 
             int imagesDeletedCount = 0;
 
@@ -563,7 +563,7 @@ namespace Capstone.DAO
             SetSideProjectGitHubRepoLinkIdProperties(reader, sideProject, projectId);
 
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsBySideProjectId(projectId);
-            sideProject.AdditionalImages = _imageDao.GetImagesBySideProjectId(projectId);
+            sideProject.AdditionalImages = _imageDao.GetMainImageAndAdditionalImagesBySideProjectId(projectId);
             sideProject.ToolsUsed = _skillDao.GetSkillsBySideProjectId(projectId);
             sideProject.Contributors = _contributorDao.GetContributorsBySideProjectId(projectId);
             sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesBySideProjectId(projectId);
@@ -572,14 +572,14 @@ namespace Capstone.DAO
             return sideProject;
         }
 
-        private void SetSideProjectMainImageIdProperties(NpgsqlDataReader reader, SideProject sideProject, int projectId)
+        private void SetSideProjectMainImageIdProperties(NpgsqlDataReader reader, SideProject sideProject, int sideProjectId)
         {
             if (reader["main_image_id"] != DBNull.Value)
             {
                 sideProject.MainImageId = Convert.ToInt32(reader["main_image_id"]);
 
                 int mainImageId = Convert.ToInt32(reader["main_image_id"]);
-                sideProject.MainImage = _imageDao.GetImageBySideProjectId(projectId, mainImageId);
+                sideProject.MainImage = _imageDao.GetImageBySideProjectId(sideProjectId, mainImageId);
             }
             else
             {
@@ -587,14 +587,14 @@ namespace Capstone.DAO
             }
         }
 
-        private void SetSideProjectWebsiteIdProperties(NpgsqlDataReader reader, SideProject sideProject, int projectId)
+        private void SetSideProjectWebsiteIdProperties(NpgsqlDataReader reader, SideProject sideProject, int sideProjectId)
         {
             if (reader["website_id"] != DBNull.Value)
             {
                 sideProject.WebsiteId = Convert.ToInt32(reader["website_id"]);
 
                 int websiteId = Convert.ToInt32(reader["website_id"]);
-                sideProject.Website = _websiteDao.GetWebsiteBySideProjectId(projectId, websiteId);
+                sideProject.Website = _websiteDao.GetWebsiteBySideProjectId(sideProjectId, websiteId);
             }
             else
             {
@@ -602,14 +602,14 @@ namespace Capstone.DAO
             }
         }
 
-        private void SetSideProjectGitHubRepoLinkIdProperties(NpgsqlDataReader reader, SideProject sideProject, int projectId)
+        private void SetSideProjectGitHubRepoLinkIdProperties(NpgsqlDataReader reader, SideProject sideProject, int sideProjectId)
         {
             if (reader["github_repo_link_id"] != DBNull.Value)
             {
                 sideProject.GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
 
                 int githubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
-                sideProject.GitHubRepoLink = _websiteDao.GetWebsiteBySideProjectId(projectId, githubRepoLinkId);
+                sideProject.GitHubRepoLink = _websiteDao.GetWebsiteBySideProjectId(sideProjectId, githubRepoLinkId);
             }
             else
             {

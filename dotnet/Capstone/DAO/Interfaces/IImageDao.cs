@@ -22,7 +22,7 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
         Image CreateImageBySideProjectId(int projectId, Image image);
-        List<Image> GetImagesBySideProjectId(int projectId);
+        List<Image> GetMainImageAndAdditionalImagesBySideProjectId(int projectId);
         Image GetImageBySideProjectId(int sideProjectId, int imageId);
         Image UpdateImageBySideProjectId(int projectId, int imageId, Image image);
         int DeleteImageBySideProjectId(int projectId, int imageId);

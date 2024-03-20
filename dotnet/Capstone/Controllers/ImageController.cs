@@ -155,7 +155,7 @@ namespace Capstone.Controllers
         [HttpGet("/sideproject/{sideProjectId}/images")]
         public ActionResult GetImagesBySideProjectId(int sideProjectId)
         {
-            List<Image> images = _imageDao.GetImagesBySideProjectId(sideProjectId);
+            List<Image> images = _imageDao.GetMainImageAndAdditionalImagesBySideProjectId(sideProjectId);
 
             if (images == null)
             {

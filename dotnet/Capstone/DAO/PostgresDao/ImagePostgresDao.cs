@@ -215,7 +215,7 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-//FIXME do we need a check in place so that only one image in SideProject can be set to MainImage w/ isMainImage?
+        //FIXME do we need a check in place so that only one image in SideProject can be set to MainImage w/ isMainImage?
 
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
@@ -237,7 +237,7 @@ namespace Capstone.DAO
             string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertSideProjectImageSql = "INSERT INTO sideproject_images (sideproject_id, image_id) VALUES (@sideProjectId, @imageId);";
 
-            // updateSideProjectMainImageSql only runs if IsMainImage is true in Image Object
+            // updateSideProjectMainImageSql only occurs if IsMainImage is true and a Main Image doesn't already exist
             string updateSideProjectMainImageSql = "UPDATE sideprojects SET main_image_id = @imageId WHERE id = @sideProjectId;";
 
             try
@@ -251,6 +251,13 @@ namespace Capstone.DAO
                         try
                         {
                             int imageId;
+
+                            Image existingMainImage = GetMainImageBySideProjectId(sideProjectId);
+
+                            if (existingMainImage != null)
+                            {
+                                image.IsMainImage = false;
+                            }
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
                             {
@@ -269,7 +276,7 @@ namespace Capstone.DAO
                                 cmdInsertSideProjectImage.ExecuteNonQuery();
                             }
 
-                            if (image.IsMainImage)
+                            if (image.IsMainImage && existingMainImage == null)
                             {
                                 using (NpgsqlCommand cmdUpdateSideProjectMainImage = new NpgsqlCommand(updateSideProjectMainImageSql, connection))
                                 {
@@ -299,6 +306,50 @@ namespace Capstone.DAO
             {
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
+        }
+        //FIXME differentiate between GetAdditionalImages and GetMainImage for SideProjects AND BlogPosts***
+
+        //FIXME Add GetMainImageBySideProjectId to ImageDAO AND CONTROLLER AND POSTMAN AND SIDEPROJECT MAP ROW*****
+        public Image GetMainImageBySideProjectId(int sideProjectId)
+        {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
+            Image mainImage = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN sideproject_images spi ON i.id = spi.image_id " +
+                         "WHERE spi.sideproject_id = @sideProjectId AND i.is_main_image = true;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainImage = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Main Image by Side Project ID.", ex);
+            }
+
+            return mainImage;
         }
 
         public Image GetImageBySideProjectId(int sideProjectId, int imageId)
@@ -344,7 +395,7 @@ namespace Capstone.DAO
             return image;
         }
 
-        public List<Image> GetImagesBySideProjectId(int sideProjectId)
+        public List<Image> GetMainImageAndAdditionalImagesBySideProjectId(int sideProjectId)
         {
             if (sideProjectId <= 0)
             {
@@ -385,6 +436,49 @@ namespace Capstone.DAO
             }
 
             return images;
+        }
+        //FIXME Add GetAdditionalImagesBySideProjectId to ImageDAO AND CONTROLLER AND POSTMAN AND SIDEPROJECT MAP ROW AND HELPER METHOD?*****
+        public List<Image> GetAdditionalImagesBySideProjectId(int sideProjectId)
+        {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
+            List<Image> additionalImages = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN sideproject_images spi ON i.id = spi.image_id " +
+                         "WHERE spi.sideproject_id = @sideProjectId AND i.is_main_image = false;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Image image = MapRowToImage(reader);
+                                additionalImages.Add(image);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the additional images by side project ID.", ex);
+            }
+
+            return additionalImages;
         }
 
         public Image UpdateImageBySideProjectId(int sideProjectId, int imageId, Image image)
