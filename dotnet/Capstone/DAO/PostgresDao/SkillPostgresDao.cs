@@ -415,6 +415,8 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            int? iconId = GetIconIdBySkillId(skillId);
+
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSkillFromSideProjectSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -422,6 +424,11 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@skillId", skillId);
 
                                 cmd.ExecuteNonQuery();
+                            }
+
+                            if (iconId.HasValue)
+                            {
+                                _imageDao.DeleteImageBySkillId(skillId, iconId.Value);
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSkillSql, connection))
@@ -450,6 +457,43 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                                HELPER METHODS
+            **********************************************************************************************
+        */
+
+        private int? GetIconIdBySkillId(int skillId)
+        {
+            string sql = "SELECT icon_id FROM skills WHERE id = @skillId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@skillId", skillId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving icon ID by skill ID: " + ex.Message);
+                return null;
             }
         }
 
