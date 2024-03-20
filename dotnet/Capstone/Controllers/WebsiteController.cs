@@ -23,7 +23,7 @@ namespace Capstone.Controllers
                                                 WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-
+//FIXME remove WebsiteType from endpoints*****
         [Authorize]
         [HttpPost("/create-website")]
         public ActionResult CreateWebsite(Website website)
