@@ -214,9 +214,9 @@ namespace Capstone.DAO
                                             SIDE PROJECT IMAGE CRUD
             **********************************************************************************************
         */
-        // TODO add isMainImage boolean flag to SideProject model to differentiate CRUD for main image vs additional images
-        // TODO if statement in CRUD to check if isMainImage and do CRUD accordingly
-        // TODO update database, controller, postman with isMainImage when ready
+        
+//FIXME do we need a check in place so that only one image in SideProject can be set to MainImage w/ isMainImage?
+
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
             if (sideProjectId <= 0)
@@ -430,7 +430,7 @@ namespace Capstone.DAO
 
             return null;
         }
-        //FIXME ADD ISMAINIMAGE CHECKER BEFORE SHIFTING SIDEPROJECT DELETE IMAGE W/ Transaction and if checker for UPDATESQL*****
+
         public int DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {
             if (sideProjectId <= 0 || imageId <= 0)

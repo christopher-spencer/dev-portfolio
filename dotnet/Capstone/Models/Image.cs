@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-//FIXME do we need a check in place so that only one image in SideProject can be set to MainImage w/ isMainImage?
+
 namespace Capstone.Models
 {
     public class Image
