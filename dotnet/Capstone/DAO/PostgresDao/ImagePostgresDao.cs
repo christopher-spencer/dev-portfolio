@@ -310,7 +310,7 @@ namespace Capstone.DAO
         }
         //FIXME differentiate between GetAdditionalImages and GetMainImage for SideProjects AND BlogPosts***
 
-        //FIXME Add GetMainImageBySideProjectId to ImageDAO AND CONTROLLER AND POSTMAN AND SIDEPROJECT MAP ROW*****
+        //FIXME Add GetMainImageBySideProjectId CONTROLLER AND POSTMAN AND SIDEPROJECT MAP ROW*****
         public Image GetMainImageBySideProjectId(int sideProjectId)
         {
             if (sideProjectId <= 0)
@@ -438,7 +438,7 @@ namespace Capstone.DAO
 
             return images;
         }
-        //FIXME Add GetAdditionalImagesBySideProjectId to ImageDAO AND CONTROLLER AND POSTMAN AND SIDEPROJECT MAP ROW AND HELPER METHOD?*****
+        //FIXME Add GetAdditionalImagesBySideProjectId to CONTROLLER AND POSTMAN AND SIDEPROJECT MAP ROW AND HELPER METHOD?*****
         public List<Image> GetAdditionalImagesBySideProjectId(int sideProjectId)
         {
             if (sideProjectId <= 0)

@@ -21,11 +21,13 @@ namespace Capstone.DAO.Interfaces
                                             SIDE PROJECT IMAGE CRUD
             **********************************************************************************************
         */
-        Image CreateImageBySideProjectId(int projectId, Image image);
-        List<Image> GetMainImageAndAdditionalImagesBySideProjectId(int projectId);
+        Image CreateImageBySideProjectId(int sideProjectId, Image image);
+        Image GetMainImageBySideProjectId(int sideProjectId);
+        List<Image> GetMainImageAndAdditionalImagesBySideProjectId(int sideProjectId);
+        List<Image> GetAdditionalImagesBySideProjectId(int sideProjectId);
         Image GetImageBySideProjectId(int sideProjectId, int imageId);
-        Image UpdateImageBySideProjectId(int projectId, int imageId, Image image);
-        int DeleteImageBySideProjectId(int projectId, int imageId);
+        Image UpdateImageBySideProjectId(int sideProjectId, int imageId, Image image);
+        int DeleteImageBySideProjectId(int sideProjectId, int imageId);
 
         /*  
             **********************************************************************************************
