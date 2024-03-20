@@ -471,12 +471,12 @@ namespace Capstone.DAO
                             int? gitHubId = GetGithubIdByContributorId(contributorId);
                             int? portfolioLinkId = GetPortfolioLinkIdByContributorId(contributorId);
 
+                            string websiteType;
+
                             if (contributorImageId.HasValue)
                             {
                                 _imageDao.DeleteImageByContributorId(contributorId, contributorImageId.Value);
                             }
-
-                            string websiteType;
 
                             if (linkedInId.HasValue)
                             {

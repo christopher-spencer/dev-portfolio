@@ -237,6 +237,36 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            int? mainImageId = GetMainImageIdBySideProjectId(sideProjectId);
+                            int? websiteId = GetWebsiteIdBySideProjectId(sideProjectId);
+                            int? gitHubId = GetGithubIdBySideProjectId(sideProjectId);
+
+                            string websiteType;
+
+                            if (mainImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageBySideProjectId(sideProjectId, mainImageId.Value);
+                            }
+
+                            if (websiteId.HasValue)
+                            {
+                                websiteType = "website";
+                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId.Value, websiteType);
+                            }
+
+                            if (gitHubId.HasValue)
+                            {
+                                websiteType = "github";
+                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, gitHubId.Value, websiteType);
+                            }
+
+                            DeleteGoalsAndObjectivesBySideProjectId(sideProjectId);
+                            DeleteAdditionalImagesBySideProjectId(sideProjectId);
+                            DeleteToolsUsedBySideProjectId(sideProjectId);
+                            DeleteContributorsBySideProjectId(sideProjectId);
+                            DeleteExternalApisAndServicesUsedBySideProjectId(sideProjectId);
+                            DeleteDependenciesAndLibrariesUsedBySideProjectId(sideProjectId);
+
                             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                             {
                                 cmd.Transaction = transaction;
