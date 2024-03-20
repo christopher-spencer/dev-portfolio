@@ -23,7 +23,6 @@ namespace Capstone.Controllers
                                                     GOAL CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO TEST ALL POSTMAN CRUD
 
         [Authorize]
         [HttpPost("/create-goal")]
