@@ -396,6 +396,7 @@ namespace Capstone.DAO
         private int DeleteToolsUsedBySideProjectId(int sideProjectId)
         {
             List<Skill> toolsUsed = _skillDao.GetSkillsBySideProjectId(sideProjectId);
+
             int toolsDeletedCount = 0;
 
             foreach (Skill tool in toolsUsed)
@@ -413,6 +414,30 @@ namespace Capstone.DAO
                 }
             }
             return toolsDeletedCount;
+        }
+
+        private int DeleteContributorsBySideProjectId(int sideProjectId)
+        {
+            List<Contributor> contributors = _contributorDao.GetContributorsBySideProjectId(sideProjectId);
+
+            int contributorsDeletedCount = 0;
+
+            foreach (Contributor contributor in contributors)
+            {
+                int contributorId = contributor.Id;
+
+                try
+                {
+                    _contributorDao.DeleteContributorBySideProjectId(sideProjectId, contributorId);
+                    contributorsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting contributor from SideProject with side project ID:{sideProjectId} and contributor ID:{contributorId}: {ex.Message}");
+                }
+            }
+
+            return contributorsDeletedCount;
         }
 
         /*  
