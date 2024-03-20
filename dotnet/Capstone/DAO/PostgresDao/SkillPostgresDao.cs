@@ -392,7 +392,7 @@ namespace Capstone.DAO
 
             return null;
         }
-// FIXME delete associated logo
+
         public int DeleteSkillBySideProjectId(int sideProjectId, int skillId)
         {
             if (sideProjectId <= 0 || skillId <= 0)
