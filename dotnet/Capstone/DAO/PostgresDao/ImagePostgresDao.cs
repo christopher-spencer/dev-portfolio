@@ -35,7 +35,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string sql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string sql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
 
             try
             {
@@ -47,6 +47,7 @@ namespace Capstone.DAO
                     {
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int id = Convert.ToInt32(cmd.ExecuteScalar());
                         image.Id = id;
@@ -68,7 +69,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ImageId must be greater than zero.");
             }
 
-            string sql = "SELECT id, name, url FROM images WHERE id = @id;";
+            string sql = "SELECT id, name, url, is_main_image FROM images WHERE id = @id;";
 
             try
             {
@@ -102,7 +103,7 @@ namespace Capstone.DAO
         {
             List<Image> images = new List<Image>();
 
-            string sql = "SELECT id, name, url FROM images;";
+            string sql = "SELECT id, name, url, is_main_image FROM images;";
 
             try
             {
@@ -147,7 +148,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ImageId must be greater than zero.");
             }
 
-            string sql = "UPDATE images SET name = @name, url = @url WHERE id = @id;";
+            string sql = "UPDATE images SET name = @name, url = @url, is_main_image = @isMainImage WHERE id = @id;";
 
             try
             {
@@ -160,6 +161,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@id", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
