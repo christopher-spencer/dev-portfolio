@@ -1,4 +1,4 @@
-// FIXME RERUN DATABASE WITH UPDATES (Added is_main_image in SideProjects)****
+// FIXME RERUN DATABASE WITH UPDATES (Added is_main_image in images table)****
 // TODO Figure out how to auto connect db updates
 
 BEGIN TRANSACTION;
@@ -39,7 +39,8 @@ DROP TABLE IF EXISTS images;
 CREATE TABLE images (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    url VARCHAR(2000) NOT NULL
+    url VARCHAR(2000) NOT NULL,
+    is_main_image BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE websites (
@@ -126,7 +127,6 @@ CREATE TABLE sideprojects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     main_image_id INTEGER,
-    -- is_main_image BOOLEAN DEFAULT FALSE,
     description VARCHAR(500) NOT NULL,
     video_walkthrough_url VARCHAR(2000),
     website_id INTEGER,
