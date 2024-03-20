@@ -386,7 +386,7 @@ namespace Capstone.DAO
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error deleting additional image from SideProject with side project ID:{sideProjectId} and image ID:{goalId}: {ex.Message}");
+                    Console.WriteLine($"Error deleting additional image from SideProject with side project ID:{sideProjectId} and image ID:{imageId}: {ex.Message}");
                 }
             }
 
@@ -438,6 +438,30 @@ namespace Capstone.DAO
             }
 
             return contributorsDeletedCount;
+        }
+
+        private int DeleteExternalApisAndServicesUsedBySideProjectId(int sideProjectId)
+        {
+            List<ApiService> externalApisAndServices = _apiServiceDao.GetAPIsAndServicesBySideProjectId(sideProjectId);
+
+            int apisAndServicesDeleteCount = 0;
+
+            foreach (ApiService externalApiOrService in externalApisAndServices)
+            {
+                int apiServiceId = externalApiOrService.Id;
+
+                try
+                {
+                    _apiServiceDao.DeleteAPIOrServiceBySideProjectId(sideProjectId, apiServiceId);
+                    apisAndServicesDeleteCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting external API/Service from SideProject with side project ID:{sideProjectId} and API/Service ID:{apiServiceId}: {ex.Message}");
+                }
+            }
+
+            return apisAndServicesDeleteCount;
         }
 
         /*  
