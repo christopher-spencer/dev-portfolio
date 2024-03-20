@@ -245,6 +245,181 @@ namespace Capstone.DAO
             }
 
         }
+
+        /*  
+            **********************************************************************************************
+                                                HELPER METHODS
+            **********************************************************************************************
+        */
+
+        private int? GetMainImageIdBySideProjectId(int sideProjectId)
+        {
+            string sql = "SELECT main_image_id FROM sideprojects WHERE id = @sideProjectId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving MainImage ID by SideProject ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int? GetWebsiteIdBySideProjectId(int sideProjectId)
+        {
+            string sql = "SELECT website_id FROM sideprojects WHERE id = @sideProjectId;";
+           
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving Website ID by SideProject ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int? GetGithubIdBySideProjectId(int sideProjectId)
+        {
+            string sql = "SELECT github_repo_link_id FROM sideprojects WHERE id = @sideProjectId;";
+           
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving GitHub ID by SideProject ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int DeleteGoalsAndObjectivesBySideProjectId(int sideProjectId)
+        {
+            List<Goal> goals = _goalDao.GetGoalsBySideProjectId(sideProjectId);
+
+            int goalsDeletedCount = 0;
+
+            foreach (Goal goal in goals)
+            {
+                int goalId = goal.Id;
+
+                try
+                {
+                    _goalDao.DeleteGoalBySideProjectId(sideProjectId, goalId);
+                    goalsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting goal/objective from SideProject with side project ID:{sideProjectId} and goal ID:{goalId}: {ex.Message}");
+                }
+            }
+
+            return goalsDeletedCount;
+        }
+
+        private int DeleteAdditionalImagesBySideProjectId(int sideProjectId)
+        {
+            List<Image> additionalImages = _imageDao.GetImagesBySideProjectId(sideProjectId);
+
+            int imagesDeletedCount = 0;
+
+            foreach (Image image in additionalImages)
+            {
+                int imageId = image.Id;
+
+                try
+                {
+                    _imageDao.DeleteImageBySideProjectId(sideProjectId, imageId);
+                    imagesDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting additional image from SideProject with side project ID:{sideProjectId} and image ID:{goalId}: {ex.Message}");
+                }
+            }
+
+            return imagesDeletedCount;
+        }
+
+        private int DeleteToolsUsedBySideProjectId(int sideProjectId)
+        {
+            List<Skill> toolsUsed = _skillDao.GetSkillsBySideProjectId(sideProjectId);
+            int toolsDeletedCount = 0;
+
+            foreach (Skill tool in toolsUsed)
+            {
+                int toolId = tool.Id;
+
+                try
+                {
+                    _skillDao.DeleteSkillBySideProjectId(sideProjectId, toolId);
+                    toolsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting tool used from SideProject with side project ID:{sideProjectId} and tool ID:{toolId}: {ex.Message}");
+                }
+            }
+            return toolsDeletedCount;
+        }
+
+        /*  
+            **********************************************************************************************
+                                            SIDE PROJECT MAP ROW
+            **********************************************************************************************
+        */
         private SideProject MapRowToSideProject(NpgsqlDataReader reader)
         {
             SideProject sideProject = new SideProject
@@ -265,7 +440,7 @@ namespace Capstone.DAO
             SetSideProjectGitHubRepoLinkIdProperties(reader, sideProject, projectId);
 
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsBySideProjectId(projectId);
-            sideProject.AdditionalImagesUrl = _imageDao.GetImagesBySideProjectId(projectId);
+            sideProject.AdditionalImages = _imageDao.GetImagesBySideProjectId(projectId);
             sideProject.ToolsUsed = _skillDao.GetSkillsBySideProjectId(projectId);
             sideProject.Contributors = _contributorDao.GetContributorsBySideProjectId(projectId);
             sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesBySideProjectId(projectId);

@@ -11,8 +11,9 @@ namespace Capstone.Models
         public Image MainImage { get; set; }
         public string Description { get; set; }
         public List<Goal> GoalsAndObjectives { get; set; }
-        public List<Image> AdditionalImagesUrl { get; set; }
+        public List<Image> AdditionalImages { get; set; }
         public string VideoWalkthroughUrl { get; set; }
+        //NOTE rename ToolsUsed (?)
         public List<Skill> ToolsUsed { get; set; }
         public int WebsiteId { get; set; }
         public Website Website { get; set; }
