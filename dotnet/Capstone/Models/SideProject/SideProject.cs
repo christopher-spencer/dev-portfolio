@@ -9,6 +9,7 @@ namespace Capstone.Models
         public string Name { get; set; }
         public int MainImageId { get; set; }
         public Image MainImage { get; set; }
+        // public bool IsMainImage { get; set; }
         public string Description { get; set; }
         public List<Goal> GoalsAndObjectives { get; set; }
         public List<Image> AdditionalImages { get; set; }
