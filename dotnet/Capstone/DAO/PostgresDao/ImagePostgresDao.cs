@@ -216,7 +216,8 @@ namespace Capstone.DAO
         */
 
         //FIXME do we need a check in place so that only one image in SideProject can be set to MainImage w/ isMainImage?
-
+        // NOTE if you delete Main Image and just UPDATE existing image to IsMainImage True, there is a true Main image but doesn't
+        // NOTE set it as Main Image so then you can't create Main Image Until you delete that one reading as IsMainImage is true
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
             if (sideProjectId <= 0)
@@ -499,6 +500,13 @@ namespace Capstone.DAO
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
+
+                    Image existingMainImage = GetMainImageBySideProjectId(sideProjectId);
+
+                    if (existingMainImage != null)
+                    {
+                        image.IsMainImage = false;
+                    }
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
