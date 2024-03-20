@@ -1,4 +1,3 @@
-// FIXME RERUN DATABASE WITH UPDATES (Added is_main_image in images table)****
 // TODO Figure out how to auto connect db updates
 
 BEGIN TRANSACTION;

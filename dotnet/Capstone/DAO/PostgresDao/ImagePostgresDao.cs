@@ -232,8 +232,10 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertSideProjectImageSql = "INSERT INTO sideproject_images (sideproject_id, image_id) VALUES (@sideProjectId, @imageId);";
+
+            // updateSideProjectMainImageSql only runs if IsMainImage is true in Image Object
             string updateSideProjectMainImageSql = "UPDATE sideprojects SET main_image_id = @imageId WHERE id = @sideProjectId;";
 
             try
@@ -252,6 +254,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
                                 cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -264,12 +267,15 @@ namespace Capstone.DAO
                                 cmdInsertSideProjectImage.ExecuteNonQuery();
                             }
 
-                            using (NpgsqlCommand cmdUpdateSideProjectMainImage = new NpgsqlCommand(updateSideProjectMainImageSql, connection))
+                            if (image.IsMainImage)
                             {
-                                cmdUpdateSideProjectMainImage.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                                cmdUpdateSideProjectMainImage.Parameters.AddWithValue("@imageId", imageId);
-                                cmdUpdateSideProjectMainImage.Transaction = transaction;
-                                cmdUpdateSideProjectMainImage.ExecuteNonQuery();
+                                using (NpgsqlCommand cmdUpdateSideProjectMainImage = new NpgsqlCommand(updateSideProjectMainImageSql, connection))
+                                {
+                                    cmdUpdateSideProjectMainImage.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                    cmdUpdateSideProjectMainImage.Parameters.AddWithValue("@imageId", imageId);
+                                    cmdUpdateSideProjectMainImage.Transaction = transaction;
+                                    cmdUpdateSideProjectMainImage.ExecuteNonQuery();
+                                }
                             }
 
                             transaction.Commit();
@@ -302,7 +308,7 @@ namespace Capstone.DAO
 
             Image image = null;
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN sideproject_images spi ON i.id = spi.image_id " +
                          "WHERE spi.sideproject_id = @sideProjectId AND i.id = @imageId";
@@ -345,7 +351,7 @@ namespace Capstone.DAO
 
             List<Image> images = new List<Image>();
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN sideproject_images spi ON i.id = spi.image_id " +
                          "WHERE spi.sideproject_id = @sideProjectId;";
@@ -387,7 +393,7 @@ namespace Capstone.DAO
             }
 
             string sql = "UPDATE images " +
-                         "SET name = @name, url = @url " +
+                         "SET name = @name, url = @url, is_main_image = @isMainImage " +
                          "FROM sideproject_images " +
                          "WHERE images.id = sideproject_images.image_id AND sideproject_images.sideproject_id = @sideProjectId " +
                          "AND images.id = @imageId;";
@@ -404,6 +410,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -429,7 +436,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and imageId must be greater than zero.");
             }
 
+            // UpdateMainImageIdSql only runs if the image is the Main Image
             string updateMainImageIdSql = "UPDATE sideprojects SET main_image_id = NULL WHERE main_image_id = @imageId;";
+
             string deleteSideProjectImageSql = "DELETE FROM sideproject_images WHERE sideproject_id = @sideProjectId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
@@ -444,13 +453,17 @@ namespace Capstone.DAO
                         try
                         {
                             int rowsAffected;
+                            Image image = GetImageByImageId(imageId);
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateMainImageIdSql, connection))
+                            if (image.IsMainImage)
                             {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@imageId", imageId);
+                                using (NpgsqlCommand cmd = new NpgsqlCommand(updateMainImageIdSql, connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
 
-                                cmd.ExecuteNonQuery();
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSideProjectImageSql, connection))
@@ -2197,6 +2210,47 @@ namespace Capstone.DAO
                                                 HELPER METHODS
             **********************************************************************************************
         */
+
+        public Image GetImageByImageId(int imageId)
+        {
+            if (imageId <= 0)
+            {
+                throw new ArgumentException("ImageId must be greater than zero.");
+            }
+
+            string sql = "SELECT id, name, url, is_main_image FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapRowToImage(reader);
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving image by image id: " + ex.Message);
+                return null;
+            }
+        }
+
         public int? GetImageIdByWebsiteId(int websiteId)
         {
             try
@@ -2240,7 +2294,8 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
-                Url = Convert.ToString(reader["url"])
+                Url = Convert.ToString(reader["url"]),
+                IsMainImage = Convert.ToBoolean(reader["is_main_image"])
             };
         }
     }
