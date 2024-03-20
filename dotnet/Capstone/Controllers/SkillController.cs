@@ -23,7 +23,7 @@ namespace Capstone.Controllers
                                                 SKILL CRUD CONTROLLER
             **********************************************************************************************
         */
-
+// TODO TEST ALL POSTMAN CRUD
         [Authorize]
         [HttpPost("/create-skill")]
         public ActionResult CreateSkill(Skill skill)

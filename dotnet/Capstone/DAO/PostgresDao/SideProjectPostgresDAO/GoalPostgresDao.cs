@@ -415,6 +415,8 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
+                            int? iconId = GetIconIdByGoalId(goalId);
+
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteGoalFromSideProjectSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -422,6 +424,11 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@goalId", goalId);
 
                                 cmd.ExecuteNonQuery();
+                            }
+
+                            if (iconId.HasValue)
+                            {
+                                _imageDao.DeleteImageByGoalId(goalId, iconId.Value);
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteGoalSql, connection))
@@ -450,6 +457,43 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                                HELPER METHODS
+            **********************************************************************************************
+        */
+
+        private int? GetIconIdByGoalId(int goalId)
+        {
+            string sql = "SELECT icon_id FROM goals WHERE id = @goalId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@goalId", goalId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving icon ID by goal ID: " + ex.Message);
+                return null;
             }
         }
 
