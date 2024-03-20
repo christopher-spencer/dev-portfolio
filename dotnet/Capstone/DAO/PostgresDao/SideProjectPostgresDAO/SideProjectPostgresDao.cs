@@ -37,7 +37,7 @@ namespace Capstone.DAO
             **********************************************************************************************
                                             SIDE PROJECT CRUD
             **********************************************************************************************
-        */   
+        */
 
         public SideProject CreateSideProject(SideProject sideProject)
         {
@@ -83,7 +83,7 @@ namespace Capstone.DAO
             }
 
             return sideProject;
-        }     
+        }
 
         public List<SideProject> GetSideProjects()
         {
@@ -100,7 +100,7 @@ namespace Capstone.DAO
                     connection.Open();
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {                    
+                    {
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -231,17 +231,37 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    NpgsqlCommand cmd = new NpgsqlCommand(sql, connection);
-                    cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
 
-                    int rowsAffected = cmd.ExecuteNonQuery();
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
 
-                    return rowsAffected;
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the side project.", ex);
+                        }
+                    }
                 }
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while deleting the side project.", ex);
+                throw new DaoException("An error occurred while connecting to the database.", ex);
             }
 
         }
@@ -286,7 +306,7 @@ namespace Capstone.DAO
         private int? GetWebsiteIdBySideProjectId(int sideProjectId)
         {
             string sql = "SELECT website_id FROM sideprojects WHERE id = @sideProjectId;";
-           
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -317,7 +337,7 @@ namespace Capstone.DAO
         private int? GetGithubIdBySideProjectId(int sideProjectId)
         {
             string sql = "SELECT github_repo_link_id FROM sideprojects WHERE id = @sideProjectId;";
-           
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -525,7 +545,7 @@ namespace Capstone.DAO
         private void SetSideProjectMainImageIdProperties(NpgsqlDataReader reader, SideProject sideProject, int projectId)
         {
             if (reader["main_image_id"] != DBNull.Value)
-            {   
+            {
                 sideProject.MainImageId = Convert.ToInt32(reader["main_image_id"]);
 
                 int mainImageId = Convert.ToInt32(reader["main_image_id"]);
