@@ -441,9 +441,6 @@ namespace Capstone.DAO
                             // If associated website exists, get the website ID associated with the api service w/ helper method
                             int? websiteId = GetWebsiteIdByApiServiceId(apiServiceId);
 
-                            // Get the image ID associated with the website
-                            int? websiteImageId = websiteId.HasValue ? _imageDao.GetImageIdByWebsiteId(websiteId.Value) : null;
-
                             // Delete sideproject_apis_and_services table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceFromSideProjectSql, connection))
                             {
@@ -462,12 +459,6 @@ namespace Capstone.DAO
 
                             if (websiteId.HasValue)
                             {   
-                                //  If website image exists, delete the image
-                                if (websiteImageId.HasValue)
-                                {
-                                _imageDao.DeleteImageByWebsiteId(websiteId.Value, websiteImageId.Value);
-                                }
-
                                 // If Api/Service website exists, delete the website
                                 _websiteDao.DeleteWebsiteByApiServiceId(apiServiceId, websiteId.Value);
                             }

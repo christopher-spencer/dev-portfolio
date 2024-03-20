@@ -404,7 +404,7 @@ namespace Capstone.DAO
 
             return null;
         }
-// FIXME test this out
+
         public int DeleteDependencyOrLibraryBySideProjectId(int sideProjectId, int dependencyLibraryId)
         {
             if (sideProjectId <= 0 || dependencyLibraryId <= 0)
@@ -429,7 +429,6 @@ namespace Capstone.DAO
 
                             int? logoId = GetLogoIdByDependencyLibraryId(dependencyLibraryId);
                             int? websiteId = GetWebsiteIdByDependencyLibraryId(dependencyLibraryId);
-                            int? websiteImageId = websiteId.HasValue? _imageDao.GetImageIdByWebsiteId(websiteId.Value) : null;
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteDependencyLibraryFromSideProjectSql, connection))
                             {
@@ -447,12 +446,7 @@ namespace Capstone.DAO
 
                             if (websiteId.HasValue)
                             {
-                                if (websiteImageId.HasValue)
-                                {
-                                    _imageDao.DeleteImageByWebsiteId(dependencyLibraryId, websiteId.Value);
-                                }
-
-                                _websiteDao.DeleteWebsiteByDependencyLibraryId(dependencyLibraryId, websiteId.Value);
+                                 _websiteDao.DeleteWebsiteByDependencyLibraryId(dependencyLibraryId, websiteId.Value);
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteDependencyLibrarySql, connection))
