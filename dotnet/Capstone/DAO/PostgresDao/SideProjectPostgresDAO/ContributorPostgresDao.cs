@@ -443,7 +443,7 @@ namespace Capstone.DAO
 
             return null;
         }
-//FIXME seems to be working after restarting the DB but triple double check
+
         public int DeleteContributorBySideProjectId(int sideProjectId, int contributorId)
         {
             if (sideProjectId <= 0 || contributorId <= 0)

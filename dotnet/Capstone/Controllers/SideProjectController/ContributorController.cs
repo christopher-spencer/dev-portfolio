@@ -23,7 +23,7 @@ namespace Capstone.Controllers
                                                 CONTRIBUTOR CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO TEST ALL POSTMAN CRUD
+
         [Authorize]
         [HttpPost("/create-contributor")]
         public ActionResult CreateContributor(Contributor contributor)
