@@ -1,4 +1,4 @@
-// TODO Figure out how to auto connect db updates
+// TODO AUTOCONNECT DB UPDATES****
 
 BEGIN TRANSACTION;
 
