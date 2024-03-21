@@ -214,9 +214,7 @@ namespace Capstone.DAO
                                             SIDE PROJECT IMAGE CRUD
             **********************************************************************************************
         */
-        // FIXME should I just create individual CRUD for MainImage and AdditionalImages (especially UPDATES (?) )*****
-        // NOTE if you delete Main Image and just UPDATE existing image to IsMainImage True, there is a true Main image but doesn't
-        // NOTE set it as Main Image so then you can't create Main Image Until you delete that one reading as IsMainImage is true
+ 
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
             if (sideProjectId <= 0)
