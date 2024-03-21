@@ -396,7 +396,7 @@ namespace Capstone.DAO
             return image;
         }
 
-        public List<Image> GetMainImageAndAdditionalImagesBySideProjectId(int sideProjectId)
+        public List<Image> GetAllImagesBySideProjectId(int sideProjectId)
         {
             if (sideProjectId <= 0)
             {

@@ -421,7 +421,7 @@ namespace Capstone.DAO
 
         private int DeleteAdditionalImagesBySideProjectId(int sideProjectId)
         {
-            List<Image> additionalImages = _imageDao.GetMainImageAndAdditionalImagesBySideProjectId(sideProjectId);
+            List<Image> additionalImages = _imageDao.GetAllImagesBySideProjectId(sideProjectId);
 
             int imagesDeletedCount = 0;
 
@@ -563,7 +563,7 @@ namespace Capstone.DAO
             SetSideProjectGitHubRepoLinkIdProperties(reader, sideProject, projectId);
 
             sideProject.GoalsAndObjectives = _goalDao.GetGoalsBySideProjectId(projectId);
-            sideProject.AdditionalImages = _imageDao.GetMainImageAndAdditionalImagesBySideProjectId(projectId);
+            sideProject.AdditionalImages = _imageDao.GetAllImagesBySideProjectId(projectId);
             sideProject.ToolsUsed = _skillDao.GetSkillsBySideProjectId(projectId);
             sideProject.Contributors = _contributorDao.GetContributorsBySideProjectId(projectId);
             sideProject.ExternalAPIsAndServicesUsed = _apiServiceDao.GetAPIsAndServicesBySideProjectId(projectId);
