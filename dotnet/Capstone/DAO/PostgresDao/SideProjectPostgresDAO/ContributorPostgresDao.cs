@@ -471,8 +471,6 @@ namespace Capstone.DAO
                             int? gitHubId = GetGithubIdByContributorId(contributorId);
                             int? portfolioLinkId = GetPortfolioLinkIdByContributorId(contributorId);
 
-                            string websiteType;
-
                             if (contributorImageId.HasValue)
                             {
                                 _imageDao.DeleteImageByContributorId(contributorId, contributorImageId.Value);
@@ -480,20 +478,17 @@ namespace Capstone.DAO
 
                             if (linkedInId.HasValue)
                             {
-                                websiteType = "linkedin";
-                                _websiteDao.DeleteWebsiteByContributorId(contributorId, linkedInId.Value, websiteType);
+                                _websiteDao.DeleteWebsiteByContributorId(contributorId, linkedInId.Value);
                             }
 
                             if (gitHubId.HasValue)
                             {
-                                websiteType = "github";
-                                _websiteDao.DeleteWebsiteByContributorId(contributorId, gitHubId.Value, websiteType);
+                                _websiteDao.DeleteWebsiteByContributorId(contributorId, gitHubId.Value);
                             }
 
                             if (portfolioLinkId.HasValue)
                             {
-                                websiteType = "portfoliolink";
-                                _websiteDao.DeleteWebsiteByContributorId(contributorId, portfolioLinkId.Value, websiteType);
+                                _websiteDao.DeleteWebsiteByContributorId(contributorId, portfolioLinkId.Value);
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributorFromSideProjectSql, connection))

@@ -436,7 +436,7 @@ namespace Capstone.DAO
 
             return images;
         }
-        
+
         public List<Image> GetAdditionalImagesBySideProjectId(int sideProjectId)
         {
             if (sideProjectId <= 0)
@@ -629,7 +629,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertBlogPostImageSql = "INSERT INTO blogpost_images (blogpost_id, image_id) VALUES (@blogPostId, @imageId);";
             string updateBlogPostMainImageSql = "UPDATE blogposts SET main_image_id = @imageId WHERE id = @blogPostId;";
 
@@ -649,6 +649,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
                                 cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -699,7 +700,7 @@ namespace Capstone.DAO
 
             Image image = null;
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN blogpost_images bi ON i.id = bi.image_id " +
                          "WHERE bi.image_id = @imageId AND bi.blogpost_id = @blogPostId";
@@ -742,7 +743,7 @@ namespace Capstone.DAO
 
             List<Image> images = new List<Image>();
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN blogpost_images bi ON i.id = bi.image_id " +
                          "WHERE bi.blogpost_id = @blogPostId;";
@@ -784,7 +785,7 @@ namespace Capstone.DAO
             }
 
             string updateImageSql = "UPDATE images " +
-                                    "SET name = @name, url = @url " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
                                     "FROM blogpost_images " +
                                     "WHERE images.id = blogpost_images.image_id AND blogpost_images.blogpost_id = @blogPostId " +
                                     "AND images.id = @imageId;";
@@ -801,6 +802,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -911,7 +913,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertWebsiteImageSql = "INSERT INTO website_images (website_id, image_id) VALUES (@websiteId, @imageId);";
             string updateWebsiteLogoIdSql = "UPDATE websites SET logo_id = @imageId WHERE id = @websiteId;";
 
@@ -931,6 +933,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
                                 cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -981,7 +984,7 @@ namespace Capstone.DAO
 
             Image image = null;
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN website_images wi ON i.id = wi.image_id " +
                          "WHERE wi.website_id = @websiteId AND wi.image_id = @imageId";
@@ -1023,7 +1026,7 @@ namespace Capstone.DAO
             }
 
             string updateImageSql = "UPDATE images " +
-                                    "SET name = @name, url = @url " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
                                     "FROM website_images " +
                                     "WHERE images.id = website_images.image_id AND website_images.website_id = @websiteId " +
                                     "AND images.id = @imageId;";
@@ -1040,6 +1043,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -1150,7 +1154,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertSkillImageSql = "INSERT INTO skill_images (skill_id, image_id) VALUES (@skillId, @imageId);";
             string updateSkillImageIdSql = "UPDATE skills SET icon_id = @imageId WHERE id = @skillId;";
 
@@ -1170,6 +1174,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -1218,7 +1223,7 @@ namespace Capstone.DAO
 
             Image image = null;
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN skill_images si ON i.id = si.image_id " +
                          "WHERE si.skill_id = @skillId";
@@ -1259,7 +1264,7 @@ namespace Capstone.DAO
             }
 
             string updateImageSql = "UPDATE images " +
-                                    "SET name = @name, url = @url " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
                                     "FROM skill_images " +
                                     "WHERE images.id = skill_images.image_id AND skill_images.skill_id = @skillId " +
                                     "AND images.id = @imageId;";
@@ -1276,6 +1281,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -1386,7 +1392,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertGoalImageSql = "INSERT INTO goal_images (goal_id, image_id) VALUES (@goalId, @imageId);";
             string updateGoalImageIdSql = "UPDATE goals SET icon_id = @imageId WHERE id = @goalId;";
 
@@ -1406,6 +1412,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -1454,7 +1461,7 @@ namespace Capstone.DAO
 
             Image image = null;
 
-            string sql = "SELECT i.id, i.name, i.url FROM images i " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image FROM images i " +
                          "JOIN goal_images gi ON i.id = gi.image_id " +
                          "WHERE gi.goal_id = @goalId;";
 
@@ -1494,7 +1501,7 @@ namespace Capstone.DAO
             }
 
             string updateImageSql = "UPDATE images " +
-                                    "SET name = @name, url = @url " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
                                     "FROM goal_images " +
                                     "WHERE images.id = goal_images.image_id AND goal_images.goal_id = @goalId " +
                                     "AND images.id = @imageId;";
@@ -1511,6 +1518,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -1621,7 +1629,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertContributorImageSql = "INSERT INTO contributor_images (contributor_id, image_id) VALUES (@contributorId, @imageId);";
             string updateContributorImageIdSql = "UPDATE contributors SET contributor_image_id = @imageId WHERE id = @contributorId;";
 
@@ -1641,6 +1649,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -1689,7 +1698,7 @@ namespace Capstone.DAO
 
             Image image = null;
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN contributor_images ci ON i.id = ci.image_id " +
                          "WHERE ci.contributor_id = @contributorId";
@@ -1730,7 +1739,7 @@ namespace Capstone.DAO
             }
 
             string updateImageSql = "UPDATE images " +
-                                    "SET name = @name, url = @url " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
                                     "FROM contributor_images " +
                                     "WHERE images.id = contributor_images.image_id AND contributor_images.contributor_id = @contributorId " +
                                     "AND images.id = @imageId;";
@@ -1747,6 +1756,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -1856,7 +1866,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertApiServiceImageSql = "INSERT INTO api_service_images (apiservice_id, image_id) VALUES (@apiServiceId, @imageId);";
             string updateApiServiceLogoIdSql = "UPDATE apis_and_services SET logo_id = @imageId WHERE id = @apiServiceId;";
 
@@ -1876,6 +1886,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -1924,7 +1935,7 @@ namespace Capstone.DAO
 
             Image image = null;
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN api_service_images asi ON i.id = asi.image_id " +
                          "WHERE asi.apiservice_id = @apiServiceId";
@@ -1965,7 +1976,7 @@ namespace Capstone.DAO
             }
 
             string updateImageSql = "UPDATE images " +
-                                    "SET name = @name, url = @url " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
                                     "FROM api_service_images " +
                                     "WHERE images.id = api_service_images.image_id AND api_service_images.apiservice_id = @apiServiceId " +
                                     "AND images.id = @imageId;";
@@ -1982,6 +1993,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -2092,7 +2104,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
-            string insertImageSql = "INSERT INTO images (name, url) VALUES (@name, @url) RETURNING id;";
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
             string insertLibraryImageSql = "INSERT INTO dependency_library_images (dependencylibrary_id, image_id) VALUES (@dependencyLibraryId, @imageId);";
             string updateLibraryLogoIdSql = "UPDATE dependencies_and_libraries SET logo_id = @imageId WHERE id = @dependencyLibraryId;";
 
@@ -2112,6 +2124,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -2160,7 +2173,7 @@ namespace Capstone.DAO
 
             Image image = null;
 
-            string sql = "SELECT i.id, i.name, i.url " +
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
                          "FROM images i " +
                          "JOIN dependency_library_images dli ON i.id = dli.image_id " +
                          "WHERE dli.dependencylibrary_id = @dependencyLibraryId";
@@ -2201,7 +2214,7 @@ namespace Capstone.DAO
             }
 
             string updateImageSql = "UPDATE images " +
-                                    "SET name = @name, url = @url " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
                                     "FROM dependency_library_images " +
                                     "WHERE images.id = dependency_library_images.image_id AND " +
                                     "dependency_library_images.dependencylibrary_id = @dependencyLibraryId " +
@@ -2219,6 +2232,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
 
                         int count = cmd.ExecuteNonQuery();
 
