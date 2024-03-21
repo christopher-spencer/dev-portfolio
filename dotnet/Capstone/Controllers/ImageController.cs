@@ -236,6 +236,33 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
+        [HttpPut("/update-sideproject/{sideProjectId}/update-main-image/{mainImageId}")]
+        public ActionResult UpdateMainImageBySideProjectId(int sideProjectId, int mainImageId, Image mainImage)
+        {
+            try
+            {
+                Image updatedMainImage = _imageDao.UpdateMainImageBySideProjectId(sideProjectId, mainImageId, mainImage);
+
+                if (updatedMainImage == null)
+                {
+                    return BadRequest("The image is null. Please provide a main image.");
+                }
+                else if (!updatedMainImage.IsMainImage)
+                {
+                    return BadRequest("The provided image is not a main image. Please provide a main image.");
+                }
+                else
+                {
+                    return Ok(updatedMainImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the side project main image.");
+            }
+        }
+
+        [Authorize]
         [HttpDelete("/sideproject/{sideProjectId}/delete-image/{imageId}")]
         public ActionResult DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {

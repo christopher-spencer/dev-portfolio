@@ -530,18 +530,20 @@ namespace Capstone.DAO
             return null;
         }
 
-        // public Image UpdateMainImageBySideProjectId(int sideProjectId, int mainImageId, Image mainImage)
-        // {
-        //     if (!mainImage.IsMainImage)
-        //     {
-        //         throw new ArgumentException("The image provided is not a main image. Please provide a main image.");
-        //     }
+        public Image UpdateMainImageBySideProjectId(int sideProjectId, int mainImageId, Image mainImage)
+        {
+            if (!mainImage.IsMainImage)
+            {
+                throw new ArgumentException("The image provided is not a main image. Please provide a main image.");
+            }
+            else
+            {
+                DeleteImageBySideProjectId(sideProjectId, mainImageId);
+                CreateImageBySideProjectId(sideProjectId, mainImage);
+            }
 
-        //     DeleteImageBySideProjectId(sideProjectId, mainImageId);
-        //     CreateImageBySideProjectId(sideProjectId, mainImage);
-
-        //     return mainImage;
-        // }
+            return mainImage;
+        }
 
         public int DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {
