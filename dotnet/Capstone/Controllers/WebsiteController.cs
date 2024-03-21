@@ -129,7 +129,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-//FIXME remove WebsiteType from endpoints and params*****
         [Authorize]
         [HttpPost("/sideproject/{sideProjectId}/create-website")]
         public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website)
@@ -238,7 +237,7 @@ namespace Capstone.Controllers
         */
         
         [Authorize]
-        [HttpPost("/contributor/{contributorId}/create-website/{websiteType}")]
+        [HttpPost("/contributor/{contributorId}/create-website")]
         public ActionResult CreateWebsiteByContributorId(int contributorId, Website website)
         {
             string websiteType = website.Type.ToLower();
@@ -306,7 +305,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/contributor/{contributorId}/delete-website/{websiteType}/{websiteId}")]
+        [HttpDelete("/contributor/{contributorId}/delete-website/{websiteId}")]
         public ActionResult DeleteWebsiteByContributorId(int contributorId, int websiteId)
         {
             Website website = _websiteDao.GetWebsiteByContributorId(contributorId, websiteId);
