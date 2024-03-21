@@ -375,8 +375,7 @@ namespace Capstone.DAO
             return website;
         }
 
-        // TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set 
-        // TODO the type for CREATE or are we good? ONLY choice to delete it and create new by WebsiteType? Consider...
+        // TODO need Website Type? Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
@@ -665,7 +664,7 @@ namespace Capstone.DAO
 
             return website;
         }
-        // TODO consider do we need Website Type here? Do we want it to be able to change at all or once you set the type for CREATE are we good? Consider...
+// TODO need Website Type? Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...
         public Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
         {
             if (contributorId <= 0 || websiteId <= 0)

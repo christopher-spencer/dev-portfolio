@@ -214,7 +214,7 @@ namespace Capstone.DAO
                                             SIDE PROJECT IMAGE CRUD
             **********************************************************************************************
         */
-// TODO should I just create individual CRUD for MainImage and AdditionalImages (especially UPDATES (?) )*****
+// FIXME should I just create individual CRUD for MainImage and AdditionalImages (especially UPDATES (?) )*****
 // NOTE if you delete Main Image and just UPDATE existing image to IsMainImage True, there is a true Main image but doesn't
 // NOTE set it as Main Image so then you can't create Main Image Until you delete that one reading as IsMainImage is true
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
@@ -610,7 +610,7 @@ namespace Capstone.DAO
                                             BLOG POST IMAGE CRUD
             **********************************************************************************************
         */
-        // TODO add BLOGPOST isMainImage checker and if statement checks for isMainImage
+        // FIXME add BLOGPOST isMainImage checker and if statement checks for isMainImage
         public Image CreateImageByBlogPostId(int blogPostId, Image image)
         {
             if (blogPostId <= 0)
