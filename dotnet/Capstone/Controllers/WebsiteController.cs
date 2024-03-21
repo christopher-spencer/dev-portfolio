@@ -129,12 +129,13 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-//FIXME remove WebsiteType from endpoints*****
+//FIXME remove WebsiteType from endpoints and params*****
         [Authorize]
-        [HttpPost("/sideproject/{sideProjectId}/create-website/{websiteType}")]
-        public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
+        [HttpPost("/sideproject/{sideProjectId}/create-website")]
+        public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
-            websiteType = websiteType.ToLower();
+            string websiteType = website.Type.ToLower();
+
       //TODO change to "main website" or something
             if (websiteType != "website" && websiteType != "github")
             {
@@ -143,7 +144,7 @@ namespace Capstone.Controllers
 
             try
             {
-                Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(sideProjectId, website, websiteType);
+                Website createdWebsite = _websiteDao.CreateWebsiteBySideProjectId(sideProjectId, website);
 
                 if (createdWebsite == null)
                 {
@@ -199,10 +200,12 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpDelete("/sideproject/{sideProjectId}/delete-website/{websiteType}/{websiteId}")]
-        public ActionResult DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
+        [HttpDelete("/sideproject/{sideProjectId}/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
-            websiteType = websiteType.ToLower();
+            Website website = _websiteDao.GetWebsiteBySideProjectId(sideProjectId, websiteId);
+            string websiteType = website.Type.ToLower();
+
 //TODO change to "main website" or something
             if (websiteType != "website" && websiteType != "github")
             {
@@ -211,7 +214,7 @@ namespace Capstone.Controllers
 
             try
             {
-                int rowsAffected = _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId, websiteType);
+                int rowsAffected = _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId);
 
                 if (rowsAffected > 0)
                 {

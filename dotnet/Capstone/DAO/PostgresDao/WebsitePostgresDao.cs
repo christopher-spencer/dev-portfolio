@@ -236,7 +236,7 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
+        public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
             if (sideProjectId <= 0)
             {
@@ -263,7 +263,7 @@ namespace Capstone.DAO
 
             string updateSideProjectWebsiteSql;
 
-            switch (websiteType)
+            switch (website.Type)
             {
                 case "website":
                     updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
@@ -315,7 +315,6 @@ namespace Capstone.DAO
                             transaction.Commit();
 
                             website.Id = websiteId;
-                            website.Type = websiteType;
 
                             return website;
                         }
@@ -422,16 +421,18 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId, string websiteType)
+        public int DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
             {
                 throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
             }
 
+            Website website = GetWebsiteBySideProjectId(sideProjectId, websiteId);
+
             string updateSideProjectWebsiteIdSql;
 
-            switch (websiteType)
+            switch (website.Type)
             {
                 case "website":
                     updateSideProjectWebsiteIdSql = "UPDATE sideprojects SET website_id = NULL WHERE website_id = @websiteId;";

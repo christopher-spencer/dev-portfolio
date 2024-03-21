@@ -241,8 +241,6 @@ namespace Capstone.DAO
                             int? websiteId = GetWebsiteIdBySideProjectId(sideProjectId);
                             int? gitHubId = GetGithubIdBySideProjectId(sideProjectId);
 
-                            string websiteType;
-
                             if (mainImageId.HasValue)
                             {
                                 _imageDao.DeleteImageBySideProjectId(sideProjectId, mainImageId.Value);
@@ -250,14 +248,12 @@ namespace Capstone.DAO
 
                             if (websiteId.HasValue)
                             {
-                                websiteType = "website";
-                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId.Value, websiteType);
+                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId.Value);
                             }
 
                             if (gitHubId.HasValue)
                             {
-                                websiteType = "github";
-                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, gitHubId.Value, websiteType);
+                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, gitHubId.Value);
                             }
 
                             DeleteGoalsAndObjectivesBySideProjectId(sideProjectId);
