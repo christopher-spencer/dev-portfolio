@@ -9,6 +9,8 @@ namespace Capstone.Models
         public string Name { get; set; }
         public int PortfolioImageId { get; set; }
         public Image PortfolioImage { get; set; }
+        // TODO create model for Country/Region, City, State, ZipCode (?)
+        // NOTE better name for location?
         public string Location { get; set; }
         public string ProfessionalSummary { get; set; }
         public List<Hobby> Hobbies { get; set; }

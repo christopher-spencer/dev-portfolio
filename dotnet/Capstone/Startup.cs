@@ -69,7 +69,12 @@ namespace Capstone
             IWebsiteDao websiteDao = new WebsitePostgresDao(connectionString, imageDao);
             IContributorDao contributorDao = new ContributorPostgresDao(connectionString, imageDao, websiteDao);
             IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString, imageDao, websiteDao);
-            IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString, imageDao, websiteDao);
+            IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString, imageDao, 
+                websiteDao);
+            ISideProjectDao sideProjectDao = new SideProjectPostgresDao(
+                connectionString, goalDao, imageDao, skillDao, contributorDao, apiServiceDao, dependencyLibraryDao, 
+                websiteDao);
+
         
 
             // Register services with DI container
@@ -77,14 +82,16 @@ namespace Capstone
             services.AddSingleton<IPasswordHasher>(ph => new PasswordHasher());
             services.AddTransient<IUserDao>(m => new UserPostgresDao(connectionString));
             services.AddTransient<IBlogPostDao>(m => new BlogPostPostgresDao(connectionString, imageDao));
-            services.AddTransient<IPortfolioDao>(m => new PortfolioPostgresDao(connectionString));
+            services.AddTransient<IPortfolioDao>(m => new PortfolioPostgresDao(
+                connectionString, sideProjectDao, websiteDao, imageDao, skillDao));
             services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(
                 connectionString, goalDao, imageDao, skillDao, contributorDao, apiServiceDao,
                 dependencyLibraryDao, websiteDao));
 
             services.AddTransient<IContributorDao>(m => new ContributorPostgresDao(connectionString, imageDao, websiteDao));
             services.AddTransient<IApiServiceDao>(m => new ApiServicePostgresDao(connectionString, imageDao, websiteDao));
-            services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString, imageDao, websiteDao));
+            services.AddTransient<IDependencyLibraryDao>(m => new DependencyLibraryPostgresDao(connectionString, imageDao, 
+                websiteDao));
 
             services.AddTransient<IImageDao>(m => new ImagePostgresDao(connectionString));
             services.AddTransient<IGoalDao>(m => new GoalPostgresDao(connectionString, imageDao));
