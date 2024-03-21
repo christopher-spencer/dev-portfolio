@@ -523,7 +523,7 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public Website CreateWebsiteByContributorId(int contributorId, Website website, string websiteType)
+        public Website CreateWebsiteByContributorId(int contributorId, Website website)
         {
             if (contributorId <= 0)
             {
@@ -550,7 +550,7 @@ namespace Capstone.DAO
 
             string updateContributorWebsiteIdSql;
 
-            switch (websiteType)
+            switch (website.Type)
             {
                 case "portfoliolink":
                     updateContributorWebsiteIdSql = "UPDATE contributors SET portfolio_id = @websiteId WHERE id = @contributorId;";
@@ -710,16 +710,18 @@ namespace Capstone.DAO
             return null;
         }
 
-        public int DeleteWebsiteByContributorId(int contributorId, int websiteId, string websiteType)
+        public int DeleteWebsiteByContributorId(int contributorId, int websiteId)
         {
             if (contributorId <= 0 || websiteId <= 0)
             {
                 throw new ArgumentException("ContributorId and websiteId must be greater than zero.");
             }
 
+            Website website = GetWebsiteByContributorId(contributorId, websiteId);
+
             string updateContributorWebsiteIdSql;
 
-            switch (websiteType)
+            switch (website.Type)
             {
                 case "linkedin":
                     updateContributorWebsiteIdSql = "UPDATE contributors SET linkedin_id = NULL WHERE linkedin_id = @websiteId;";

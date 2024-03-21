@@ -239,9 +239,9 @@ namespace Capstone.Controllers
         
         [Authorize]
         [HttpPost("/contributor/{contributorId}/create-website/{websiteType}")]
-        public ActionResult CreateWebsiteByContributorId(int contributorId, Website website, string websiteType)
+        public ActionResult CreateWebsiteByContributorId(int contributorId, Website website)
         {
-            websiteType = websiteType.ToLower();
+            string websiteType = website.Type.ToLower();
 
             if (websiteType != "linkedin" && websiteType != "github" && websiteType != "portfoliolink")
             {
@@ -250,7 +250,7 @@ namespace Capstone.Controllers
 
             try
             {
-                Website createdWebsite = _websiteDao.CreateWebsiteByContributorId(contributorId, website, websiteType);
+                Website createdWebsite = _websiteDao.CreateWebsiteByContributorId(contributorId, website);
 
                 if (createdWebsite == null)
                 {
@@ -307,9 +307,11 @@ namespace Capstone.Controllers
 
         [Authorize]
         [HttpDelete("/contributor/{contributorId}/delete-website/{websiteType}/{websiteId}")]
-        public ActionResult DeleteWebsiteByContributorId(int contributorId, int websiteId, string websiteType)
+        public ActionResult DeleteWebsiteByContributorId(int contributorId, int websiteId)
         {
-            websiteType = websiteType.ToLower();
+            Website website = _websiteDao.GetWebsiteByContributorId(contributorId, websiteId);
+
+            string websiteType = website.Type.ToLower();
 
             if (websiteType != "linkedin" && websiteType != "github" && websiteType != "portfoliolink")
             {
@@ -318,7 +320,7 @@ namespace Capstone.Controllers
 
             try
             {
-                int rowsAffected = _websiteDao.DeleteWebsiteByContributorId(contributorId, websiteId, websiteType);
+                int rowsAffected = _websiteDao.DeleteWebsiteByContributorId(contributorId, websiteId);
 
                 if (rowsAffected > 0)
                 {
