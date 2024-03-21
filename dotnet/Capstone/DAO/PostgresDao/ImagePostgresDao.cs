@@ -308,9 +308,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-        //FIXME differentiate between GetAdditionalImages and GetMainImage for SideProjects AND BlogPosts***
 
-        //FIXME Add GetMainImageBySideProjectId CONTROLLER AND POSTMAN AND SIDEPROJECT MAP ROW*****
         public Image GetMainImageBySideProjectId(int sideProjectId)
         {
             if (sideProjectId <= 0)
@@ -438,7 +436,7 @@ namespace Capstone.DAO
 
             return images;
         }
-        //FIXME Add GetAdditionalImagesBySideProjectId to CONTROLLER AND POSTMAN AND SIDEPROJECT MAP ROW AND HELPER METHOD?*****
+        
         public List<Image> GetAdditionalImagesBySideProjectId(int sideProjectId)
         {
             if (sideProjectId <= 0)

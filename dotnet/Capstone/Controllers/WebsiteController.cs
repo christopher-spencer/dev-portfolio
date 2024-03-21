@@ -23,7 +23,7 @@ namespace Capstone.Controllers
                                                 WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-//FIXME remove WebsiteType from endpoints*****
+
         [Authorize]
         [HttpPost("/create-website")]
         public ActionResult CreateWebsite(Website website)
@@ -129,6 +129,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
+//FIXME remove WebsiteType from endpoints*****
         [Authorize]
         [HttpPost("/sideproject/{sideProjectId}/create-website/{websiteType}")]
         public ActionResult CreateWebsiteBySideProjectId(int sideProjectId, Website website, string websiteType)
