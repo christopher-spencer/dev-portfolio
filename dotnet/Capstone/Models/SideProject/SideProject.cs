@@ -11,7 +11,6 @@ namespace Capstone.Models
         public Image MainImage { get; set; }
         public string Description { get; set; }
         public List<Goal> GoalsAndObjectives { get; set; }
-        // NOTE rename ALLIMAGES or something to reflect it includes the Main Image as well
         public List<Image> AdditionalImages { get; set; }
         public string VideoWalkthroughUrl { get; set; }
         //NOTE rename ToolsUsed (?)

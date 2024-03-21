@@ -9,13 +9,17 @@ namespace Capstone.Models
         public string Name { get; set; }
         public string IssuingOrganization { get; set; }
         public string Description { get; set; }
-        public Image OrganizationLogoUrl { get; set; }
+        public int OrganizationLogoId { get; set; }
+        public Image OrganizationLogo { get; set; }
+        public int OrganizationWebsiteId { get; set; }
         public Website OrganizationWebsite { get; set; }
         public DateTime IssueDate { get; set; }
         public DateTime ExpirationDate { get; set; }
-        public int CredentialId { get; set; }
-        public Website CredentialURL { get; set; }
-        public Image ImageUrl { get; set; }
+        public int CredentialIdNumber { get; set; }
+        public int CredentialWebsiteId { get; set; }
+        public Website CredentialWebsite { get; set; }
+        public int AssociatedImageId { get; set; }
+        public Image AssociatedImage { get; set; }
         public List <Skill> AssociatedSkills { get; set; }
     } 
 }

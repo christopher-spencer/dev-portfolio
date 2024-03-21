@@ -7,7 +7,9 @@ namespace Capstone.Models
     {
         public int Id { get; set; }
         public string SchoolOrInstitution { get; set; }
-        public Image InstitutionLogoUrl { get; set; }
+        public int InstitutionLogoId { get; set; }
+        public Image InstitutionLogo { get; set; }
+        public int InstitutionWebsiteId { get; set; }
         public Website InstitutionWebsite { get; set; }
         public string Location { get; set; }
         public string Description { get; set; }
@@ -17,7 +19,8 @@ namespace Capstone.Models
         public DateTime StartDate { get; set; }
         public DateTime GraduationDate { get; set; }
         public List<Achievement> HonorsAndAwards { get; set; }
-        public Image MainImageUrl { get; set; }
-        public List<Image> AdditionalImagesUrl { get; set; }
+        public int MainImageId { get; set; }
+        public Image MainImage { get; set; }
+        public List<Image> AdditionalImages { get; set; }
     }
 }

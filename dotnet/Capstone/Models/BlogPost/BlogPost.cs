@@ -6,7 +6,6 @@ namespace Capstone.Models
 {
     public class BlogPost
     {
-         // TODO add AdditionalImages for CARTOON BLOG POSTS
         public int Id { get; set; }
         public string Name { get; set; }
         public string Author { get; set; }
@@ -14,7 +13,8 @@ namespace Capstone.Models
         public string Content { get; set; }
         public int MainImageId { get; set; }
         public Image MainImage { get; set; }
-// NOTE rename ALLIMAGES or something to reflect it includes the Main Image as well
+ // TODO add AdditionalImages for CARTOON BLOG POSTS        
+// NOTE better name than additionalImages?
         // public List<Image> AdditionalImages { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
