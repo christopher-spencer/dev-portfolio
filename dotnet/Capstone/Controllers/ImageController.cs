@@ -152,8 +152,24 @@ namespace Capstone.Controllers
             }
         }
 
-        [HttpGet("/sideproject/{sideProjectId}/images")]
-        public ActionResult GetImagesBySideProjectId(int sideProjectId)
+// TODO create postman path
+        [HttpGet("/sideproject/{sideProjectId}/main-image")]
+        public ActionResult GetMainImageBySideProjectId(int sideProjectId)
+        {
+            Image mainImage = _imageDao.GetMainImageBySideProjectId(sideProjectId);
+
+            if (mainImage == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(mainImage);
+            }
+        }
+// TODO adjust postman path
+        [HttpGet("/sideproject/{sideProjectId}/all-images")]
+        public ActionResult GetMainImageAndAdditionalImagesBySideProjectId(int sideProjectId)
         {
             List<Image> images = _imageDao.GetMainImageAndAdditionalImagesBySideProjectId(sideProjectId);
 
@@ -166,6 +182,22 @@ namespace Capstone.Controllers
                 return Ok(images);
             }
         }
+
+// TODO create postman path
+        [HttpGet("/sideproject/{sideProjectId}/additional-images")]
+        public ActionResult GetAdditionalImagesBySideProjectId(int sideProjectId)
+        {
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesBySideProjectId(sideProjectId);
+
+            if (additionalImages == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(additionalImages);
+            }
+        } 
 
         [HttpGet("/sideproject/{sideProjectId}/image/{imageId}")]
         public ActionResult<Image> GetImageBySideProjectId(int sideProjectId, int imageId)
