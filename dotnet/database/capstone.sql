@@ -24,8 +24,10 @@ DROP TABLE IF EXISTS contributor_websites;
 DROP TABLE IF EXISTS api_service_websites;
 DROP TABLE IF EXISTS dependency_library_websites;
 
+DROP TABLE IF EXISTS portfolios;
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
+
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS goals;
 DROP TABLE IF EXISTS dependencies_and_libraries;
@@ -136,6 +138,21 @@ CREATE TABLE sideprojects (
     FOREIGN KEY (main_image_id) REFERENCES images(id),
     FOREIGN KEY (website_id) REFERENCES websites(id),
     FOREIGN KEY (github_repo_link_id) REFERENCES websites(id)
+);
+// NOTE added DROP and portfolios table to modify
+CREATE TABLE portfolios (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    main_image_id INTEGER,
+    location VARCHAR(60),
+    professional_summary VARCHAR(500),
+    email VARCHAR(80),
+    github_repo_link_id INTEGER,
+    linkedin_id INTEGER,
+    FOREIGN KEY (portfolio_image_id) REFERENCES images(id),
+    FOREIGN KEY (github_repo_link_id) REFERENCES websites(id),
+    FOREIGN KEY (linkedin_id) REFERENCES websites(id)
+
 );
 
 CREATE TABLE website_images (

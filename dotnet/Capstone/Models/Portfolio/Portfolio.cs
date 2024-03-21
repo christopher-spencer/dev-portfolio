@@ -7,8 +7,8 @@ namespace Capstone.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int PortfolioImageId { get; set; }
-        public Image PortfolioImage { get; set; }
+        public int MainImageId { get; set; }
+        public Image MainImage { get; set; }
         // TODO create model for Country/Region, City, State, ZipCode (?)
         // NOTE better name for location?
         public string Location { get; set; }

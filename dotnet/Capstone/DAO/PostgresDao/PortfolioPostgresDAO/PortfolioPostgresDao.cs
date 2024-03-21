@@ -35,7 +35,8 @@ namespace Capstone.DAO
         {
             List<Portfolio> portfolios = new List<Portfolio>();
 
-            string sql = "SELECT id, name, location, professional_summary, email FROM portfolios";
+            string sql = "SELECT id, name, main_image_id, location, professional_summary, email, " +
+                "github_repo_link_id, linkedin_id FROM portfolios";
 
             try
             {
@@ -73,7 +74,8 @@ namespace Capstone.DAO
 
             Portfolio portfolio = null;
 
-            string sql = "SELECT id, name, location, professional_summary, email FROM portfolios WHERE id = @portfolioId";
+            string sql = "SELECT id, name, main_image_id, location, professional_summary, email, " +
+                "github_repo_link_id, linkedin_id FROM portfolios WHERE id = @portfolioId";
 
             try
             {
@@ -126,7 +128,36 @@ namespace Capstone.DAO
                 Email = Convert.ToString(reader["email"])
             };
 
+            int portfolioId = portfolio.Id;
+
+            SetPortfolioMainImageIdProperties(reader, portfolio, portfolioId);
+
+
             return portfolio;
         }
+
+        private void SetPortfolioMainImageIdProperties(NpgsqlDataReader reader, Portfolio portfolio, int portfolioId)
+        {
+            if (reader["main_image_id"] != DBNull.Value)
+            {
+                portfolio.MainImageId = Convert.ToInt32(reader["main_image_id"]);
+
+                portfolio.MainImage = _imageDao.GetMainImageBySideProjectId(portfolioId);
+            }
+            else
+            {
+                portfolio.MainImageId = 0;
+            }
+        }
+
+        // private void SetPortfolioGitHubRepoLinkIdProperties(NpgsqlDataReader reader, Portfolio portfolio, int portfolioId)
+        // {
+        //     if (reader["github_repo_link_id"] != DBNull.Value)
+        //     {
+        //         portfolio.GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
+
+        //         portfolio.GitHubRepoLink = _websiteDao.GetWebsiteByPortfolioId(portfolioId);
+        //     }
+        // }
     }
 }
