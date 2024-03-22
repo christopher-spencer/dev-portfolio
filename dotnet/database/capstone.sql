@@ -25,6 +25,8 @@ DROP TABLE IF EXISTS contributor_images;
 DROP TABLE IF EXISTS api_service_images;
 DROP TABLE IF EXISTS dependency_library_images;
 
+DROP TABLE IF EXISTS experience_images;
+
 DROP TABLE IF EXISTS contributor_websites;
 DROP TABLE IF EXISTS api_service_websites;
 DROP TABLE IF EXISTS dependency_library_websites;
@@ -32,8 +34,10 @@ DROP TABLE IF EXISTS dependency_library_websites;
 DROP TABLE IF EXISTS portfolios;
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
-
 DROP TABLE IF EXISTS users;
+
+DROP TABLE IF EXISTS experiences;
+
 DROP TABLE IF EXISTS goals;
 DROP TABLE IF EXISTS dependencies_and_libraries;
 DROP TABLE IF EXISTS contributors;
@@ -68,7 +72,6 @@ CREATE TABLE skills (
     FOREIGN KEY (icon_id) REFERENCES images(id)
 );
 
-// NOTE check achievements and DROP and achievements_images placement
 CREATE TABLE achievements (
     id SERIAL PRIMARY KEY,
     description VARCHAR(350) NOT NULL,
@@ -125,6 +128,21 @@ CREATE TABLE goals (
     description VARCHAR(300) NOT NULL,
     icon_id INTEGER,
     FOREIGN KEY (icon_id) REFERENCES images(id)
+);
+
+CREATE TABLE experiences (
+    id SERIAL PRIMARY KEY,
+    position_title VARCHAR(50) NOT NULL,
+    company_name VARCHAR(100) NOT NULL,
+    company_logo_id INTEGER,
+    company_website_id INTEGER,
+    location VARCHAR(100),
+    start_date TIMESTAMP,
+    end_date TIMESTAMP,
+    main_image_id INTEGER,
+    FOREIGN KEY (company_logo_id) REFERENCES images(id),
+    FOREIGN KEY (company_website_id) REFERENCES websites(id),
+    FOREIGN KEY (main_image_id) REFERENCES images(id)
 );
 
 CREATE TABLE users (
@@ -240,6 +258,14 @@ CREATE TABLE dependency_library_images (
     PRIMARY KEY (dependencylibrary_id, image_id),
     FOREIGN KEY (dependencylibrary_id) REFERENCES dependencies_and_libraries(id),
     FOREIGN KEY (image_id) REFERENCES images(id)    
+);
+
+CREATE TABLE experience_images (
+    experience_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (experience_id, image_id),
+    FOREIGN KEY (experience_id) REFERENCES experiences(id),
+    FOREIGN KEY (image_id) REFERENCES images(id)
 );
 
 CREATE TABLE contributor_websites (
