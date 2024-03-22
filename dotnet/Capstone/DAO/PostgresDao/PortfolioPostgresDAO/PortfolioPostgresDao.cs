@@ -30,7 +30,7 @@ namespace Capstone.DAO
                                             PORTFOLIO CRUD
             **********************************************************************************************
         */
-
+// TODO finish CRUD, helper methods and maprow
         public List<Portfolio> GetPortfolios()
         {
             List<Portfolio> portfolios = new List<Portfolio>();
