@@ -133,6 +133,15 @@ namespace Capstone.Controllers
         [HttpPost("/sideproject/{sideProjectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int sideProjectId, Image image)
         {
+//FIXME SIDEPROJECT CONTROLLERS NEED SWITCHED FOR TYPE FROM ISMAINIMAGE***
+
+            // string imageType = image.Type.ToLower();
+
+            // if (imageType != "main image" && imageType != "additional image")
+            // {
+            //     return BadRequest("Invalid image type. Allowed values are 'main image' and 'additional image'.");
+            // }
+
             try
             {
                 Image createdImage = _imageDao.CreateImageBySideProjectId(sideProjectId, image);
@@ -242,11 +251,12 @@ namespace Capstone.Controllers
             try
             {
                 Image updatedMainImage = _imageDao.UpdateMainImageBySideProjectId(sideProjectId, mainImageId, mainImage);
-
+                
                 if (updatedMainImage == null)
                 {
                     return BadRequest("The image is null. Please provide a main image.");
                 }
+// FIXME switch to TYPE
                 else if (!updatedMainImage.IsMainImage)
                 {
                     return BadRequest("The provided image is not a main image. Please provide a main image.");
@@ -266,6 +276,16 @@ namespace Capstone.Controllers
         [HttpDelete("/sideproject/{sideProjectId}/delete-image/{imageId}")]
         public ActionResult DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {
+// FIXME uncomment code for switch to Image.Type            
+            // Image image = _imageDao.GetImageBySideProjectId(sideProjectId, imageId);
+
+            // string imageType = image.Type.ToLower();
+
+            // if (imageType != "main image" && imageType != "additional image")
+            // {
+            //     return BadRequest("Invalid imageType. Allowed values are 'main image' and 'additional image'.");
+            // }
+
             try
             {
                 int rowsAffected = _imageDao.DeleteImageBySideProjectId(sideProjectId, imageId);

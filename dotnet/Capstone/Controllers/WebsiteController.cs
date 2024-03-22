@@ -203,6 +203,7 @@ namespace Capstone.Controllers
         public ActionResult DeleteWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
             Website website = _websiteDao.GetWebsiteBySideProjectId(sideProjectId, websiteId);
+            
             string websiteType = website.Type.ToLower();
 
 //TODO change to "main website" or something
