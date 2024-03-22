@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS skill_images;
 DROP TABLE IF EXISTS goal_images;
 
 DROP TABLE IF EXISTS achievement_images;
+DROP TABLE IF EXISTS hobby_images;
 
 DROP TABLE IF EXISTS contributor_images;
 DROP TABLE IF EXISTS api_service_images;
@@ -38,6 +39,7 @@ DROP TABLE IF EXISTS dependencies_and_libraries;
 DROP TABLE IF EXISTS contributors;
 DROP TABLE IF EXISTS apis_and_services;
 
+DROP TABLE IF EXISTS hobbies;
 DROP TABLE IF EXISTS achievements;
 DROP TABLE IF EXISTS websites;
 DROP TABLE IF EXISTS skills;
@@ -68,6 +70,13 @@ CREATE TABLE skills (
 
 // NOTE check achievements and DROP and achievements_images placement
 CREATE TABLE achievements (
+    id SERIAL PRIMARY KEY,
+    description VARCHAR(350) NOT NULL,
+    icon_id INTEGER,
+    FOREIGN KEY (icon_id) REFERENCES images(id)
+);
+
+CREATE TABLE hobbies (
     id SERIAL PRIMARY KEY,
     description VARCHAR(350) NOT NULL,
     icon_id INTEGER,
@@ -198,6 +207,14 @@ CREATE TABLE achievement_images (
     image_id INTEGER,
     PRIMARY KEY (achievement_id, image_id),
     FOREIGN KEY (achievement_id) REFERENCES achievements(id),
+    FOREIGN KEY (image_id) REFERENCES images(id)
+);
+
+CREATE TABLE hobby_images (
+    hobby_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (hobby_id, image_id),
+    FOREIGN KEY (hobby_id) REFERENCES hobbies(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
 );
 

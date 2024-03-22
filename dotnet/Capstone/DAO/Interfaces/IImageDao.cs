@@ -21,7 +21,7 @@ namespace Capstone.DAO.Interfaces
                                             PORTFOLIO IMAGE CRUD
             **********************************************************************************************
         */
-        // TODO Create Controllers****
+        // TODO Create Portfolio Controllers****
         Image CreateImageByPortfolioId(int portfolioId, Image image);
         Image GetMainImageByPortfolioId(int portfolioId);
         Image GetImageByPortfolioId(int portfolioId, int imageId);
@@ -152,6 +152,7 @@ namespace Capstone.DAO.Interfaces
                                             ACHIEVEMENT IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Create Achievement Controllers****
         Image CreateImageByAchievementId(int achievementId, Image image);
         Image GetImageByAchievementId(int achievementId);
         Image UpdateImageByAchievementId(int achievementId, int imageId, Image image);
@@ -162,6 +163,11 @@ namespace Capstone.DAO.Interfaces
                                             HOBBY IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Create Hobby Controllers****        
+        Image CreateImageByHobbyId(int hobbyId, Image image);
+        Image GetImageByHobbyId(int hobbyId);
+        Image UpdateImageByHobbyId(int hobbyId, int imageId, Image image);
+        int DeleteImageByHobbyId(int hobbyId, int imageId);
 
         /*  
             **********************************************************************************************

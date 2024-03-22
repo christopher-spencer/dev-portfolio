@@ -3017,6 +3017,238 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        public Image CreateImageByHobbyId(int hobbyId, Image image)
+        {
+            if (hobbyId <= 0)
+            {
+                throw new ArgumentException("HobbyId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
+            string insertHobbyImageSql = "INSERT INTO hobby_images (hobby_id, image_id) VALUES (@hobbyId, @imageId);";
+            string updateHobbyIconIdSql = "UPDATE hobbies SET icon_id = @imageId WHERE id = @hobbyId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int imageId;
+
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
+
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertHobbyImage = new NpgsqlCommand(insertHobbyImageSql, connection))
+                            {
+                                cmdInsertHobbyImage.Parameters.AddWithValue("@hobbyId", hobbyId);
+                                cmdInsertHobbyImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertHobbyImage.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmdUpdateHobbyIconId = new NpgsqlCommand(updateHobbyIconIdSql, connection))
+                            {
+                                cmdUpdateHobbyIconId.Parameters.AddWithValue("@hobbyId", hobbyId);
+                                cmdUpdateHobbyIconId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateHobbyIconId.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image for the hobby.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Image GetImageByHobbyId(int hobbyId)
+        {
+            if (hobbyId <= 0)
+            {
+                throw new ArgumentException("HobbyId must be greater than zero.");
+            }
+
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN hobby_images hi ON i.id = hi.image_id " +
+                         "WHERE hi.hobby_id = @hobbyId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@hobbyId", hobbyId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by hobby ID.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageByHobbyId(int hobbyId, int imageId, Image image)
+        {
+            if (hobbyId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("HobbyId and imageId must be greater than zero.");
+            }
+
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
+                                    "FROM hobby_images " +
+                                    "WHERE images.id = hobby_images.image_id AND hobby_images.hobby_id = @hobbyId " +
+                                    "AND images.id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@hobbyId", hobbyId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return image;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by hobby ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteImageByHobbyId(int hobbyId, int imageId)
+        {
+            if (hobbyId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("HobbyId and imageId must be greater than zero.");
+            }
+
+            string updateHobbyIconIdSql = "UPDATE hobbies SET icon_id = NULL WHERE icon_id = @imageId;";
+            string deleteHobbyImageSql = "DELETE FROM hobby_images WHERE hobby_id = @hobbyId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateHobbyIconIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteHobbyImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@hobbyId", hobbyId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by hobby ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                                 HELPER METHODS
