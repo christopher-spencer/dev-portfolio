@@ -17,6 +17,7 @@ namespace Capstone.Controllers
         {
             _imageDao = imageDao;
         }
+// FIXME add CONSTANTS for main image and additional image types*******
 
         /*  
             **********************************************************************************************

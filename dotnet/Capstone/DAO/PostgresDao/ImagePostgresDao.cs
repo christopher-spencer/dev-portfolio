@@ -16,7 +16,9 @@ namespace Capstone.DAO
         {
             connectionString = dbConnectionString;
         }
-// FIXME add CONSTANTS for main image and additional image types*******
+
+        const string MainImage = "main image";
+        const string AdditionalImage = "additional image";
         /*  
             **********************************************************************************************
                                                     IMAGE CRUD
@@ -254,7 +256,7 @@ namespace Capstone.DAO
 
                             if (existingMainImage != null)
                             {
-                                image.Type = "additional image";
+                                image.Type = AdditionalImage;
                             }
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
@@ -274,7 +276,7 @@ namespace Capstone.DAO
                                 cmdInsertPortfolioImage.ExecuteNonQuery();
                             }
 
-                            if ( (image.Type == "main image" ) && (existingMainImage == null) )
+                            if ( (image.Type == MainImage ) && (existingMainImage == null) )
                             {
                                 using (NpgsqlCommand cmdUpdatePortfolioMainImage = new NpgsqlCommand(updatePortfolioMainImageSql, connection))
                                 {
@@ -329,7 +331,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
-                        cmd.Parameters.AddWithValue("@imageType", "main image");
+                        cmd.Parameters.AddWithValue("@imageType", MainImage);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -458,7 +460,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
-                        cmd.Parameters.AddWithValue("@imageType", "additional image");
+                        cmd.Parameters.AddWithValue("@imageType", AdditionalImage);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -502,7 +504,7 @@ namespace Capstone.DAO
 
                     if (existingMainImage != null)
                     {
-                        image.Type = "additional image";
+                        image.Type = AdditionalImage;
                     }
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
@@ -532,7 +534,7 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage)
         {
-            if (mainImage.Type != "main image")
+            if (mainImage.Type != MainImage)
             {
                 throw new ArgumentException("The image provided is not a main image. Please provide a main image.");
             }
@@ -572,7 +574,7 @@ namespace Capstone.DAO
 
                             Image image = GetImageByImageId(imageId);
 
-                            if (image.Type == "main image")
+                            if (image.Type == MainImage)
                             {
                                 using (NpgsqlCommand cmd = new NpgsqlCommand(updateMainImageIdSql, connection))
                                 {
@@ -666,7 +668,7 @@ namespace Capstone.DAO
 
                             if (existingMainImage != null)
                             {
-                                image.Type = "additional image";
+                                image.Type = AdditionalImage;
                             }
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
@@ -686,7 +688,7 @@ namespace Capstone.DAO
                                 cmdInsertSideProjectImage.ExecuteNonQuery();
                             }
 
-                            if ( (image.Type == "main image") && (existingMainImage == null) )
+                            if ( (image.Type == MainImage) && (existingMainImage == null) )
                             {
                                 using (NpgsqlCommand cmdUpdateSideProjectMainImage = new NpgsqlCommand(updateSideProjectMainImageSql, connection))
                                 {
@@ -741,7 +743,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@imageType", "main image");
+                        cmd.Parameters.AddWithValue("@imageType", MainImage);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -870,7 +872,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
-                        cmd.Parameters.AddWithValue("@imageType", "additional image");
+                        cmd.Parameters.AddWithValue("@imageType", AdditionalImage);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -914,7 +916,7 @@ namespace Capstone.DAO
 
                     if (existingMainImage != null)
                     {
-                        image.Type = "additional image";
+                        image.Type = AdditionalImage;
                     }
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
@@ -944,7 +946,7 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageBySideProjectId(int sideProjectId, int mainImageId, Image mainImage)
         {
-            if (mainImage.Type != "main image")
+            if (mainImage.Type != MainImage)
             {
                 throw new ArgumentException("The image provided is not a main image. Please provide a main image.");
             }
@@ -984,7 +986,7 @@ namespace Capstone.DAO
 
                             Image image = GetImageByImageId(imageId);
 
-                            if (image.Type == "main image")
+                            if (image.Type == MainImage)
                             {
                                 using (NpgsqlCommand cmd = new NpgsqlCommand(updateMainImageIdSql, connection))
                                 {
