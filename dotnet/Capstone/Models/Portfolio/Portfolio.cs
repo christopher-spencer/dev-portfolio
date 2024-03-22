@@ -5,7 +5,6 @@ namespace Capstone.Models
 {
     public class Portfolio
     {
-        // TODO Add AdditionalImages and GetAdditionalImagesByPortfolioId method?
         public int Id { get; set; }
         public string Name { get; set; }
         public int MainImageId { get; set; }
@@ -27,5 +26,7 @@ namespace Capstone.Models
         public List<Credential> CertificationsAndCredentials { get; set; }
         public List<VolunteerWork> VolunteerWorks { get; set; }
         public List<OpenSourceContribution> OpenSourceContributions { get; set; }
+        public List<Image> AdditionalImages { get; set; }
+
     }
 }

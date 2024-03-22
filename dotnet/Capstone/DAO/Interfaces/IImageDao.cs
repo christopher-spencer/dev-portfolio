@@ -21,8 +21,15 @@ namespace Capstone.DAO.Interfaces
                                             PORTFOLIO IMAGE CRUD
             **********************************************************************************************
         */
-
-        // TODO Porfolio Image CRUD
+        // TODO Create Controllers****
+        Image CreateImageByPortfolioId(int portfolioId, Image image);
+        Image GetMainImageByPortfolioId(int portfolioId);
+        Image GetImageByPortfolioId(int portfolioId, int imageId);
+        List<Image> GetAllImagesByPortfolioId(int portfolioId);
+        List<Image> GetAdditionalImagesByPortfolioId(int portfolioId);
+        Image UpdateImageByPortfolioId(int portfolioId, int imageId, Image image);
+        Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage);
+        int DeleteImageByPortfolioId(int portfolioId, int imageId);
         
         /*  
             **********************************************************************************************

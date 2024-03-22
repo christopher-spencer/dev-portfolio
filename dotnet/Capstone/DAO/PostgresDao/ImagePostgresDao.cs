@@ -434,6 +434,49 @@ namespace Capstone.DAO
             return images;
         }
 
+        public List<Image> GetAdditionalImagesByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            List<Image> additionalImages = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN portfolio_images pi ON i.id = pi.image_id " +
+                         "WHERE pi.portfolio_id = @portfolioId AND i.is_main_image = false;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Image image = MapRowToImage(reader);
+                                additionalImages.Add(image);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the additional images by portfolio ID.", ex);
+            }
+
+            return additionalImages;
+        }
+
         public Image UpdateImageByPortfolioId(int portfolioId, int imageId, Image image)
         {
             if (portfolioId <= 0 || imageId <= 0)
@@ -486,6 +529,20 @@ namespace Capstone.DAO
         }
 
         // TODO add UpdateMainImageByPortfolioId (?) (Depends on if you include additionalImages field)
+        public Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage)
+        {
+            if (!mainImage.IsMainImage)
+            {
+                throw new ArgumentException("The image provided is not a main image. Please provide a main image.");
+            }
+            else
+            {
+                DeleteImageByPortfolioId(portfolioId, mainImageId);
+                CreateImageByPortfolioId(portfolioId, mainImage);
+            }
+
+            return mainImage;
+        }
 
         public int DeleteImageByPortfolioId(int portfolioId, int imageId)
         {
