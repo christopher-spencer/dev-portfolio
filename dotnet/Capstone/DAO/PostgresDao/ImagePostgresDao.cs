@@ -2745,6 +2745,280 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                            EXPERIENCE IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                            CREDENTIAL IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                            EDUCATION IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                        OPEN SOURCE CONTRIBUTION IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                            VOLUNTEER WORK IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                            ACHIEVEMENT IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        public Image CreateImageByAchievementId(int achievementId, Image image)
+        {
+            if (achievementId <= 0)
+            {
+                throw new ArgumentException("AchievementId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
+            string insertAchievementImageSql = "INSERT INTO achievement_images (achievement_id, image_id) VALUES (@achievementId, @imageId);";
+            string updateAchievementIconIdSql = "UPDATE achievements SET icon_id = @imageId WHERE id = @achievementId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int imageId;
+
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
+
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertAchievementImage = new NpgsqlCommand(insertAchievementImageSql, connection))
+                            {
+                                cmdInsertAchievementImage.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmdInsertAchievementImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertAchievementImage.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmdUpdateAchievementIconId = new NpgsqlCommand(updateAchievementIconIdSql, connection))
+                            {
+                                cmdUpdateAchievementIconId.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmdUpdateAchievementIconId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateAchievementIconId.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image for the achievement.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Image GetImageByAchievementId(int achievementId)
+        {
+            if (achievementId <= 0)
+            {
+                throw new ArgumentException("AchievementId must be greater than zero.");
+            }
+
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN achievement_images ai ON i.id = ai.image_id " +
+                         "WHERE ai.achievement_id = @achievementId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@achievementId", achievementId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by achievement ID.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageByAchievementId(int achievementId, int imageId, Image image)
+        {
+            if (achievementId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("AchievementId and imageId must be greater than zero.");
+            }
+
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
+                                    "FROM achievement_images " +
+                                    "WHERE images.id = achievement_images.image_id AND achievement_images.achievement_id = @achievementId " +
+                                    "AND images.id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return image;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by achievement ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteImageByAchievementId(int achievementId, int imageId)
+        {
+            if (achievementId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("AchievementId and imageId must be greater than zero.");
+            }
+
+            string updateAchievementIconIdSql = "UPDATE achievements SET icon_id = NULL WHERE icon_id = @imageId;";
+            string deleteAchievementImageSql = "DELETE FROM achievement_images WHERE achievement_id = @achievementId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateAchievementIconIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAchievementImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by achievement ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
+                                            HOBBY IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
                                                 HELPER METHODS
             **********************************************************************************************
         */
