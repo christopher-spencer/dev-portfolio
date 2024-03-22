@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS sideproject_contributors;
 DROP TABLE IF EXISTS sideproject_skills;
 DROP TABLE IF EXISTS sideproject_goals;
 
+DROP TABLE IF EXISTS portfolio_images
 DROP TABLE IF EXISTS sideproject_images;
 DROP TABLE IF EXISTS blogpost_images;
 
@@ -145,7 +146,7 @@ CREATE TABLE portfolios (
     name VARCHAR(100) NOT NULL,
     main_image_id INTEGER,
     location VARCHAR(60),
-    professional_summary VARCHAR(500),
+    professional_summary VARCHAR(500) NOT NULL,
     email VARCHAR(80),
     github_repo_link_id INTEGER,
     linkedin_id INTEGER,
@@ -240,6 +241,15 @@ CREATE TABLE sideproject_images (
     image_id INTEGER,
     PRIMARY KEY (sideproject_id, image_id),
     FOREIGN KEY (sideproject_id) REFERENCES sideprojects(id),
+    FOREIGN KEY (image_id) REFERENCES images(id)
+);
+
+// NOTE added DROP and portfolio_images table to modify
+CREATE TABLE portfolio_images (
+    portfolio_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (portfolio_id, image_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
 );
 

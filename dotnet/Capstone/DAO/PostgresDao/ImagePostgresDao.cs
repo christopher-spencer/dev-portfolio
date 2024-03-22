@@ -211,10 +211,363 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                            PORTFOLIO IMAGE CRUD
+            **********************************************************************************************
+        */
+
+        public Image CreateImageByPortfolioId(int portfolioId, Image image)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
+            string insertPortfolioImageSql = "INSERT INTO portfolio_images (portfolio_id, image_id) VALUES (@portfolioId, @imageId);";
+
+            // updatePortfolioMainImageSql only occurs if IsMainImage is true and a Main Image doesn't already exist
+            string updatePortfolioMainImageSql = "UPDATE portfolios SET main_image_id = @imageId WHERE id = @portfolioId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int imageId;
+
+                            Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
+
+                            if (existingMainImage != null)
+                            {
+                                image.IsMainImage = false;
+                            }
+
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
+                                cmdInsertImage.Transaction = transaction;
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertPortfolioImage = new NpgsqlCommand(insertPortfolioImageSql, connection))
+                            {
+                                cmdInsertPortfolioImage.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmdInsertPortfolioImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertPortfolioImage.Transaction = transaction;
+                                cmdInsertPortfolioImage.ExecuteNonQuery();
+                            }
+
+                            if (image.IsMainImage && existingMainImage == null)
+                            {
+                                using (NpgsqlCommand cmdUpdatePortfolioMainImage = new NpgsqlCommand(updatePortfolioMainImageSql, connection))
+                                {
+                                    cmdUpdatePortfolioMainImage.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                    cmdUpdatePortfolioMainImage.Parameters.AddWithValue("@imageId", imageId);
+                                    cmdUpdatePortfolioMainImage.Transaction = transaction;
+                                    cmdUpdatePortfolioMainImage.ExecuteNonQuery();
+                                }
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the main image for the portfolio.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Image GetMainImageByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            Image mainImage = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN portfolio_images pi ON i.id = pi.image_id " +
+                         "WHERE pi.portfolio_id = @portfolioId AND i.is_main_image = true;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainImage = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Main Image by Portfolio ID.", ex);
+            }
+
+            return mainImage;
+        }
+
+        public Image GetImageByPortfolioId(int portfolioId, int imageId)
+        {
+            if (portfolioId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and ImageId must be greater than zero.");
+            }
+
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN portfolio_images pi ON i.id = pi.image_id " +
+                         "WHERE pi.portfolio_id = @portfolioId AND i.id = @imageId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by portfolio ID and image ID.", ex);
+            }
+
+            return image;
+        }
+
+        public List<Image> GetAllImagesByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            List<Image> images = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN portfolio_images pi ON i.id = pi.image_id " +
+                         "WHERE pi.portfolio_id = @portfolioId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Image image = MapRowToImage(reader);
+                                images.Add(image);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving all images by Portfolio ID.", ex);
+            }
+
+            return images;
+        }
+
+        public Image UpdateImageByPortfolioId(int portfolioId, int imageId, Image image)
+        {
+            if (portfolioId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and imageId must be greater than zero.");
+            }
+
+            string sql = "UPDATE images " +
+                         "SET name = @name, url = @url, is_main_image = @isMainImage " +
+                         "FROM portfolio_images " +
+                         "WHERE images.id = portfolio_images.image_id AND portfolio_images.portfolio_id = @portfolioId " +
+                         "AND images.id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
+
+                    if (existingMainImage != null)
+                    {
+                        image.IsMainImage = false;
+                    }
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return image;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image.", ex);
+            }
+
+            return null;
+        }
+
+        // TODO add UpdateMainImageByPortfolioId (?) (Depends on if you include additionalImages field)
+
+        public int DeleteImageByPortfolioId(int portfolioId, int imageId)
+        {
+            if (portfolioId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and imageId must be greater than zero.");
+            }
+
+            // UpdateMainImageIdSql only runs if the image is the Main Image
+            string updateMainImageIdSql = "UPDATE portfolios SET main_image_id = NULL WHERE main_image_id = @imageId;";
+
+            string deletePortfolioImageSql = "DELETE FROM portfolio_images WHERE portfolio_id = @portfolioId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+                            Image image = GetImageByImageId(imageId);
+
+                            if (image.IsMainImage)
+                            {
+                                using (NpgsqlCommand cmd = new NpgsqlCommand(updateMainImageIdSql, connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deletePortfolioImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image from the portfolio.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        /*  
+            **********************************************************************************************
                                             SIDE PROJECT IMAGE CRUD
             **********************************************************************************************
         */
- 
+
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
             if (sideProjectId <= 0)

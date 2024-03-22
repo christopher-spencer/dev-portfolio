@@ -130,25 +130,25 @@ namespace Capstone.DAO
 
             int portfolioId = portfolio.Id;
 
-            SetPortfolioMainImageIdProperties(reader, portfolio, portfolioId);
+           // SetPortfolioMainImageIdProperties(reader, portfolio, portfolioId);
 
 
             return portfolio;
         }
 
-        private void SetPortfolioMainImageIdProperties(NpgsqlDataReader reader, Portfolio portfolio, int portfolioId)
-        {
-            if (reader["main_image_id"] != DBNull.Value)
-            {
-                portfolio.MainImageId = Convert.ToInt32(reader["main_image_id"]);
+        // private void SetPortfolioMainImageIdProperties(NpgsqlDataReader reader, Portfolio portfolio, int portfolioId)
+        // {
+        //     if (reader["main_image_id"] != DBNull.Value)
+        //     {
+        //         portfolio.MainImageId = Convert.ToInt32(reader["main_image_id"]);
 
-                portfolio.MainImage = _imageDao.GetMainImageBySideProjectId(portfolioId);
-            }
-            else
-            {
-                portfolio.MainImageId = 0;
-            }
-        }
+        //         portfolio.MainImage = _imageDao.GetMainImageByPortfolioId(portfolioId);
+        //     }
+        //     else
+        //     {
+        //         portfolio.MainImageId = 0;
+        //     }
+        // }
 
         // private void SetPortfolioGitHubRepoLinkIdProperties(NpgsqlDataReader reader, Portfolio portfolio, int portfolioId)
         // {
