@@ -9,5 +9,7 @@ namespace Capstone.Models
         public string Name { get; set; }
         public string Url { get; set; }
         public bool IsMainImage { get; set; }
+        // FIXME add Type where applicable and replace IsMainImage throughout then get rid of it****
+        public string Type { get; set; }
     }
 }

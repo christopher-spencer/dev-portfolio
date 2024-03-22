@@ -19,7 +19,7 @@ namespace Capstone.Models
         public List<Skill> SkillsUsedOrObtained { get; set; }
         public int MainImageId { get; set; }
         public Image MainImage { get; set; }
-        public List<Image> AdditionalImagesUrl { get; set; }
+        public List<Image> AdditionalImages { get; set; }
 
     }
 }

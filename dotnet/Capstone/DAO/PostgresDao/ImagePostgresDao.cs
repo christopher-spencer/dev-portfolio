@@ -2748,6 +2748,239 @@ namespace Capstone.DAO
                                             EXPERIENCE IMAGE CRUD
             **********************************************************************************************
         */
+// FIXME need to differentiate between CompanyWebsiteLogo and MainImage and normal AdditionalImages
+        public Image CreateImageByExperienceId(int experienceId, Image image)
+        {
+            if (experienceId <= 0)
+            {
+                throw new ArgumentException("ExperienceId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            string insertImageSql = "INSERT INTO images (name, url, is_main_image) VALUES (@name, @url, @isMainImage) RETURNING id;";
+            string insertExperienceImageSql = "INSERT INTO experience_images (experience_id, image_id) VALUES (@experienceId, @imageId);";
+            
+            string updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = @imageId WHERE id = @experienceId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int imageId;
+
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
+
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertExperienceImage = new NpgsqlCommand(insertExperienceImageSql, connection))
+                            {
+                                cmdInsertExperienceImage.Parameters.AddWithValue("@experienceId", experienceId);
+                                cmdInsertExperienceImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertExperienceImage.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmdUpdateExperience = new NpgsqlCommand(updateExperienceImageIdSql, connection))
+                            {
+                                cmdUpdateExperience.Parameters.AddWithValue("@experienceId", experienceId);
+                                cmdUpdateExperience.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateExperience.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image for the experience.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Image GetImageByExperienceId(int experienceId)
+        {
+            if (experienceId <= 0)
+            {
+                throw new ArgumentException("ExperienceId must be greater than zero.");
+            }
+
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.is_main_image " +
+                         "FROM images i " +
+                         "JOIN experience_images ei ON i.id = ei.image_id " +
+                         "WHERE ei.experience_id = @experienceId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@experienceId", experienceId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by experience ID.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageByExperienceId(int experienceId, int imageId, Image image)
+        {
+            if (experienceId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("ExperienceId and imageId must be greater than zero.");
+            }
+
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url, is_main_image = @isMainImage " +
+                                    "FROM experience_images " +
+                                    "WHERE images.id = experience_images.image_id AND experience_images.experience_id = @experienceId " +
+                                    "AND images.id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@isMainImage", image.IsMainImage);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return image;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by experience ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteImageByExperienceId(int experienceId, int imageId)
+        {
+            if (experienceId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("ExperienceId and imageId must be greater than zero.");
+            }
+
+            string updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = NULL WHERE main_image_id = @imageId;";
+            string deleteExperienceImageSql = "DELETE FROM experience_images WHERE experience_id = @experienceId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateExperienceImageIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteExperienceImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by experience ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************

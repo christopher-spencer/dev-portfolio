@@ -53,7 +53,8 @@ CREATE TABLE images (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     url VARCHAR(2000) NOT NULL,
-    is_main_image BOOLEAN DEFAULT FALSE
+    is_main_image BOOLEAN DEFAULT FALSE,
+    type VARCHAR(30)
 );
 
 CREATE TABLE websites (
@@ -180,7 +181,7 @@ CREATE TABLE sideprojects (
     FOREIGN KEY (website_id) REFERENCES websites(id),
     FOREIGN KEY (github_repo_link_id) REFERENCES websites(id)
 );
-// NOTE added DROP and portfolios table to modify
+
 CREATE TABLE portfolios (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
