@@ -152,6 +152,10 @@ namespace Capstone.DAO.Interfaces
                                             ACHIEVEMENT IMAGE CRUD
             **********************************************************************************************
         */
+        Image CreateImageByAchievementId(int achievementId, Image image);
+        Image GetImageByAchievementId(int achievementId);
+        Image UpdateImageByAchievementId(int achievementId, int imageId, Image image);
+        int DeleteImageByAchievementId(int achievementId, int imageId);
 
         /*  
             **********************************************************************************************
