@@ -53,7 +53,6 @@ CREATE TABLE images (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     url VARCHAR(2000) NOT NULL,
-    is_main_image BOOLEAN DEFAULT FALSE,
     type VARCHAR(30)
 );
 

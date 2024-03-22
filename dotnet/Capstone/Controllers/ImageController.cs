@@ -257,7 +257,7 @@ namespace Capstone.Controllers
                     return BadRequest("The image is null. Please provide a main image.");
                 }
 // FIXME switch to TYPE
-                else if (!updatedMainImage.IsMainImage)
+                else if (updatedMainImage.Type != "main image")
                 {
                     return BadRequest("The provided image is not a main image. Please provide a main image.");
                 }
