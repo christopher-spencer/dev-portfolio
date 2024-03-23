@@ -160,6 +160,14 @@ namespace Capstone.DAO.Interfaces
                                         OPEN SOURCE CONTRIBUTION IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Create OpenSourceContribution Controllers****
+        Image CreateImageByOpenSourceContributionId(int contributionId, Image image);
+        Image GetMainImageOrOrganizationLogoByOpenSourceContributionId(int contributionId, string imageType);
+        Image GetImageByOpenSourceContributionId(int contributionId, int imageId);
+        List<Image> GetAdditionalImagesByOpenSourceContributionId(int contributionId);
+        Image UpdateImageByOpenSourceContributionId(int contributionId, int imageId, Image image);
+        Image UpdateMainImageOrLogoByOpenSourceContributionId(int contributionId, int imageId, Image image);
+        int DeleteImageByOpenSourceContributionId(int openSourceContributionId, int imageId);
 
         /*  
             **********************************************************************************************
