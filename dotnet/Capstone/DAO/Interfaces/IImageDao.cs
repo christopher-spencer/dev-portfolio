@@ -21,7 +21,7 @@ namespace Capstone.DAO.Interfaces
                                             PORTFOLIO IMAGE CRUD
             **********************************************************************************************
         */
-        // TODO Create Portfolio Controllers****
+        // TODO IMAGE Portfolio Controllers****
         Image CreateImageByPortfolioId(int portfolioId, Image image);
         Image GetMainImageByPortfolioId(int portfolioId);
         Image GetImageByPortfolioId(int portfolioId, int imageId);
@@ -122,7 +122,7 @@ namespace Capstone.DAO.Interfaces
                                             EXPERIENCE IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Create Experience Controllers****
+// TODO IMAGE Experience Controllers****
         Image CreateImageByExperienceId(int experienceId, Image image);
         Image GetMainImageOrCompanyLogoByExperienceId(int experienceId, string imageType);
         Image GetImageByExperienceId(int experienceId, int imageId);
@@ -135,7 +135,7 @@ namespace Capstone.DAO.Interfaces
                                             CREDENTIAL IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Create Credential Controllers****
+// TODO IMAGE Credential Controllers****
         Image CreateImageByCredentialId(int credentialId, Image image);
         Image GetMainImageOrOrganizationLogoByCredentialId(int credentialId, string imageType);
         Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image);
@@ -146,7 +146,7 @@ namespace Capstone.DAO.Interfaces
                                             EDUCATION IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Create Education Controllers****
+// TODO IMAGE Education Controllers****
         Image CreateImageByEducationId(int educationId, Image image);
         Image GetMainImageOrInstitutionLogoByEducationId(int educationId, string imageType);
         Image GetImageByEducationId(int educationId, int imageId);
@@ -160,7 +160,7 @@ namespace Capstone.DAO.Interfaces
                                         OPEN SOURCE CONTRIBUTION IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Create OpenSourceContribution Controllers****
+// TODO IMAGE OpenSourceContribution Controllers****
         Image CreateImageByOpenSourceContributionId(int contributionId, Image image);
         Image GetMainImageOrOrganizationLogoByOpenSourceContributionId(int contributionId, string imageType);
         Image GetImageByOpenSourceContributionId(int contributionId, int imageId);
@@ -174,7 +174,7 @@ namespace Capstone.DAO.Interfaces
                                             VOLUNTEER WORK IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Create VolunteerWork Controllers****
+// TODO IMAGE VolunteerWork Controllers****
         Image CreateImageByVolunteerWorkId(int volunteerWorkId, Image image);
         Image GetMainImageOrOrganizationLogoByVolunteerWorkId(int volunteerWorkId, string imageType);
         Image GetImageByVolunteerWorkId(int volunteerWorkId, int imageId);
@@ -188,7 +188,7 @@ namespace Capstone.DAO.Interfaces
                                             ACHIEVEMENT IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Create Achievement Controllers****
+// TODO IMAGE Achievement Controllers****
         Image CreateImageByAchievementId(int achievementId, Image image);
         Image GetImageByAchievementId(int achievementId);
         Image UpdateImageByAchievementId(int achievementId, int imageId, Image image);
@@ -199,7 +199,7 @@ namespace Capstone.DAO.Interfaces
                                             HOBBY IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Create Hobby Controllers****        
+// TODO IMAGE Hobby Controllers****        
         Image CreateImageByHobbyId(int hobbyId, Image image);
         Image GetImageByHobbyId(int hobbyId);
         Image UpdateImageByHobbyId(int hobbyId, int imageId, Image image);
