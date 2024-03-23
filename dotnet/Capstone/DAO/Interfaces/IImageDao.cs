@@ -123,7 +123,6 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 // TODO Create Experience Controllers****
-//FIXME update Experience controllers for type like we did with SideProject images****
         Image CreateImageByExperienceId(int experienceId, Image image);
         Image GetMainImageOrCompanyLogoByExperienceId(int experienceId, string imageType);
         Image GetImageByExperienceId(int experienceId, int imageId);

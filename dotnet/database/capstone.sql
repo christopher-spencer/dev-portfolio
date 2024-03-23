@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS contributor_images;
 DROP TABLE IF EXISTS api_service_images;
 DROP TABLE IF EXISTS dependency_library_images;
 
+DROP TABLE IF EXISTS credential_images;
 DROP TABLE IF EXISTS experience_images;
 
 DROP TABLE IF EXISTS contributor_websites;
@@ -37,6 +38,7 @@ DROP TABLE IF EXISTS blogposts;
 DROP TABLE IF EXISTS users;
 
 DROP TABLE IF EXISTS experiences;
+DROP TABLE IF EXISTS credentials;
 
 DROP TABLE IF EXISTS goals;
 DROP TABLE IF EXISTS dependencies_and_libraries;
@@ -143,6 +145,24 @@ CREATE TABLE experiences (
     FOREIGN KEY (company_logo_id) REFERENCES images(id),
     FOREIGN KEY (company_website_id) REFERENCES websites(id),
     FOREIGN KEY (main_image_id) REFERENCES images(id)
+);
+
+CREATE TABLE credentials (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    issuing_organization VARCHAR(100) NOT NULL,
+    description VARCHAR(400),
+    organization_logo_id INTEGER,
+    organization_website_id INTEGER,
+    issue_date TIMESTAMP,
+    expiration_date TIMESTAMP,
+    credential_id_number INTEGER,
+    credential_website_id INTEGER,
+    associated_image_id INTEGER,
+    FOREIGN KEY (organization_logo_id) REFERENCES images(id),
+    FOREIGN KEY (organization_website_id) REFERENCES websites(id),
+    FOREIGN KEY (credential_website_id) REFERENCES websites(id),
+    FOREIGN KEY (associated_image_id) REFERENCES images(id)
 );
 
 CREATE TABLE users (
@@ -258,6 +278,14 @@ CREATE TABLE dependency_library_images (
     PRIMARY KEY (dependencylibrary_id, image_id),
     FOREIGN KEY (dependencylibrary_id) REFERENCES dependencies_and_libraries(id),
     FOREIGN KEY (image_id) REFERENCES images(id)    
+);
+
+CREATE TABLE credential_images (
+    credential_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (credential_id, image_id),
+    FOREIGN KEY (credential_id) REFERENCES credentials(id),
+    FOREIGN KEY (image_id) REFERENCES images(id)
 );
 
 CREATE TABLE experience_images (
