@@ -23,7 +23,7 @@ namespace Capstone.Models
         public List<Achievement> ReviewCommentsAndFeedbackReceived { get; set; }
         public int MainImageId { get; set; }
         public Image MainImage { get; set; }
-        public List<Image> AdditionalImagesUrl { get; set; }
+        public List<Image> AdditionalImages { get; set; }
 
     }
 }

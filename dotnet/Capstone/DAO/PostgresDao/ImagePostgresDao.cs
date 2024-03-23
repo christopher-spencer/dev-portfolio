@@ -4141,6 +4141,8 @@ namespace Capstone.DAO
                 case Logo:
                     updateOpenSourceContributionImageIdSql = "UPDATE open_source_contributions SET organization_logo_id = NULL WHERE organization_logo_id = @imageId;";
                     break;
+                case AdditionalImage:
+                    break;
                 default:
                     throw new ArgumentException("Invalid website type.");
             }
@@ -4211,6 +4213,416 @@ namespace Capstone.DAO
                                             VOLUNTEER WORK IMAGE CRUD
             **********************************************************************************************
         */
+
+        public Image CreateImageByVolunteerWorkId(int volunteerWorkId, Image image)
+        {
+            if (volunteerWorkId <= 0)
+            {
+                throw new ArgumentException("VolunteerWorkId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
+            string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
+            string insertWorkImageSql = "INSERT INTO volunteer_work_images (volunteer_work_id, image_id) VALUES (@volunteerWorkId, @imageId);";
+
+            string updateWorkImageIdSql = null;
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateWorkImageIdSql = "UPDATE volunteer_works SET main_image_id = @imageId WHERE id = @volunteerWorkId;";
+                    break;
+                case Logo:
+                    updateWorkImageIdSql = "UPDATE volunteer_works SET organization_logo_id = @imageId WHERE id = @volunteerWorkId;";
+                    break;
+                case AdditionalImage:
+                    break;
+                default:
+                    throw new ArgumentException("Invalid image type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            Image existingMainImage = null;
+
+                            if (image.Type == MainImage)
+                            {
+                                existingMainImage = GetMainImageOrOrganizationLogoByVolunteerWorkId(volunteerWorkId, MainImage);
+
+                                if (existingMainImage != null)
+                                {
+                                    image.Type = AdditionalImage;
+                                }
+                            }
+
+                            Image existingLogo = null;
+
+                            if (image.Type == Logo)
+                            {
+                                existingLogo = GetMainImageOrOrganizationLogoByVolunteerWorkId(volunteerWorkId, Logo);
+
+                                if (existingLogo != null)
+                                {
+                                    image.Type = AdditionalImage;
+                                }
+                            }
+
+                            int imageId;
+
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
+                                cmdInsertImage.Transaction = transaction;
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertWorkImage = new NpgsqlCommand(insertWorkImageSql, connection))
+                            {
+                                cmdInsertWorkImage.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                                cmdInsertWorkImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertWorkImage.Transaction = transaction;
+                                cmdInsertWorkImage.ExecuteNonQuery();
+                            }
+
+                            if ((image.Type == MainImage && existingMainImage == null) || (image.Type == Logo && existingLogo == null))
+                            {
+                                using (NpgsqlCommand cmdUpdateWorkImageId = new NpgsqlCommand(updateWorkImageIdSql, connection))
+                                {
+                                    cmdUpdateWorkImageId.Parameters.AddWithValue("@imageId", imageId);
+                                    cmdUpdateWorkImageId.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                                    cmdUpdateWorkImageId.Transaction = transaction;
+                                    cmdUpdateWorkImageId.ExecuteNonQuery();
+                                }
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image by volunteer work ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Image GetMainImageOrOrganizationLogoByVolunteerWorkId(int volunteerWorkId, string imageType)
+        {
+            if (volunteerWorkId <= 0)
+            {
+                throw new ArgumentException("Volunteer Work Id must be greater than zero.");
+            }
+
+            if (imageType != MainImage && imageType != Logo)
+            {
+                throw new ArgumentException("Image Type must be 'main image' or 'logo'.");
+            }
+
+            Image mainImageOrLogo = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN volunteer_work_images vwi ON i.id = vwi.image_id " +
+                         "WHERE vwi.volunteer_work_id = @volunteerWorkId AND i.type = @imageType;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                        cmd.Parameters.AddWithValue("@imageType", imageType);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainImageOrLogo = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Main Image or Organization Logo by Volunteer Work ID.", ex);
+            }
+
+            return mainImageOrLogo;
+        }
+
+        public Image GetImageByVolunteerWorkId(int volunteerWorkId, int imageId)
+        {
+            if (volunteerWorkId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("Volunteer Work Id and ImageId must be greater than zero.");
+            }
+
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN volunteer_work_images vwi ON i.id = vwi.image_id " +
+                         "WHERE vwi.volunteer_work_id = @volunteerWorkId AND i.id = @imageId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by volunteer work ID and image ID.", ex);
+            }
+
+            return image;
+        }
+
+        public List<Image> GetAdditionalImagesByVolunteerWorkId(int volunteerWorkId)
+        {
+            if (volunteerWorkId <= 0)
+            {
+                throw new ArgumentException("Volunteer Work Id must be greater than zero.");
+            }
+
+            List<Image> additionalImages = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN volunteer_work_images vwi ON i.id = vwi.image_id " +
+                         "WHERE vwi.volunteer_work_id = @volunteerWorkId AND i.type = @imageType;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                        cmd.Parameters.AddWithValue("@imageType", AdditionalImage);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Image image = MapRowToImage(reader);
+                                additionalImages.Add(image);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the additional images by volunteer work ID.", ex);
+            }
+
+            return additionalImages;
+        }
+
+        public Image UpdateImageByVolunteerWorkId(int volunteerWorkId, int imageId, Image image)
+        {
+            if (volunteerWorkId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("Volunteer Work Id and imageId must be greater than zero.");
+            }
+
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url, type = @type " +
+                                    "FROM volunteer_work_images " +
+                                    "WHERE images.id = volunteer_work_images.image_id AND volunteer_work_images.volunteer_work_id = @volunteerWorkId " +
+                                    "AND images.id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@type", image.Type);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return image;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by volunteer work ID.", ex);
+            }
+
+            return null;
+        }
+
+        public Image UpdateMainImageOrLogoByVolunteerWorkId(int volunteerWorkId, int imageId, Image image)
+        {
+            if (image.Type != MainImage && image.Type != Logo)
+            {
+                throw new ArgumentException("The image provided is not a main image or organization logo. Please provide a main image or organization logo.");
+            }
+            else
+            {
+                DeleteImageByVolunteerWorkId(volunteerWorkId, imageId);
+                CreateImageByVolunteerWorkId(volunteerWorkId, image);
+            }
+
+            return image;
+        }
+
+        public int DeleteImageByVolunteerWorkId(int volunteerWorkId, int imageId)
+        {
+            if (volunteerWorkId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("VolunteerWorkId and imageId must be greater than zero.");
+            }
+
+            // UpdateVolunteerWorkImageIdSql only runs if the image is the Main Image or Logo
+            string updateVolunteerWorkImageIdSql = null;
+
+            string deleteVolunteerWorkImageSql = "DELETE FROM volunteer_work_images WHERE volunteer_work_id = @volunteerWorkId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            Image image = GetImageByImageId(imageId);
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateVolunteerWorkImageIdSql = "UPDATE volunteer_works SET main_image_id = NULL WHERE main_image_id = @imageId;";
+                    break;
+                case Logo:
+                    updateVolunteerWorkImageIdSql = "UPDATE volunteer_works SET organization_logo_id = NULL WHERE organization_logo_id = @imageId;";
+                    break;
+                case AdditionalImage:
+                    break;
+                default:
+                    throw new ArgumentException("Invalid image type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            if (image.Type == MainImage || image.Type == Logo)
+                            {
+                                using (NpgsqlCommand cmd = new NpgsqlCommand(updateVolunteerWorkImageIdSql, connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteVolunteerWorkImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by volunteer work ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
