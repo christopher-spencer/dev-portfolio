@@ -2757,7 +2757,7 @@ namespace Capstone.DAO
                                             EXPERIENCE IMAGE CRUD
             **********************************************************************************************
         */
-// FIXME need to differentiate between CompanyWebsiteLogo and MainImage and normal AdditionalImages w/ TYPE
+
         public Image CreateImageByExperienceId(int experienceId, Image image)
         {
             if (experienceId <= 0)
@@ -3017,7 +3017,22 @@ namespace Capstone.DAO
 
             return null;
         }
-// TODO add UpdateMainImageOrLogoByExperienceId
+
+        public Image UpdateMainImageOrLogoByExperienceId(int experienceId, int imageId, Image image)
+        {
+            if (image.Type != MainImage || image.Type != Logo)
+            {
+                throw new ArgumentException("The image provided is not a main image or company logo. Please provide a main image or company logo.");
+            }
+            else
+            {
+                DeleteImageByExperienceId(experienceId, imageId);
+                CreateImageByExperienceId(experienceId, image);
+            }
+
+            return image;
+        }
+
         public int DeleteImageByExperienceId(int experienceId, int imageId)
         {
             if (experienceId <= 0 || imageId <= 0)
