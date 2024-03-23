@@ -76,7 +76,7 @@ namespace Capstone.DAO.Interfaces
         Website GetWebsiteByExperienceId(int experienceId);
         Website UpdateWebsiteByExperienceId(int experienceId, int websiteId, Website website);
         int DeleteWebsiteByExperienceId(int experienceId, int websiteId);
-        
+
         /*  
             **********************************************************************************************
                                             CREDENTIAL WEBSITE CRUD
@@ -89,6 +89,11 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 // TODO WEBSITE Education Controllers****
+        Website CreateWebsiteByEducationId(int educationId, Website website);
+        Website GetWebsiteByEducationId(int educationId);
+        Website UpdateWebsiteByEducationId(int educationId, int websiteId, Website website);
+        int DeleteWebsiteByEducationId(int educationId, int websiteId);
+        
         /*  
             **********************************************************************************************
                                         OPEN SOURCE CONTRIBUTION WEBSITE CRUD
