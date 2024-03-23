@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Capstone.DAO;
 using Capstone.DAO.Interfaces;
 using Capstone.Exceptions;
 using Capstone.Models;
@@ -17,13 +18,15 @@ namespace Capstone.Controllers
         {
             _imageDao = imageDao;
         }
-// FIXME add CONSTANTS for main image and additional image types*******
+
+        const string MainImage = "main image";
+        const string AdditionalImage = "additional image";
 
         /*  
             **********************************************************************************************
                                                 IMAGE CRUD CONTROLLER
             **********************************************************************************************
-        */
+        */ 
 
         [Authorize]
         [HttpPost("/create-image")]
@@ -134,14 +137,13 @@ namespace Capstone.Controllers
         [HttpPost("/sideproject/{sideProjectId}/create-image")]
         public ActionResult CreateImageBySideProjectId(int sideProjectId, Image image)
         {
-//FIXME SIDEPROJECT CONTROLLERS NEED SWITCHED FOR TYPE FROM ISMAINIMAGE***
 
-            // string imageType = image.Type.ToLower();
+            string imageType = image.Type.ToLower();
 
-            // if (imageType != "main image" && imageType != "additional image")
-            // {
-            //     return BadRequest("Invalid image type. Allowed values are 'main image' and 'additional image'.");
-            // }
+            if (imageType != MainImage && imageType != AdditionalImage)
+            {
+                return BadRequest("Invalid image type. Allowed values are 'main image' and 'additional image'.");
+            }
 
             try
             {
@@ -257,8 +259,7 @@ namespace Capstone.Controllers
                 {
                     return BadRequest("The image is null. Please provide a main image.");
                 }
-// FIXME switch to TYPE
-                else if (updatedMainImage.Type != "main image")
+                else if (updatedMainImage.Type != MainImage)
                 {
                     return BadRequest("The provided image is not a main image. Please provide a main image.");
                 }
@@ -277,15 +278,14 @@ namespace Capstone.Controllers
         [HttpDelete("/sideproject/{sideProjectId}/delete-image/{imageId}")]
         public ActionResult DeleteImageBySideProjectId(int sideProjectId, int imageId)
         {
-// FIXME uncomment code for switch to Image.Type            
-            // Image image = _imageDao.GetImageBySideProjectId(sideProjectId, imageId);
+            Image image = _imageDao.GetImageBySideProjectId(sideProjectId, imageId);
 
-            // string imageType = image.Type.ToLower();
+            string imageType = image.Type.ToLower();
 
-            // if (imageType != "main image" && imageType != "additional image")
-            // {
-            //     return BadRequest("Invalid imageType. Allowed values are 'main image' and 'additional image'.");
-            // }
+            if (imageType != MainImage && imageType != AdditionalImage)
+            {
+                return BadRequest("Invalid imageType. Allowed values are 'main image' and 'additional image'.");
+            }
 
             try
             {

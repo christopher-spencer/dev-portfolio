@@ -19,6 +19,7 @@ namespace Capstone.DAO
 
         const string MainImage = "main image";
         const string AdditionalImage = "additional image";
+
         /*  
             **********************************************************************************************
                                                     IMAGE CRUD
@@ -1040,7 +1041,7 @@ namespace Capstone.DAO
                                             BLOG POST IMAGE CRUD
             **********************************************************************************************
         */
-        // FIXME add BLOGPOST isMainImage checker and if statement checks for isMainImage
+        // FIXME add BLOGPOST Main Image checker and if statement checks for Main Image
         public Image CreateImageByBlogPostId(int blogPostId, Image image)
         {
             if (blogPostId <= 0)
@@ -2755,8 +2756,8 @@ namespace Capstone.DAO
                                             EXPERIENCE IMAGE CRUD
             **********************************************************************************************
         */
-// FIXME need to differentiate between CompanyWebsiteLogo and MainImage and normal AdditionalImages
-//FIXME update controllers for type like we did with SideProject images****
+// FIXME need to differentiate between CompanyWebsiteLogo and MainImage and normal AdditionalImages w/ TYPE
+//FIXME update Experience controllers for type like we did with SideProject images****
         public Image CreateImageByExperienceId(int experienceId, Image image)
         {
             if (experienceId <= 0)
