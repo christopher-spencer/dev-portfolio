@@ -3600,6 +3600,50 @@ namespace Capstone.DAO
             return image;
         }
 
+        public List<Image> GetAdditionalImagesByEducationId(int educationId)
+        {
+            if (educationId <= 0)
+            {
+                throw new ArgumentException("EducationId must be greater than zero.");
+            }
+
+            List<Image> additionalImages = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN education_images ei ON i.id = ei.image_id " +
+                         "WHERE ei.education_id = @educationId AND i.type = @imageType;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@educationId", educationId);
+                        cmd.Parameters.AddWithValue("@imageType", AdditionalImage);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Image image = MapRowToImage(reader);
+                                additionalImages.Add(image);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the additional images by education ID.", ex);
+            }
+
+            return additionalImages;
+        }
+
         public Image UpdateImageByEducationId(int educationId, int imageId, Image image)
         {
             if (educationId <= 0 || imageId <= 0)

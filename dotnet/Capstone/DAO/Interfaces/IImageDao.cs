@@ -150,6 +150,7 @@ namespace Capstone.DAO.Interfaces
         Image CreateImageByEducationId(int educationId, Image image);
         Image GetMainImageOrInstitutionLogoByEducationId(int educationId, string imageType);
         Image GetImageByEducationId(int educationId, int imageId);
+        List<Image> GetAdditionalImagesByEducationId(int educationId);
         Image UpdateImageByEducationId(int educationId, int imageId, Image image);
         Image UpdateMainImageOrLogoByEducationId(int educationId, int imageId, Image image);
         int DeleteImageByEducationId(int educationId, int imageId);
