@@ -19,6 +19,7 @@ namespace Capstone.DAO
 
         const string MainImage = "main image";
         const string AdditionalImage = "additional image";
+        const string Logo = "logo";
 
         /*  
             **********************************************************************************************
@@ -2757,7 +2758,6 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 // FIXME need to differentiate between CompanyWebsiteLogo and MainImage and normal AdditionalImages w/ TYPE
-//FIXME update Experience controllers for type like we did with SideProject images****
         public Image CreateImageByExperienceId(int experienceId, Image image)
         {
             if (experienceId <= 0)
@@ -2775,10 +2775,29 @@ namespace Capstone.DAO
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
 
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertExperienceImageSql = "INSERT INTO experience_images (experience_id, image_id) VALUES (@experienceId, @imageId);";
             
-            string updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = @imageId WHERE id = @experienceId;";
+            string updateExperienceImageIdSql = null;
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = @imageId WHERE id = @experienceId;";
+                    break;
+                case Logo:
+                    updateExperienceImageIdSql = "UPDATE experiences SET company_logo_id = @imageId WHERE id = @experienceId;";
+                    break;
+                case AdditionalImage:
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
 
             try
             {
@@ -2786,10 +2805,11 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
+                            // FIXME check out CreateImageBySideProjectId for possible checks to put in place ****
                             int imageId;
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
@@ -2797,7 +2817,7 @@ namespace Capstone.DAO
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
                                 cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
-
+                                cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
 
@@ -2805,14 +2825,19 @@ namespace Capstone.DAO
                             {
                                 cmdInsertExperienceImage.Parameters.AddWithValue("@experienceId", experienceId);
                                 cmdInsertExperienceImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertExperienceImage.Transaction = transaction;
                                 cmdInsertExperienceImage.ExecuteNonQuery();
                             }
 
-                            using (NpgsqlCommand cmdUpdateExperience = new NpgsqlCommand(updateExperienceImageIdSql, connection))
+                            if ( (image.Type == MainImage || image.Type == Logo) )
                             {
-                                cmdUpdateExperience.Parameters.AddWithValue("@experienceId", experienceId);
-                                cmdUpdateExperience.Parameters.AddWithValue("@imageId", imageId);
-                                cmdUpdateExperience.ExecuteNonQuery();
+                                using (NpgsqlCommand cmdUpdateExperience = new NpgsqlCommand(updateExperienceImageIdSql, connection))
+                                {
+                                    cmdUpdateExperience.Parameters.AddWithValue("@experienceId", experienceId);
+                                    cmdUpdateExperience.Parameters.AddWithValue("@imageId", imageId);
+                                    cmdUpdateExperience.Transaction = transaction;
+                                    cmdUpdateExperience.ExecuteNonQuery();
+                                }
                             }
 
                             transaction.Commit();
@@ -2836,11 +2861,11 @@ namespace Capstone.DAO
             }
         }
 
-        public Image GetImageByExperienceId(int experienceId)
+        public Image GetImageByExperienceId(int experienceId, int imageId)
         {
-            if (experienceId <= 0)
+            if (experienceId <= 0 || imageId <= 0)
             {
-                throw new ArgumentException("ExperienceId must be greater than zero.");
+                throw new ArgumentException("ExperienceId and ImageId must be greater than zero.");
             }
 
             Image image = null;
@@ -2848,7 +2873,7 @@ namespace Capstone.DAO
             string sql = "SELECT i.id, i.name, i.url, i.type " +
                          "FROM images i " +
                          "JOIN experience_images ei ON i.id = ei.image_id " +
-                         "WHERE ei.experience_id = @experienceId";
+                         "WHERE ei.experience_id = @experienceId AND i.id = @imageId";
 
             try
             {
@@ -2859,6 +2884,7 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
 
                         using (NpgsqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -2872,7 +2898,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the image by experience ID.", ex);
+                throw new DaoException("An error occurred while retrieving the image by experience ID and image ID.", ex);
             }
 
             return image;
@@ -3048,7 +3074,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -3059,7 +3085,7 @@ namespace Capstone.DAO
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
                                 cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
-
+                                cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
 
@@ -3067,6 +3093,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertAchievementImage.Parameters.AddWithValue("@achievementId", achievementId);
                                 cmdInsertAchievementImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertAchievementImage.Transaction = transaction;
                                 cmdInsertAchievementImage.ExecuteNonQuery();
                             }
 
@@ -3074,6 +3101,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateAchievementIconId.Parameters.AddWithValue("@achievementId", achievementId);
                                 cmdUpdateAchievementIconId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateAchievementIconId.Transaction = transaction;
                                 cmdUpdateAchievementIconId.ExecuteNonQuery();
                             }
 
@@ -3286,7 +3314,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -3297,7 +3325,7 @@ namespace Capstone.DAO
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
                                 cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
-
+                                cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
 
@@ -3305,6 +3333,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertHobbyImage.Parameters.AddWithValue("@hobbyId", hobbyId);
                                 cmdInsertHobbyImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertHobbyImage.Transaction = transaction;
                                 cmdInsertHobbyImage.ExecuteNonQuery();
                             }
 
@@ -3312,6 +3341,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateHobbyIconId.Parameters.AddWithValue("@hobbyId", hobbyId);
                                 cmdUpdateHobbyIconId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateHobbyIconId.Transaction = transaction;
                                 cmdUpdateHobbyIconId.ExecuteNonQuery();
                             }
 

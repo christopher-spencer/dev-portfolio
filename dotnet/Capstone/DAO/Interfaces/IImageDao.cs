@@ -123,7 +123,9 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 // TODO Create Experience Controllers****
-            
+//FIXME update Experience controllers for type like we did with SideProject images****
+
+
 
         /*  
             **********************************************************************************************
