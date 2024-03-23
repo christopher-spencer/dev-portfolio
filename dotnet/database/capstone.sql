@@ -26,6 +26,7 @@ DROP TABLE IF EXISTS api_service_images;
 DROP TABLE IF EXISTS dependency_library_images;
 
 DROP TABLE IF EXISTS credential_images;
+DROP TABLE IF EXISTS education_images;
 DROP TABLE IF EXISTS experience_images;
 
 DROP TABLE IF EXISTS contributor_websites;
@@ -38,6 +39,7 @@ DROP TABLE IF EXISTS blogposts;
 DROP TABLE IF EXISTS users;
 
 DROP TABLE IF EXISTS experiences;
+DROP TABLE IF EXISTS educations;
 DROP TABLE IF EXISTS credentials;
 
 DROP TABLE IF EXISTS goals;
@@ -144,6 +146,26 @@ CREATE TABLE experiences (
     main_image_id INTEGER,
     FOREIGN KEY (company_logo_id) REFERENCES images(id),
     FOREIGN KEY (company_website_id) REFERENCES websites(id),
+    FOREIGN KEY (main_image_id) REFERENCES images(id)
+);
+
+CREATE TABLE educations (
+    id SERIAL PRIMARY KEY,
+    institution_name VARCHAR(75) NOT NULL,
+    institution_logo_id INTEGER,
+    institution_website_id INTEGER,
+    location VARCHAR(100),
+    description VARCHAR(500),
+    field_of_study VARCHAR(200),
+    major VARCHAR(100),
+    minor VARCHAR(100),
+    degree_obtained VARCHAR(200),
+    gpa INTEGER,
+    start_date TIMESTAMP,
+    graduation_date TIMESTAMP,
+    main_image_id INTEGER,
+    FOREIGN KEY (institution_logo_id) REFERENCES images(id),
+    FOREIGN KEY (institution_website_id) REFERENCES websites(id),
     FOREIGN KEY (main_image_id) REFERENCES images(id)
 );
 
@@ -285,6 +307,14 @@ CREATE TABLE credential_images (
     image_id INTEGER,
     PRIMARY KEY (credential_id, image_id),
     FOREIGN KEY (credential_id) REFERENCES credentials(id),
+    FOREIGN KEY (image_id) REFERENCES images(id)
+);
+
+CREATE TABLE education_images (
+    education_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (education_id, image_id),
+    FOREIGN KEY (education_id) REFERENCES educations(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
 );
 
