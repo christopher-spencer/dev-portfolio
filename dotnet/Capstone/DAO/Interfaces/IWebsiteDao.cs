@@ -93,7 +93,7 @@ namespace Capstone.DAO.Interfaces
         Website GetWebsiteByEducationId(int educationId);
         Website UpdateWebsiteByEducationId(int educationId, int websiteId, Website website);
         int DeleteWebsiteByEducationId(int educationId, int websiteId);
-        
+
         /*  
             **********************************************************************************************
                                         OPEN SOURCE CONTRIBUTION WEBSITE CRUD
@@ -106,7 +106,10 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 // TODO WEBSITE VolunteerWork Controllers****
-
+        Website CreateWebsiteByVolunteerWorkId(int volunteerWorkId, Website website);
+        Website GetWebsiteByVolunteerWorkId(int volunteerWorkId);
+        Website UpdateWebsiteByVolunteerWorkId(int volunteerWorkId, int websiteId, Website website);
+        int DeleteWebsiteByVolunteerWorkId(int volunteerWorkId, int websiteId);
 
     }
 }
