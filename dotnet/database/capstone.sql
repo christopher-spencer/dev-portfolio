@@ -35,6 +35,12 @@ DROP TABLE IF EXISTS contributor_websites;
 DROP TABLE IF EXISTS api_service_websites;
 DROP TABLE IF EXISTS dependency_library_websites;
 
+DROP TABLE IF EXISTS volunteer_work_websites;
+DROP TABLE IF EXISTS open_source_contribution_websites;
+DROP TABLE IF EXISTS credential_websites;
+DROP TABLE IF EXISTS education_websites;
+DROP TABLE IF EXISTS experience_websites;
+
 DROP TABLE IF EXISTS portfolios;
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
@@ -379,6 +385,46 @@ CREATE TABLE experience_images (
     PRIMARY KEY (experience_id, image_id),
     FOREIGN KEY (experience_id) REFERENCES experiences(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
+);
+
+CREATE TABLE volunteer_work_websites (
+    volunteer_work_id INTEGER,
+    website_id INTEGER,
+    PRIMARY KEY (volunteer_work_id, website_id),
+    FOREIGN KEY (volunteer_work_id) REFERENCES volunteer_works(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)
+);
+
+CREATE TABLE open_source_contribution_websites(
+    open_source_contribution_id INTEGER,
+    website_id INTEGER,
+    PRIMARY KEY (open_source_contribution_id, website_id),
+    FOREIGN KEY (open_source_contribution_id) REFERENCES open_source_contributions(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)
+);
+
+CREATE TABLE credential_websites(
+    credential_id INTEGER,
+    website_id INTEGER,
+    PRIMARY KEY (credential_id, website_id),
+    FOREIGN KEY (credential_id) REFERENCES credentials(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)
+);
+
+CREATE TABLE education_websites(
+    education_id INTEGER,
+    website_id INTEGER,
+    PRIMARY KEY (education_id, website_id),
+    FOREIGN KEY (education_id) REFERENCES educations(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)
+);
+
+CREATE TABLE experience_websites(
+    experience_id INTEGER,
+    website_id INTEGER,
+    PRIMARY KEY (experience_id, website_id),
+    FOREIGN KEY (experience_id) REFERENCES experiences(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
 CREATE TABLE contributor_websites (
