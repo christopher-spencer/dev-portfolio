@@ -72,6 +72,11 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 // TODO WEBSITE Experience Controllers****
+        Website CreateWebsiteByExperienceId(int experienceId, Website website);
+        Website GetWebsiteByExperienceId(int experienceId);
+        Website UpdateWebsiteByExperienceId(int experienceId, int websiteId, Website website);
+        int DeleteWebsiteByExperienceId(int experienceId, int websiteId);
+        
         /*  
             **********************************************************************************************
                                             CREDENTIAL WEBSITE CRUD
