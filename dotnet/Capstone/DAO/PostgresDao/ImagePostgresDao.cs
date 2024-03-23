@@ -2809,7 +2809,30 @@ namespace Capstone.DAO
                     {
                         try
                         {
-                            // FIXME check out CreateImageBySideProjectId for possible checks to put in place ****
+                            Image existingMainImage = null;
+
+                            if (image.Type == MainImage)
+                            {
+                                existingMainImage = GetMainImageOrCompanyLogoByExperienceId(experienceId, MainImage);
+
+                                if (existingMainImage != null)
+                                {
+                                    image.Type = AdditionalImage;
+                                }
+                            }
+
+                            Image existingLogo = null;
+
+                            if (image.Type == Logo)
+                            {
+                                existingLogo = GetMainImageOrCompanyLogoByExperienceId(experienceId, Logo);
+
+                                if (existingLogo != null)
+                                {
+                                    image.Type = AdditionalImage;
+                                }
+                            }
+
                             int imageId;
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
@@ -2829,7 +2852,7 @@ namespace Capstone.DAO
                                 cmdInsertExperienceImage.ExecuteNonQuery();
                             }
 
-                            if ( (image.Type == MainImage || image.Type == Logo) )
+                            if ( (image.Type == MainImage && existingMainImage == null) || (image.Type == Logo && existingLogo == null))
                             {
                                 using (NpgsqlCommand cmdUpdateExperience = new NpgsqlCommand(updateExperienceImageIdSql, connection))
                                 {
@@ -2850,7 +2873,7 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the image for the experience.", ex);
+                            throw new DaoException("An error occurred while creating the image or logo by experience ID.", ex);
                         }
                     }
                 }
@@ -2859,6 +2882,53 @@ namespace Capstone.DAO
             {
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
+        }
+
+        public Image GetMainImageOrCompanyLogoByExperienceId(int experienceId, string imageType)
+        {
+            if (experienceId <= 0)
+            {
+                throw new ArgumentException("ExperienceId must be greater than zero.");
+            }
+
+            if (imageType != MainImage && imageType != Logo)
+            {
+                throw new ArgumentException("Image Type must be 'main image' or 'logo'.");
+            }
+
+            Image mainImageOrLogo = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                        "FROM images i " +
+                        "JOIN experience_images ei ON i.id = ei.image_id " +
+                        "WHERE ei.experience_id = @experienceId AND i.type = @imageType;";
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                        cmd.Parameters.AddWithValue("@imageType", imageType);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainImageOrLogo = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Main Image or Logo by Experience ID.", ex);
+            }
+
+            return mainImageOrLogo;
         }
 
         public Image GetImageByExperienceId(int experienceId, int imageId)
@@ -2947,7 +3017,7 @@ namespace Capstone.DAO
 
             return null;
         }
-
+// TODO add UpdateMainImageOrLogoByExperienceId
         public int DeleteImageByExperienceId(int experienceId, int imageId)
         {
             if (experienceId <= 0 || imageId <= 0)
@@ -2955,9 +3025,27 @@ namespace Capstone.DAO
                 throw new ArgumentException("ExperienceId and imageId must be greater than zero.");
             }
 
-            string updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = NULL WHERE main_image_id = @imageId;";
+            // UpdateExperienceImageIdSql only runs if the image is the Main Image
+            string updateExperienceImageIdSql = null;
+
             string deleteExperienceImageSql = "DELETE FROM experience_images WHERE experience_id = @experienceId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            Image image = GetImageByImageId(imageId);
+
+            switch (image.Type)
+            {
+                case MainImage: 
+                    updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = NULL WHERE main_image_id = @imageId;";
+                    break;
+                case Logo:
+                    updateExperienceImageIdSql = "UPDATE experiences SET company_logo_id = NULL WHERE company_logo_id = @imageId;";
+                    break;
+                case AdditionalImage:
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
 
             try
             {
@@ -2971,12 +3059,15 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateExperienceImageIdSql, connection))
+                            if (image.Type == MainImage || image.Type == Logo)
                             {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@imageId", imageId);
+                                using (NpgsqlCommand cmd = new NpgsqlCommand(updateExperienceImageIdSql, connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
 
-                                cmd.ExecuteNonQuery();
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteExperienceImageSql, connection))
