@@ -278,7 +278,7 @@ namespace Capstone.DAO
                                 cmdInsertPortfolioImage.ExecuteNonQuery();
                             }
 
-                            if ( (image.Type == MainImage ) && (existingMainImage == null) )
+                            if ((image.Type == MainImage) && (existingMainImage == null))
                             {
                                 using (NpgsqlCommand cmdUpdatePortfolioMainImage = new NpgsqlCommand(updatePortfolioMainImageSql, connection))
                                 {
@@ -690,7 +690,7 @@ namespace Capstone.DAO
                                 cmdInsertSideProjectImage.ExecuteNonQuery();
                             }
 
-                            if ( (image.Type == MainImage) && (existingMainImage == null) )
+                            if ((image.Type == MainImage) && (existingMainImage == null))
                             {
                                 using (NpgsqlCommand cmdUpdateSideProjectMainImage = new NpgsqlCommand(updateSideProjectMainImageSql, connection))
                                 {
@@ -2782,7 +2782,7 @@ namespace Capstone.DAO
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertExperienceImageSql = "INSERT INTO experience_images (experience_id, image_id) VALUES (@experienceId, @imageId);";
-            
+
             string updateExperienceImageIdSql = null;
 
             switch (image.Type)
@@ -2852,7 +2852,7 @@ namespace Capstone.DAO
                                 cmdInsertExperienceImage.ExecuteNonQuery();
                             }
 
-                            if ( (image.Type == MainImage && existingMainImage == null) || (image.Type == Logo && existingLogo == null))
+                            if ((image.Type == MainImage && existingMainImage == null) || (image.Type == Logo && existingLogo == null))
                             {
                                 using (NpgsqlCommand cmdUpdateExperience = new NpgsqlCommand(updateExperienceImageIdSql, connection))
                                 {
@@ -2925,7 +2925,7 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the Main Image or Logo by Experience ID.", ex);
+                throw new DaoException("An error occurred while retrieving the Main Image or Company Logo by Experience ID.", ex);
             }
 
             return mainImageOrLogo;
@@ -3040,7 +3040,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ExperienceId and imageId must be greater than zero.");
             }
 
-            // UpdateExperienceImageIdSql only runs if the image is the Main Image
+            // UpdateExperienceImageIdSql only runs if the image is the Main Image or Logo
             string updateExperienceImageIdSql = null;
 
             string deleteExperienceImageSql = "DELETE FROM experience_images WHERE experience_id = @experienceId AND image_id = @imageId;";
@@ -3050,7 +3050,7 @@ namespace Capstone.DAO
 
             switch (image.Type)
             {
-                case MainImage: 
+                case MainImage:
                     updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = NULL WHERE main_image_id = @imageId;";
                     break;
                 case Logo:
@@ -3128,6 +3128,255 @@ namespace Capstone.DAO
                                             CREDENTIAL IMAGE CRUD
             **********************************************************************************************
         */
+
+        public Image CreateImageByCredentialId(int credentialId, Image image)
+        {
+            if (credentialId <= 0)
+            {
+                throw new ArgumentException("CredentialId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
+            string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
+            string insertCredentialImageSql = "INSERT INTO credential_images (credential_id, image_id) VALUES (@credentialId, @imageId);";
+
+            string updateCredentialImageIdSql = null;
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateCredentialImageIdSql = "UPDATE credentials SET main_image_id = @imageId WHERE id = @credentialId;";
+                    break;
+                case Logo:
+                    updateCredentialImageIdSql = "UPDATE credentials SET organization_logo_id = @imageId WHERE id = @credentialId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid image type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int imageId;
+
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
+                                cmdInsertImage.Transaction = transaction;
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertCredentialImage = new NpgsqlCommand(insertCredentialImageSql, connection))
+                            {
+                                cmdInsertCredentialImage.Parameters.AddWithValue("@credentialId", credentialId);
+                                cmdInsertCredentialImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertCredentialImage.Transaction = transaction;
+                                cmdInsertCredentialImage.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmdUpdateCredentialImageId = new NpgsqlCommand(updateCredentialImageIdSql, connection))
+                            {
+                                cmdUpdateCredentialImageId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateCredentialImageId.Parameters.AddWithValue("@credentialId", credentialId);
+                                cmdUpdateCredentialImageId.Transaction = transaction;
+                                cmdUpdateCredentialImageId.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image by credential ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Image GetMainImageOrOrganizationLogoByCredentialId(int credentialId, string imageType)
+        {
+            if (credentialId <= 0)
+            {
+                throw new ArgumentException("CredentialId must be greater than zero.");
+            }
+
+            if (imageType != MainImage && imageType != Logo)
+            {
+                throw new ArgumentException("Image Type must be 'main image' or 'logo'.");
+            }
+
+            Image mainImageOrLogo = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN credential_images ci ON i.id = ci.image_id " +
+                         "WHERE ci.credential_id = @credentialId AND i.type = @imageType;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                        cmd.Parameters.AddWithValue("@imageType", imageType);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainImageOrLogo = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Main Image or Organization Logo by Credential ID.", ex);
+            }
+
+            return mainImageOrLogo;
+        }
+
+        public Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image)
+        {
+            if (image.Type != MainImage || image.Type != Logo)
+            {
+                throw new ArgumentException("The image provided is not a main image or organization logo. Please provide a main image or organization logo.");
+            }
+            else
+            {
+                DeleteImageByCredentialId(credentialId, imageId);
+                CreateImageByCredentialId(credentialId, image);
+            }
+
+            return image;
+        }
+
+        public int DeleteImageByCredentialId(int credentialId, int imageId)
+        {
+            if (credentialId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("CredentialId and imageId must be greater than zero.");
+            }
+
+            // UpdateCredentialImageIdSql only runs if the image is the Main Image or Logo
+            string updateCredentialImageIdSql = null;
+
+            string deleteCredentialImageSql = "DELETE FROM credential_images WHERE credential_id = @credentialId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            Image image = GetImageByImageId(imageId);
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateCredentialImageIdSql = "UPDATE credentials SET main_image_id = NULL WHERE main_image_id = @imageId;";
+                    break;
+                case Logo:
+                    updateCredentialImageIdSql = "UPDATE credentials SET organization_logo_id = NULL WHERE organization_logo_id = @imageId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid image type.");
+
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected = 0;
+
+                            if (image.Type == MainImage || image.Type == Logo)
+                            {
+                                using (NpgsqlCommand cmd = new NpgsqlCommand(updateCredentialImageIdSql, connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteCredentialImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by credential ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************

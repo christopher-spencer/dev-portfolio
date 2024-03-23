@@ -158,11 +158,11 @@ CREATE TABLE credentials (
     expiration_date TIMESTAMP,
     credential_id_number INTEGER,
     credential_website_id INTEGER,
-    associated_image_id INTEGER,
+    main_image_id INTEGER,
     FOREIGN KEY (organization_logo_id) REFERENCES images(id),
     FOREIGN KEY (organization_website_id) REFERENCES websites(id),
     FOREIGN KEY (credential_website_id) REFERENCES websites(id),
-    FOREIGN KEY (associated_image_id) REFERENCES images(id)
+    FOREIGN KEY (main_image_id) REFERENCES images(id)
 );
 
 CREATE TABLE users (

@@ -18,8 +18,8 @@ namespace Capstone.Models
         public int CredentialIdNumber { get; set; }
         public int CredentialWebsiteId { get; set; }
         public Website CredentialWebsite { get; set; }
-        public int AssociatedImageId { get; set; }
-        public Image AssociatedImage { get; set; }
+        public int MainImageId { get; set; }
+        public Image MainImage { get; set; }
         public List <Skill> AssociatedSkills { get; set; }
     } 
 }
