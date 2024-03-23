@@ -395,7 +395,7 @@ CREATE TABLE volunteer_work_websites (
     FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
-CREATE TABLE open_source_contribution_websites(
+CREATE TABLE open_source_contribution_websites (
     open_source_contribution_id INTEGER,
     website_id INTEGER,
     PRIMARY KEY (open_source_contribution_id, website_id),
@@ -403,7 +403,7 @@ CREATE TABLE open_source_contribution_websites(
     FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
-CREATE TABLE credential_websites(
+CREATE TABLE credential_websites (
     credential_id INTEGER,
     website_id INTEGER,
     PRIMARY KEY (credential_id, website_id),
@@ -411,7 +411,7 @@ CREATE TABLE credential_websites(
     FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
-CREATE TABLE education_websites(
+CREATE TABLE education_websites (
     education_id INTEGER,
     website_id INTEGER,
     PRIMARY KEY (education_id, website_id),
@@ -419,7 +419,7 @@ CREATE TABLE education_websites(
     FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
-CREATE TABLE experience_websites(
+CREATE TABLE experience_websites (
     experience_id INTEGER,
     website_id INTEGER,
     PRIMARY KEY (experience_id, website_id),
