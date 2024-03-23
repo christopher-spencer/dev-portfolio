@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS contributor_images;
 DROP TABLE IF EXISTS api_service_images;
 DROP TABLE IF EXISTS dependency_library_images;
 
+DROP TABLE IF EXISTS open_source_contribution_images;
 DROP TABLE IF EXISTS credential_images;
 DROP TABLE IF EXISTS education_images;
 DROP TABLE IF EXISTS experience_images;
@@ -41,6 +42,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS experiences;
 DROP TABLE IF EXISTS educations;
 DROP TABLE IF EXISTS credentials;
+DROP TABLE IF EXISTS open_source_contributions;
 
 DROP TABLE IF EXISTS goals;
 DROP TABLE IF EXISTS dependencies_and_libraries;
@@ -188,6 +190,24 @@ CREATE TABLE credentials (
     FOREIGN KEY (main_image_id) REFERENCES images(id)
 );
 
+CREATE TABLE open_source_contributions (
+    id SERIAL PRIMARY KEY,
+    project_name VARCHAR(125),
+    organization_name VARCHAR(125),
+    organization_logo_id INTEGER,
+    start_date TIMESTAMP,
+    end_date TIMESTAMP,
+    project_description VARCHAR(500),
+    contribution_details VARCHAR(500),
+    organization_website_id INTEGER,
+    organization_github_id INTEGER,
+    main_image_id INTEGER,
+    FOREIGN KEY (organization_logo_id) REFERENCES images(id),
+    FOREIGN KEY (organization_website_id) REFERENCES websites(id),
+    FOREIGN KEY (organization_github_id) REFERENCES websites(id),
+    FOREIGN KEY (main_image_id) REFERENCES images(id)
+);
+
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -301,6 +321,14 @@ CREATE TABLE dependency_library_images (
     PRIMARY KEY (dependencylibrary_id, image_id),
     FOREIGN KEY (dependencylibrary_id) REFERENCES dependencies_and_libraries(id),
     FOREIGN KEY (image_id) REFERENCES images(id)    
+);
+
+CREATE TABLE open_source_contribution_images (
+    open_source_contribution_id INTEGER,
+    image_id INTEGER,
+    PRIMARY KEY (open_source_contribution_id, image_id),
+    FOREIGN KEY (open_source_contribution_id) REFERENCES open_source_contributions(id),
+    FOREIGN Key (image_id) REFERENCES images(id)
 );
 
 CREATE TABLE credential_images (

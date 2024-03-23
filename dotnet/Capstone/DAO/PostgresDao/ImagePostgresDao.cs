@@ -3798,6 +3798,414 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        public Image CreateImageByOpenSourceContributionId(int contributionId, Image image)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("ContributionId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
+            string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
+            string insertContributionImageSql = "INSERT INTO open_source_contribution_images (open_source_contribution_id, image_id) VALUES (@contributionId, @imageId);";
+
+            string updateContributionImageIdSql = null;
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateContributionImageIdSql = "UPDATE open_source_contributions SET main_image_id = @imageId WHERE id = @contributionId;";
+                    break;
+                case Logo:
+                    updateContributionImageIdSql = "UPDATE open_source_contributions SET organization_logo_id = @imageId WHERE id = @contributionId;";
+                    break;
+                case AdditionalImage:
+                    break;
+                default:
+                    throw new ArgumentException("Invalid image type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            Image existingMainImage = null;
+
+                            if (image.Type == MainImage)
+                            {
+                                existingMainImage = GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, MainImage);
+
+                                if (existingMainImage != null)
+                                {
+                                    image.Type = AdditionalImage;
+                                }
+                            }
+
+                            Image existingLogo = null;
+
+                            if (image.Type == Logo)
+                            {
+                                existingLogo = GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, Logo);
+
+                                if (existingLogo != null)
+                                {
+                                    image.Type = AdditionalImage;
+                                }
+                            }
+
+                            int imageId;
+
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
+                                cmdInsertImage.Transaction = transaction;
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertContributionImage = new NpgsqlCommand(insertContributionImageSql, connection))
+                            {
+                                cmdInsertContributionImage.Parameters.AddWithValue("@contributionId", contributionId);
+                                cmdInsertContributionImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertContributionImage.Transaction = transaction;
+                                cmdInsertContributionImage.ExecuteNonQuery();
+                            }
+
+                            if ((image.Type == MainImage && existingMainImage == null) || (image.Type == Logo && existingLogo == null))
+                            {
+                                using (NpgsqlCommand cmdUpdateContributionImageId = new NpgsqlCommand(updateContributionImageIdSql, connection))
+                                {
+                                    cmdUpdateContributionImageId.Parameters.AddWithValue("@imageId", imageId);
+                                    cmdUpdateContributionImageId.Parameters.AddWithValue("@contributionId", contributionId);
+                                    cmdUpdateContributionImageId.Transaction = transaction;
+                                    cmdUpdateContributionImageId.ExecuteNonQuery();
+                                }
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image by open source contribution ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Image GetMainImageOrOrganizationLogoByOpenSourceContributionId(int contributionId, string imageType)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("Open Source ContributionId must be greater than zero.");
+            }
+
+            if (imageType != MainImage && imageType != Logo)
+            {
+                throw new ArgumentException("Image Type must be 'main image' or 'logo'.");
+            }
+
+            Image mainImageOrLogo = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN open_source_contribution_images oci ON i.id = oci.image_id " +
+                         "WHERE oci.open_source_contribution_id = @contributionId AND i.type = @imageType;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@imageType", imageType);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainImageOrLogo = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Main Image or Organization Logo by Open Source Contribution ID.", ex);
+            }
+
+            return mainImageOrLogo;
+        }
+
+        public Image GetImageByOpenSourceContributionId(int contributionId, int imageId)
+        {
+            if (contributionId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("Open Source ContributionId and ImageId must be greater than zero.");
+            }
+
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN open_source_contribution_images oci ON i.id = oci.image_id " +
+                         "WHERE oci.open_source_contribution_id = @contributionId AND i.id = @imageId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by open source contribution ID and image ID.", ex);
+            }
+
+            return image;
+        }
+
+        public List<Image> GetAdditionalImagesByOpenSourceContributionId(int contributionId)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("Open Source ContributionId must be greater than zero.");
+            }
+
+            List<Image> additionalImages = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN open_source_contribution_images oci ON i.id = oci.image_id " +
+                         "WHERE oci.open_source_contribution_id = @contributionId AND i.type = @imageType;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@imageType", AdditionalImage);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Image image = MapRowToImage(reader);
+                                additionalImages.Add(image);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the additional images by open source contribution ID.", ex);
+            }
+
+            return additionalImages;
+        }
+
+        public Image UpdateImageByOpenSourceContributionId(int contributionId, int imageId, Image image)
+        {
+            if (contributionId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("Open Source ContributionId and imageId must be greater than zero.");
+            }
+
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url, type = @type " +
+                                    "FROM open_source_contribution_images " +
+                                    "WHERE images.id = open_source_contribution_images.image_id AND open_source_contribution_images.open_source_contribution_id = @contributionId " +
+                                    "AND images.id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@type", image.Type);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return image;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by open source contribution ID.", ex);
+            }
+
+            return null;
+        }
+
+        public Image UpdateMainImageOrLogoByOpenSourceContributionId(int contributionId, int imageId, Image image)
+        {
+            if (image.Type != MainImage && image.Type != Logo)
+            {
+                throw new ArgumentException("The image provided is not a main image or organization logo. Please provide a main image or organization logo.");
+            }
+            else
+            {
+                DeleteImageByOpenSourceContributionId(contributionId, imageId);
+                CreateImageByOpenSourceContributionId(contributionId, image);
+            }
+
+            return image;
+        }
+
+        public int DeleteImageByOpenSourceContributionId(int openSourceContributionId, int imageId)
+        {
+            if (openSourceContributionId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("OpenSourceContributionId and imageId must be greater than zero.");
+            }
+
+            // UpdateOpenSourceContributionImageIdSql only runs if the image is the Main Image or Logo
+            string updateOpenSourceContributionImageIdSql = null;
+
+            string deleteOpenSourceContributionImageSql = "DELETE FROM open_source_contribution_images WHERE open_source_contribution_id = @openSourceContributionId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            Image image = GetImageByImageId(imageId);
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateOpenSourceContributionImageIdSql = "UPDATE open_source_contributions SET main_image_id = NULL WHERE main_image_id = @imageId;";
+                    break;
+                case Logo:
+                    updateOpenSourceContributionImageIdSql = "UPDATE open_source_contributions SET organization_logo_id = NULL WHERE organization_logo_id = @imageId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            if (image.Type == MainImage || image.Type == Logo)
+                            {
+                                using (NpgsqlCommand cmd = new NpgsqlCommand(updateOpenSourceContributionImageIdSql, connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteOpenSourceContributionImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@openSourceContributionId", openSourceContributionId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by open source contribution ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                             VOLUNTEER WORK IMAGE CRUD
