@@ -135,6 +135,11 @@ namespace Capstone.DAO.Interfaces
                                             CREDENTIAL IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Create Credential Controllers****
+        Image CreateImageByCredentialId(int credentialId, Image image);
+        Image GetMainImageOrOrganizationLogoByCredentialId(int credentialId, string imageType);
+        Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image);
+        int DeleteImageByCredentialId(int credentialId, int imageId);
 
         /*  
             **********************************************************************************************
