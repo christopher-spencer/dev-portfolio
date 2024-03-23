@@ -146,6 +146,13 @@ namespace Capstone.DAO.Interfaces
                                             EDUCATION IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Create Education Controllers****
+        Image CreateImageByEducationId(int educationId, Image image);
+        Image GetMainImageOrInstitutionLogoByEducationId(int educationId, string imageType);
+        Image GetImageByEducationId(int educationId, int imageId);
+        Image UpdateImageByEducationId(int educationId, int imageId, Image image);
+        Image UpdateMainImageOrLogoByEducationId(int educationId, int imageId, Image image);
+        int DeleteImageByEducationId(int educationId, int imageId);
 
         /*  
             **********************************************************************************************
