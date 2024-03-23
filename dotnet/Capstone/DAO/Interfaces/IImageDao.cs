@@ -174,6 +174,14 @@ namespace Capstone.DAO.Interfaces
                                             VOLUNTEER WORK IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Create VolunteerWork Controllers****
+        Image CreateImageByVolunteerWorkId(int volunteerWorkId, Image image);
+        Image GetMainImageOrOrganizationLogoByVolunteerWorkId(int volunteerWorkId, string imageType);
+        Image GetImageByVolunteerWorkId(int volunteerWorkId, int imageId);
+        List<Image> GetAdditionalImagesByVolunteerWorkId(int volunteerWorkId);
+        Image UpdateImageByVolunteerWorkId(int volunteerWorkId, int imageId, Image image);
+        Image UpdateMainImageOrLogoByVolunteerWorkId(int volunteerWorkId, int imageId, Image image);
+        int DeleteImageByVolunteerWorkId(int volunteerWorkId, int imageId);
 
         /*  
             **********************************************************************************************
