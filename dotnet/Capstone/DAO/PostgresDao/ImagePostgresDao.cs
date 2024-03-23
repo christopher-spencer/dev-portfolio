@@ -3384,6 +3384,370 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        public Image CreateImageByEducationId(int educationId, Image image)
+        {
+            if (educationId <= 0)
+            {
+                throw new ArgumentException("EducationId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
+            string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
+            string insertEducationImageSql = "INSERT INTO education_images (education_id, image_id) VALUES (@educationId, @imageId);";
+
+            string updateEducationImageIdSql = null;
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateEducationImageIdSql = "UPDATE educations SET main_image_id = @imageId WHERE id = @educationId;";
+                    break;
+                case Logo:
+                    updateEducationImageIdSql = "UPDATE educations SET institution_logo_id = @imageId WHERE id = @educationId;";
+                    break;
+                case AdditionalImage:
+                    break;
+                default:
+                    throw new ArgumentException("Invalid image type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            Image existingMainImage = null;
+
+                            if (image.Type == MainImage)
+                            {
+                                existingMainImage = GetMainImageOrInstitutionLogoByEducationId(educationId, MainImage);
+
+                                if (existingMainImage != null)
+                                {
+                                    image.Type = AdditionalImage;
+                                }
+                            }
+
+                            Image existingLogo = null;
+
+                            if (image.Type == Logo)
+                            {
+                                existingLogo = GetMainImageOrInstitutionLogoByEducationId(educationId, Logo);
+
+                                if (existingLogo != null)
+                                {
+                                    image.Type = AdditionalImage;
+                                }
+                            }
+
+                            int imageId;
+
+                            using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
+                            {
+                                cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
+                                cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
+                                cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
+                                cmdInsertImage.Transaction = transaction;
+                                imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertEducationImage = new NpgsqlCommand(insertEducationImageSql, connection))
+                            {
+                                cmdInsertEducationImage.Parameters.AddWithValue("@educationId", educationId);
+                                cmdInsertEducationImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertEducationImage.Transaction = transaction;
+                                cmdInsertEducationImage.ExecuteNonQuery();
+                            }
+
+                            if ((image.Type == MainImage && existingMainImage == null) || (image.Type == Logo && existingLogo == null))
+                            {
+                                using (NpgsqlCommand cmdUpdateEducationImageId = new NpgsqlCommand(updateEducationImageIdSql, connection))
+                                {
+                                    cmdUpdateEducationImageId.Parameters.AddWithValue("@imageId", imageId);
+                                    cmdUpdateEducationImageId.Parameters.AddWithValue("@educationId", educationId);
+                                    cmdUpdateEducationImageId.Transaction = transaction;
+                                    cmdUpdateEducationImageId.ExecuteNonQuery();
+                                }
+                            }
+
+                            transaction.Commit();
+
+                            image.Id = imageId;
+
+                            return image;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the image by education ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Image GetMainImageOrInstitutionLogoByEducationId(int educationId, string imageType)
+        {
+            if (educationId <= 0)
+            {
+                throw new ArgumentException("EducationId must be greater than zero.");
+            }
+
+            if (imageType != MainImage && imageType != Logo)
+            {
+                throw new ArgumentException("Image Type must be 'main image' or 'logo'.");
+            }
+
+            Image mainImageOrLogo = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN education_images ei ON i.id = ei.image_id " +
+                         "WHERE ei.education_id = @educationId AND i.type = @imageType;";
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@educationId", educationId);
+                        cmd.Parameters.AddWithValue("@imageType", imageType);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainImageOrLogo = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Main Image or Institution Logo by Education ID.", ex);
+            }
+
+            return mainImageOrLogo;
+        }
+
+        public Image GetImageByEducationId(int educationId, int imageId)
+        {
+            if (educationId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("EducationId and ImageId must be greater than zero.");
+            }
+
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN education_images ei ON i.id = ei.image_id " +
+                         "WHERE ei.education_id = @educationId AND i.id = @imageId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@educationId", educationId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by education ID and image ID.", ex);
+            }
+
+            return image;
+        }
+
+        public Image UpdateImageByEducationId(int educationId, int imageId, Image image)
+        {
+            if (educationId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("EducationId and imageId must be greater than zero.");
+            }
+
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url, type = @type " +
+                                    "FROM education_images " +
+                                    "WHERE images.id = education_images.image_id AND education_images.education_id = @educationId " +
+                                    "AND images.id = @imageId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@educationId", educationId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@type", image.Type);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return image;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by education ID.", ex);
+            }
+
+            return null;
+        }
+
+        public Image UpdateMainImageOrLogoByEducationId(int educationId, int imageId, Image image)
+        {
+            if (image.Type != MainImage && image.Type != Logo)
+            {
+                throw new ArgumentException("The image provided is not a main image or institution logo. Please provide a main image or institution logo.");
+            }
+            else
+            {
+                DeleteImageByEducationId(educationId, imageId);
+                CreateImageByEducationId(educationId, image);
+            }
+
+            return image;
+        }
+
+        public int DeleteImageByEducationId(int educationId, int imageId)
+        {
+            if (educationId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("EducationId and imageId must be greater than zero.");
+            }
+
+            // UpdateEducationImageIdSql only runs if the image is the Main Image or Logo
+            string updateEducationImageIdSql = null;
+
+            string deleteEducationImageSql = "DELETE FROM education_images WHERE education_id = @educationId AND image_id = @imageId;";
+            string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
+
+            Image image = GetImageByImageId(imageId);
+
+            switch (image.Type)
+            {
+                case MainImage:
+                    updateEducationImageIdSql = "UPDATE educations SET main_image_id = NULL WHERE main_image_id = @imageId;";
+                    break;
+                case Logo:
+                    updateEducationImageIdSql = "UPDATE educations SET institution_logo_id = NULL WHERE institution_logo_id = @imageId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            if (image.Type == MainImage || image.Type == Logo)
+                            {
+                                using (NpgsqlCommand cmd = new NpgsqlCommand(updateEducationImageIdSql, connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteEducationImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@educationId", educationId);
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteImageSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the image by education ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         OPEN SOURCE CONTRIBUTION IMAGE CRUD

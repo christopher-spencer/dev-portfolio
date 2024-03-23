@@ -17,13 +17,33 @@ namespace Capstone.Models
         public string Major { get; set; }
         public string Minor { get; set; }
         public string DegreeObtained { get; set; }
-        //FIXME fix for diff than INT for decimal places
-        public int GPA { get; set; }
+        public decimal GPAOverall { get; set; }
+        public decimal GPAInMajor { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime GraduationDate { get; set; }
         public List<Achievement> HonorsAndAwards { get; set; }
         public int MainImageId { get; set; }
         public Image MainImage { get; set; }
         public List<Image> AdditionalImages { get; set; }
+
+        // Method to format overall GPA
+        public string FormatOverallGPA()
+        {
+            return $"{GPAOverall} / 4";
+        }
+
+        // Method to format major GPA
+        public string FormatGPAInMajor()
+        {
+            return $"{GPAInMajor} / 4";
+        }
+
+        // Override ToString() method
+        public override string ToString()
+        {
+            string overallGPAString = FormatOverallGPA();
+            string majorGPAString = FormatGPAInMajor();
+            return $"Overall GPA: {overallGPAString}, Major GPA: {majorGPAString}";
+        }
     }
 }

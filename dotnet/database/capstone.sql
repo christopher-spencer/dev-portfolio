@@ -160,7 +160,8 @@ CREATE TABLE educations (
     major VARCHAR(100),
     minor VARCHAR(100),
     degree_obtained VARCHAR(200),
-    gpa INTEGER,
+    gpa_overall NUMERIC(1,2),
+    gpa_in_major NUMERIC(1,2),
     start_date TIMESTAMP,
     graduation_date TIMESTAMP,
     main_image_id INTEGER,
@@ -366,7 +367,6 @@ CREATE TABLE sideproject_images (
     FOREIGN KEY (image_id) REFERENCES images(id)
 );
 
-// NOTE added DROP and portfolio_images table to modify
 CREATE TABLE portfolio_images (
     portfolio_id INTEGER,
     image_id INTEGER,
