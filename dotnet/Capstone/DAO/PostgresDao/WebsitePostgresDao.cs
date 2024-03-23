@@ -232,6 +232,13 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
+                                            PORTFOLIO WEBSITE CRUD
+            **********************************************************************************************
+        */
+        // TODO Portfolio Website PGDAO****
+
+        /*  
+            **********************************************************************************************
                                             SIDE PROJECT WEBSITE CRUD
             **********************************************************************************************
         */
@@ -621,7 +628,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
-        
+
         public Website GetWebsiteByContributorId(int contributorId, int websiteId)
         {
             if (contributorId <= 0)
@@ -664,7 +671,7 @@ namespace Capstone.DAO
 
             return website;
         }
-// TODO UPDATE need Website Type? Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...
+        // TODO UPDATE need Website Type? Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...
         public Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
         {
             if (contributorId <= 0 || websiteId <= 0)
@@ -751,7 +758,7 @@ namespace Capstone.DAO
                             int rowsAffected;
 
                             // Get the image ID associated with the website
-                            int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);                            
+                            int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
 
                             // Update contributor websiteId reference to null
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateContributorWebsiteIdSql, connection))
@@ -1320,6 +1327,284 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
+
+        /*  
+            **********************************************************************************************
+                                            EXPERIENCE WEBSITE CRUD
+            **********************************************************************************************
+        */
+        // TODO WEBSITE Experience PGDAO****
+        public Website CreateWebsiteByExperienceId(int experienceId, Website website)
+        {
+            if (experienceId <= 0)
+            {
+                throw new ArgumentException("Experience Id must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
+            string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
+            string insertExperienceWebsiteSql = "INSERT INTO experience_websites (experience_id, website_id) VALUES (@experienceId, @websiteId);";
+            string updateExperienceWebsiteIdSql = "UPDATE experiences SET company_website_id = @websiteId WHERE id = @experienceId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int websiteId;
+
+                            using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                            {
+                                cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                                cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Transaction = transaction;
+                                websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertExperienceWebsite = new NpgsqlCommand(insertExperienceWebsiteSql, connection))
+                            {
+                                cmdInsertExperienceWebsite.Parameters.AddWithValue("@experienceId", experienceId);
+                                cmdInsertExperienceWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdInsertExperienceWebsite.Transaction = transaction;
+                                cmdInsertExperienceWebsite.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmdUpdateExperience = new NpgsqlCommand(updateExperienceWebsiteIdSql, connection))
+                            {
+                                cmdUpdateExperience.Parameters.AddWithValue("@experienceId", experienceId);
+                                cmdUpdateExperience.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdUpdateExperience.Transaction = transaction;
+                                cmdUpdateExperience.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            website.Id = websiteId;
+
+                            return website;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the website by experience ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Website GetWebsiteByExperienceId(int experienceId)
+        {
+            if (experienceId <= 0)
+            {
+                throw new ArgumentException("ExperienceId must be greater than zero.");
+            }
+
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN experience_websites ew ON w.id = ew.website_id " +
+                         "WHERE ew.experience_id = @experienceId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@experienceId", experienceId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website by Experience ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website UpdateWebsiteByExperienceId(int experienceId, int websiteId, Website website)
+        {
+            if (experienceId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ExperienceId and websiteId must be greater than zero.");
+            }
+
+            string updateWebsiteSql = "UPDATE websites " +
+                                      "SET name = @name, url = @url " +
+                                      "FROM experience_websites " +
+                                      "WHERE websites.id = experience_websites.website_id AND experience_websites.experience_id = @experienceId " +
+                                      "AND websites.id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return website;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website by Experience ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteWebsiteByExperienceId(int experienceId, int websiteId)
+        {
+            if (experienceId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ExperienceId and websiteId must be greater than zero.");
+            }
+
+            string updateExperienceWebsiteIdSql = "UPDATE experiences SET company_website_id = NULL WHERE company_website_id = @websiteId;";
+            string deleteExperienceWebsiteSql = "DELETE FROM experience_websites WHERE experience_id = @experienceId AND website_id = @websiteId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateExperienceWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteExperienceWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            if (imageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByWebsiteId(websiteId, imageId.Value);
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the website by Experience ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+
+        /*  
+            **********************************************************************************************
+                                            CREDENTIAL WEBSITE CRUD
+            **********************************************************************************************
+        */
+        // TODO WEBSITE Credential PGDAO****
+        /*  
+            **********************************************************************************************
+                                            EDUCATION WEBSITE CRUD
+            **********************************************************************************************
+        */
+        // TODO WEBSITE Education PGDAO****
+        /*  
+            **********************************************************************************************
+                                        OPEN SOURCE CONTRIBUTION WEBSITE CRUD
+            **********************************************************************************************
+        */
+        // TODO WEBSITE OpenSourceContribution PGDAO****
+        /*  
+            **********************************************************************************************
+                                            VOLUNTEER WORK WEBSITE CRUD
+            **********************************************************************************************
+        */
+        // TODO WEBSITE VolunteerWork PGDAO****
+
 
         /*  
             **********************************************************************************************
