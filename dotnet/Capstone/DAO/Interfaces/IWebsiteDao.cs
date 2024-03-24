@@ -104,6 +104,10 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 // TODO WEBSITE OpenSourceContribution Controllers****
+        Website CreateWebsiteByOpenSourceContributionId(int contributionId, Website website);
+        Website GetWebsiteByOpenSourceContributionId(int contributionId, int websiteId);
+        Website UpdateWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website);
+        int DeleteWebsiteByOpenSourceContributionId(int contributionId, int websiteId);
         /*  
             **********************************************************************************************
                                             VOLUNTEER WORK WEBSITE CRUD
