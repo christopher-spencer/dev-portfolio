@@ -21,10 +21,13 @@ namespace Capstone.DAO.Interfaces
 
         /*  
             **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
                                             PORTFOLIO WEBSITE CRUD
             **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
         */
-        // TODO Portfolio Website Controllers****
         Website CreateWebsiteByPortfolioId(int portfolioId, Website website);
         Website GetWebsiteByPortfolioId(int portfolioId, int websiteId);
         Website UpdateWebsiteByPortfolioId(int portfolioId, int websiteId, Website website);
@@ -32,7 +35,61 @@ namespace Capstone.DAO.Interfaces
 
         /*  
             **********************************************************************************************
+                                            EXPERIENCE WEBSITE CRUD
+            **********************************************************************************************
+        */
+        Website CreateWebsiteByExperienceId(int experienceId, Website website);
+        Website GetWebsiteByExperienceId(int experienceId);
+        Website UpdateWebsiteByExperienceId(int experienceId, int websiteId, Website website);
+        int DeleteWebsiteByExperienceId(int experienceId, int websiteId);
+
+        /*  
+            **********************************************************************************************
+                                            CREDENTIAL WEBSITE CRUD
+            **********************************************************************************************
+        */
+        Website CreateWebsiteByCredentialId(int credentialId, Website website);
+        Website GetWebsiteByCredentialId(int credentialId, int websiteId);
+        Website UpdateWebsiteByCredentialId(int credentialId, int websiteId, Website website);
+        int DeleteWebsiteByCredentialId(int credentialId, int websiteId);
+
+        /*  
+            **********************************************************************************************
+                                            EDUCATION WEBSITE CRUD
+            **********************************************************************************************
+        */
+        Website CreateWebsiteByEducationId(int educationId, Website website);
+        Website GetWebsiteByEducationId(int educationId);
+        Website UpdateWebsiteByEducationId(int educationId, int websiteId, Website website);
+        int DeleteWebsiteByEducationId(int educationId, int websiteId);
+
+        /*  
+            **********************************************************************************************
+                                        OPEN SOURCE CONTRIBUTION WEBSITE CRUD
+            **********************************************************************************************
+        */
+        Website CreateWebsiteByOpenSourceContributionId(int contributionId, Website website);
+        Website GetWebsiteByOpenSourceContributionId(int contributionId, int websiteId);
+        Website UpdateWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website);
+        int DeleteWebsiteByOpenSourceContributionId(int contributionId, int websiteId);
+
+        /*  
+            **********************************************************************************************
+                                            VOLUNTEER WORK WEBSITE CRUD
+            **********************************************************************************************
+        */
+        Website CreateWebsiteByVolunteerWorkId(int volunteerWorkId, Website website);
+        Website GetWebsiteByVolunteerWorkId(int volunteerWorkId);
+        Website UpdateWebsiteByVolunteerWorkId(int volunteerWorkId, int websiteId, Website website);
+        int DeleteWebsiteByVolunteerWorkId(int volunteerWorkId, int websiteId);
+
+        /*  
+            **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
                                             SIDE PROJECT WEBSITE CRUD
+            **********************************************************************************************
+            **********************************************************************************************
             **********************************************************************************************
         */
         Website CreateWebsiteBySideProjectId(int projectId, Website website);
@@ -69,59 +126,6 @@ namespace Capstone.DAO.Interfaces
         Website GetWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId);
         Website UpdateWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId, Website website);
         int DeleteWebsiteByDependencyLibraryId(int dependencyLibraryId, int websiteId);
-
-        /*  
-            **********************************************************************************************
-                                            EXPERIENCE WEBSITE CRUD
-            **********************************************************************************************
-        */
-// TODO WEBSITE Experience Controllers****
-        Website CreateWebsiteByExperienceId(int experienceId, Website website);
-        Website GetWebsiteByExperienceId(int experienceId);
-        Website UpdateWebsiteByExperienceId(int experienceId, int websiteId, Website website);
-        int DeleteWebsiteByExperienceId(int experienceId, int websiteId);
-
-        /*  
-            **********************************************************************************************
-                                            CREDENTIAL WEBSITE CRUD
-            **********************************************************************************************
-        */
-// TODO WEBSITE Credential Controllers****
-        Website CreateWebsiteByCredentialId(int credentialId, Website website);
-        Website GetWebsiteByCredentialId(int credentialId, int websiteId);
-        Website UpdateWebsiteByCredentialId(int credentialId, int websiteId, Website website);
-        int DeleteWebsiteByCredentialId(int credentialId, int websiteId);
-        /*  
-            **********************************************************************************************
-                                            EDUCATION WEBSITE CRUD
-            **********************************************************************************************
-        */
-// TODO WEBSITE Education Controllers****
-        Website CreateWebsiteByEducationId(int educationId, Website website);
-        Website GetWebsiteByEducationId(int educationId);
-        Website UpdateWebsiteByEducationId(int educationId, int websiteId, Website website);
-        int DeleteWebsiteByEducationId(int educationId, int websiteId);
-
-        /*  
-            **********************************************************************************************
-                                        OPEN SOURCE CONTRIBUTION WEBSITE CRUD
-            **********************************************************************************************
-        */
-// TODO WEBSITE OpenSourceContribution Controllers****
-        Website CreateWebsiteByOpenSourceContributionId(int contributionId, Website website);
-        Website GetWebsiteByOpenSourceContributionId(int contributionId, int websiteId);
-        Website UpdateWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website);
-        int DeleteWebsiteByOpenSourceContributionId(int contributionId, int websiteId);
-        /*  
-            **********************************************************************************************
-                                            VOLUNTEER WORK WEBSITE CRUD
-            **********************************************************************************************
-        */
-// TODO WEBSITE VolunteerWork Controllers****
-        Website CreateWebsiteByVolunteerWorkId(int volunteerWorkId, Website website);
-        Website GetWebsiteByVolunteerWorkId(int volunteerWorkId);
-        Website UpdateWebsiteByVolunteerWorkId(int volunteerWorkId, int websiteId, Website website);
-        int DeleteWebsiteByVolunteerWorkId(int volunteerWorkId, int websiteId);
 
     }
 }
