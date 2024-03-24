@@ -28,6 +28,17 @@ namespace Capstone.DAO.Interfaces
 
         /*  
             **********************************************************************************************
+                                          EDUCATION ACHIEVEMENT CRUD
+            **********************************************************************************************
+        */
+// TODO ACHIEVEMENT Education Controllers****
+        Achievement CreateAchievementByEducationId(int educationId, Achievement achievement);
+        List<Achievement> GetAchievementsByEducationId(int educationId);    
+        Achievement GetAchievementByEducationId(int educationId, int achievementId);
+        Achievement UpdateAchievementByEducationId(int educationId, int achievementId, Achievement achievement);
+        int DeleteAchievementByEducationId(int educationId, int achievementId);
+        /*  
+            **********************************************************************************************
                                     OPEN SOURCE CONTRIBUTION ACHIEVEMENT CRUD
             **********************************************************************************************
         */

@@ -47,6 +47,7 @@ DROP TABLE IF EXISTS credential_websites;
 DROP TABLE IF EXISTS education_websites;
 DROP TABLE IF EXISTS work_experience_websites;
 
+DROP TABLE IF EXISTS education_achievements;
 DROP TABLE IF EXISTS work_experience_achievements;
 DROP TABLE IF EXISTS open_source_contribution_achievements;
 DROP TABLE IF EXISTS volunteer_work_achievements;
@@ -290,6 +291,14 @@ CREATE TABLE portfolios (
     FOREIGN KEY (portfolio_image_id) REFERENCES images(id),
     FOREIGN KEY (github_repo_link_id) REFERENCES websites(id),
     FOREIGN KEY (linkedin_id) REFERENCES websites(id)
+);
+
+CREATE TABLE education_achievements (
+    education_id INTEGER,
+    achievement_id INTEGER,
+    PRIMARY KEY (education_id, achievement_id),
+    FOREIGN KEY (education_id) REFERENCES educations(id),
+    FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
 
 CREATE TABLE work_experience_achievements (
