@@ -19,6 +19,13 @@ namespace Capstone.DAO
             this._imageDao = imageDao;
         }
         // TODO add Blog Post Website CRUD eventually after links set up in BP Model
+
+        const string MainWebsite = "main-website";
+        const string SecondaryWebsite = "secondary-website";
+        const string GitHub = "github";
+        const string PortfolioLink = "portfolio-link";
+        const string LinkedIn = "linkedin";
+
         /*  
             **********************************************************************************************
                                                     WEBSITE CRUD
@@ -272,10 +279,10 @@ namespace Capstone.DAO
 
             switch (website.Type)
             {
-                case "website":
+                case MainWebsite:
                     updateSideProjectWebsiteSql = "UPDATE sideprojects SET website_id = @websiteId WHERE id = @sideProjectId;";
                     break;
-                case "github":
+                case GitHub:
                     updateSideProjectWebsiteSql = "UPDATE sideprojects SET github_repo_link_id = @websiteId WHERE id = @sideProjectId;";
                     break;
                 default:
@@ -339,6 +346,7 @@ namespace Capstone.DAO
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
         }
+
         public Website GetWebsiteBySideProjectId(int sideProjectId, int websiteId)
         {
             if (sideProjectId <= 0)
@@ -440,10 +448,10 @@ namespace Capstone.DAO
 
             switch (website.Type)
             {
-                case "website":
+                case MainWebsite:
                     updateSideProjectWebsiteIdSql = "UPDATE sideprojects SET website_id = NULL WHERE website_id = @websiteId;";
                     break;
-                case "github":
+                case GitHub:
                     updateSideProjectWebsiteIdSql = "UPDATE sideprojects SET github_repo_link_id = NULL WHERE github_repo_link_id = @websiteId;";
                     break;
                 default:
@@ -558,13 +566,13 @@ namespace Capstone.DAO
 
             switch (website.Type)
             {
-                case "portfoliolink":
+                case PortfolioLink:
                     updateContributorWebsiteIdSql = "UPDATE contributors SET portfolio_id = @websiteId WHERE id = @contributorId;";
                     break;
-                case "github":
+                case GitHub:
                     updateContributorWebsiteIdSql = "UPDATE contributors SET github_id = @websiteId WHERE id = @contributorId;";
                     break;
-                case "linkedin":
+                case LinkedIn:
                     updateContributorWebsiteIdSql = "UPDATE contributors SET linkedin_id = @websiteId WHERE id = @contributorId;";
                     break;
                 default:
@@ -729,13 +737,13 @@ namespace Capstone.DAO
 
             switch (website.Type)
             {
-                case "linkedin":
+                case LinkedIn:
                     updateContributorWebsiteIdSql = "UPDATE contributors SET linkedin_id = NULL WHERE linkedin_id = @websiteId;";
                     break;
-                case "github":
+                case GitHub:
                     updateContributorWebsiteIdSql = "UPDATE contributors SET github_id = NULL WHERE github_id = @websiteId;";
                     break;
-                case "portfoliolink":
+                case PortfolioLink:
                     updateContributorWebsiteIdSql = "UPDATE contributors SET portfolio_id = NULL WHERE portfolio_id = @websiteId;";
                     break;
                 default:
@@ -1584,6 +1592,93 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
         // TODO WEBSITE Credential PGDAO****
+
+        public Website CreateWebsiteByCredentialId(int credentialId, Website website)
+        {
+            if (credentialId <= 0)
+            {
+                throw new ArgumentException("CredentialId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
+            string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
+            string insertCredentialWebsiteSql = "INSERT INTO credential_websites (credential_id, website_id) VALUES (@credentialId, @websiteId);";
+            string updateCredentialWebsiteSql = "UPDATE credentials SET credential_website_id = @websiteId WHERE id = @credentialId;";
+
+
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int websiteId;
+
+                            using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                            {
+                                cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                                cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Transaction = transaction;
+                                websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertCredentialWebsite = new NpgsqlCommand(insertCredentialWebsiteSql, connection))
+                            {
+                                cmdInsertCredentialWebsite.Parameters.AddWithValue("@credentialId", credentialId);
+                                cmdInsertCredentialWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdInsertCredentialWebsite.Transaction = transaction;
+                                cmdInsertCredentialWebsite.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmdUpdateCredentialWebsite = new NpgsqlCommand(updateCredentialWebsiteSql, connection))
+                            {
+                                cmdUpdateCredentialWebsite.Parameters.AddWithValue("@credentialId", credentialId);
+                                cmdUpdateCredentialWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdUpdateCredentialWebsite.Transaction = transaction;
+                                cmdUpdateCredentialWebsite.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            website.Id = websiteId;
+
+                            return website;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the website for the credential.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                             EDUCATION WEBSITE CRUD

@@ -18,6 +18,12 @@ namespace Capstone.Controllers
             _websiteDao = websiteDao;
         }
 
+        const string MainWebsite = "main-website";
+        const string SecondaryWebsite = "secondary-website";
+        const string GitHub = "github";
+        const string PortfolioLink = "portfolio-link";
+        const string LinkedIn = "linkedin";
+
         /*  
             **********************************************************************************************
                                                 WEBSITE CRUD CONTROLLER
@@ -136,9 +142,9 @@ namespace Capstone.Controllers
             string websiteType = website.Type.ToLower();
 
       //TODO change to "main website" or something
-            if (websiteType != "website" && websiteType != "github")
+            if (websiteType != MainWebsite && websiteType != GitHub)
             {
-                return BadRequest("Invalid websiteType. Allowed values are 'website' and 'github'.");
+                return BadRequest("Invalid websiteType. Allowed values are 'main-website' and 'github'.");
             }
 
             try
@@ -207,9 +213,9 @@ namespace Capstone.Controllers
             string websiteType = website.Type.ToLower();
 
 //TODO change to "main website" or something
-            if (websiteType != "website" && websiteType != "github")
+            if (websiteType != MainWebsite && websiteType != GitHub)
             {
-                return BadRequest("Invalid websiteType. Allowed values are 'website' and 'github'.");
+                return BadRequest("Invalid websiteType. Allowed values are 'main-website' and 'github'.");
             }
 
             try
@@ -243,9 +249,9 @@ namespace Capstone.Controllers
         {
             string websiteType = website.Type.ToLower();
 
-            if (websiteType != "linkedin" && websiteType != "github" && websiteType != "portfoliolink")
+            if (websiteType != LinkedIn && websiteType != GitHub && websiteType != PortfolioLink)
             {
-                return BadRequest("Invalid websiteType. Allowed values are 'linkedin' and 'github' and 'portfoliolink'.");
+                return BadRequest("Invalid websiteType. Allowed values are 'linkedin' and 'github' and 'portfolio-link'.");
             }
 
             try
@@ -313,9 +319,9 @@ namespace Capstone.Controllers
 
             string websiteType = website.Type.ToLower();
 
-            if (websiteType != "linkedin" && websiteType != "github" && websiteType != "portfoliolink")
+            if (websiteType != LinkedIn && websiteType != GitHub && websiteType != PortfolioLink)
             {
-                return BadRequest("Invalid websiteType. Allowed values are 'linkedin' and 'github' and 'portfoliolink'.");
+                return BadRequest("Invalid websiteType. Allowed values are 'linkedin' and 'github' and 'portfolio-link'.");
             }
 
             try
