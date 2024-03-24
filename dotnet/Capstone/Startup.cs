@@ -71,19 +71,31 @@ namespace Capstone
             IApiServiceDao apiServiceDao = new ApiServicePostgresDao(connectionString, imageDao, websiteDao);
             IDependencyLibraryDao dependencyLibraryDao = new DependencyLibraryPostgresDao(connectionString, imageDao, 
                 websiteDao);
+
             ISideProjectDao sideProjectDao = new SideProjectPostgresDao(
                 connectionString, goalDao, imageDao, skillDao, contributorDao, apiServiceDao, dependencyLibraryDao, 
                 websiteDao);
 
-        
+            IAchievementDao achievementDao = new AchievementPostgresDao(connectionString, imageDao);
+            IExperienceDao experienceDao = new ExperiencePostgresDao(connectionString, imageDao, skillDao, websiteDao, 
+                achievementDao);
+            IPortfolioDao portfolioDao = new PortfolioPostgresDao(connectionString, sideProjectDao, websiteDao, imageDao, 
+                skillDao);
 
             // Register services with DI container
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
             services.AddSingleton<IPasswordHasher>(ph => new PasswordHasher());
             services.AddTransient<IUserDao>(m => new UserPostgresDao(connectionString));
+
             services.AddTransient<IBlogPostDao>(m => new BlogPostPostgresDao(connectionString, imageDao));
+
             services.AddTransient<IPortfolioDao>(m => new PortfolioPostgresDao(
                 connectionString, sideProjectDao, websiteDao, imageDao, skillDao));
+
+            services.AddTransient<IExperienceDao>(m => new ExperiencePostgresDao(connectionString, imageDao, skillDao, 
+                websiteDao, achievementDao));
+            services.AddTransient<IAchievementDao>(m => new AchievementPostgresDao(connectionString, imageDao));
+
             services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(
                 connectionString, goalDao, imageDao, skillDao, contributorDao, apiServiceDao,
                 dependencyLibraryDao, websiteDao));
