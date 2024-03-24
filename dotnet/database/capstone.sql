@@ -7,8 +7,14 @@ DROP TABLE IF EXISTS sideproject_websites;
 DROP TABLE IF EXISTS sideproject_dependencies_and_libraries;
 DROP TABLE IF EXISTS sideproject_apis_and_services;
 DROP TABLE IF EXISTS sideproject_contributors;
-DROP TABLE IF EXISTS sideproject_skills;
 DROP TABLE IF EXISTS sideproject_goals;
+
+DROP TABLE IF EXISTS sideproject_skills;
+DROP TABLE IF EXISTS experience_skills;
+DROP TABLE IF EXISTS credential_skills;
+DROP TABLE IF EXISTS open_source_contribution_skills;
+DROP TABLE IF EXISTS volunteer_work_skills;
+DROP TABLE IF EXISTS portfolio_skills;
 
 DROP TABLE IF EXISTS portfolio_images
 DROP TABLE IF EXISTS sideproject_images;
@@ -487,6 +493,46 @@ CREATE TABLE sideproject_skills (
     skill_id INTEGER,
     PRIMARY KEY (sideproject_id, skill_id),
     FOREIGN KEY (sideproject_id) REFERENCES sideprojects(id),
+    FOREIGN KEY (skill_id) REFERENCES skills(id)
+);
+
+CREATE TABLE experience_skills (
+    experience_id INTEGER,
+    skill_id INTEGER,
+    PRIMARY KEY (experience_id, skill_id),
+    FOREIGN KEY (experience_id) REFERENCES experiences(id),
+    FOREIGN KEY (skill_id) REFERENCES skills(id)
+);
+
+CREATE TABLE credential_skills (
+    credential_id INTEGER,
+    skill_id INTEGER,
+    PRIMARY KEY (credential_id, skill_id),
+    FOREIGN KEY (credential_id) REFERENCES credentials(id),
+    FOREIGN KEY (skill_id) REFERENCES skills(id)
+);
+
+CREATE TABLE open_source_contribution_skills (
+    contribution_id INTEGER,
+    skill_id INTEGER,
+    PRIMARY KEY (contribution_id, skill_id),
+    FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id),
+    FOREIGN KEY (skill_id) REFERENCES skills(id)
+);
+
+CREATE TABLE volunteer_work_skills (
+    volunteer_id INTEGER,
+    skill_id INTEGER,
+    PRIMARY KEY (volunteer_id, skill_id),
+    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id),
+    FOREIGN KEY (skill_id) REFERENCES skills(id)
+);
+
+CREATE TABLE portfolio_skills (
+    portfolio_id INTEGER,
+    skill_id INTEGER,
+    PRIMARY KEY (portfolio_id, skill_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
     FOREIGN KEY (skill_id) REFERENCES skills(id)
 );
 
