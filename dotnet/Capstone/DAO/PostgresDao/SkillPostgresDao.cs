@@ -624,6 +624,11 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("ProjectId and skillId must be greater than zero.");
             }
+// FIXME ADD THIS NULL CHECK TO UPDATES AS WELL**********
+            if (string.IsNullOrEmpty(skill.Name))
+            {
+                throw new ArgumentException("Skill name cannot be null or empty.");
+            }
 
             string sql = "UPDATE skills " +
                          "SET name = @name " +
@@ -730,7 +735,7 @@ namespace Capstone.DAO
 
         /*   
             **********************************************************************************************
-                                            EXPERIENCE SKILL CRUD
+                                            WORK EXPERIENCE SKILL CRUD
             **********************************************************************************************
         */
         public Skill CreateSkillByWorkExperienceId(int experienceId, Skill skill)

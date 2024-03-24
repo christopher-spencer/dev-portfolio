@@ -98,11 +98,11 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
-                                            EXPERIENCE ACHIEVEMENT CRUD
+                                          WORK EXPERIENCE ACHIEVEMENT CRUD
             **********************************************************************************************
         */
 
-        public Achievement CreateAchievementByExperienceId(int experienceId, Achievement achievement)
+        public Achievement CreateAchievementByWorkExperienceId(int experienceId, Achievement achievement)
         {
             if (experienceId <= 0)
             {
@@ -115,7 +115,7 @@ namespace Capstone.DAO
             }
 
             string insertAchievementSql = "INSERT INTO achievements (description) VALUES (@description) RETURNING id;";
-            string insertExperienceAchievementSql = "INSERT INTO experience_achievements (experience_id, achievement_id) VALUES (@experienceId, @achievementId);";
+            string insertExperienceAchievementSql = "INSERT INTO work_experience_achievements (experience_id, achievement_id) VALUES (@experienceId, @achievementId);";
 
             try
             {
@@ -155,7 +155,7 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the achievement by experience ID.", ex);
+                            throw new DaoException("An error occurred while creating the achievement by work experience ID.", ex);
                         }
                     }
                 }
@@ -166,7 +166,7 @@ namespace Capstone.DAO
             }
         }
 
-        public List<Achievement> GetAchievementsByExperienceId(int experienceId)
+        public List<Achievement> GetAchievementsByWorkExperienceId(int experienceId)
         {
             if (experienceId <= 0)
             {
@@ -177,7 +177,7 @@ namespace Capstone.DAO
 
             string sql = "SELECT a.id, a.description, a.icon_id " +
                          "FROM achievements a " +
-                         "JOIN experience_achievements ea ON a.id = ea.achievement_id " +
+                         "JOIN work_experience_achievements ea ON a.id = ea.achievement_id " +
                          "WHERE ea.experience_id = @experienceId;";
 
             try
@@ -204,13 +204,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the achievements by experience ID.", ex);
+                throw new DaoException("An error occurred while retrieving the achievements by work experience ID.", ex);
             }
 
             return achievements;
         }
 
-        public Achievement GetAchievementByExperienceId(int experienceId, int achievementId)
+        public Achievement GetAchievementByWorkExperienceId(int experienceId, int achievementId)
         {
             if (experienceId <= 0 || achievementId <= 0)
             {
@@ -219,7 +219,7 @@ namespace Capstone.DAO
 
             string sql = "SELECT a.id, a.description, a.icon_id " +
                          "FROM achievements a " +
-                         "JOIN experience_achievements ea ON a.id = ea.achievement_id " +
+                         "JOIN work_experience_achievements ea ON a.id = ea.achievement_id " +
                          "WHERE ea.experience_id = @experienceId AND a.id = @achievementId;";
 
             try
@@ -245,13 +245,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the achievement by experience ID and achievement ID.", ex);
+                throw new DaoException("An error occurred while retrieving the achievement by work experience ID and achievement ID.", ex);
             }
 
             return null;
         }
 
-        public Achievement UpdateAchievementByExperienceId(int experienceId, int achievementId, Achievement achievement)
+        public Achievement UpdateAchievementByWorkExperienceId(int experienceId, int achievementId, Achievement achievement)
         {
             if (experienceId <= 0 || achievementId <= 0)
             {
@@ -265,9 +265,9 @@ namespace Capstone.DAO
 
             string sql = "UPDATE achievements " +
                          "SET description = @description " +
-                         "FROM experience_achievements " +
-                         "WHERE achievements.id = experience_achievements.achievement_id " +
-                         "AND experience_achievements.experience_id = @experienceId " +
+                         "FROM work_experience_achievements " +
+                         "WHERE achievements.id = work_experience_achievements.achievement_id " +
+                         "AND work_experience_achievements.experience_id = @experienceId " +
                          "AND achievements.id = @achievementId;";
 
             try
@@ -294,10 +294,78 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the achievement by experience ID.", ex);
+                throw new DaoException("An error occurred while updating the achievement by work experience ID.", ex);
             }
 
             return null;
+        }
+
+        public int DeleteAchievementByWorkExperienceId(int experienceId, int achievementId)
+        {
+            if (experienceId <= 0 || achievementId <= 0)
+            {
+                throw new ArgumentException("Experience ID and Achievement ID must be greater than zero.");
+            }
+
+            string deleteAchievementFromExperienceSql = "DELETE FROM work_experience_achievements WHERE experience_id = @experienceId AND achievement_id = @achievementId;";
+            string deleteAchievementSql = "DELETE FROM achievements WHERE id = @achievementId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? iconId = GetIconIdByAchievementId(achievementId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAchievementFromExperienceSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                                cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            if (iconId.HasValue)
+                            {
+                                _imageDao.DeleteImageByAchievementId(achievementId, iconId.Value);
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAchievementSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmd.Transaction = transaction;
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the achievement by work experience ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            
+            }
+
         }
 
         /*  
@@ -305,6 +373,270 @@ namespace Capstone.DAO
                                     OPEN SOURCE CONTRIBUTION ACHIEVEMENT CRUD
             **********************************************************************************************
         */
+
+        public Achievement CreateAchievementByOpenSourceContributionId(int contributionId, Achievement achievement)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("Contribution ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(achievement.Description))
+            {
+                throw new ArgumentException("Achievement description cannot be null or empty.");
+            }
+
+            string insertAchievementSql = "INSERT INTO achievements (description) VALUES (@description) RETURNING id;";
+            string insertContributionAchievementSql = "INSERT INTO open_source_contribution_achievements (contribution_id, achievement_id) VALUES (@contributionId, @achievementId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int achievementId;
+
+                            using (NpgsqlCommand cmdInsertAchievement = new NpgsqlCommand(insertAchievementSql, connection))
+                            {
+                                cmdInsertAchievement.Parameters.AddWithValue("@description", achievement.Description);
+                                cmdInsertAchievement.Transaction = transaction;
+                                achievementId = Convert.ToInt32(cmdInsertAchievement.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertContributionAchievement = new NpgsqlCommand(insertContributionAchievementSql, connection))
+                            {
+                                cmdInsertContributionAchievement.Parameters.AddWithValue("@contributionId", contributionId);
+                                cmdInsertContributionAchievement.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmdInsertContributionAchievement.Transaction = transaction;
+                                cmdInsertContributionAchievement.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            achievement.Id = achievementId;
+
+                            return achievement;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the achievement by open source contribution ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public List<Achievement> GetAchievementsByOpenSourceContributionId(int contributionId)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("Contribution ID must be greater than zero.");
+            }
+
+            List<Achievement> achievements = new List<Achievement>();
+
+            string sql = "SELECT a.id, a.description, a.icon_id " +
+                         "FROM achievements a " +
+                         "JOIN open_source_contribution_achievements ca ON a.id = ca.achievement_id " +
+                         "WHERE ca.contribution_id = @contributionId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Achievement achievement = MapRowToAchievement(reader);
+
+                                achievements.Add(achievement);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the achievements by open source contribution ID.", ex);
+            }
+
+            return achievements;
+        }
+
+        public Achievement GetAchievementByOpenSourceContributionId(int contributionId, int achievementId)
+        {
+            if (contributionId <= 0 || achievementId <= 0)
+            {
+                throw new ArgumentException("Contribution ID and Achievement ID must be greater than zero.");
+            }
+
+            string sql = "SELECT a.id, a.description, a.icon_id " +
+                         "FROM achievements a " +
+                         "JOIN open_source_contribution_achievements ca ON a.id = ca.achievement_id " +
+                         "WHERE ca.contribution_id = @contributionId AND a.id = @achievementId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@achievementId", achievementId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapRowToAchievement(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the achievement by open source contribution ID and achievement ID.", ex);
+            }
+
+            return null;
+        }
+
+        public Achievement UpdateAchievementByOpenSourceContributionId(int contributionId, int achievementId, Achievement achievement)
+        {
+            if (contributionId <= 0 || achievementId <= 0)
+            {
+                throw new ArgumentException("Contribution ID and Achievement ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(achievement.Description))
+            {
+                throw new ArgumentException("Achievement description cannot be null or empty.");
+            }
+
+            string sql = "UPDATE achievements " +
+                         "SET description = @description " +
+                         "FROM open_source_contribution_achievements " +
+                         "WHERE achievements.id = open_source_contribution_achievements.achievement_id " +
+                         "AND open_source_contribution_achievements.contribution_id = @contributionId " +
+                         "AND achievements.id = @achievementId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                        cmd.Parameters.AddWithValue("@description", achievement.Description);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return achievement;
+                        }
+                    }
+
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the achievement by open source contribution ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteAchievementByOpenSourceContributionId(int contributionId, int achievementId)
+        {
+            if (contributionId <= 0 || achievementId <= 0)
+            {
+                throw new ArgumentException("Contribution ID and Achievement ID must be greater than zero.");
+            }
+
+            string deleteAchievementFromContributionSql = "DELETE FROM open_source_contribution_achievements WHERE contribution_id = @contributionId AND achievement_id = @achievementId;";
+            string deleteAchievementSql = "DELETE FROM achievements WHERE id = @achievementId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? iconId = GetIconIdByAchievementId(achievementId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAchievementFromContributionSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                                cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            if (iconId.HasValue)
+                            {
+                                _imageDao.DeleteImageByAchievementId(achievementId, iconId.Value);
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAchievementSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmd.Transaction = transaction;
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the achievement by open source contribution ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
