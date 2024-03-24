@@ -1617,9 +1617,20 @@ namespace Capstone.DAO
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertCredentialWebsiteSql = "INSERT INTO credential_websites (credential_id, website_id) VALUES (@credentialId, @websiteId);";
-            string updateCredentialWebsiteSql = "UPDATE credentials SET credential_website_id = @websiteId WHERE id = @credentialId;";
 
+            string updateCredentialWebsiteSql;
 
+            switch (website.Type)
+            {
+                case MainWebsite:
+                    updateCredentialWebsiteSql = "UPDATE credentials SET organization_website_id = @websiteId WHERE id = @credentialId;";
+                    break;
+                case SecondaryWebsite:
+                    updateCredentialWebsiteSql = "UPDATE credentials SET credential_website_id = @websiteId WHERE id = @credentialId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
 
             try
             {
@@ -1668,7 +1679,185 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the website for the credential.", ex);
+                            throw new DaoException("An error occurred while creating the website by credential ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Website GetWebsiteByCredentialId(int credentialId, int websiteId)
+        {
+            if (credentialId <= 0)
+            {
+                throw new ArgumentException("CredentialId must be greater than zero.");
+            }
+
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN credential_websites cw ON w.id = cw.website_id " +
+                         "WHERE cw.credential_id = @credentialId AND w.id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website by Credential ID and website ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website UpdateWebsiteByCredentialId(int credentialId, int websiteId, Website website)
+        {
+            if (credentialId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("CredentialId and websiteId must be greater than zero.");
+            }
+
+            string updateWebsiteSql = "UPDATE websites " +
+                                      "SET name = @name, url = @url " +
+                                      "FROM credential_websites " +
+                                      "WHERE websites.id = credential_websites.website_id " +
+                                      "AND credential_websites.credential_id = @credentialId " +
+                                      "AND websites.id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return website;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website by Credential ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteWebsiteByCredentialId(int credentialId, int websiteId)
+        {
+            if (credentialId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("CredentialId and websiteId must be greater than zero.");
+            }
+
+            Website website = GetWebsiteByCredentialId(credentialId, websiteId);
+
+            string updateCredentialWebsiteIdSql;
+
+            switch (website.Type)
+            {
+                case MainWebsite:
+                    updateCredentialWebsiteIdSql = "UPDATE credentials SET organization_website_id = NULL WHERE organization_website_id = @websiteId;";
+                    break;
+                case SecondaryWebsite:
+                    updateCredentialWebsiteIdSql = "UPDATE credentials SET credential_website_id = NULL WHERE credential_website_id = @websiteId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
+
+            string deleteCredentialWebsiteSql = "DELETE FROM credential_websites WHERE credential_id = @credentialId AND website_id = @websiteId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateCredentialWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteCredentialWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            if (imageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByWebsiteId(websiteId, imageId.Value);
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the website by Credential ID.", ex);
                         }
                     }
                 }
