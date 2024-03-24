@@ -18,10 +18,13 @@ namespace Capstone.DAO.Interfaces
 
         /*  
             **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
                                             PORTFOLIO IMAGE CRUD
             **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
         */
-        // TODO IMAGE Portfolio Controllers****
         Image CreateImageByPortfolioId(int portfolioId, Image image);
         Image GetMainImageByPortfolioId(int portfolioId);
         Image GetImageByPortfolioId(int portfolioId, int imageId);
@@ -30,10 +33,94 @@ namespace Capstone.DAO.Interfaces
         Image UpdateImageByPortfolioId(int portfolioId, int imageId, Image image);
         Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage);
         int DeleteImageByPortfolioId(int portfolioId, int imageId);
-        
+       /*  
+            **********************************************************************************************
+                                            EXPERIENCE IMAGE CRUD
+            **********************************************************************************************
+        */
+        Image CreateImageByExperienceId(int experienceId, Image image);
+        Image GetMainImageOrCompanyLogoByExperienceId(int experienceId, string imageType);
+        Image GetImageByExperienceId(int experienceId, int imageId);
+        Image UpdateImageByExperienceId(int experienceId, int imageId, Image image);
+        Image UpdateMainImageOrLogoByExperienceId(int experienceId, int imageId, Image image);
+        int DeleteImageByExperienceId(int experienceId, int imageId);
+
         /*  
             **********************************************************************************************
+                                            CREDENTIAL IMAGE CRUD
+            **********************************************************************************************
+        */
+        Image CreateImageByCredentialId(int credentialId, Image image);
+        Image GetMainImageOrOrganizationLogoByCredentialId(int credentialId, string imageType);
+        Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image);
+        int DeleteImageByCredentialId(int credentialId, int imageId);
+
+        /*  
+            **********************************************************************************************
+                                            EDUCATION IMAGE CRUD
+            **********************************************************************************************
+        */
+        Image CreateImageByEducationId(int educationId, Image image);
+        Image GetMainImageOrInstitutionLogoByEducationId(int educationId, string imageType);
+        Image GetImageByEducationId(int educationId, int imageId);
+        List<Image> GetAdditionalImagesByEducationId(int educationId);
+        Image UpdateImageByEducationId(int educationId, int imageId, Image image);
+        Image UpdateMainImageOrLogoByEducationId(int educationId, int imageId, Image image);
+        int DeleteImageByEducationId(int educationId, int imageId);
+
+        /*  
+            **********************************************************************************************
+                                        OPEN SOURCE CONTRIBUTION IMAGE CRUD
+            **********************************************************************************************
+        */
+        Image CreateImageByOpenSourceContributionId(int contributionId, Image image);
+        Image GetMainImageOrOrganizationLogoByOpenSourceContributionId(int contributionId, string imageType);
+        Image GetImageByOpenSourceContributionId(int contributionId, int imageId);
+        List<Image> GetAdditionalImagesByOpenSourceContributionId(int contributionId);
+        Image UpdateImageByOpenSourceContributionId(int contributionId, int imageId, Image image);
+        Image UpdateMainImageOrLogoByOpenSourceContributionId(int contributionId, int imageId, Image image);
+        int DeleteImageByOpenSourceContributionId(int openSourceContributionId, int imageId);
+
+        /*  
+            **********************************************************************************************
+                                            VOLUNTEER WORK IMAGE CRUD
+            **********************************************************************************************
+        */
+        Image CreateImageByVolunteerWorkId(int volunteerWorkId, Image image);
+        Image GetMainImageOrOrganizationLogoByVolunteerWorkId(int volunteerWorkId, string imageType);
+        Image GetImageByVolunteerWorkId(int volunteerWorkId, int imageId);
+        List<Image> GetAdditionalImagesByVolunteerWorkId(int volunteerWorkId);
+        Image UpdateImageByVolunteerWorkId(int volunteerWorkId, int imageId, Image image);
+        Image UpdateMainImageOrLogoByVolunteerWorkId(int volunteerWorkId, int imageId, Image image);
+        int DeleteImageByVolunteerWorkId(int volunteerWorkId, int imageId);
+
+        /*  
+            **********************************************************************************************
+                                            ACHIEVEMENT IMAGE CRUD
+            **********************************************************************************************
+        */
+        Image CreateImageByAchievementId(int achievementId, Image image);
+        Image GetImageByAchievementId(int achievementId);
+        Image UpdateImageByAchievementId(int achievementId, int imageId, Image image);
+        int DeleteImageByAchievementId(int achievementId, int imageId);
+
+        /*  
+            **********************************************************************************************
+                                            HOBBY IMAGE CRUD
+            **********************************************************************************************
+        */
+        Image CreateImageByHobbyId(int hobbyId, Image image);
+        Image GetImageByHobbyId(int hobbyId);
+        Image UpdateImageByHobbyId(int hobbyId, int imageId, Image image);
+        int DeleteImageByHobbyId(int hobbyId, int imageId);
+
+        /*  
+            **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
                                             SIDE PROJECT IMAGE CRUD
+            **********************************************************************************************
+            **********************************************************************************************
             **********************************************************************************************
         */
         Image CreateImageBySideProjectId(int sideProjectId, Image image);
@@ -116,94 +203,6 @@ namespace Capstone.DAO.Interfaces
         Image GetImageByDependencyLibraryId(int dependencyLibraryId);
         Image UpdateImageByDependencyLibraryId(int dependencyLibraryId, int imageId, Image image);
         int DeleteImageByDependencyLibraryId(int dependencyLibraryId, int imageId);
-
-        /*  
-            **********************************************************************************************
-                                            EXPERIENCE IMAGE CRUD
-            **********************************************************************************************
-        */
-// TODO IMAGE Experience Controllers****
-        Image CreateImageByExperienceId(int experienceId, Image image);
-        Image GetMainImageOrCompanyLogoByExperienceId(int experienceId, string imageType);
-        Image GetImageByExperienceId(int experienceId, int imageId);
-        Image UpdateImageByExperienceId(int experienceId, int imageId, Image image);
-        Image UpdateMainImageOrLogoByExperienceId(int experienceId, int imageId, Image image);
-        int DeleteImageByExperienceId(int experienceId, int imageId);
-
-        /*  
-            **********************************************************************************************
-                                            CREDENTIAL IMAGE CRUD
-            **********************************************************************************************
-        */
-// TODO IMAGE Credential Controllers****
-        Image CreateImageByCredentialId(int credentialId, Image image);
-        Image GetMainImageOrOrganizationLogoByCredentialId(int credentialId, string imageType);
-        Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image);
-        int DeleteImageByCredentialId(int credentialId, int imageId);
-
-        /*  
-            **********************************************************************************************
-                                            EDUCATION IMAGE CRUD
-            **********************************************************************************************
-        */
-// TODO IMAGE Education Controllers****
-        Image CreateImageByEducationId(int educationId, Image image);
-        Image GetMainImageOrInstitutionLogoByEducationId(int educationId, string imageType);
-        Image GetImageByEducationId(int educationId, int imageId);
-        List<Image> GetAdditionalImagesByEducationId(int educationId);
-        Image UpdateImageByEducationId(int educationId, int imageId, Image image);
-        Image UpdateMainImageOrLogoByEducationId(int educationId, int imageId, Image image);
-        int DeleteImageByEducationId(int educationId, int imageId);
-
-        /*  
-            **********************************************************************************************
-                                        OPEN SOURCE CONTRIBUTION IMAGE CRUD
-            **********************************************************************************************
-        */
-// TODO IMAGE OpenSourceContribution Controllers****
-        Image CreateImageByOpenSourceContributionId(int contributionId, Image image);
-        Image GetMainImageOrOrganizationLogoByOpenSourceContributionId(int contributionId, string imageType);
-        Image GetImageByOpenSourceContributionId(int contributionId, int imageId);
-        List<Image> GetAdditionalImagesByOpenSourceContributionId(int contributionId);
-        Image UpdateImageByOpenSourceContributionId(int contributionId, int imageId, Image image);
-        Image UpdateMainImageOrLogoByOpenSourceContributionId(int contributionId, int imageId, Image image);
-        int DeleteImageByOpenSourceContributionId(int openSourceContributionId, int imageId);
-
-        /*  
-            **********************************************************************************************
-                                            VOLUNTEER WORK IMAGE CRUD
-            **********************************************************************************************
-        */
-// TODO IMAGE VolunteerWork Controllers****
-        Image CreateImageByVolunteerWorkId(int volunteerWorkId, Image image);
-        Image GetMainImageOrOrganizationLogoByVolunteerWorkId(int volunteerWorkId, string imageType);
-        Image GetImageByVolunteerWorkId(int volunteerWorkId, int imageId);
-        List<Image> GetAdditionalImagesByVolunteerWorkId(int volunteerWorkId);
-        Image UpdateImageByVolunteerWorkId(int volunteerWorkId, int imageId, Image image);
-        Image UpdateMainImageOrLogoByVolunteerWorkId(int volunteerWorkId, int imageId, Image image);
-        int DeleteImageByVolunteerWorkId(int volunteerWorkId, int imageId);
-
-        /*  
-            **********************************************************************************************
-                                            ACHIEVEMENT IMAGE CRUD
-            **********************************************************************************************
-        */
-// TODO IMAGE Achievement Controllers****
-        Image CreateImageByAchievementId(int achievementId, Image image);
-        Image GetImageByAchievementId(int achievementId);
-        Image UpdateImageByAchievementId(int achievementId, int imageId, Image image);
-        int DeleteImageByAchievementId(int achievementId, int imageId);
-
-        /*  
-            **********************************************************************************************
-                                            HOBBY IMAGE CRUD
-            **********************************************************************************************
-        */
-// TODO IMAGE Hobby Controllers****        
-        Image CreateImageByHobbyId(int hobbyId, Image image);
-        Image GetImageByHobbyId(int hobbyId);
-        Image UpdateImageByHobbyId(int hobbyId, int imageId, Image image);
-        int DeleteImageByHobbyId(int hobbyId, int imageId);
 
         /*  
             **********************************************************************************************
