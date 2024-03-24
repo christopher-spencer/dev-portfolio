@@ -2123,6 +2123,278 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
         // TODO WEBSITE OpenSourceContribution PGDAO****
+        public Website CreateWebsiteByOpenSourceContributionId(int contributionId, Website website)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("Contribution Id must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
+            string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
+            string insertContributionWebsiteSql = "INSERT INTO open_source_contribution_websites (contribution_id, website_id) VALUES (@contributionId, @websiteId);";
+
+            string updateContributionWebsiteIdSql;
+
+            switch (website.Type)
+            {
+                case MainWebsite:
+                    updateContributionWebsiteIdSql = "UPDATE open_source_contributions SET organization_website_id = @websiteId WHERE id = @contributionId;";
+                    break;
+                case GitHub:
+                    updateContributionWebsiteIdSql = "UPDATE open_source_contributions SET organization_github_id = @websiteId WHERE id = @contributionId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int websiteId;
+
+                            using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                            {
+                                cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                                cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Transaction = transaction;
+                                websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertContributionWebsite = new NpgsqlCommand(insertContributionWebsiteSql, connection))
+                            {
+                                cmdInsertContributionWebsite.Parameters.AddWithValue("@contributionId", contributionId);
+                                cmdInsertContributionWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdInsertContributionWebsite.Transaction = transaction;
+                                cmdInsertContributionWebsite.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmdUpdateContribution = new NpgsqlCommand(updateContributionWebsiteIdSql, connection))
+                            {
+                                cmdUpdateContribution.Parameters.AddWithValue("@contributionId", contributionId);
+                                cmdUpdateContribution.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdUpdateContribution.Transaction = transaction;
+                                cmdUpdateContribution.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            website.Id = websiteId;
+
+                            return website;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the website by open source contribution ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Website GetWebsiteByOpenSourceContributionId(int contributionId, int websiteId)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("ContributionId must be greater than zero.");
+            }
+
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN open_source_contribution_websites ocw ON w.id = ocw.website_id " +
+                         "WHERE ocw.contribution_id = @contributionId AND w.id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website by Open Source Contribution ID and website ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website UpdateWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website)
+        {
+            if (contributionId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ContributionId and websiteId must be greater than zero.");
+            }
+
+            string updateWebsiteSql = "UPDATE websites " +
+                                      "SET name = @name, url = @url " +
+                                      "FROM open_source_contribution_websites " +
+                                      "WHERE websites.id = open_source_contribution_websites.website_id " +
+                                      "AND open_source_contribution_websites.contribution_id = @contributionId " +
+                                      "AND websites.id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateWebsiteSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return website;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website by Open Source Contribution ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteWebsiteByOpenSourceContributionId(int contributionId, int websiteId)
+        {
+            if (contributionId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ContributionId and websiteId must be greater than zero.");
+            }
+
+            Website website = GetWebsiteByOpenSourceContributionId(contributionId, websiteId);
+
+            string updateContributionWebsiteIdSql;
+
+            switch (website.Type)
+            {
+                case MainWebsite:
+                    updateContributionWebsiteIdSql = "UPDATE open_source_contributions SET organization_website_id = NULL WHERE organization_website_id = @websiteId;";
+                    break;
+                case GitHub:
+                    updateContributionWebsiteIdSql = "UPDATE open_source_contributions SET organization_github_id = NULL WHERE organization_github_id = @websiteId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
+
+            string deleteContributionWebsiteSql = "DELETE FROM open_source_contribution_websites WHERE contribution_id = @contributionId AND website_id = @websiteId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateContributionWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributionWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            if (imageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByWebsiteId(websiteId, imageId.Value);
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                            transaction.Rollback();
+                            throw new DaoException("An error occurred while deleting the website by Open Source Contribution ID.");
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
