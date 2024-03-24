@@ -129,19 +129,19 @@ namespace Capstone.DAO
                         {
                             int achievementId;
 
-                            using (NpgsqlCommand cmdInsertAchievement = new NpgsqlCommand(insertAchievementSql, connection))
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertAchievementSql, connection))
                             {
-                                cmdInsertAchievement.Parameters.AddWithValue("@description", achievement.Description);
-                                cmdInsertAchievement.Transaction = transaction;
-                                achievementId = Convert.ToInt32(cmdInsertAchievement.ExecuteScalar());
+                                cmd.Parameters.AddWithValue("@description", achievement.Description);
+                                cmd.Transaction = transaction;
+                                achievementId = Convert.ToInt32(cmd.ExecuteScalar());
                             }
 
-                            using (NpgsqlCommand cmdInsertExperienceAchievement = new NpgsqlCommand(insertExperienceAchievementSql, connection))
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertExperienceAchievementSql, connection))
                             {
-                                cmdInsertExperienceAchievement.Parameters.AddWithValue("@experienceId", experienceId);
-                                cmdInsertExperienceAchievement.Parameters.AddWithValue("@achievementId", achievementId);
-                                cmdInsertExperienceAchievement.Transaction = transaction;
-                                cmdInsertExperienceAchievement.ExecuteNonQuery();
+                                cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                                cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
                             }
 
                             transaction.Commit();

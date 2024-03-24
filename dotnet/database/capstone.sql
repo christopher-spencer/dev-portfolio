@@ -2,6 +2,7 @@
 
 BEGIN TRANSACTION;
 
+DROP TABLE IF EXISTS portfolio_websites;
 DROP TABLE IF EXISTS sideproject_websites;
 
 DROP TABLE IF EXISTS sideproject_dependencies_and_libraries;
@@ -9,12 +10,15 @@ DROP TABLE IF EXISTS sideproject_apis_and_services;
 DROP TABLE IF EXISTS sideproject_contributors;
 DROP TABLE IF EXISTS sideproject_goals;
 
+DROP TABLE IF EXISTS portfolio_hobbies;
+
+DROP TABLE IF EXISTS portfolio_skills;
 DROP TABLE IF EXISTS sideproject_skills;
+
 DROP TABLE IF EXISTS work_experience_skills;
 DROP TABLE IF EXISTS credential_skills;
 DROP TABLE IF EXISTS open_source_contribution_skills;
 DROP TABLE IF EXISTS volunteer_work_skills;
-DROP TABLE IF EXISTS portfolio_skills;
 
 DROP TABLE IF EXISTS portfolio_images
 DROP TABLE IF EXISTS sideproject_images;
@@ -573,6 +577,14 @@ CREATE TABLE portfolio_skills (
     FOREIGN KEY (skill_id) REFERENCES skills(id)
 );
 
+CREATE TABLE portfolio_hobbies (
+    portfolio_id INTEGER,
+    hobby_id INTEGER,
+    PRIMARY KEY (portfolio_id, hobby_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
+    FOREIGN KEY (hobby_id) REFERENCES hobbies(id)
+);
+
 CREATE TABLE sideproject_contributors (
     sideproject_id INTEGER,
     contributor_id INTEGER,
@@ -602,6 +614,14 @@ CREATE TABLE sideproject_websites (
     website_id INTEGER,
     PRIMARY KEY (sideproject_id, website_id),
     FOREIGN KEY (sideproject_id) REFERENCES sideprojects(id),
+    FOREIGN KEY (website_id) REFERENCES websites(id)
+);
+
+CREATE TABLE portfolio_websites (
+    portfolio_id INTEGER,
+    website_id INTEGER,
+    PRIMARY KEY (portfolio_id, website_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
     FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
