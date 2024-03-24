@@ -77,6 +77,7 @@ namespace Capstone
                 websiteDao);
 
             IAchievementDao achievementDao = new AchievementPostgresDao(connectionString, imageDao);
+            IEducationDao educationDao = new EducationPostgresDao(connectionString, imageDao, websiteDao, achievementDao);
             IWorkExperienceDao experienceDao = new WorkExperiencePostgresDao(connectionString, imageDao, skillDao, websiteDao, 
                 achievementDao);
             IPortfolioDao portfolioDao = new PortfolioPostgresDao(connectionString, sideProjectDao, websiteDao, imageDao, 
@@ -94,6 +95,8 @@ namespace Capstone
 
             services.AddTransient<IWorkExperienceDao>(m => new WorkExperiencePostgresDao(connectionString, imageDao, skillDao, 
                 websiteDao, achievementDao));
+            services.AddTransient<IEducationDao>(m => new EducationPostgresDao(connectionString, imageDao, websiteDao, 
+                achievementDao));
             services.AddTransient<IAchievementDao>(m => new AchievementPostgresDao(connectionString, imageDao));
 
             services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(

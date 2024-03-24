@@ -289,7 +289,6 @@ namespace Capstone.DAO
             {
                 throw new DaoException("An error occurred while connecting to the database.", ex);
             }
-
         }
 
         /*  
