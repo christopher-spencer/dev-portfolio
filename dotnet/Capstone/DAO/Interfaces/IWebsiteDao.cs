@@ -83,6 +83,10 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 // TODO WEBSITE Credential Controllers****
+        Website CreateWebsiteByCredentialId(int credentialId, Website website);
+        Website GetWebsiteByCredentialId(int credentialId, int websiteId);
+        Website UpdateWebsiteByCredentialId(int credentialId, int websiteId, Website website);
+        int DeleteWebsiteByCredentialId(int credentialId, int websiteId);
         /*  
             **********************************************************************************************
                                             EDUCATION WEBSITE CRUD
