@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Capstone.Models
 {
-    public class Experience
+    public class WorkExperience
     {
         public int Id { get; set; }
         public string PositionTitle { get; set; }

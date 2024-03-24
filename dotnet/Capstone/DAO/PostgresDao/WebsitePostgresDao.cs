@@ -523,10 +523,10 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
-                                            EXPERIENCE WEBSITE CRUD
+                                           WORK EXPERIENCE WEBSITE CRUD
             **********************************************************************************************
         */
-        public Website CreateWebsiteByExperienceId(int experienceId, Website website)
+        public Website CreateWebsiteByWorkExperienceId(int experienceId, Website website)
         {
             if (experienceId <= 0)
             {
@@ -549,8 +549,8 @@ namespace Capstone.DAO
             }
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
-            string insertExperienceWebsiteSql = "INSERT INTO experience_websites (experience_id, website_id) VALUES (@experienceId, @websiteId);";
-            string updateExperienceWebsiteIdSql = "UPDATE experiences SET company_website_id = @websiteId WHERE id = @experienceId;";
+            string insertExperienceWebsiteSql = "INSERT INTO work_experience_websites (experience_id, website_id) VALUES (@experienceId, @websiteId);";
+            string updateExperienceWebsiteIdSql = "UPDATE work_experiences SET company_website_id = @websiteId WHERE id = @experienceId;";
 
             try
             {
@@ -599,7 +599,7 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the website by experience ID.", ex);
+                            throw new DaoException("An error occurred while creating the website by work experience ID.", ex);
                         }
                     }
                 }
@@ -610,7 +610,7 @@ namespace Capstone.DAO
             }
         }
 
-        public Website GetWebsiteByExperienceId(int experienceId)
+        public Website GetWebsiteByWorkExperienceId(int experienceId)
         {
             if (experienceId <= 0)
             {
@@ -621,8 +621,8 @@ namespace Capstone.DAO
 
             string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
                          "FROM websites w " +
-                         "JOIN experience_websites ew ON w.id = ew.website_id " +
-                         "WHERE ew.experience_id = @experienceId";
+                         "JOIN work_experience_websites wew ON w.id = wew.website_id " +
+                         "WHERE wew.experience_id = @experienceId";
 
             try
             {
@@ -646,13 +646,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the website by Experience ID.", ex);
+                throw new DaoException("An error occurred while retrieving the website by Work Experience ID.", ex);
             }
 
             return website;
         }
 
-        public Website UpdateWebsiteByExperienceId(int experienceId, int websiteId, Website website)
+        public Website UpdateWebsiteByWorkExperienceId(int experienceId, int websiteId, Website website)
         {
             if (experienceId <= 0 || websiteId <= 0)
             {
@@ -661,8 +661,9 @@ namespace Capstone.DAO
 
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
-                                      "FROM experience_websites " +
-                                      "WHERE websites.id = experience_websites.website_id AND experience_websites.experience_id = @experienceId " +
+                                      "FROM work_experience_websites " +
+                                      "WHERE websites.id = work_experience_websites.website_id " +
+                                      "AND work_experience_websites.experience_id = @experienceId " +
                                       "AND websites.id = @websiteId;";
 
             try
@@ -689,21 +690,21 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the website by Experience ID.", ex);
+                throw new DaoException("An error occurred while updating the website by Work Experience ID.", ex);
             }
 
             return null;
         }
 
-        public int DeleteWebsiteByExperienceId(int experienceId, int websiteId)
+        public int DeleteWebsiteByWorkExperienceId(int experienceId, int websiteId)
         {
             if (experienceId <= 0 || websiteId <= 0)
             {
                 throw new ArgumentException("ExperienceId and websiteId must be greater than zero.");
             }
 
-            string updateExperienceWebsiteIdSql = "UPDATE experiences SET company_website_id = NULL WHERE company_website_id = @websiteId;";
-            string deleteExperienceWebsiteSql = "DELETE FROM experience_websites WHERE experience_id = @experienceId AND website_id = @websiteId;";
+            string updateExperienceWebsiteIdSql = "UPDATE work_experiences SET company_website_id = NULL WHERE company_website_id = @websiteId;";
+            string deleteExperienceWebsiteSql = "DELETE FROM work_experience_websites WHERE experience_id = @experienceId AND website_id = @websiteId;";
             string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
 
             try
@@ -760,7 +761,7 @@ namespace Capstone.DAO
 
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while deleting the website by Experience ID.", ex);
+                            throw new DaoException("An error occurred while deleting the website by Work Experience ID.", ex);
                         }
                     }
                 }

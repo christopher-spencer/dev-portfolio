@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS sideproject_contributors;
 DROP TABLE IF EXISTS sideproject_goals;
 
 DROP TABLE IF EXISTS sideproject_skills;
-DROP TABLE IF EXISTS experience_skills;
+DROP TABLE IF EXISTS work_experience_skills;
 DROP TABLE IF EXISTS credential_skills;
 DROP TABLE IF EXISTS open_source_contribution_skills;
 DROP TABLE IF EXISTS volunteer_work_skills;
@@ -35,7 +35,7 @@ DROP TABLE IF EXISTS volunteer_work_images;
 DROP TABLE IF EXISTS open_source_contribution_images;
 DROP TABLE IF EXISTS credential_images;
 DROP TABLE IF EXISTS education_images;
-DROP TABLE IF EXISTS experience_images;
+DROP TABLE IF EXISTS work_experience_images;
 
 DROP TABLE IF EXISTS contributor_websites;
 DROP TABLE IF EXISTS api_service_websites;
@@ -45,14 +45,18 @@ DROP TABLE IF EXISTS volunteer_work_websites;
 DROP TABLE IF EXISTS open_source_contribution_websites;
 DROP TABLE IF EXISTS credential_websites;
 DROP TABLE IF EXISTS education_websites;
-DROP TABLE IF EXISTS experience_websites;
+DROP TABLE IF EXISTS work_experience_websites;
+
+DROP TABLE IF EXISTS work_experience_achievements;
+DROP TABLE IF EXISTS open_source_contribution_achievements;
+DROP TABLE IF EXISTS volunteer_work_achievements;
 
 DROP TABLE IF EXISTS portfolios;
 DROP TABLE IF EXISTS sideprojects;
 DROP TABLE IF EXISTS blogposts;
 DROP TABLE IF EXISTS users;
 
-DROP TABLE IF EXISTS experiences;
+DROP TABLE IF EXISTS work_experiences;
 DROP TABLE IF EXISTS educations;
 DROP TABLE IF EXISTS credentials;
 DROP TABLE IF EXISTS open_source_contributions;
@@ -150,7 +154,7 @@ CREATE TABLE goals (
     FOREIGN KEY (icon_id) REFERENCES images(id)
 );
 
-CREATE TABLE experiences (
+CREATE TABLE work_experiences (
     id SERIAL PRIMARY KEY,
     position_title VARCHAR(50) NOT NULL,
     company_name VARCHAR(100) NOT NULL,
@@ -288,6 +292,30 @@ CREATE TABLE portfolios (
     FOREIGN KEY (linkedin_id) REFERENCES websites(id)
 );
 
+CREATE TABLE work_experience_achievements (
+    experience_id INTEGER,
+    achievement_id INTEGER,
+    PRIMARY KEY (experience_id, achievement_id),
+    FOREIGN KEY (experience_id) REFERENCES work_experiences(id),
+    FOREIGN KEY (achievement_id) REFERENCES achievements(id)
+);
+
+CREATE TABLE open_source_contribution_achievements (
+    contribution_id INTEGER,
+    achievement_id INTEGER,
+    PRIMARY KEY (contribution_id, achievement_id),
+    FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id),
+    FOREIGN KEY (achievement_id) REFERENCES achievements(id)
+);
+
+CREATE TABLE volunteer_work_achievements (
+    volunteer_id INTEGER,
+    achievement_id INTEGER,
+    PRIMARY KEY (volunteer_id, achievement_id),
+    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id),
+    FOREIGN KEY (achievement_id) REFERENCES achievements(id)
+);
+
 CREATE TABLE website_images (
     website_id INTEGER,
     image_id INTEGER,
@@ -384,11 +412,11 @@ CREATE TABLE education_images (
     FOREIGN KEY (image_id) REFERENCES images(id)
 );
 
-CREATE TABLE experience_images (
+CREATE TABLE work_experience_images (
     experience_id INTEGER,
     image_id INTEGER,
     PRIMARY KEY (experience_id, image_id),
-    FOREIGN KEY (experience_id) REFERENCES experiences(id),
+    FOREIGN KEY (experience_id) REFERENCES work_experiences(id),
     FOREIGN KEY (image_id) REFERENCES images(id)
 );
 
@@ -424,11 +452,11 @@ CREATE TABLE education_websites (
     FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
-CREATE TABLE experience_websites (
+CREATE TABLE work_experience_websites (
     experience_id INTEGER,
     website_id INTEGER,
     PRIMARY KEY (experience_id, website_id),
-    FOREIGN KEY (experience_id) REFERENCES experiences(id),
+    FOREIGN KEY (experience_id) REFERENCES work_experiences(id),
     FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
@@ -496,11 +524,11 @@ CREATE TABLE sideproject_skills (
     FOREIGN KEY (skill_id) REFERENCES skills(id)
 );
 
-CREATE TABLE experience_skills (
+CREATE TABLE work_experience_skills (
     experience_id INTEGER,
     skill_id INTEGER,
     PRIMARY KEY (experience_id, skill_id),
-    FOREIGN KEY (experience_id) REFERENCES experiences(id),
+    FOREIGN KEY (experience_id) REFERENCES work_experiences(id),
     FOREIGN KEY (skill_id) REFERENCES skills(id)
 );
 

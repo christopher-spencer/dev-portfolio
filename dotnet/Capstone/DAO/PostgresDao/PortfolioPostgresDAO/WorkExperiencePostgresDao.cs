@@ -7,7 +7,7 @@ using Npgsql;
 
 namespace Capstone.DAO
 {
-    public class ExperiencePostgresDao: IExperienceDao
+    public class WorkExperiencePostgresDao: IWorkExperienceDao
     {
         private readonly string connectionString;
         private readonly IImageDao _imageDao;
@@ -15,7 +15,7 @@ namespace Capstone.DAO
         private readonly IWebsiteDao _websiteDao;
         private readonly IAchievementDao _achievementDao;
 
-        public ExperiencePostgresDao(string dbConnectionString, IImageDao imageDao, ISkillDao skillDao, IWebsiteDao websiteDao, IAchievementDao achievementDao)
+        public WorkExperiencePostgresDao(string dbConnectionString, IImageDao imageDao, ISkillDao skillDao, IWebsiteDao websiteDao, IAchievementDao achievementDao)
         {
             connectionString = dbConnectionString;
             _imageDao = imageDao;

@@ -35,13 +35,13 @@ namespace Capstone.DAO.Interfaces
 
         /*  
             **********************************************************************************************
-                                            EXPERIENCE WEBSITE CRUD
+                                            WORK EXPERIENCE WEBSITE CRUD
             **********************************************************************************************
         */
-        Website CreateWebsiteByExperienceId(int experienceId, Website website);
-        Website GetWebsiteByExperienceId(int experienceId);
-        Website UpdateWebsiteByExperienceId(int experienceId, int websiteId, Website website);
-        int DeleteWebsiteByExperienceId(int experienceId, int websiteId);
+        Website CreateWebsiteByWorkExperienceId(int experienceId, Website website);
+        Website GetWebsiteByWorkExperienceId(int experienceId);
+        Website UpdateWebsiteByWorkExperienceId(int experienceId, int websiteId, Website website);
+        int DeleteWebsiteByWorkExperienceId(int experienceId, int websiteId);
 
         /*  
             **********************************************************************************************

@@ -139,7 +139,7 @@ namespace Capstone.Controllers
 // TODO IMAGE Portfolio Controllers****
         /*   
             **********************************************************************************************
-                                        EXPERIENCE IMAGE CRUD CONTROLLER
+                                      WORK EXPERIENCE IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
 // TODO IMAGE Experience Controllers****

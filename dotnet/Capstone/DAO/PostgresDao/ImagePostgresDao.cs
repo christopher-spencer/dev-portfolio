@@ -631,11 +631,11 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
-                                            EXPERIENCE IMAGE CRUD
+                                        WORK EXPERIENCE IMAGE CRUD
             **********************************************************************************************
         */
 
-        public Image CreateImageByExperienceId(int experienceId, Image image)
+        public Image CreateImageByWorkExperienceId(int experienceId, Image image)
         {
             if (experienceId <= 0)
             {
@@ -658,17 +658,17 @@ namespace Capstone.DAO
             }
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
-            string insertExperienceImageSql = "INSERT INTO experience_images (experience_id, image_id) VALUES (@experienceId, @imageId);";
+            string insertExperienceImageSql = "INSERT INTO work_experience_images (experience_id, image_id) VALUES (@experienceId, @imageId);";
 
             string updateExperienceImageIdSql = null;
 
             switch (image.Type)
             {
                 case MainImage:
-                    updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = @imageId WHERE id = @experienceId;";
+                    updateExperienceImageIdSql = "UPDATE work_experiences SET main_image_id = @imageId WHERE id = @experienceId;";
                     break;
                 case Logo:
-                    updateExperienceImageIdSql = "UPDATE experiences SET company_logo_id = @imageId WHERE id = @experienceId;";
+                    updateExperienceImageIdSql = "UPDATE work_experiences SET company_logo_id = @imageId WHERE id = @experienceId;";
                     break;
                 case AdditionalImage:
                     break;
@@ -690,7 +690,7 @@ namespace Capstone.DAO
 
                             if (image.Type == MainImage)
                             {
-                                existingMainImage = GetMainImageOrCompanyLogoByExperienceId(experienceId, MainImage);
+                                existingMainImage = GetMainImageOrCompanyLogoByWorkExperienceId(experienceId, MainImage);
 
                                 if (existingMainImage != null)
                                 {
@@ -702,7 +702,7 @@ namespace Capstone.DAO
 
                             if (image.Type == Logo)
                             {
-                                existingLogo = GetMainImageOrCompanyLogoByExperienceId(experienceId, Logo);
+                                existingLogo = GetMainImageOrCompanyLogoByWorkExperienceId(experienceId, Logo);
 
                                 if (existingLogo != null)
                                 {
@@ -750,7 +750,7 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the image or logo by experience ID.", ex);
+                            throw new DaoException("An error occurred while creating the image or logo by work experience ID.", ex);
                         }
                     }
                 }
@@ -761,7 +761,7 @@ namespace Capstone.DAO
             }
         }
 
-        public Image GetMainImageOrCompanyLogoByExperienceId(int experienceId, string imageType)
+        public Image GetMainImageOrCompanyLogoByWorkExperienceId(int experienceId, string imageType)
         {
             if (experienceId <= 0)
             {
@@ -777,7 +777,7 @@ namespace Capstone.DAO
 
             string sql = "SELECT i.id, i.name, i.url, i.type " +
                         "FROM images i " +
-                        "JOIN experience_images ei ON i.id = ei.image_id " +
+                        "JOIN work_experience_images ei ON i.id = ei.image_id " +
                         "WHERE ei.experience_id = @experienceId AND i.type = @imageType;";
             try
             {
@@ -802,13 +802,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the Main Image or Company Logo by Experience ID.", ex);
+                throw new DaoException("An error occurred while retrieving the Main Image or Company Logo by Work Experience ID.", ex);
             }
 
             return mainImageOrLogo;
         }
 
-        public Image GetImageByExperienceId(int experienceId, int imageId)
+        public Image GetImageByWorkExperienceId(int experienceId, int imageId)
         {
             if (experienceId <= 0 || imageId <= 0)
             {
@@ -819,7 +819,7 @@ namespace Capstone.DAO
 
             string sql = "SELECT i.id, i.name, i.url, i.type " +
                          "FROM images i " +
-                         "JOIN experience_images ei ON i.id = ei.image_id " +
+                         "JOIN work_experience_images ei ON i.id = ei.image_id " +
                          "WHERE ei.experience_id = @experienceId AND i.id = @imageId";
 
             try
@@ -845,13 +845,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the image by experience ID and image ID.", ex);
+                throw new DaoException("An error occurred while retrieving the image by work experience ID and image ID.", ex);
             }
 
             return image;
         }
 
-        public Image UpdateImageByExperienceId(int experienceId, int imageId, Image image)
+        public Image UpdateImageByWorkExperienceId(int experienceId, int imageId, Image image)
         {
             if (experienceId <= 0 || imageId <= 0)
             {
@@ -860,8 +860,8 @@ namespace Capstone.DAO
 
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
-                                    "FROM experience_images " +
-                                    "WHERE images.id = experience_images.image_id AND experience_images.experience_id = @experienceId " +
+                                    "FROM work_experience_images " +
+                                    "WHERE images.id = work_experience_images.image_id AND work_experience_images.experience_id = @experienceId " +
                                     "AND images.id = @imageId;";
 
             try
@@ -889,13 +889,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the image by experience ID.", ex);
+                throw new DaoException("An error occurred while updating the image by work experience ID.", ex);
             }
 
             return null;
         }
 
-        public Image UpdateMainImageOrLogoByExperienceId(int experienceId, int imageId, Image image)
+        public Image UpdateMainImageOrLogoByWorkExperienceId(int experienceId, int imageId, Image image)
         {
             if (image.Type != MainImage || image.Type != Logo)
             {
@@ -903,14 +903,14 @@ namespace Capstone.DAO
             }
             else
             {
-                DeleteImageByExperienceId(experienceId, imageId);
-                CreateImageByExperienceId(experienceId, image);
+                DeleteImageByWorkExperienceId(experienceId, imageId);
+                CreateImageByWorkExperienceId(experienceId, image);
             }
 
             return image;
         }
 
-        public int DeleteImageByExperienceId(int experienceId, int imageId)
+        public int DeleteImageByWorkExperienceId(int experienceId, int imageId)
         {
             if (experienceId <= 0 || imageId <= 0)
             {
@@ -920,7 +920,7 @@ namespace Capstone.DAO
             // UpdateExperienceImageIdSql only runs if the image is the Main Image or Logo
             string updateExperienceImageIdSql = null;
 
-            string deleteExperienceImageSql = "DELETE FROM experience_images WHERE experience_id = @experienceId AND image_id = @imageId;";
+            string deleteExperienceImageSql = "DELETE FROM work_experience_images WHERE experience_id = @experienceId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
             Image image = GetImageByImageId(imageId);
@@ -928,10 +928,10 @@ namespace Capstone.DAO
             switch (image.Type)
             {
                 case MainImage:
-                    updateExperienceImageIdSql = "UPDATE experiences SET main_image_id = NULL WHERE main_image_id = @imageId;";
+                    updateExperienceImageIdSql = "UPDATE work_experiences SET main_image_id = NULL WHERE main_image_id = @imageId;";
                     break;
                 case Logo:
-                    updateExperienceImageIdSql = "UPDATE experiences SET company_logo_id = NULL WHERE company_logo_id = @imageId;";
+                    updateExperienceImageIdSql = "UPDATE work_experiences SET company_logo_id = NULL WHERE company_logo_id = @imageId;";
                     break;
                 case AdditionalImage:
                     break;
@@ -989,7 +989,7 @@ namespace Capstone.DAO
 
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while deleting the image by experience ID.", ex);
+                            throw new DaoException("An error occurred while deleting the image by work experience ID.", ex);
                         }
                     }
                 }

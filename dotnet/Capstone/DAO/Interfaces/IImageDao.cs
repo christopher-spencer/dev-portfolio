@@ -35,15 +35,15 @@ namespace Capstone.DAO.Interfaces
         int DeleteImageByPortfolioId(int portfolioId, int imageId);
        /*  
             **********************************************************************************************
-                                            EXPERIENCE IMAGE CRUD
+                                           WORK EXPERIENCE IMAGE CRUD
             **********************************************************************************************
         */
-        Image CreateImageByExperienceId(int experienceId, Image image);
-        Image GetMainImageOrCompanyLogoByExperienceId(int experienceId, string imageType);
-        Image GetImageByExperienceId(int experienceId, int imageId);
-        Image UpdateImageByExperienceId(int experienceId, int imageId, Image image);
-        Image UpdateMainImageOrLogoByExperienceId(int experienceId, int imageId, Image image);
-        int DeleteImageByExperienceId(int experienceId, int imageId);
+        Image CreateImageByWorkExperienceId(int experienceId, Image image);
+        Image GetMainImageOrCompanyLogoByWorkExperienceId(int experienceId, string imageType);
+        Image GetImageByWorkExperienceId(int experienceId, int imageId);
+        Image UpdateImageByWorkExperienceId(int experienceId, int imageId, Image image);
+        Image UpdateMainImageOrLogoByWorkExperienceId(int experienceId, int imageId, Image image);
+        int DeleteImageByWorkExperienceId(int experienceId, int imageId);
 
         /*  
             **********************************************************************************************

@@ -733,7 +733,7 @@ namespace Capstone.DAO
                                             EXPERIENCE SKILL CRUD
             **********************************************************************************************
         */
-        public Skill CreateSkillByExperienceId(int experienceId, Skill skill)
+        public Skill CreateSkillByWorkExperienceId(int experienceId, Skill skill)
         {
             if (experienceId <= 0)
             {
@@ -746,7 +746,7 @@ namespace Capstone.DAO
             }
 
             string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
-            string insertExperienceSkillSql = "INSERT INTO experience_skills (experience_id, skill_id) VALUES (@experienceId, @skillId);";
+            string insertExperienceSkillSql = "INSERT INTO work_experience_skills (experience_id, skill_id) VALUES (@experienceId, @skillId);";
 
             try
             {
@@ -785,7 +785,7 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the skill by experience ID.", ex);
+                            throw new DaoException("An error occurred while creating the skill by work experience ID.", ex);
                         }
                     }
                 }
@@ -796,7 +796,7 @@ namespace Capstone.DAO
             }
         }
 
-        public List<Skill> GetSkillsByExperienceId(int experienceId)
+        public List<Skill> GetSkillsByWorkExperienceId(int experienceId)
         {
             if (experienceId <= 0)
             {
@@ -807,7 +807,7 @@ namespace Capstone.DAO
 
             string sql = "SELECT s.id, s.name, s.icon_id " +
                          "FROM skills s " +
-                         "JOIN experience_skills es ON s.id = es.skill_id " +
+                         "JOIN work_experience_skills es ON s.id = es.skill_id " +
                          "WHERE es.experience_id = @experienceId;";
 
             try
@@ -833,13 +833,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving skills by experience ID.", ex);
+                throw new DaoException("An error occurred while retrieving skills by work experience ID.", ex);
             }
 
             return skills;
         }
 
-        public Skill GetSkillByExperienceId(int experienceId, int skillId)
+        public Skill GetSkillByWorkExperienceId(int experienceId, int skillId)
         {
             if (experienceId <= 0 || skillId <= 0)
             {
@@ -850,7 +850,7 @@ namespace Capstone.DAO
 
             string sql = "SELECT s.id, s.name, s.icon_id " +
                          "FROM skills s " +
-                         "JOIN experience_skills es ON s.id = es.skill_id " +
+                         "JOIN work_experience_skills es ON s.id = es.skill_id " +
                          "WHERE es.experience_id = @experienceId AND s.id = @skillId;";
 
             try
@@ -876,13 +876,13 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while retrieving the skill by experience ID and skill ID.", ex);
+                throw new DaoException("An error occurred while retrieving the skill by work experience ID and skill ID.", ex);
             }
 
             return skill;
         }
 
-        public Skill UpdateSkillByExperienceId(int experienceId, int skillId, Skill skill)
+        public Skill UpdateSkillByWorkExperienceId(int experienceId, int skillId, Skill skill)
         {
             if (experienceId <= 0 || skillId <= 0)
             {
@@ -891,9 +891,9 @@ namespace Capstone.DAO
 
             string sql = "UPDATE skills " +
                          "SET name = @name " +
-                         "FROM experience_skills " +
-                         "WHERE skills.id = experience_skills.skill_id " +
-                         "AND experience_skills.experience_id = @experienceId " +
+                         "FROM work_experience_skills " +
+                         "WHERE skills.id = work_experience_skills.skill_id " +
+                         "AND work_experience_skills.experience_id = @experienceId " +
                          "AND skills.id = @skillId;";
 
             try
@@ -919,20 +919,20 @@ namespace Capstone.DAO
             }
             catch (NpgsqlException ex)
             {
-                throw new DaoException("An error occurred while updating the skill by experience ID.", ex);
+                throw new DaoException("An error occurred while updating the skill by work experience ID.", ex);
             }
 
             return null;
         }
 
-        public int DeleteSkillByExperienceId(int experienceId, int skillId)
+        public int DeleteSkillByWorkExperienceId(int experienceId, int skillId)
         {
             if (experienceId <= 0 || skillId <= 0)
             {
                 throw new ArgumentException("ExperienceId and skillId must be greater than zero.");
             }
 
-            string deleteSkillFromExperienceSql = "DELETE FROM experience_skills WHERE experience_id = @experienceId AND skill_id = @skillId;";
+            string deleteSkillFromExperienceSql = "DELETE FROM work_experience_skills WHERE experience_id = @experienceId AND skill_id = @skillId;";
             string deleteSkillSql = "DELETE FROM skills WHERE id = @skillId;";
 
             try
@@ -981,7 +981,7 @@ namespace Capstone.DAO
 
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while deleting the skill by experience ID.", ex);
+                            throw new DaoException("An error occurred while deleting the skill by work experience ID.", ex);
                         }
                     }
                 }

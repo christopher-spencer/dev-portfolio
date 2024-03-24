@@ -46,15 +46,15 @@ namespace Capstone.DAO.Interfaces
 
     /*   
         **********************************************************************************************
-                                        EXPERIENCE SKILL CRUD
+                                        WORK EXPERIENCE SKILL CRUD
         **********************************************************************************************
     */
     // TODO SKILL Experience Controllers****
-        Skill CreateSkillByExperienceId(int experienceId, Skill skill); 
-        List<Skill> GetSkillsByExperienceId(int experienceId);
-        Skill GetSkillByExperienceId(int experienceId, int skillId);
-        Skill UpdateSkillByExperienceId(int experienceId, int skillId, Skill skill);
-        int DeleteSkillByExperienceId(int experienceId, int skillId);
+        Skill CreateSkillByWorkExperienceId(int experienceId, Skill skill); 
+        List<Skill> GetSkillsByWorkExperienceId(int experienceId);
+        Skill GetSkillByWorkExperienceId(int experienceId, int skillId);
+        Skill UpdateSkillByWorkExperienceId(int experienceId, int skillId, Skill skill);
+        int DeleteSkillByWorkExperienceId(int experienceId, int skillId);
     
         /*  
             **********************************************************************************************
