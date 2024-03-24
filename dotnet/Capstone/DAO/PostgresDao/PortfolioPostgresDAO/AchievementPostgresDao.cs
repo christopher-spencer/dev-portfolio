@@ -644,6 +644,270 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        public Achievement CreateAchievementByVolunteerWorkId(int volunteerId, Achievement achievement)
+        {
+            if (volunteerId <= 0)
+            {
+                throw new ArgumentException("VolunteerWorkId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(achievement.Description))
+            {
+                throw new ArgumentException("Achievement description cannot be null or empty.");
+            }
+
+            string insertAchievementSql = "INSERT INTO achievements (description) VALUES (@description) RETURNING id;";
+            string insertVolunteerWorkAchievementSql = "INSERT INTO volunteer_work_achievements (volunteer_id, achievement_id) VALUES (@volunteerId, @achievementId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int achievementId;
+
+                            using (NpgsqlCommand cmdInsertAchievement = new NpgsqlCommand(insertAchievementSql, connection))
+                            {
+                                cmdInsertAchievement.Parameters.AddWithValue("@description", achievement.Description);
+                                cmdInsertAchievement.Transaction = transaction;
+                                achievementId = Convert.ToInt32(cmdInsertAchievement.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertWorkAchievement = new NpgsqlCommand(insertVolunteerWorkAchievementSql, connection))
+                            {
+                                cmdInsertWorkAchievement.Parameters.AddWithValue("@volunteerId", volunteerId);
+                                cmdInsertWorkAchievement.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmdInsertWorkAchievement.Transaction = transaction;
+                                cmdInsertWorkAchievement.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            achievement.Id = achievementId;
+
+                            return achievement;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the achievement by volunteer work ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public List<Achievement> GetAchievementsByVolunteerWorkId(int volunteerId)
+        {
+            if (volunteerId <= 0)
+            {
+                throw new ArgumentException("VolunteerWorkId must be greater than zero.");
+            }
+
+            List<Achievement> achievements = new List<Achievement>();
+
+            string sql = "SELECT a.id, a.description, a.icon_id " +
+                         "FROM achievements a " +
+                         "JOIN volunteer_work_achievements va ON a.id = va.achievement_id " +
+                         "WHERE va.volunteer_id = @volunteerId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@volunteerId", volunteerId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Achievement achievement = MapRowToAchievement(reader);
+
+                                achievements.Add(achievement);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the achievements by volunteer work ID.", ex);
+            }
+
+            return achievements;
+        }
+
+        public Achievement GetAchievementByVolunteerWorkId(int volunteerId, int achievementId)
+        {
+            if (volunteerId <= 0 || achievementId <= 0)
+            {
+                throw new ArgumentException("VolunteerWorkId and AchievementId must be greater than zero.");
+            }
+
+            string sql = "SELECT a.id, a.description, a.icon_id " +
+                         "FROM achievements a " +
+                         "JOIN volunteer_work_achievements va ON a.id = va.achievement_id " +
+                         "WHERE va.volunteer_id = @volunteerId AND a.id = @achievementId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@volunteerId", volunteerId);
+                        cmd.Parameters.AddWithValue("@achievementId", achievementId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapRowToAchievement(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the achievement by volunteer work ID and achievement ID.", ex);
+            }
+
+            return null;
+        }
+
+        public Achievement UpdateAchievementByVolunteerWorkId(int volunteerId, int achievementId, Achievement achievement)
+        {
+            if (volunteerId <= 0 || achievementId <= 0)
+            {
+                throw new ArgumentException("VolunteerWorkId and AchievementId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(achievement.Description))
+            {
+                throw new ArgumentException("Achievement description cannot be null or empty.");
+            }
+
+            string sql = "UPDATE achievements " +
+                         "SET description = @description " +
+                         "FROM volunteer_work_achievements " +
+                         "WHERE achievements.id = volunteer_work_achievements.achievement_id " +
+                         "AND volunteer_work_achievements.volunteer_id = @volunteerId " +
+                         "AND achievements.id = @achievementId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@volunteerId", volunteerId);
+                        cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                        cmd.Parameters.AddWithValue("@description", achievement.Description);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return achievement;
+                        }
+                    }
+
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the achievement by volunteer work ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteAchievementByVolunteerWorkId(int volunteerId, int achievementId)
+        {
+            if (volunteerId <= 0 || achievementId <= 0)
+            {
+                throw new ArgumentException("VolunteerWorkId and AchievementId must be greater than zero.");
+            }
+
+            string deleteAchievementFromVolunteerSql = "DELETE FROM volunteer_work_achievements WHERE volunteer_id = @volunteerId AND achievement_id = @achievementId;";
+            string deleteAchievementSql = "DELETE FROM achievements WHERE id = @achievementId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? iconId = GetIconIdByAchievementId(achievementId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAchievementFromVolunteerSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@volunteerId", volunteerId);
+                                cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            if (iconId.HasValue)
+                            {
+                                _imageDao.DeleteImageByAchievementId(achievementId, iconId.Value);
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAchievementSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@achievementId", achievementId);
+                                cmd.Transaction = transaction;
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the achievement by volunteer work ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                                 HELPER METHODS

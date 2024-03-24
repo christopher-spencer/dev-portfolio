@@ -43,5 +43,10 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
 // TODO ACHIEVEMENT Volunteer Controllers****
+        Achievement CreateAchievementByVolunteerWorkId(int volunteerId, Achievement achievement);
+        List<Achievement> GetAchievementsByVolunteerWorkId(int volunteerId);
+        Achievement GetAchievementByVolunteerWorkId(int volunteerId, int achievementId);
+        Achievement UpdateAchievementByVolunteerWorkId(int volunteerId, int achievementId, Achievement achievement);
+        int DeleteAchievementByVolunteerWorkId(int volunteerId, int achievementId);
     }
 }
