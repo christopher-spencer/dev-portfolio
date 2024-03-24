@@ -8,7 +8,7 @@ namespace Capstone.DAO.Interfaces
 
         /*  
             **********************************************************************************************
-                                        SIDE PROJECT CRUD
+                                                SIDE PROJECT CRUD
             **********************************************************************************************
         */
         SideProject CreateSideProject(SideProject sideProject);
@@ -16,5 +16,11 @@ namespace Capstone.DAO.Interfaces
         SideProject GetSideProject(int sideProjectId);
         SideProject UpdateSideProject(SideProject sideProject, int sideProjectId);
         int DeleteSideProject(int sideProjectId);
+
+        /*  
+            **********************************************************************************************
+                                            PORTFOLIO SIDE PROJECT CRUD
+            **********************************************************************************************
+        */
     }
 }
