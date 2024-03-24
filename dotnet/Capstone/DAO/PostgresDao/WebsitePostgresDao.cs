@@ -242,7 +242,280 @@ namespace Capstone.DAO
                                             PORTFOLIO WEBSITE CRUD
             **********************************************************************************************
         */
-        // TODO Portfolio Website PGDAO****
+        public Website CreateWebsiteByPortfolioId(int portfolioId, Website website)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
+            string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
+            string insertPortfolioWebsiteSql = "INSERT INTO portfolio_websites (portfolio_id, website_id) VALUES (@portfolioId, @websiteId);";
+            
+            string updatePortfolioWebsiteIdSql;
+
+            switch (website.Type)
+            {
+                case GitHub:
+                    updatePortfolioWebsiteIdSql = "UPDATE portfolios SET github_repo_link_id = @websiteId WHERE id = @portfolioId;";
+                    break;
+                case LinkedIn:
+                    updatePortfolioWebsiteIdSql = "UPDATE portfolios SET linkedin_id = @websiteId WHERE id = @portfolioId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int websiteId;
+
+                            using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
+                            {
+                                cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
+                                cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Transaction = transaction;
+                                websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmdInsertPortfolioWebsite = new NpgsqlCommand(insertPortfolioWebsiteSql, connection))
+                            {
+                                cmdInsertPortfolioWebsite.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmdInsertPortfolioWebsite.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdInsertPortfolioWebsite.Transaction = transaction;
+                                cmdInsertPortfolioWebsite.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmdUpdatePortfolio = new NpgsqlCommand(updatePortfolioWebsiteIdSql, connection))
+                            {
+                                cmdUpdatePortfolio.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmdUpdatePortfolio.Parameters.AddWithValue("@websiteId", websiteId);
+                                cmdUpdatePortfolio.Transaction = transaction;
+                                cmdUpdatePortfolio.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            website.Id = websiteId;
+
+                            return website;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the website by portfolio ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public Website GetWebsiteByPortfolioId(int portfolioId, int websiteId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN portfolio_websites pw ON w.id = pw.website_id " +
+                         "WHERE pw.portfolio_id = @portfolioId AND w.id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the website by portfolio ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website UpdateWebsiteByPortfolioId(int portfolioId, int websiteId, Website website)
+        {
+            if (portfolioId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and websiteId must be greater than zero.");
+            }
+
+            string sql = "UPDATE websites " +
+                         "SET name = @name, url = @url " +
+                         "FROM portfolio_websites " +
+                         "WHERE websites.id = portfolio_websites.website_id " +
+                         "AND portfolio_websites.portfolio_id = @portfolioId " +
+                         "AND websites.id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                        cmd.Parameters.AddWithValue("@name", website.Name);
+                        cmd.Parameters.AddWithValue("@url", website.Url);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return website;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the website by portfolio ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteWebsiteByPortfolioId(int portfolioId, int websiteId)
+        {
+            if (portfolioId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and websiteId must be greater than zero.");
+            }
+
+            Website website = GetWebsiteByPortfolioId(portfolioId, websiteId);
+
+            string updatePortfolioWebsiteIdSql;
+
+            switch (website.Type)
+            {
+                case GitHub:
+                    updatePortfolioWebsiteIdSql = "UPDATE portfolios SET github_repo_link_id = NULL WHERE github_repo_link_id = @websiteId;";
+                    break;
+                case LinkedIn:
+                    updatePortfolioWebsiteIdSql = "UPDATE portfolios SET linkedin_id = NULL WHERE linkedin_id = @websiteId;";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid website type.");
+            }
+
+            string deleteWebsiteFromPortfolioSql = "DELETE FROM portfolio_websites WHERE portfolio_id = @portfolioId AND website_id = @websiteId;";
+            string deleteWebsiteSql = "DELETE FROM websites WHERE id = @websiteId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(updatePortfolioWebsiteIdSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteFromPortfolioSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            if (imageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByWebsiteId(websiteId, imageId.Value);
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the website by portfolio ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }    
+        }
 
         /*  
             **********************************************************************************************
@@ -1871,7 +2144,6 @@ namespace Capstone.DAO
                                             EDUCATION WEBSITE CRUD
             **********************************************************************************************
         */
-        // TODO WEBSITE Education PGDAO****
         public Website CreateWebsiteByEducationId(int educationId, Website website)
         {
             if (educationId <= 0)
@@ -2122,7 +2394,6 @@ namespace Capstone.DAO
                                         OPEN SOURCE CONTRIBUTION WEBSITE CRUD
             **********************************************************************************************
         */
-        // TODO WEBSITE OpenSourceContribution PGDAO****
         public Website CreateWebsiteByOpenSourceContributionId(int contributionId, Website website)
         {
             if (contributionId <= 0)

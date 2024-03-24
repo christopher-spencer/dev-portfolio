@@ -280,7 +280,6 @@ CREATE TABLE portfolios (
     FOREIGN KEY (portfolio_image_id) REFERENCES images(id),
     FOREIGN KEY (github_repo_link_id) REFERENCES websites(id),
     FOREIGN KEY (linkedin_id) REFERENCES websites(id)
-
 );
 
 CREATE TABLE website_images (
