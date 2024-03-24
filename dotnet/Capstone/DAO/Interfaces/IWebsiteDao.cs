@@ -25,6 +25,10 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
         */
         // TODO Portfolio Website Controllers****
+        Website CreateWebsiteByPortfolioId(int portfolioId, Website website);
+        Website GetWebsiteByPortfolioId(int portfolioId, int websiteId);
+        Website UpdateWebsiteByPortfolioId(int portfolioId, int websiteId, Website website);
+        int DeleteWebsiteByPortfolioId(int portfolioId, int websiteId);
 
         /*  
             **********************************************************************************************
