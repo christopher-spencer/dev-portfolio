@@ -293,6 +293,325 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        public Credential CreateCredentialByPortfolioId(int portfolioId, Credential credential)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(credential.Name))
+            {
+                throw new ArgumentException("Credential name is required to created a Credential.");
+            }
+
+            if (string.IsNullOrEmpty(credential.IssuingOrganization))
+            {
+                throw new ArgumentException("Issuing Organization is required to created a Credential.");
+            }
+
+            string insertCredentialSql = "INSERT INTO credentials (name, issuing_organization, description, issue_date, " +
+                                         "expiration_date, credential_id_number) " +
+                                         "VALUES (@name, @issuingOrganization, @description, @issueDate, @expirationDate, " +
+                                         "@credentialIdNumber) " +
+                                         "RETURNING id;";
+
+            string insertPortfolioCredentialSql = "INSERT INTO portfolio_credentials (portfolio_id, credential_id) " +
+                                                  "VALUES (@portfolioId, @credentialId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int credentialId;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertCredentialSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@name", credential.Name);
+                                cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
+                                cmd.Parameters.AddWithValue("@description", credential.Description);
+                                cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
+                                cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
+                                cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
+                                cmd.Transaction = transaction;
+
+                                credentialId = Convert.ToInt32(cmd.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertPortfolioCredentialSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@credentialId", credential.Id);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            credential.Id = credentialId;
+
+                            return credential;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the Credential for the Portfolio.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public List<Credential> GetCredentialsByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID must be greater than zero.");
+            }
+
+            List<Credential> credentials = new List<Credential>();
+
+            string sql = "SELECT c.id, c.name, c.issuing_organization, c.description, c.issue_date, " +
+                         "c.expiration_date, c.credential_id_number " +
+                         "FROM credentials c " +
+                         "JOIN portfolio_credentials pc ON c.id = pc.credential_id " +
+                         "WHERE pc.portfolio_id = @portfolioId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Credential credential = MapRowToCredential(reader);
+                                credentials.Add(credential);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving all Credentials for the Portfolio.", ex);
+            }
+
+            return credentials;
+        }
+
+        public Credential GetCredentialByPortfolioId(int portfolioId, int credentialId)
+        {
+            if (portfolioId <= 0 || credentialId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Credential ID must be greater than zero.");
+            }
+
+            Credential credential = null;
+
+            string sql = "SELECT c.id, c.name, c.issuing_organization, c.description, c.issue_date, " +
+                         "c.expiration_date, c.credential_id_number " +
+                         "FROM credentials c " +
+                         "JOIN portfolio_credentials pc ON c.id = pc.credential_id " +
+                         "WHERE pc.portfolio_id = @portfolioId AND c.id = @credentialId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                credential = MapRowToCredential(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Credential for the Portfolio.", ex);
+            }
+
+            return credential;
+        }
+
+        public Credential UpdateCredentialByPortfolioId(int portfolioId, int credentialId, Credential credential)
+        {
+            if (portfolioId <= 0 || credentialId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Credential ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(credential.Name))
+            {
+                throw new ArgumentException("Credential name is required to update a Credential.");
+            }
+
+            if (string.IsNullOrEmpty(credential.IssuingOrganization))
+            {
+                throw new ArgumentException("Issuing Organization is required to update a Credential.");
+            }
+
+            string sql = "UPDATE credentials SET name = @name, issuing_organization = @issuingOrganization, " +
+                         "description = @description, issue_date = @issueDate, expiration_date = @expirationDate, " +
+                         "credential_id_number = @credentialIdNumber " +
+                         "FROM portfolio_credentials pc " +
+                         "WHERE pc.portfolio_id = @portfolioId AND pc.credential_id = @credentialId " +
+                         "AND pc.credential_id = credentials.id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", credential.Name);
+                        cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
+                        cmd.Parameters.AddWithValue("@description", credential.Description);
+                        cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
+                        cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
+                        cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return credential;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the credential by portfolio ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteCredentialByPortfolioId(int portfolioId, int credentialId)
+        {
+            if (portfolioId <= 0 || credentialId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Credential ID must be greater than zero.");
+            }
+
+            string deletePortfolioCredentialSql = "DELETE FROM portfolio_credentials " +
+                                                  "WHERE portfolio_id = @portfolioId " +
+                                                  "AND credential_id = @credentialId;";
+
+            string deleteCredentialSql = "DELETE FROM credentials " +
+                                         "WHERE id = @credentialId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? organizationLogoId = GetOrganizationLogoIdByCredentialId(credentialId);
+                            int? organizationWebsiteId = GetOrganizationWebsiteIdByCredentialId(credentialId);
+                            int? credentialWebsiteId = GetCredentialWebsiteIdByCredentialId(credentialId);
+                            int? mainImageId = GetMainImageIdByCredentialId(credentialId);
+
+                            if (organizationLogoId.HasValue)
+                            {
+                                _imageDao.DeleteImageByCredentialId(credentialId, organizationLogoId.Value);
+                            }
+
+                            if (organizationWebsiteId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByCredentialId(credentialId, organizationWebsiteId.Value);
+                            }
+
+                            if (credentialWebsiteId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByCredentialId(credentialId, credentialWebsiteId.Value);
+                            }
+
+                            if (mainImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByCredentialId(credentialId, mainImageId.Value);
+                            }
+
+                            DeleteAssociatedSkillsByCredentialId(credentialId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deletePortfolioCredentialSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteCredentialSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@credentialId", credentialId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the Credential by Portfolio ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                             CREDENTIAL HELPER METHODS
