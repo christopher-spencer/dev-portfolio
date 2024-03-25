@@ -77,11 +77,16 @@ namespace Capstone
                 websiteDao);
 
             IAchievementDao achievementDao = new AchievementPostgresDao(connectionString, imageDao);
+            IHobbyDao hobbyDao = new HobbyPostgresDao(connectionString, imageDao);
+            ICredentialDao credentialDao = new CredentialPostgresDao(connectionString, imageDao, websiteDao, skillDao);
+            IVolunteerWorkDao volunteerWorkDao = new VolunteerWorkPostgresDao(connectionString, imageDao, websiteDao, 
+                achievementDao, skillDao);
             IOpenSourceContributionDao openSourceContributionDao = new OpenSourceContributionPostgresDao(connectionString, 
                 imageDao, websiteDao, achievementDao, skillDao);
             IEducationDao educationDao = new EducationPostgresDao(connectionString, imageDao, websiteDao, achievementDao);
             IWorkExperienceDao experienceDao = new WorkExperiencePostgresDao(connectionString, imageDao, skillDao, websiteDao, 
                 achievementDao);
+
             IPortfolioDao portfolioDao = new PortfolioPostgresDao(connectionString, sideProjectDao, websiteDao, imageDao, 
                 skillDao);
 
@@ -101,6 +106,10 @@ namespace Capstone
                 achievementDao));
             services.AddTransient<IOpenSourceContributionDao>(m => new OpenSourceContributionPostgresDao(connectionString, imageDao, 
                 websiteDao, achievementDao, skillDao));
+            services.AddTransient<IVolunteerWorkDao>(m => new VolunteerWorkPostgresDao(connectionString, imageDao, websiteDao, 
+                achievementDao, skillDao));
+            services.AddTransient<ICredentialDao>(m => new CredentialPostgresDao(connectionString, imageDao, websiteDao, skillDao));
+            services.AddTransient<IHobbyDao>(m => new HobbyPostgresDao(connectionString, imageDao));
             services.AddTransient<IAchievementDao>(m => new AchievementPostgresDao(connectionString, imageDao));
 
             services.AddTransient<ISideProjectDao>(m => new SideProjectPostgresDao(
