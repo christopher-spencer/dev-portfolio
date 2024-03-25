@@ -34,51 +34,51 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public Credential CreateCredential(Credential credential)
-        {
-            if (string.IsNullOrEmpty(credential.Name))
-            {
-                throw new ArgumentException("Credential name is required to created a Credential.");
-            }
+        // public Credential CreateCredential(Credential credential)
+        // {
+        //     if (string.IsNullOrEmpty(credential.Name))
+        //     {
+        //         throw new ArgumentException("Credential name is required to created a Credential.");
+        //     }
 
-            if (string.IsNullOrEmpty(credential.IssuingOrganization))
-            {
-                throw new ArgumentException("Issuing Organization is required to created a Credential.");
+        //     if (string.IsNullOrEmpty(credential.IssuingOrganization))
+        //     {
+        //         throw new ArgumentException("Issuing Organization is required to created a Credential.");
 
-            }
+        //     }
 
-            string sql = "INSERT INTO credentials (name, issuing_organization, description, issue_date, " +
-                         "expiration_date, credential_id_number) " +
-                         "VALUES (@name, @issuingOrganization, @description, @issueDate, @expirationDate, " +
-                         "@credentialIdNumber) " +
-                         "RETURNING id;";
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     string sql = "INSERT INTO credentials (name, issuing_organization, description, issue_date, " +
+        //                  "expiration_date, credential_id_number) " +
+        //                  "VALUES (@name, @issuingOrganization, @description, @issueDate, @expirationDate, " +
+        //                  "@credentialIdNumber) " +
+        //                  "RETURNING id;";
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@name", credential.Name);
-                        cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
-                        cmd.Parameters.AddWithValue("@description", credential.Description);
-                        cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
-                        cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
-                        cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@name", credential.Name);
+        //                 cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
+        //                 cmd.Parameters.AddWithValue("@description", credential.Description);
+        //                 cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
+        //                 cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
+        //                 cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
 
-                        int credentialId = Convert.ToInt32(cmd.ExecuteScalar());
-                        credential.Id = credentialId;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the Credential.", ex);
-            }
+        //                 int credentialId = Convert.ToInt32(cmd.ExecuteScalar());
+        //                 credential.Id = credentialId;
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while creating the Credential.", ex);
+        //     }
 
-            return credential;
-        }
+        //     return credential;
+        // }
 
         public List<Credential> GetCredentials()
         {
@@ -154,138 +154,138 @@ namespace Capstone.DAO
             return credential;
         }
 
-        public Credential UpdateCredential(int credentialId, Credential credential)
-        {
-            if (credentialId <= 0)
-            {
-                throw new ArgumentException("Credential ID must be greater than zero.");
-            }
+        // public Credential UpdateCredential(int credentialId, Credential credential)
+        // {
+        //     if (credentialId <= 0)
+        //     {
+        //         throw new ArgumentException("Credential ID must be greater than zero.");
+        //     }
 
-            if (string.IsNullOrEmpty(credential.Name))
-            {
-                throw new ArgumentException("Credential name is required to update a Credential.");
-            }
+        //     if (string.IsNullOrEmpty(credential.Name))
+        //     {
+        //         throw new ArgumentException("Credential name is required to update a Credential.");
+        //     }
 
-            if (string.IsNullOrEmpty(credential.IssuingOrganization))
-            {
-                throw new ArgumentException("Issuing Organization is required to update a Credential.");
-            }
+        //     if (string.IsNullOrEmpty(credential.IssuingOrganization))
+        //     {
+        //         throw new ArgumentException("Issuing Organization is required to update a Credential.");
+        //     }
 
-            string sql = "UPDATE credentials SET name = @name, issuing_organization = @issuingOrganization, " +
-                         "description = @description, issue_date = @issueDate, expiration_date = @expirationDate, " +
-                         "credential_id_number = @credentialIdNumber WHERE id = @credentialId;";
+        //     string sql = "UPDATE credentials SET name = @name, issuing_organization = @issuingOrganization, " +
+        //                  "description = @description, issue_date = @issueDate, expiration_date = @expirationDate, " +
+        //                  "credential_id_number = @credentialIdNumber WHERE id = @credentialId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@name", credential.Name);
-                        cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
-                        cmd.Parameters.AddWithValue("@description", credential.Description);
-                        cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
-                        cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
-                        cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
-                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@name", credential.Name);
+        //                 cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
+        //                 cmd.Parameters.AddWithValue("@description", credential.Description);
+        //                 cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
+        //                 cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
+        //                 cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
+        //                 cmd.Parameters.AddWithValue("@credentialId", credentialId);
 
-                        int count = cmd.ExecuteNonQuery();
+        //                 int count = cmd.ExecuteNonQuery();
 
-                        if (count == 1)
-                        {
-                            return credential;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the Credential.", ex);
-            }
-        }
+        //                 if (count == 1)
+        //                 {
+        //                     return credential;
+        //                 }
+        //                 else
+        //                 {
+        //                     return null;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while updating the Credential.", ex);
+        //     }
+        // }
 
-        public int DeleteCredential(int credentialId)
-        {
-            if (credentialId <= 0)
-            {
-                throw new ArgumentException("Credential ID must be greater than zero.");
-            }
+        // public int DeleteCredential(int credentialId)
+        // {
+        //     if (credentialId <= 0)
+        //     {
+        //         throw new ArgumentException("Credential ID must be greater than zero.");
+        //     }
 
-            string sql = "DELETE FROM credentials WHERE id = @credentialId;";
+        //     string sql = "DELETE FROM credentials WHERE id = @credentialId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            int rowsAffected;
+        //             using (NpgsqlTransaction transaction = connection.BeginTransaction())
+        //             {
+        //                 try
+        //                 {
+        //                     int rowsAffected;
 
-                            int? organizationLogoId = GetOrganizationLogoIdByCredentialId(credentialId);
-                            int? organizationWebsiteId = GetOrganizationWebsiteIdByCredentialId(credentialId);
-                            int? credentialWebsiteId = GetCredentialWebsiteIdByCredentialId(credentialId);
-                            int? mainImageId = GetMainImageIdByCredentialId(credentialId);
+        //                     int? organizationLogoId = GetOrganizationLogoIdByCredentialId(credentialId);
+        //                     int? organizationWebsiteId = GetOrganizationWebsiteIdByCredentialId(credentialId);
+        //                     int? credentialWebsiteId = GetCredentialWebsiteIdByCredentialId(credentialId);
+        //                     int? mainImageId = GetMainImageIdByCredentialId(credentialId);
 
-                            if (organizationLogoId.HasValue)
-                            {
-                                _imageDao.DeleteImageByCredentialId(credentialId, organizationLogoId.Value);
-                            }
+        //                     if (organizationLogoId.HasValue)
+        //                     {
+        //                         _imageDao.DeleteImageByCredentialId(credentialId, organizationLogoId.Value);
+        //                     }
 
-                            if (organizationWebsiteId.HasValue)
-                            {
-                                _websiteDao.DeleteWebsiteByCredentialId(credentialId, organizationWebsiteId.Value);
-                            }
+        //                     if (organizationWebsiteId.HasValue)
+        //                     {
+        //                         _websiteDao.DeleteWebsiteByCredentialId(credentialId, organizationWebsiteId.Value);
+        //                     }
 
-                            if (credentialWebsiteId.HasValue)
-                            {
-                                _websiteDao.DeleteWebsiteByCredentialId(credentialId, credentialWebsiteId.Value);
-                            }
+        //                     if (credentialWebsiteId.HasValue)
+        //                     {
+        //                         _websiteDao.DeleteWebsiteByCredentialId(credentialId, credentialWebsiteId.Value);
+        //                     }
 
-                            if (mainImageId.HasValue)
-                            {
-                                _imageDao.DeleteImageByCredentialId(credentialId, mainImageId.Value);
-                            }
+        //                     if (mainImageId.HasValue)
+        //                     {
+        //                         _imageDao.DeleteImageByCredentialId(credentialId, mainImageId.Value);
+        //                     }
 
-                            DeleteAssociatedSkillsByCredentialId(credentialId);
+        //                     DeleteAssociatedSkillsByCredentialId(credentialId);
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                            {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@credentialId", credentialId);
-                                rowsAffected = cmd.ExecuteNonQuery();
-                            }
+        //                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //                     {
+        //                         cmd.Transaction = transaction;
+        //                         cmd.Parameters.AddWithValue("@credentialId", credentialId);
+        //                         rowsAffected = cmd.ExecuteNonQuery();
+        //                     }
 
-                            transaction.Commit();
+        //                     transaction.Commit();
 
-                            return rowsAffected;
+        //                     return rowsAffected;
 
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.ToString());
+        //                 }
+        //                 catch (Exception ex)
+        //                 {
+        //                     Console.WriteLine(ex.ToString());
 
-                            transaction.Rollback();
+        //                     transaction.Rollback();
 
-                            throw new DaoException("An error occurred while deleting the Credential.", ex);
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while deleting the Credential.", ex);
-            }
-        }
+        //                     throw new DaoException("An error occurred while deleting the Credential.", ex);
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while deleting the Credential.", ex);
+        //     }
+        // }
 
         /*  
             **********************************************************************************************

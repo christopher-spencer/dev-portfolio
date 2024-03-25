@@ -10,7 +10,6 @@ namespace Capstone.DAO.Interfaces
                                                 HOBBY CRUD
             **********************************************************************************************
         */
-// TODO HOBBY Controllers****
         Hobby GetHobby(int hobbyId);
         List<Hobby> GetHobbies();
     
@@ -19,7 +18,6 @@ namespace Capstone.DAO.Interfaces
                                           PORTFOLIO HOBBY CRUD
             **********************************************************************************************
         */
-// TODO HOBBY Portfolio Controllers****
         Hobby CreateHobbyByPortfolioId(int portfolioId, Hobby hobby);
         List<Hobby> GetHobbiesByPortfolioId(int portfolioId);    
         Hobby GetHobbyByPortfolioId(int portfolioId, int hobbyId);

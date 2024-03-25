@@ -10,19 +10,17 @@ namespace Capstone.DAO.Interfaces
                                                 CREDENTIAL CRUD
             **********************************************************************************************
         */
-// TODO CREDENTIAL Controllers****
-        Credential CreateCredential(Credential credential);
+        // Credential CreateCredential(Credential credential);
         List<Credential> GetCredentials();
         Credential GetCredential(int credentialId);
-        Credential UpdateCredential(int credentialId, Credential credential);
-        int DeleteCredential(int credentialId);
+        // Credential UpdateCredential(int credentialId, Credential credential);
+        // int DeleteCredential(int credentialId);
         
         /*  
             **********************************************************************************************
                                             PORTFOLIO CREDENTIAL CRUD
             **********************************************************************************************
         */
-// TODO create PORTFOLIO Credential Controllers
         Credential CreateCredentialByPortfolioId(int portfolioId, Credential credential);
         List<Credential> GetCredentialsByPortfolioId(int portfolioId);
         Credential GetCredentialByPortfolioId(int portfolioId, int credentialId);

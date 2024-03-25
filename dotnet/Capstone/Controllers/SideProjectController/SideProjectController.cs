@@ -37,7 +37,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetSideProjectById), new { sideProjectId = createdSideProject.Id }, createdSideProject);
+                    return CreatedAtAction(nameof(GetSideProject), new { sideProjectId = createdSideProject.Id }, createdSideProject);
                 }
             }
             catch (DaoException)
@@ -62,13 +62,13 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/sideproject/{sideProjectId}")]
-        public ActionResult<SideProject> GetSideProjectById(int sideProjectId)
+        public ActionResult<SideProject> GetSideProject(int sideProjectId)
         {
             SideProject sideProject = _sideProjectDao.GetSideProject(sideProjectId);
 
             if (sideProject == null)
             {
-                return NotFound();
+                return BadRequest();
             }
             else
             {
@@ -113,7 +113,7 @@ namespace Capstone.Controllers
                 }
                 else
                 {
-                    return NotFound();
+                    return NoContent();
                 }
             }
             catch (DaoException)
