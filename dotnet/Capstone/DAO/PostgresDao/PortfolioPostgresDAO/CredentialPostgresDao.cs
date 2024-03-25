@@ -45,6 +45,166 @@ namespace Capstone.DAO
                                             CREDENTIAL HELPER METHODS
             **********************************************************************************************
         */
+
+        private int? GetOrganizationLogoIdByCredentialId(int credentialId)
+        {
+            string sql = "SELECT organization_logo_id FROM credentials WHERE id = @credentialId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("credentialId", credentialId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving Organization Logo Id by Credential ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int? GetOrganizationWebsiteIdByCredentialId(int credentialId)
+        {
+            string sql = "SELECT organization_website_id FROM credentials WHERE id = @credentialId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("credentialId", credentialId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving Organization Website Id by Credential ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int? GetCredentialWebsiteIdByCredentialId(int credentialId)
+        {
+            string sql = "SELECT credential_website_id FROM credentials WHERE id = @credentialId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("credentialId", credentialId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving Credential Website Id by Credential ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int? GetMainImageIdByCredentialId(int credentialId)
+        {
+            string sql = "SELECT main_image_id FROM credentials WHERE id = @credentialId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("credentialId", credentialId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving Main Image Id by Credential ID: " + ex.Message);
+                return null;
+            }
+        }
+
+        private int DeleteAssociatedSkillsByCredentialId(int credentialId)
+        {
+            List<Skill> skills = _skillDao.GetSkillsByCredentialId(credentialId);
+
+            int skillsDeletedCount = 0;
+
+            foreach (Skill skill in skills)
+            {
+                int skillId = skill.Id;
+
+                try
+                {
+                    _skillDao.DeleteSkillByCredentialId(credentialId, skillId);
+                    skillsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error deleting Skill by Credential ID: " + ex.Message);
+                }
+            }
+
+            return skillsDeletedCount;
+        }
         
         /*  
             **********************************************************************************************
