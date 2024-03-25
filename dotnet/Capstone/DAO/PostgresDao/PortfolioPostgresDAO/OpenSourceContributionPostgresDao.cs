@@ -683,7 +683,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
 
                         object result = cmd.ExecuteScalar();
 
@@ -717,7 +717,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
 
                         object result = cmd.ExecuteScalar();
 
@@ -751,7 +751,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
 
                         object result = cmd.ExecuteScalar();
 
@@ -785,7 +785,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
 
                         object result = cmd.ExecuteScalar();
 
