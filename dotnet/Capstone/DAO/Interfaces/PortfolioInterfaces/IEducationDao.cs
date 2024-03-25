@@ -16,6 +16,17 @@ namespace Capstone.DAO.Interfaces
         Education GetEducation(int educationId);
         Education UpdateEducation(int educationId, Education education);
         int DeleteEducation(int educationId);
-        
+
+        /*  
+            **********************************************************************************************
+                                            PORTFOLIO EDUCATION CRUD
+            **********************************************************************************************
+        */
+// TODO create PORTFOLIO Education Controllers      
+        Education CreateEducationByPortfolioId(int portfolioId, Education education);
+        List<Education> GetEducationsByPortfolioId(int portfolioId);
+        Education GetEducationByPortfolioId(int portfolioId, int educationId);
+        Education UpdateEducationByPortfolioId(int portfolioId, int educationId, Education education);
+        int DeleteEducationByPortfolioId(int portfolioId, int educationId);
     }
 }

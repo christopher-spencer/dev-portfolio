@@ -46,7 +46,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Location is required to create an Education.");
             }
 
-            if (education.StartDate == DateTime.MinValue|| education.StartDate > DateTime.Now)
+            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
             {
                 throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
             }
@@ -250,7 +250,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
-                        try 
+                        try
                         {
                             int rowsAffected;
 
@@ -310,8 +310,336 @@ namespace Capstone.DAO
                                             PORTFOLIO EDUCATION CRUD
             **********************************************************************************************
         */
-// TODO create PORTFOLIO Education PGDAO, DAO, and Controllers
 
+        public Education CreateEducationByPortfolioId(int portfolioId, Education education)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(education.InstitutionName))
+            {
+                throw new ArgumentException("Institution Name is required to create an Education.");
+            }
+
+            if (string.IsNullOrEmpty(education.Location))
+            {
+                throw new ArgumentException("Location is required to create an Education.");
+            }
+
+            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
+            }
+
+            string insertEducationSql = "INSERT INTO educations (portfolio_id, institution_name, location, description, field_of_study, major, minor, " +
+                         "degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date) " +
+                         "VALUES (@portfolioId, @institutionName, @location, @description, @fieldOfStudy, @major, @minor, @degreeObtained, " +
+                         "@gpaOverall, @gpaInMajor, @startDate, @graduationDate) " +
+                         "RETURNING id;";
+
+            string insertPortfolioEducationSql = "INSERT INTO portfolio_educations (portfolio_id, education_id) VALUES (@portfolioId, @educationId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int educationId;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertEducationSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
+                                cmd.Parameters.AddWithValue("@location", education.Location);
+                                cmd.Parameters.AddWithValue("@description", education.Description);
+                                cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
+                                cmd.Parameters.AddWithValue("@major", education.Major);
+                                cmd.Parameters.AddWithValue("@minor", education.Minor);
+                                cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
+                                cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
+                                cmd.Parameters.AddWithValue("@gpaInMajor", education.GPAInMajor);
+                                cmd.Parameters.AddWithValue("@startDate", education.StartDate);
+                                cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
+                                cmd.Transaction = transaction;
+
+                                educationId = Convert.ToInt32(cmd.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertPortfolioEducationSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@educationId", education.Id);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            education.Id = educationId;
+
+                            return education;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the Education for the Portfolio.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public List<Education> GetEducationsByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID must be greater than zero.");
+            }
+
+            List<Education> educations = new List<Education>();
+
+            string sql = "SELECT e.id, e.institution_name, e.institution_logo_id, e.institution_website_id, e.location, e.description, e.field_of_study, " +
+                         "e.major, e.minor, e.degree_obtained, e.gpa_overall, e.gpa_in_major, e.start_date, e.graduation_date, e.main_image_id " +
+                         "FROM educations e " +
+                         "JOIN portfolio_educations pe ON e.id = pe.education_id " +
+                         "WHERE pe.portfolio_id = @portfolioId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Education education = MapRowToEducation(reader);
+                                educations.Add(education);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving all Educations for the Portfolio.", ex);
+            }
+
+            return educations;
+        }
+
+        public Education GetEducationByPortfolioId(int portfolioId, int educationId)
+        {
+            if (portfolioId <= 0 || educationId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Education ID must be greater than zero.");
+            }
+
+            Education education = null;
+
+            string sql = "SELECT e.id, e.institution_name, e.institution_logo_id, e.institution_website_id, e.location, e.description, e.field_of_study, " +
+                         "e.major, e.minor, e.degree_obtained, e.gpa_overall, e.gpa_in_major, e.start_date, e.graduation_date, e.main_image_id " +
+                         "FROM educations e " +
+                         "JOIN portfolio_educations pe ON e.id = pe.education_id " +
+                         "WHERE pe.portfolio_id = @portfolioId AND e.id = @educationId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@educationId", educationId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                education = MapRowToEducation(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the education for the Portfolio.", ex);
+            }
+
+            return education;
+        }
+
+        public Education UpdateEducationByPortfolioId(int portfolioId, int educationId, Education education)
+        {
+            if (portfolioId <= 0 || educationId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Education ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(education.InstitutionName))
+            {
+                throw new ArgumentException("Institution Name is required to update an Education.");
+            }
+
+            if (string.IsNullOrEmpty(education.Location))
+            {
+                throw new ArgumentException("Location is required to update an Education.");
+            }
+
+            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to update an Education.");
+            }
+
+            string sql = "UPDATE educations SET institution_name = @institutionName, location = @location, description = @description, " +
+                         "field_of_study = @fieldOfStudy, major = @major, minor = @minor, degree_obtained = @degreeObtained, " +
+                         "gpa_overall = @gpaOverall, gpa_in_major = @gpaInMajor, start_date = @startDate, graduation_date = @graduationDate " +
+                         "FROM portfolio_educations pe " +
+                         "WHERE pe.portfolio_id = @portfolioId AND pe.education_id = @educationId AND pe.education_id = educations.id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@educationId", educationId);
+                        cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
+                        cmd.Parameters.AddWithValue("@location", education.Location);
+                        cmd.Parameters.AddWithValue("@description", education.Description);
+                        cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
+                        cmd.Parameters.AddWithValue("@major", education.Major);
+                        cmd.Parameters.AddWithValue("@minor", education.Minor);
+                        cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
+                        cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
+                        cmd.Parameters.AddWithValue("@gpaInMajor", education.GPAInMajor);
+                        cmd.Parameters.AddWithValue("@startDate", education.StartDate);
+                        cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return education;
+                        }
+                    }
+                }
+
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the education by portfolio ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteEducationByPortfolioId(int portfolioId, int educationId)
+        {
+            if (portfolioId <= 0 || educationId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Education ID must be greater than zero.");
+            }
+            
+            string deletePortfolioEducationSql = "DELETE FROM portfolio_educations WHERE portfolio_id = @portfolioId AND education_id = @educationId;";
+            string deleteEducationSql = "DELETE FROM educations WHERE id = @educationId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? institutionLogoId = GetInstitutionLogoIdByEducationId(educationId);
+                            int? mainImageId = GetMainImageIdByEducationId(educationId);
+                            int? institutionWebsiteId = GetWebsiteIdByEducationId(educationId);
+
+                            if (institutionLogoId.HasValue)
+                            {
+                                _imageDao.DeleteImageByEducationId(educationId, institutionLogoId.Value);
+                            }
+
+                            if (mainImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByEducationId(educationId, mainImageId.Value);
+                            }
+
+                            if (institutionWebsiteId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByEducationId(educationId, institutionWebsiteId.Value);
+                            }
+
+                            DeleteHonorsAndAwardsByEducationId(educationId);
+                            DeleteAdditionalImagesByEducationId(educationId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deletePortfolioEducationSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@educationId", educationId);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteEducationSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@educationId", educationId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the Education by Portfolio ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
@@ -321,7 +649,7 @@ namespace Capstone.DAO
 
         private int? GetMainImageIdByEducationId(int educationId)
         {
-            string sql= "SELECT main_image_id FROM educations WHERE id = @educationId;";
+            string sql = "SELECT main_image_id FROM educations WHERE id = @educationId;";
 
             try
             {
@@ -501,7 +829,7 @@ namespace Capstone.DAO
 
             education.HonorsAndAwards = _achievementDao.GetAchievementsByEducationId(educationId);
             education.AdditionalImages = _imageDao.GetAdditionalImagesByEducationId(educationId);
-            
+
             return education;
         }
 

@@ -3,14 +3,18 @@
 BEGIN TRANSACTION;
 
 DROP TABLE IF EXISTS portfolio_websites;
-DROP TABLE IF EXISTS sideproject_websites;
+DROP TABLE IF EXISTS portfolio_work_experiences;
+DROP TABLE IF EXISTS portfolio_educations;
+DROP TABLE IF EXISTS portfolio_credentials;
+DROP TABLE IF EXISTS portfolio_open_source_contributions;
+DROP TABLE IF EXISTS portfolio_volunteer_works;
+DROP TABLE IF EXISTS portfolio_hobbies;
 
+DROP TABLE IF EXISTS sideproject_websites;
 DROP TABLE IF EXISTS sideproject_dependencies_and_libraries;
 DROP TABLE IF EXISTS sideproject_apis_and_services;
 DROP TABLE IF EXISTS sideproject_contributors;
 DROP TABLE IF EXISTS sideproject_goals;
-
-DROP TABLE IF EXISTS portfolio_hobbies;
 
 DROP TABLE IF EXISTS portfolio_skills;
 DROP TABLE IF EXISTS sideproject_skills;
@@ -623,6 +627,46 @@ CREATE TABLE portfolio_websites (
     PRIMARY KEY (portfolio_id, website_id),
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
     FOREIGN KEY (website_id) REFERENCES websites(id)
+);
+
+CREATE TABLE portfolio_educations (
+    portfolio_id INTEGER,
+    education_id INTEGER,
+    PRIMARY KEY (portfolio_id, education_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
+    FOREIGN KEY (education_id) REFERENCES educations(id)
+);
+
+CREATE TABLE portfolio_work_experiences (
+    portfolio_id INTEGER,
+    experience_id INTEGER,
+    PRIMARY KEY (portfolio_id, experience_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
+    FOREIGN KEY (experience_id) REFERENCES work_experiences(id)
+);
+
+CREATE TABLE portfolio_credentials (
+    portfolio_id INTEGER,
+    credential_id INTEGER,
+    PRIMARY KEY (portfolio_id, credential_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
+    FOREIGN KEY (credential_id) REFERENCES credentials(id)
+);
+
+CREATE TABLE portfolio_open_source_contributions (
+    portfolio_id INTEGER,
+    contribution_id INTEGER,
+    PRIMARY KEY (portfolio_id, contribution_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
+    FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id)
+);
+
+CREATE TABLE portfolio_volunteer_works (
+    portfolio_id INTEGER,
+    volunteer_id INTEGER,
+    PRIMARY KEY (portfolio_id, volunteer_id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
+    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id)
 );
 
 INSERT INTO users (username, password_hash, salt, user_role) VALUES ('user', 'Jg45HuwT7PZkfuKTz6IB90CtWY4=', 'LHxP4Xh7bN0=', 'user');
