@@ -220,13 +220,13 @@ CREATE TABLE credentials (
 
 CREATE TABLE open_source_contributions (
     id SERIAL PRIMARY KEY,
-    project_name VARCHAR(125),
-    organization_name VARCHAR(125),
+    project_name VARCHAR(125) NOT NULL,
+    organization_name VARCHAR(125) NOT NULL,
     organization_logo_id INTEGER,
-    start_date TIMESTAMP,
+    start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP,
     project_description VARCHAR(500),
-    contribution_details VARCHAR(500),
+    contribution_details VARCHAR(500) NOT NULL,
     organization_website_id INTEGER,
     organization_github_id INTEGER,
     main_image_id INTEGER,

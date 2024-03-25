@@ -77,8 +77,8 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@startDate", education.StartDate);
                         cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
 
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        education.Id = id;
+                        int educationId = Convert.ToInt32(cmd.ExecuteScalar());
+                        education.Id = educationId;
                     }
                 }
             }
@@ -548,7 +548,6 @@ namespace Capstone.DAO
                         }
                     }
                 }
-
             }
             catch (NpgsqlException ex)
             {

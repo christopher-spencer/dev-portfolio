@@ -36,11 +36,634 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        public OpenSourceContribution CreateOpenSourceContribution(OpenSourceContribution contribution)
+        {
+            if (string.IsNullOrEmpty(contribution.ProjectName))
+            {
+                throw new ArgumentException("Project Name is required to create an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.OrganizationName))
+            {
+                throw new ArgumentException("Organization Name is required to create an Open Source Contribution.");
+            }
+
+            if (contribution.StartDate == DateTime.MinValue || contribution.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.ContributionDetails))
+            {
+                throw new ArgumentException("Contribution Details are required to create an Open Source Contribution.");
+            }
+
+            string sql = "INSERT INTO open_source_contributions (project_name, organization_name, start_date, " +
+                         "end_date, project_description, contribution_details) " +
+                         "VALUES (@projectName, @organizationName, @startDate, @endDate, @projectDescription, " +
+                         "@contributionDetails) " +
+                         "RETURNING id;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@projectName", contribution.ProjectName);
+                        cmd.Parameters.AddWithValue("@organizationName", contribution.OrganizationName);
+                        cmd.Parameters.AddWithValue("@startDate", contribution.StartDate);
+                        cmd.Parameters.AddWithValue("@endDate", contribution.EndDate);
+                        cmd.Parameters.AddWithValue("@projectDescription", contribution.ProjectDescription);
+                        cmd.Parameters.AddWithValue("@contributionDetails", contribution.ContributionDetails);
+
+                        int contributionId = Convert.ToInt32(cmd.ExecuteScalar());
+                        contribution.Id = contributionId;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the Open Source Contribution.", ex);
+            }
+
+            return contribution;
+        }
+
+        public List<OpenSourceContribution> GetOpenSourceContributions()
+        {
+            List<OpenSourceContribution> contributions = new List<OpenSourceContribution>();
+
+            string sql = "SELECT project_name, organization_name, start_date, " +
+                         "end_date, project_description, contribution_details " +
+                         "FROM open_source_contributions;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                OpenSourceContribution contribution = MapRowToOpenSourceContribution(reader);
+                                contributions.Add(contribution);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving all Open Source Contributions.", ex);
+            }
+
+            return contributions;
+        }
+
+        public OpenSourceContribution GetOpenSourceContribution(int contributionId)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("Contribution ID must be greater than zero.");
+            }
+
+            OpenSourceContribution contribution = null;
+
+            string sql = "SELECT project_name, organization_name, start_date, " +
+                         "end_date, project_description, contribution_details " +
+                         "FROM open_source_contributions WHERE id = @contributionId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                contribution = MapRowToOpenSourceContribution(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Open Source Contribution.", ex);
+            }
+
+            return contribution;
+        }
+
+        public OpenSourceContribution UpdateOpenSourceContribution(int contributionId, OpenSourceContribution contribution)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("Contribution ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.ProjectName))
+            {
+                throw new ArgumentException("Project Name is required to update an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.OrganizationName))
+            {
+                throw new ArgumentException("Organization Name is required to update an Open Source Contribution.");
+            }
+
+            if (contribution.StartDate == DateTime.MinValue || contribution.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to update an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.ContributionDetails))
+            {
+                throw new ArgumentException("Contribution Details are required to update an Open Source Contribution.");
+            }
+
+            string sql = "UPDATE open_source_contributions SET project_name = @projectName, " +
+                         "organization_name = @organizationName, start_date = @startDate, " +
+                         "end_date = @endDate, project_description = @projectDescription, " +
+                         "contribution_details = @contributionDetails " +
+                         "WHERE id = @contributionId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@projectName", contribution.ProjectName);
+                        cmd.Parameters.AddWithValue("@organizationName", contribution.OrganizationName);
+                        cmd.Parameters.AddWithValue("@startDate", contribution.StartDate);
+                        cmd.Parameters.AddWithValue("@endDate", contribution.EndDate);
+                        cmd.Parameters.AddWithValue("@projectDescription", contribution.ProjectDescription);
+                        cmd.Parameters.AddWithValue("@contributionDetails", contribution.ContributionDetails);
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return contribution;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the Open Source Contribution.", ex);
+            }
+        }
+
+        public int DeleteOpenSourceContribution(int contributionId)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("Contribution ID must be greater than zero.");
+            }
+
+            string sql = "DELETE FROM open_source_contributions WHERE id = @contributionId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? organizationLogoId = GetOrganizationLogoIdByOpenSourceContributionId(contributionId);
+                            int? organizationWebsiteId = GetOrganizationWebsiteIdByOpenSourceContributionId(contributionId);
+                            int? organizationGitHubId = GetOrganizationGitHubIdByOpenSourceContributionId(contributionId);
+                            int? mainImageId = GetMainImageIdByOpenSourceContributionId(contributionId);
+
+                            if (organizationLogoId.HasValue)
+                            {
+                                _imageDao.DeleteImageByOpenSourceContributionId(contributionId, organizationLogoId.Value);
+
+                            }
+
+                            if (organizationWebsiteId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByOpenSourceContributionId(contributionId, organizationWebsiteId.Value);
+                            }
+
+                            if (organizationGitHubId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByOpenSourceContributionId(contributionId, organizationGitHubId.Value);
+                            }
+
+                            if (mainImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByOpenSourceContributionId(contributionId, mainImageId.Value);
+                            }
+
+                            DeleteReviewCommentsAndFeedbackReceivedByOpenSourceContributionId(contributionId);
+                            DeleteTechSkillsUtilizedByOpenSourceContributionId(contributionId);
+                            DeletePullRequestsLinksByOpenSourceContributionId(contributionId);
+                            DeleteAdditionalImagesByOpenSourceContributionId(contributionId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the Open Source Contribution.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         PORTFOLIO OPEN SOURCE CONTRIBUTION CRUD
             **********************************************************************************************
         */
+
+        public OpenSourceContribution CreateOpenSourceContributionByPortfolioId(int portfolioId, OpenSourceContribution contribution)
+        {
+
+            //FIXME add these null checks in each PGDAO to Helper Method******
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.ProjectName))
+            {
+                throw new ArgumentException("Project Name is required to create an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.OrganizationName))
+            {
+                throw new ArgumentException("Organization Name is required to create an Open Source Contribution.");
+            }
+
+            if (contribution.StartDate == DateTime.MinValue || contribution.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.ContributionDetails))
+            {
+                throw new ArgumentException("Contribution Details are required to create an Open Source Contribution.");
+            }
+
+            string insertContributionSql = "INSERT INTO open_source_contributions (project_name, organization_name, start_date, " +
+                         "end_date, project_description, contribution_details) " +
+                         "VALUES (@projectName, @organizationName, @startDate, @endDate, @projectDescription, " +
+                         "@contributionDetails) " +
+                         "RETURNING id;";
+
+            string insertPortfolioContributionSql = "INSERT INTO portfolio_open_source_contributions (portfolio_id, contribution_id) " +
+                                                    "VALUES (@portfolioId, @contributionId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int contributionId;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertContributionSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@projectName", contribution.ProjectName);
+                                cmd.Parameters.AddWithValue("@organizationName", contribution.OrganizationName);
+                                cmd.Parameters.AddWithValue("@startDate", contribution.StartDate);
+                                cmd.Parameters.AddWithValue("@endDate", contribution.EndDate);
+                                cmd.Parameters.AddWithValue("@projectDescription", contribution.ProjectDescription);
+                                cmd.Parameters.AddWithValue("@contributionDetails", contribution.ContributionDetails);
+                                cmd.Transaction = transaction;
+
+                                contributionId = Convert.ToInt32(cmd.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertPortfolioContributionSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            contribution.Id = contributionId;
+
+                            return contribution;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the Open Source Contribution for the Portfolio.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public List<OpenSourceContribution> GetOpenSourceContributionsByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID must be greater than zero.");
+            }
+
+            List<OpenSourceContribution> contributions = new List<OpenSourceContribution>();
+
+            string sql = "SELECT osc.project_name, osc.organization_name, osc.start_date, " +
+                         "osc.end_date, osc.project_description, osc.contribution_details " +
+                         "FROM open_source_contributions osc " +
+                         "JOIN portfolio_open_source_contributions psc ON osc.id = psc.contribution_id " +
+                         "WHERE psc.portfolio_id = @portfolioId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                OpenSourceContribution contribution = MapRowToOpenSourceContribution(reader);
+                                contributions.Add(contribution);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving all Open Source Contributions for the Portfolio.", ex);
+            }
+
+            return contributions;
+        }
+
+        public OpenSourceContribution GetOpenSourceContributionByPortfolioId(int portfolioId, int contributionId)
+        {
+            if (portfolioId <= 0 || contributionId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Contribution ID must be greater than zero.");
+            }
+
+            OpenSourceContribution contribution = null;
+
+            string sql = "SELECT osc.project_name, osc.organization_name, osc.start_date, " +
+                         "osc.end_date, osc.project_description, osc.contribution_details " +
+                         "FROM open_source_contributions osc " +
+                         "JOIN portfolio_open_source_contributions psc ON osc.id = psc.contribution_id " +
+                         "WHERE psc.portfolio_id = @portfolioId AND osc.id = @contributionId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                contribution = MapRowToOpenSourceContribution(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Open Source Contribution for the Portfolio.", ex);
+            }
+
+            return contribution;
+        }
+
+        public OpenSourceContribution UpdateOpenSourceContributionByPortfolioId(int portfolioId, int contributionId, OpenSourceContribution contribution)
+        {
+            if (portfolioId <= 0 || contributionId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Contribution ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.ProjectName))
+            {
+                throw new ArgumentException("Project Name is required to update an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.OrganizationName))
+            {
+                throw new ArgumentException("Organization Name is required to update an Open Source Contribution.");
+            }
+
+            if (contribution.StartDate == DateTime.MinValue || contribution.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to update an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.ContributionDetails))
+            {
+                throw new ArgumentException("Contribution Details are required to update an Open Source Contribution.");
+            }
+
+            string sql = "UPDATE open_source_contributions SET project_name = @projectName, " +
+                         "organization_name = @organizationName, start_date = @startDate, " +
+                         "end_date = @endDate, project_description = @projectDescription, " +
+                         "contribution_details = @contributionDetails " +
+                         "FROM portfolio_open_source_contributions psc " +
+                         "WHERE psc.portfolio_id = @portfolioId AND psc.contribution_id = @contributionId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@projectName", contribution.ProjectName);
+                        cmd.Parameters.AddWithValue("@organizationName", contribution.OrganizationName);
+                        cmd.Parameters.AddWithValue("@startDate", contribution.StartDate);
+                        cmd.Parameters.AddWithValue("@endDate", contribution.EndDate);
+                        cmd.Parameters.AddWithValue("@projectDescription", contribution.ProjectDescription);
+                        cmd.Parameters.AddWithValue("@contributionDetails", contribution.ContributionDetails);
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return contribution;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the open source contribution by portfolio ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteOpenSourceContributionByPortfolioId(int portfolioId, int contributionId)
+        {
+            if (portfolioId <= 0 || contributionId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Contribution ID must be greater than zero.");
+            }
+
+            string deletePortfolioContributionSql = "DELETE FROM portfolio_open_source_contributions " +
+                                                    "WHERE portfolio_id = @portfolioId " +
+                                                    "AND contribution_id = @contributionId;";
+            
+            string deleteContributionSql = "DELETE FROM open_source_contributions WHERE id = @contributionId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? organizationLogoId = GetOrganizationLogoIdByOpenSourceContributionId(contributionId);
+                            int? organizationWebsiteId = GetOrganizationWebsiteIdByOpenSourceContributionId(contributionId);
+                            int? organizationGitHubId = GetOrganizationGitHubIdByOpenSourceContributionId(contributionId);
+                            int? mainImageId = GetMainImageIdByOpenSourceContributionId(contributionId);
+
+                            if (organizationLogoId.HasValue)
+                            {
+                                _imageDao.DeleteImageByOpenSourceContributionId(contributionId, organizationLogoId.Value);
+
+                            }
+
+                            if (organizationWebsiteId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByOpenSourceContributionId(contributionId, organizationWebsiteId.Value);
+                            }
+
+                            if (organizationGitHubId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByOpenSourceContributionId(contributionId, organizationGitHubId.Value);
+                            }
+
+                            if (mainImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByOpenSourceContributionId(contributionId, mainImageId.Value);
+                            }
+
+                            DeleteReviewCommentsAndFeedbackReceivedByOpenSourceContributionId(contributionId);
+                            DeleteTechSkillsUtilizedByOpenSourceContributionId(contributionId);
+                            DeletePullRequestsLinksByOpenSourceContributionId(contributionId);
+                            DeleteAdditionalImagesByOpenSourceContributionId(contributionId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deletePortfolioContributionSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributionSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@contributionId", contributionId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the Open Source Contribution by Portfolio ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
