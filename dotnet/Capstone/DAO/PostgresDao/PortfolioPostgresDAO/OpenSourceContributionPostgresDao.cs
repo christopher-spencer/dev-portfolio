@@ -54,6 +54,82 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        private OpenSourceContribution MapRowToOpenSourceContribution(NpgsqlDataReader reader)
+        {
+            OpenSourceContribution openSourceContribution = new OpenSourceContribution
+            {
+                Id = Convert.ToInt32(reader["id"]),
+                ProjectName = Convert.ToString(reader["project_name"]),
+                OrganizationName = Convert.ToString(reader["organization_name"]),
+                StartDate = Convert.ToDateTime(reader["start_date"]),
+                EndDate = Convert.ToDateTime(reader["end_date"]),
+                ProjectDescription = Convert.ToString(reader["project_description"]),
+                ContributionDetails = Convert.ToString(reader["contribution_details"])
+            };
+
+            int contributionId = openSourceContribution.Id;
+
+
+
+            return openSourceContribution;
+        }
+
+        private void SetOpenSourceContributionLogoIdProperties(NpgsqlDataReader reader, OpenSourceContribution contribution, int contributionId)
+        {
+            if (reader["organization_logo_id"] != DBNull.Value)
+            {
+                contribution.OrganizationLogoId = Convert.ToInt32(reader["organization_logo_id"]);
+
+                contribution.OrganizationLogo = _imageDao.GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, Logo);
+            }
+            else
+            {
+                contribution.OrganizationLogoId = 0;
+            }
+        }
+
+        private void SetOpenSourceContributionOrganizationWebsiteIdProperties(NpgsqlDataReader reader, OpenSourceContribution contribution, int contributionId)
+        {
+            if (reader["organization_website_id"] != DBNull.Value)
+            {
+                contribution.OrganizationWebsiteId = Convert.ToInt32(reader["organization_website_id"]);
+
+                contribution.OrganizationWebsite = _websiteDao.GetWebsiteByOpenSourceContributionId(contributionId, contribution.OrganizationWebsiteId);
+            }
+            else
+            {
+                contribution.OrganizationWebsiteId = 0;
+            }
+        }
+
+        private void SetOpenSourceContributionOrganizationGitHubIdProperties(NpgsqlDataReader reader, OpenSourceContribution contribution, int contributionId)
+        {
+            if (reader["organization_github_id"] != DBNull.Value)
+            {
+                contribution.OrganizationGitHubId = Convert.ToInt32(reader["organization_github_id"]);
+
+                contribution.OrganizationGitHubRepo = _websiteDao.GetWebsiteByOpenSourceContributionId(contributionId, contribution.OrganizationGitHubId);
+            }
+            else
+            {
+                contribution.OrganizationGitHubId = 0;
+            }
+        }
+
+        private void SetOpenSourceContributionMainImageIdProperties(NpgsqlDataReader reader, OpenSourceContribution contribution, int contributionId)
+        {
+            if (reader["main_image_id"] != DBNull.Value)
+            {
+                contribution.MainImageId = Convert.ToInt32(reader["main_image_id"]);
+
+                contribution.MainImage = _imageDao.GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, MainImage);
+            }
+            else
+            {
+                contribution.MainImageId = 0;
+            }
+        }
+
 
     }
 }
