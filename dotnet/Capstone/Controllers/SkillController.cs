@@ -54,7 +54,7 @@ namespace Capstone.Controllers
 
             if (skill == null)
             {
-                return NotFound();
+                return BadRequest();
             }
             else
             {
