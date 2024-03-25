@@ -286,7 +286,6 @@ namespace Capstone.DAO
                             transaction.Commit();
 
                             return rowsAffected;
-
                         }
                         catch (Exception ex)
                         {

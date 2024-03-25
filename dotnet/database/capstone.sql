@@ -238,13 +238,13 @@ CREATE TABLE open_source_contributions (
 
 CREATE TABLE volunteer_works (
     id SERIAL PRIMARY KEY,
-    organization_name VARCHAR(125),
+    organization_name VARCHAR(125) NOT NULL,
     organization_logo_id INTEGER,
     location VARCHAR(100),
     organization_description VARCHAR(500),
     organization_website_id INTEGER,
-    position_title VARCHAR(100),
-    start_date TIMESTAMP,
+    position_title VARCHAR(100) NOT NULL,
+    start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP,
     main_image_id INTEGER,
     FOREIGN KEY (organization_logo_id) REFERENCES images(id),
