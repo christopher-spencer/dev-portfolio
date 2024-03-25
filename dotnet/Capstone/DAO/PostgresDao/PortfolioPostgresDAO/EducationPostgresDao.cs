@@ -333,9 +333,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
             }
 
-            string insertEducationSql = "INSERT INTO educations (portfolio_id, institution_name, location, description, field_of_study, major, minor, " +
+            string insertEducationSql = "INSERT INTO educations (institution_name, location, description, field_of_study, major, minor, " +
                          "degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date) " +
-                         "VALUES (@portfolioId, @institutionName, @location, @description, @fieldOfStudy, @major, @minor, @degreeObtained, " +
+                         "VALUES (@institutionName, @location, @description, @fieldOfStudy, @major, @minor, @degreeObtained, " +
                          "@gpaOverall, @gpaInMajor, @startDate, @graduationDate) " +
                          "RETURNING id;";
 
@@ -355,7 +355,6 @@ namespace Capstone.DAO
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(insertEducationSql, connection))
                             {
-                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
                                 cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
                                 cmd.Parameters.AddWithValue("@location", education.Location);
                                 cmd.Parameters.AddWithValue("@description", education.Description);
