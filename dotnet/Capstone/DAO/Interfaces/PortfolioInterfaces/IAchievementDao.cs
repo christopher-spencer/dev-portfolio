@@ -10,7 +10,6 @@ namespace Capstone.DAO.Interfaces
                                                 ACHIEVEMENT CRUD
             **********************************************************************************************
         */
-// TODO ACHIEVEMENT Controllers****
         Achievement GetAchievement(int achievementId);
         List<Achievement> GetAchievements();
     
@@ -19,7 +18,6 @@ namespace Capstone.DAO.Interfaces
                                           WORK EXPERIENCE ACHIEVEMENT CRUD
             **********************************************************************************************
         */
-// TODO ACHIEVEMENT Experience Controllers****
         Achievement CreateAchievementByWorkExperienceId(int experienceId, Achievement achievement);
         List<Achievement> GetAchievementsByWorkExperienceId(int experienceId);
         Achievement GetAchievementByWorkExperienceId(int experienceId, int achievementId);
@@ -31,29 +29,28 @@ namespace Capstone.DAO.Interfaces
                                           EDUCATION ACHIEVEMENT CRUD
             **********************************************************************************************
         */
-// TODO ACHIEVEMENT Education Controllers****
         Achievement CreateAchievementByEducationId(int educationId, Achievement achievement);
         List<Achievement> GetAchievementsByEducationId(int educationId);    
         Achievement GetAchievementByEducationId(int educationId, int achievementId);
         Achievement UpdateAchievementByEducationId(int educationId, int achievementId, Achievement achievement);
         int DeleteAchievementByEducationId(int educationId, int achievementId);
+
         /*  
             **********************************************************************************************
                                     OPEN SOURCE CONTRIBUTION ACHIEVEMENT CRUD
             **********************************************************************************************
         */
-// TODO ACHIEVEMENT Contribution Controllers****
         Achievement CreateAchievementByOpenSourceContributionId(int contributionId, Achievement achievement);
         List<Achievement> GetAchievementsByOpenSourceContributionId(int contributionId);
         Achievement GetAchievementByOpenSourceContributionId(int contributionId, int achievementId);
         Achievement UpdateAchievementByOpenSourceContributionId(int contributionId, int achievementId, Achievement achievement);
         int DeleteAchievementByOpenSourceContributionId(int contributionId, int achievementId);
+
         /*  
             **********************************************************************************************
                                             VOLUNTEER WORK ACHIEVEMENT CRUD
             **********************************************************************************************
         */
-// TODO ACHIEVEMENT Volunteer Controllers****
         Achievement CreateAchievementByVolunteerWorkId(int volunteerId, Achievement achievement);
         List<Achievement> GetAchievementsByVolunteerWorkId(int volunteerId);
         Achievement GetAchievementByVolunteerWorkId(int volunteerId, int achievementId);
