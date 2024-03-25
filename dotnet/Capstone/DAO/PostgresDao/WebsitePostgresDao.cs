@@ -1447,6 +1447,48 @@ namespace Capstone.DAO
             return website;
         }
 
+        public List<Website> GetWebsitesByOpenSourceContributionId(int contributionId)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("ContributionId must be greater than zero.");
+            }
+
+            List<Website> websites = new List<Website>();
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN open_source_contribution_websites ocw ON w.id = ocw.website_id " +
+                         "WHERE ocw.contribution_id = @contributionId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                websites.Add(MapRowToWebsite(reader));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the websites by Open Source Contribution ID.", ex);
+            }
+
+            return websites;
+        }
+
         public Website UpdateWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website)
         {
             if (contributionId <= 0 || websiteId <= 0)

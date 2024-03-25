@@ -69,7 +69,15 @@ namespace Capstone.DAO
 
             int contributionId = openSourceContribution.Id;
 
+            SetOpenSourceContributionLogoIdProperties(reader, openSourceContribution, contributionId);
+            SetOpenSourceContributionOrganizationWebsiteIdProperties(reader, openSourceContribution, contributionId);
+            SetOpenSourceContributionOrganizationGitHubIdProperties(reader, openSourceContribution, contributionId);
+            SetOpenSourceContributionMainImageIdProperties(reader, openSourceContribution, contributionId);
 
+            openSourceContribution.TechSkillsUtilized = _skillDao.GetSkillsByOpenSourceContributionId(contributionId);
+            openSourceContribution.PullRequestsLinks = _websiteDao.GetWebsitesByOpenSourceContributionId(contributionId);
+            openSourceContribution.ReviewCommentsAndFeedbackReceived = _achievementDao.GetAchievementsByOpenSourceContributionId(contributionId);
+            openSourceContribution.AdditionalImages = _imageDao.GetAdditionalImagesByOpenSourceContributionId(contributionId);
 
             return openSourceContribution;
         }
