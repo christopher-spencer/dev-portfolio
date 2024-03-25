@@ -851,6 +851,50 @@ namespace Capstone.DAO
             return image;
         }
 
+        public List<Image> GetAdditionalImagesByWorkExperienceId(int experienceId)
+        {
+            if (experienceId <= 0)
+            {
+                throw new ArgumentException("ExperienceId must be greater than zero.");
+            }
+
+            List<Image> additionalImages = new List<Image>();
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN work_experience_images ei ON i.id = ei.image_id " +
+                         "WHERE ei.experience_id = @experienceId AND i.type = @imageType;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@experienceId", experienceId);
+                        cmd.Parameters.AddWithValue("@imageType", AdditionalImage);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Image image = MapRowToImage(reader);
+                                additionalImages.Add(image);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the additional images by work experience ID.", ex);
+            }
+
+            return additionalImages;
+        }
+
         public Image UpdateImageByWorkExperienceId(int experienceId, int imageId, Image image)
         {
             if (experienceId <= 0 || imageId <= 0)

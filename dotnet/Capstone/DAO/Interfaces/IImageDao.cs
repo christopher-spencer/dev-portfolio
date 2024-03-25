@@ -41,6 +41,7 @@ namespace Capstone.DAO.Interfaces
         Image CreateImageByWorkExperienceId(int experienceId, Image image);
         Image GetMainImageOrCompanyLogoByWorkExperienceId(int experienceId, string imageType);
         Image GetImageByWorkExperienceId(int experienceId, int imageId);
+        List<Image> GetAdditionalImagesByWorkExperienceId(int experienceId);
         Image UpdateImageByWorkExperienceId(int experienceId, int imageId, Image image);
         Image UpdateMainImageOrLogoByWorkExperienceId(int experienceId, int imageId, Image image);
         int DeleteImageByWorkExperienceId(int experienceId, int imageId);
