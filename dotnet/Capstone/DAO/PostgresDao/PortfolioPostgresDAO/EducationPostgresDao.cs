@@ -373,7 +373,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmd = new NpgsqlCommand(insertPortfolioEducationSql, connection))
                             {
                                 cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
-                                cmd.Parameters.AddWithValue("@educationId", education.Id);
+                                cmd.Parameters.AddWithValue("@educationId", educationId);
                                 cmd.Transaction = transaction;
                                 cmd.ExecuteNonQuery();
                             }
@@ -563,7 +563,10 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID and Education ID must be greater than zero.");
             }
             
-            string deletePortfolioEducationSql = "DELETE FROM portfolio_educations WHERE portfolio_id = @portfolioId AND education_id = @educationId;";
+            string deletePortfolioEducationSql = "DELETE FROM portfolio_educations " +
+                                                 "WHERE portfolio_id = @portfolioId " +
+                                                 "AND education_id = @educationId;";
+                                                 
             string deleteEducationSql = "DELETE FROM educations WHERE id = @educationId;";
 
             try

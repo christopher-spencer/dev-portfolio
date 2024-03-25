@@ -284,7 +284,7 @@ namespace Capstone.DAO
                             Console.WriteLine(ex.ToString());
 
                             transaction.Rollback();
-                            
+
                             throw new DaoException("An error occurred while deleting the Volunteer Work.", ex);
                         }
                     }
@@ -301,6 +301,330 @@ namespace Capstone.DAO
                                         PORTFOLIO VOLUNTEER WORK CRUD
             **********************************************************************************************
         */
+
+        public VolunteerWork CreateVolunteerWorkByPortfolioId(int portfolioId, VolunteerWork volunteerWork)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
+            {
+                throw new ArgumentException("Organization Name is required to create a Volunteer Work.");
+            }
+
+            if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
+            {
+                throw new ArgumentException("Position Title is required to create a Volunteer Work.");
+            }
+
+            if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create a Volunteer Work.");
+            }
+
+            string insertVolunteerWorkSql = "INSERT INTO volunteer_works (organization_name, location, " +
+                                             "organization_description, position_title, start_date, end_date) " +
+                                             "VALUES (@organizationName, @location, @organizationDescription, " +
+                                             "@positionTitle, @startDate, @endDate) " +
+                                             "RETURNING id;";
+
+            string insertPortfolioVolunteerWorkSql = "INSERT INTO portfolio_volunteer_works (portfolio_id, " +
+                                                     "volunteer_id) " +
+                                                     "VALUES (@portfolioId, @volunteerWorkId);";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int volunteerWorkId;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertVolunteerWorkSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@organizationName", volunteerWork.OrganizationName);
+                                cmd.Parameters.AddWithValue("@location", volunteerWork.Location);
+                                cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription);
+                                cmd.Parameters.AddWithValue("@positionTitle", volunteerWork.PositionTitle);
+                                cmd.Parameters.AddWithValue("@startDate", volunteerWork.StartDate);
+                                cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate);
+                                cmd.Transaction = transaction;
+
+                                volunteerWorkId = Convert.ToInt32(cmd.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertPortfolioVolunteerWorkSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            volunteerWork.Id = volunteerWorkId;
+
+                            return volunteerWork;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the Volunteer Work for the Portfolio.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public List<VolunteerWork> GetVolunteerWorksByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID must be greater than zero.");
+            }
+
+            List<VolunteerWork> volunteerWorks = new List<VolunteerWork>();
+
+            string sql = "SELECT vw.id, vw.organization_name, vw.location, vw.organization_description, " +
+                         "vw.position_title, vw.start_date, vw.end_date " +
+                         "FROM volunteer_works vw " +
+                         "JOIN portfolio_volunteer_works pvw ON vw.id = pvw.volunteer_id " +
+                         "WHERE pvw.portfolio_id = @portfolioId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                VolunteerWork volunteerWork = MapRowToVolunteerWork(reader);
+                                volunteerWorks.Add(volunteerWork);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving all Volunteer Works for the Portfolio.", ex);
+            }
+
+            return volunteerWorks;
+        }
+
+        public VolunteerWork GetVolunteerWorkByPortfolioId(int portfolioId, int volunteerWorkId)
+        {
+            if (portfolioId <= 0 || volunteerWorkId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Volunteer Work ID must be greater than zero.");
+            }
+
+            VolunteerWork volunteerWork = null;
+
+            string sql = "SELECT vw.id, vw.organization_name, vw.location, vw.organization_description, " +
+                         "vw.position_title, vw.start_date, vw.end_date " +
+                         "FROM volunteer_works vw " +
+                         "JOIN portfolio_volunteer_works pvw ON vw.id = pvw.volunteer_id " +
+                         "WHERE pvw.portfolio_id = @portfolioId AND vw.id = @volunteerWorkId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                volunteerWork = MapRowToVolunteerWork(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Volunteer Work for the Portfolio.", ex);
+            }
+
+            return volunteerWork;
+        }
+
+        public VolunteerWork UpdateVolunteerWorkByPortfolioId(int portfolioId, int volunteerWorkId, VolunteerWork volunteerWork)
+        {
+            if (portfolioId <= 0 || volunteerWorkId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Volunteer Work ID must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
+            {
+                throw new ArgumentException("Organization Name is required to update a Volunteer Work.");
+            }
+
+            if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
+            {
+                throw new ArgumentException("Position Title is required to update a Volunteer Work.");
+            }
+
+            if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to update a Volunteer Work.");
+            }
+
+            string sql = "UPDATE volunteer_works SET organization_name = @organizationName, location = @location, " +
+                         "organization_description = @organizationDescription, position_title = @positionTitle, " +
+                         "start_date = @startDate, end_date = @endDate " +
+                         "FROM portfolio_volunteer_works pvw " +
+                         "WHERE pvw.portfolio_id = @portfolioId AND pvw.volunteer_id = @volunteerWorkId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                        cmd.Parameters.AddWithValue("@organizationName", volunteerWork.OrganizationName);
+                        cmd.Parameters.AddWithValue("@location", volunteerWork.Location);
+                        cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription);
+                        cmd.Parameters.AddWithValue("@positionTitle", volunteerWork.PositionTitle);
+                        cmd.Parameters.AddWithValue("@startDate", volunteerWork.StartDate);
+                        cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return volunteerWork;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the Volunteer Work for the Portfolio.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteVolunteerWorkByPortfolioId(int portfolioId, int volunteerWorkId)
+        {
+            if (portfolioId <= 0 || volunteerWorkId <= 0)
+            {
+                throw new ArgumentException("Portfolio ID and Volunteer Work ID must be greater than zero.");
+            }
+
+            string deletePortfolioVolunteerWorkSql = "DELETE FROM portfolio_volunteer_works " +
+                                                     "WHERE portfolio_id = @portfolioId " +
+                                                     "AND volunteer_id = @volunteerWorkId;";
+
+            string deleteVolunteerWorkSql = "DELETE FROM volunteer_works " +
+                                             "WHERE id = @volunteerWorkId;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? mainImageId = GetMainImageIdByVolunteerWorkId(volunteerWorkId);
+                            int? organizationLogoId = GetOrganizationLogoIdByVolunteerWorkId(volunteerWorkId);
+                            int? organizationWebsiteId = GetOrganizationWebsiteIdByVolunteerWorkId(volunteerWorkId);
+
+                            if (mainImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByVolunteerWorkId(volunteerWorkId, mainImageId.Value);
+                            }
+
+                            if (organizationLogoId.HasValue)
+                            {
+                                _imageDao.DeleteImageByVolunteerWorkId(volunteerWorkId, organizationLogoId.Value);
+                            }
+
+                            if (organizationWebsiteId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByVolunteerWorkId(volunteerWorkId, organizationWebsiteId.Value);
+                            }
+
+                            DeleteResponsibilitiesAndAchievementsByVolunteerWorkId(volunteerWorkId);
+                            DeleteSkillsUsedAndObtainedByVolunteerWorkId(volunteerWorkId);
+                            DeleteAdditionalImagesByVolunteerWorkId(volunteerWorkId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deletePortfolioVolunteerWorkSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteVolunteerWorkSql, connection))
+                            {
+                                cmd.Transaction = transaction;
+                                cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the Volunteer Work for the Portfolio.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
