@@ -244,7 +244,91 @@ namespace Capstone.Controllers
                                         WORK EXPERIENCE WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO WEBSITE Experience Controllers****
+
+        [Authorize]
+        [HttpPost("/work-experience/{experienceId}/create-website")]
+        public ActionResult CreateWebsiteByWorkExperienceId(int experienceId, Website website)
+        {
+            try
+            {
+                Website createdWebsite = _websiteDao.CreateWebsiteByWorkExperienceId(experienceId, website);
+
+                if (createdWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetWebsiteByWorkExperienceId), new { experienceId, websiteId = createdWebsite.Id }, createdWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the work experience website.");
+            }
+        }
+
+        [HttpGet("/work-experience/{experienceId}/website")]
+        public ActionResult<Website> GetWebsiteByWorkExperienceId(int experienceId)
+        {
+            Website website = _websiteDao.GetWebsiteByWorkExperienceId(experienceId);
+
+            if (website == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(website);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/work-experience/{experienceId}/update-website/{websiteId}")]
+        public ActionResult UpdateWebsiteByWorkExperienceId(int experienceId, int websiteId, Website website)
+        {
+            try
+            {
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByWorkExperienceId(experienceId, websiteId, website);
+
+                if (updatedWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the work experience website.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/work-experience/{experienceId}/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsiteByWorkExperienceId(int experienceId, int websiteId)
+        {
+            try
+            {
+                int rowsAffected = _websiteDao.DeleteWebsiteByWorkExperienceId(experienceId, websiteId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Work experience website deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the work experience website.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         CREDENTIAL WEBSITE CRUD CONTROLLER
