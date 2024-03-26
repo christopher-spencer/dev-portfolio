@@ -725,7 +725,91 @@ namespace Capstone.Controllers
                                         VOLUNTEER WORK WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO WEBSITE VolunteerWork Controllers****
+
+        [Authorize]
+        [HttpPost("/volunteer-work/{volunteerWorkId}/create-website")]
+        public ActionResult CreateWebsiteByVolunteerWorkId(int volunteerWorkId, Website website)
+        {
+            try
+            {
+                Website createdWebsite = _websiteDao.CreateWebsiteByVolunteerWorkId(volunteerWorkId, website);
+
+                if (createdWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetWebsiteByVolunteerWorkId), new { volunteerWorkId, websiteId = createdWebsite.Id }, createdWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the volunteer work website.");
+            }
+        }
+
+        [HttpGet("/volunteer-work/{volunteerWorkId}/website")]
+        public ActionResult<Website> GetWebsiteByVolunteerWorkId(int volunteerWorkId)
+        {
+            Website website = _websiteDao.GetWebsiteByVolunteerWorkId(volunteerWorkId);
+
+            if (website == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(website);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/volunteer-work/{volunteerWorkId}/update-website/{websiteId}")]
+        public ActionResult UpdateWebsiteByVolunteerWorkId(int volunteerWorkId, int websiteId, Website website)
+        {
+            try
+            {
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByVolunteerWorkId(volunteerWorkId, websiteId, website);
+
+                if (updatedWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the volunteer work website.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/volunteer-work/{volunteerWorkId}/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsiteByVolunteerWorkId(int volunteerWorkId, int websiteId)
+        {
+            try
+            {
+                int rowsAffected = _websiteDao.DeleteWebsiteByVolunteerWorkId(volunteerWorkId, websiteId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Volunteer work website deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the volunteer work website.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         ACHIEVEMENT WEBSITE CRUD CONTROLLER
