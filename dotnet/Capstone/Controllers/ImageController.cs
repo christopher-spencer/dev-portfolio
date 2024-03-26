@@ -21,6 +21,7 @@ namespace Capstone.Controllers
 
         const string MainImage = "main image";
         const string AdditionalImage = "additional image";
+        const string Logo = "logo";
 
         /*  
             **********************************************************************************************
@@ -28,28 +29,28 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */ 
 
-        [Authorize]
-        [HttpPost("/create-image")]
-        public ActionResult CreateImage(Image image)
-        {
-            try
-            {
-                Image createdImage = _imageDao.CreateImage(image);
+        // [Authorize]
+        // [HttpPost("/create-image")]
+        // public ActionResult CreateImage(Image image)
+        // {
+        //     try
+        //     {
+        //         Image createdImage = _imageDao.CreateImage(image);
 
-                if (createdImage == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return CreatedAtAction(nameof(GetImage), new { imageId = createdImage.Id }, createdImage);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while creating the image.");
-            }
-        }
+        //         if (createdImage == null)
+        //         {
+        //             return BadRequest();
+        //         }
+        //         else
+        //         {
+        //             return CreatedAtAction(nameof(GetImage), new { imageId = createdImage.Id }, createdImage);
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while creating the image.");
+        //     }
+        // }
 
         [HttpGet("/image/{imageId}")]
         public ActionResult<Image> GetImage(int imageId)
@@ -81,13 +82,160 @@ namespace Capstone.Controllers
             }
         }
 
+        // [Authorize]
+        // [HttpPut("/update-image/{imageId}/")]
+        // public ActionResult UpdateImage(Image image, int imageId)
+        // {
+        //     try
+        //     {
+        //         Image updatedImage = _imageDao.UpdateImage(image, imageId);
+
+        //         if (updatedImage == null)
+        //         {
+        //             return BadRequest();
+        //         }
+        //         else
+        //         {
+        //             return Ok(updatedImage);
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while updating the image.");
+        //     }
+        // }
+
+        // [Authorize]
+        // [HttpDelete("/delete-image/{imageId}")]
+        // public ActionResult DeleteImage(int imageId)
+        // {
+        //     try
+        //     {
+        //         int rowsAffected = _imageDao.DeleteImage(imageId);
+
+        //         if (rowsAffected > 0)
+        //         {
+        //             return Ok("Image deleted successfully.");
+        //         }
+        //         else
+        //         {
+        //             return NotFound();
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while deleting the image.");
+        //     }
+        // }
+
+        /*  
+            **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
+                                        PORTFOLIO IMAGE CRUD CONTROLLER
+            **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
+        */
+
         [Authorize]
-        [HttpPut("/update-image/{imageId}/")]
-        public ActionResult UpdateImage(Image image, int imageId)
+        [HttpPost("/portfolio/{portfolioId}/create-image")]
+        public ActionResult CreateImageByPortfolioId(int portfolioId, Image image)
+        {
+
+            string imageType = image.Type.ToLower();
+
+            if (imageType != MainImage && imageType != AdditionalImage)
+            {
+                return BadRequest("Invalid image type. Allowed values are 'main image' and 'additional image'.");
+            }
+
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByPortfolioId(portfolioId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetImageByPortfolioId), new { portfolioId, imageId = createdImage.Id }, createdImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the portfolio image.");
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/main-image")]
+        public ActionResult GetMainImageByPortfolioId(int portfolioId)
+        {
+            Image mainImage = _imageDao.GetMainImageByPortfolioId(portfolioId);
+
+            if (mainImage == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(mainImage);
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/image/{imageId}")]
+        public ActionResult<Image> GetImageByPortfolioId(int portfolioId, int imageId)
+        {
+            Image image = _imageDao.GetImageByPortfolioId(portfolioId, imageId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/all-images")]
+        public ActionResult GetAllImagesByPortfolioId(int portfolioId)
+        {
+            List<Image> images = _imageDao.GetAllImagesByPortfolioId(portfolioId);
+
+            if (images == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(images);
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/additional-images")]
+        public ActionResult GetAdditionalImagesByPortfolioId(int portfolioId)
+        {
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByPortfolioId(portfolioId);
+
+            if (additionalImages == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(additionalImages);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/portfolio/{portfolioId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByPortfolioId(int portfolioId, int imageId, Image image)
         {
             try
             {
-                Image updatedImage = _imageDao.UpdateImage(image, imageId);
+                Image updatedImage = _imageDao.UpdateImageByPortfolioId(portfolioId, imageId, image);
 
                 if (updatedImage == null)
                 {
@@ -100,17 +248,53 @@ namespace Capstone.Controllers
             }
             catch (DaoException)
             {
-                return StatusCode(500, "An error occurred while updating the image.");
+                return StatusCode(500, "An error occurred while updating the portfolio image.");
             }
         }
 
         [Authorize]
-        [HttpDelete("/delete-image/{imageId}")]
-        public ActionResult DeleteImage(int imageId)
+        [HttpPut("/portfolio/{portfolioId}/update-main-image/{mainImageId}")]
+        public ActionResult UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage)
         {
             try
             {
-                int rowsAffected = _imageDao.DeleteImage(imageId);
+                Image updatedMainImage = _imageDao.UpdateMainImageByPortfolioId(portfolioId, mainImageId, mainImage);
+
+                if (updatedMainImage == null)
+                {
+                    return BadRequest("The image is null. Please provide a main image.");
+                }
+                else if (updatedMainImage.Type != MainImage)
+                {
+                    return BadRequest("The provided image is not a main image. Please provide a main image.");
+                }
+                else
+                {
+                    return Ok(updatedMainImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the portfolio main image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/portfolio/{portfolioId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByPortfolioId(int portfolioId, int imageId)
+        {
+            Image image = _imageDao.GetImageByPortfolioId(portfolioId, imageId);
+
+            string imageType = image.Type.ToLower();
+
+            if (imageType != MainImage && imageType != AdditionalImage)
+            {
+                return BadRequest("Invalid imageType. Allowed values are 'main image' and 'additional image'.");
+            }
+
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByPortfolioId(portfolioId, imageId);
 
                 if (rowsAffected > 0)
                 {
@@ -123,20 +307,10 @@ namespace Capstone.Controllers
             }
             catch (DaoException)
             {
-                return StatusCode(500, "An error occurred while deleting the image.");
+                return StatusCode(500, "An error occurred while deleting the portfolio image.");
             }
         }
 
-        /*  
-            **********************************************************************************************
-            **********************************************************************************************
-            **********************************************************************************************
-                                        PORTFOLIO IMAGE CRUD CONTROLLER
-            **********************************************************************************************
-            **********************************************************************************************
-            **********************************************************************************************
-        */
-// TODO IMAGE Portfolio Controllers****
         /*   
             **********************************************************************************************
                                       WORK EXPERIENCE IMAGE CRUD CONTROLLER
@@ -358,7 +532,7 @@ namespace Capstone.Controllers
             }
             catch (DaoException)
             {
-                return StatusCode(500, "An error occurred while deleting the blog post.");
+                return StatusCode(500, "An error occurred while deleting the blog post image.");
             }
         }
 

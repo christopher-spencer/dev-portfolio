@@ -10,11 +10,11 @@ namespace Capstone.DAO.Interfaces
                                                     IMAGE CRUD
             **********************************************************************************************
         */
-        Image CreateImage(Image image);
+        // Image CreateImage(Image image);
         Image GetImage(int imageId);
         List<Image> GetImages();
-        Image UpdateImage(Image image, int imageId);
-        int DeleteImage(int imageId);
+        // Image UpdateImage(Image image, int imageId);
+        // int DeleteImage(int imageId);
 
         /*  
             **********************************************************************************************
