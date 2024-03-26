@@ -25,6 +25,7 @@ namespace Capstone.DAO
         const string GitHub = "github";
         const string PortfolioLink = "portfolio link";
         const string LinkedIn = "linkedin";
+        const string PullRequestLink = "pull request link";
 
         /*  
             **********************************************************************************************
@@ -1332,7 +1333,7 @@ namespace Capstone.DAO
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertContributionWebsiteSql = "INSERT INTO open_source_contribution_websites (contribution_id, website_id) VALUES (@contributionId, @websiteId);";
 
-            string updateContributionWebsiteIdSql;
+            string updateContributionWebsiteIdSql = null;
 
             switch (website.Type)
             {
@@ -1341,6 +1342,8 @@ namespace Capstone.DAO
                     break;
                 case GitHub:
                     updateContributionWebsiteIdSql = "UPDATE open_source_contributions SET organization_github_id = @websiteId WHERE id = @contributionId;";
+                    break;
+                case PullRequestLink:
                     break;
                 default:
                     throw new ArgumentException("Invalid website type.");
@@ -1356,6 +1359,30 @@ namespace Capstone.DAO
                     {
                         try
                         {
+                            Website existingMainWebsite = null;
+
+                            if (website.Type == MainWebsite)
+                            {
+                                existingMainWebsite = GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, MainWebsite);
+
+                                if (existingMainWebsite != null)
+                                {
+                                    throw new DaoException("Main website already exists for this open source contribution.");
+                                }
+                            }
+
+                            Website existingGitHub = null;
+
+                            if (website.Type == GitHub)
+                            {
+                                existingGitHub = GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, GitHub);
+
+                                if (existingGitHub != null)
+                                {
+                                    throw new DaoException("GitHub already exists for this open source contribution.");
+                                }
+                            }
+
                             int websiteId;
 
                             using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
@@ -1375,12 +1402,15 @@ namespace Capstone.DAO
                                 cmdInsertContributionWebsite.ExecuteNonQuery();
                             }
 
-                            using (NpgsqlCommand cmdUpdateContribution = new NpgsqlCommand(updateContributionWebsiteIdSql, connection))
+                            if ((website.Type == MainWebsite && existingMainWebsite == null) || (website.Type == GitHub && existingGitHub == null))
                             {
-                                cmdUpdateContribution.Parameters.AddWithValue("@contributionId", contributionId);
-                                cmdUpdateContribution.Parameters.AddWithValue("@websiteId", websiteId);
-                                cmdUpdateContribution.Transaction = transaction;
-                                cmdUpdateContribution.ExecuteNonQuery();
+                                using (NpgsqlCommand cmdUpdateContribution = new NpgsqlCommand(updateContributionWebsiteIdSql, connection))
+                                {
+                                    cmdUpdateContribution.Parameters.AddWithValue("@contributionId", contributionId);
+                                    cmdUpdateContribution.Parameters.AddWithValue("@websiteId", websiteId);
+                                    cmdUpdateContribution.Transaction = transaction;
+                                    cmdUpdateContribution.ExecuteNonQuery();
+                                }
                             }
 
                             transaction.Commit();
@@ -1393,7 +1423,7 @@ namespace Capstone.DAO
                         {
                             transaction.Rollback();
 
-                            throw new DaoException("An error occurred while creating the website by open source contribution ID.", ex);
+                            throw new DaoException("An error occurred while creating the organization website or github or pull request link by open source contribution ID.", ex);
                         }
                     }
                 }
@@ -1447,7 +1477,55 @@ namespace Capstone.DAO
             return website;
         }
 
-        public List<Website> GetWebsitesByOpenSourceContributionId(int contributionId)
+        public Website GetMainWebsiteOrGitHubByOpenSourceContributionId(int contributionId, string websiteType)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("ContributionId must be greater than zero.");
+            }
+
+            if (websiteType != MainWebsite && websiteType != GitHub)
+            {
+                throw new ArgumentException("Website Type must be either 'main website' or 'github'.");
+            }
+
+            Website mainWebsiteOrGitHub = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN open_source_contribution_websites ocw ON w.id = ocw.website_id " +
+                         "WHERE ocw.contribution_id = @contributionId AND w.type = @websiteType;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@websiteType", websiteType);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainWebsiteOrGitHub = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the main website or GitHub by Open Source Contribution ID.", ex);
+            }
+
+            return mainWebsiteOrGitHub;
+        }
+
+        public List<Website> GetAllWebsitesByOpenSourceContributionId(int contributionId)
         {
             if (contributionId <= 0)
             {
@@ -1487,6 +1565,49 @@ namespace Capstone.DAO
             }
 
             return websites;
+        }
+
+        public List<Website> GetPullRequestLinksByOpenSourceContributionId(int contributionId)
+        {
+            if (contributionId <= 0)
+            {
+                throw new ArgumentException("ContributionId must be greater than zero.");
+            }
+
+            List<Website> pullRequestLinks = new List<Website>();
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN open_source_contribution_websites ocw ON w.id = ocw.website_id " +
+                         "WHERE ocw.contribution_id = @contributionId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributionId", contributionId);
+                        cmd.Parameters.AddWithValue("@type", PullRequestLink);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                pullRequestLinks.Add(MapRowToWebsite(reader));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the pull request links by Open Source Contribution ID.", ex);
+            }
+
+            return pullRequestLinks;
         }
 
         public Website UpdateWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website)
@@ -1531,6 +1652,21 @@ namespace Capstone.DAO
             }
 
             return null;
+        }
+
+        public Website UpdateMainWebsiteOrGitHubByOpenSourceContributionId(int contributionId, int websiteId, Website website)
+        {
+            if (website.Type != MainWebsite || website.Type != GitHub)
+            {
+                throw new ArgumentException("Website Type must be either 'main website' or 'github'.");
+            }
+            else
+            {
+                DeleteWebsiteByOpenSourceContributionId(contributionId, websiteId);
+                CreateWebsiteByOpenSourceContributionId(contributionId, website);
+            }
+
+            return website;
         }
 
         public int DeleteWebsiteByOpenSourceContributionId(int contributionId, int websiteId)

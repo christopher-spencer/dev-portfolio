@@ -70,8 +70,11 @@ namespace Capstone.DAO.Interfaces
         */
         Website CreateWebsiteByOpenSourceContributionId(int contributionId, Website website);
         Website GetWebsiteByOpenSourceContributionId(int contributionId, int websiteId);
-        List<Website> GetWebsitesByOpenSourceContributionId(int contributionId);
+        Website GetMainWebsiteOrGitHubByOpenSourceContributionId(int contributionId, string websiteType);
+        List<Website> GetAllWebsitesByOpenSourceContributionId(int contributionId);
+        List<Website> GetPullRequestLinksByOpenSourceContributionId(int contributionId);
         Website UpdateWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website);
+        Website UpdateMainWebsiteOrGitHubByOpenSourceContributionId(int contributionId, int websiteId, Website website);
         int DeleteWebsiteByOpenSourceContributionId(int contributionId, int websiteId);
 
         /*  

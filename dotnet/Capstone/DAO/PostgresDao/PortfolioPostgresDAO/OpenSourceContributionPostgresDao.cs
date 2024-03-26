@@ -833,7 +833,7 @@ namespace Capstone.DAO
 
         private int DeletePullRequestsLinksByOpenSourceContributionId(int contributionId)
         {
-            List<Website> websites = _websiteDao.GetWebsitesByOpenSourceContributionId(contributionId);
+            List<Website> websites = _websiteDao.GetAllWebsitesByOpenSourceContributionId(contributionId);
 
             int websitesDeletedCount = 0;
 
@@ -930,7 +930,7 @@ namespace Capstone.DAO
             SetOpenSourceContributionMainImageIdProperties(reader, openSourceContribution, contributionId);
 
             openSourceContribution.TechSkillsUtilized = _skillDao.GetSkillsByOpenSourceContributionId(contributionId);
-            openSourceContribution.PullRequestsLinks = _websiteDao.GetWebsitesByOpenSourceContributionId(contributionId);
+            openSourceContribution.PullRequestsLinks = _websiteDao.GetAllWebsitesByOpenSourceContributionId(contributionId);
             openSourceContribution.ReviewCommentsAndFeedbackReceived = _achievementDao.GetAchievementsByOpenSourceContributionId(contributionId);
             openSourceContribution.AdditionalImages = _imageDao.GetAdditionalImagesByOpenSourceContributionId(contributionId);
 

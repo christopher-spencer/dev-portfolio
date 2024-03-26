@@ -19,6 +19,7 @@ namespace Capstone.Models
         public int OrganizationGitHubId { get; set; }
         public Website OrganizationGitHubRepo { get; set; }
         public List<Skill> TechSkillsUtilized { get; set; }
+        // FIXME need to be able to CRUD pull request links***********
         public List<Website> PullRequestsLinks { get; set; }
         public List<Achievement> ReviewCommentsAndFeedbackReceived { get; set; }
         public int MainImageId { get; set; }

@@ -23,6 +23,8 @@ namespace Capstone.Controllers
         const string GitHub = "github";
         const string PortfolioLink = "portfolio link";
         const string LinkedIn = "linkedin";
+        const string PullRequestLink = "pull request link";
+
 
         /*  
             **********************************************************************************************
@@ -531,6 +533,51 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 // TODO WEBSITE OpenSourceContribution Controllers****
+        [Authorize]
+        [HttpPost("/open-source-contribution/{contributionId}/create-website")]
+        public ActionResult CreateWebsiteByOpenSourceContributionId(int contributionId, Website website)
+        {
+            string websiteType = website.Type.ToLower();
+
+            if (websiteType != MainWebsite && websiteType != GitHub && websiteType != PullRequestLink)
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'main website' and 'github' and 'pull request link'.");
+            }
+
+            try
+            {
+                Website createdWebsite = _websiteDao.CreateWebsiteByOpenSourceContributionId(contributionId, website);
+
+                if (createdWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetWebsiteByOpenSourceContributionId), new { contributionId, websiteId = createdWebsite.Id }, createdWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the open source contribution website.");
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/website/{websiteId}")]
+        public ActionResult<Website> GetWebsiteByOpenSourceContributionId(int contributionId, int websiteId)
+        {
+            Website website = _websiteDao.GetWebsiteByOpenSourceContributionId(contributionId, websiteId);
+
+            if (website == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(website);
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         VOLUNTEER WORK WEBSITE CRUD CONTROLLER
