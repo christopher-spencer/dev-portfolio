@@ -1147,6 +1147,49 @@ namespace Capstone.DAO
             }
         }
 
+        public Image GetImageByCredentialId(int credentialId, int imageId)
+        {
+            if (credentialId <= 0 || imageId <= 0)
+            {
+                throw new ArgumentException("CredentialId and ImageId must be greater than zero.");
+            }
+
+            Image image = null;
+
+            string sql = "SELECT i.id, i.name, i.url, i.type " +
+                         "FROM images i " +
+                         "JOIN credential_images ci ON i.id = ci.image_id " +
+                         "WHERE ci.credential_id = @credentialId AND i.id = @imageId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                image = MapRowToImage(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the image by credential ID and image ID.", ex);
+            }
+
+            return image;
+        }
+
         public Image GetMainImageOrOrganizationLogoByCredentialId(int credentialId, string imageType)
         {
             if (credentialId <= 0)

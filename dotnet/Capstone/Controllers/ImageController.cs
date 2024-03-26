@@ -493,7 +493,133 @@ namespace Capstone.Controllers
                                         CREDENTIAL IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO IMAGE Credential Controllers****
+
+        [Authorize]
+        [HttpPost("/credential/{credentialId}/create-image")]
+        public ActionResult CreateImageByCredentialId(int credentialId, Image image)
+        {
+            string imageType = image.Type.ToLower();
+
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByCredentialId(credentialId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest("Image cannot be null or empty.");
+                }
+                else
+                {
+                    if (imageType == MainImage)
+                    {
+                        return CreatedAtAction(nameof(GetMainImageByCredentialId), new { credentialId }, createdImage);
+                    }
+                    else if (imageType == Logo)
+                    {
+                        return CreatedAtAction(nameof(GetOrganizationLogoByCredentialId), new { credentialId }, createdImage);
+                    }
+                    else
+                    {
+                        return BadRequest("Invalid image type. Allowed values are 'main image' and 'logo'.");
+                    }
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the credential image.");
+            }
+        }
+
+        [HttpGet("/credential/{credentialId}/main-image")]
+        public ActionResult GetMainImageByCredentialId(int credentialId)
+        {
+            Image mainImage = _imageDao.GetMainImageOrOrganizationLogoByCredentialId(credentialId, MainImage);
+
+            if (mainImage == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(mainImage);
+            }
+        }
+
+        [HttpGet("/credential/{credentialId}/logo")]
+        public ActionResult GetOrganizationLogoByCredentialId(int credentialId)
+        {
+            Image logo = _imageDao.GetMainImageOrOrganizationLogoByCredentialId(credentialId, Logo);
+
+            if (logo == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(logo);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/credential/{credentialId}/update-image/{imageId}")]
+        public ActionResult UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateMainImageOrOrganizationLogoByCredentialId(credentialId, imageId, image);
+
+                if (updatedImage == null)
+                {
+                    return BadRequest("The image is null. Please provide a main image or logo.");
+                }
+                else if (updatedImage.Type != MainImage && updatedImage.Type != Logo)
+                {
+                    return BadRequest("The provided image is not a main image or logo. Please provide a main image or logo.");
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the credential main image or logo.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/credential/{credentialId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByCredentialId(int credentialId, int imageId)
+        {
+            Image image = _imageDao.GetImageByCredentialId(credentialId, imageId);
+
+            string imageType = image.Type.ToLower();
+
+            if (imageType != MainImage && imageType != Logo)
+            {
+                return BadRequest("Invalid imageType. Allowed values are 'main image' and 'logo'.");
+            }
+
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByCredentialId(credentialId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Credential image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the credential image.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         EDUCATION IMAGE CRUD CONTROLLER
