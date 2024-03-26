@@ -440,7 +440,91 @@ namespace Capstone.Controllers
                                         EDUCATION WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO WEBSITE Education Controllers****
+
+        [Authorize]
+        [HttpPost("/education/{educationId}/create-website")]
+        public ActionResult CreateWebsiteByEducationId(int educationId, Website website)
+        {
+            try
+            {
+                Website createdWebsite = _websiteDao.CreateWebsiteByEducationId(educationId, website);
+
+                if (createdWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetWebsiteByEducationId), new { educationId, websiteId = createdWebsite.Id }, createdWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the education website.");
+            }
+        }
+
+        [HttpGet("/education/{educationId}/website")]
+        public ActionResult<Website> GetWebsiteByEducationId(int educationId)
+        {
+            Website website = _websiteDao.GetWebsiteByEducationId(educationId);
+
+            if (website == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(website);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/education/{educationId}/update-website/{websiteId}")]
+        public ActionResult UpdateWebsiteByEducationId(int educationId, int websiteId, Website website)
+        {
+            try
+            {
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByEducationId(educationId, websiteId, website);
+
+                if (updatedWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the education website.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/education/{educationId}/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsiteByEducationId(int educationId, int websiteId)
+        {
+            try
+            {
+                int rowsAffected = _websiteDao.DeleteWebsiteByEducationId(educationId, websiteId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Education website deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the education website.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                 OPEN SOURCE CONTRIBUTION WEBSITE CRUD CONTROLLER
