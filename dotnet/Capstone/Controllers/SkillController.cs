@@ -657,5 +657,106 @@ namespace Capstone.Controllers
                                             VOLUNTEER WORK SKILL CRUD CONTROLLER
             **********************************************************************************************
         */
+
+        [Authorize]
+        [HttpPost("/volunteer-work/{volunteerWorkId}/create-skill")]
+        public ActionResult CreateSkillByVolunteerWorkId(int volunteerWorkId, Skill skill)
+        {
+            try
+            {
+                Skill createdSkill = _skillDao.CreateSkillByVolunteerWorkId(volunteerWorkId, skill);
+
+                if (createdSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetSkillByVolunteerWorkId), new { volunteerWorkId, skillId = createdSkill.Id }, createdSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the volunteer work skill.");
+            }
+        }
+
+        [HttpGet("/volunteer-work/{volunteerWorkId}/skills")]
+        public ActionResult GetSkillsByVolunteerWorkId(int volunteerWorkId)
+        {
+            List<Skill> skills = _skillDao.GetSkillsByVolunteerWorkId(volunteerWorkId);
+
+            if (skills == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skills);
+            }
+        }
+
+        [HttpGet("/volunteer-work/{volunteerWorkId}/skill/{skillId}")]
+        public ActionResult<Skill> GetSkillByVolunteerWorkId(int volunteerWorkId, int skillId)
+        {
+            Skill skill = _skillDao.GetSkillByVolunteerWorkId(volunteerWorkId, skillId);
+
+            if (skill == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skill);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/volunteer-work/{volunteerWorkId}/update-skill/{skillId}")]
+        public ActionResult UpdateSkillByVolunteerWorkId(int volunteerWorkId, int skillId, Skill skill)
+        {
+            try
+            {
+                Skill updatedSkill = _skillDao.UpdateSkillByVolunteerWorkId(volunteerWorkId, skillId, skill);
+
+                if (updatedSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the volunteer work skill.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/volunteer-work/{volunteerWorkId}/delete-skill/{skillId}")]
+        public ActionResult DeleteSkillByVolunteerWorkId(int volunteerWorkId, int skillId)
+        {
+            try
+            {
+                int rowsAffected = _skillDao.DeleteSkillByVolunteerWorkId(volunteerWorkId, skillId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Volunteer work skill deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the volunteer work skill.");
+            }
+        }
+
+        
     }
 }

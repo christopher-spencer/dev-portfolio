@@ -73,7 +73,7 @@ namespace Capstone.DAO.Interfaces
                                      OPEN SOURCE CONTRIBUTION SKILL CRUD
             **********************************************************************************************
         */
-// TODO SKILL OpenSourceContribution Controllers****
+
         Skill CreateSkillByOpenSourceContributionId(int openSourceContributionId, Skill skill);
         List<Skill> GetSkillsByOpenSourceContributionId(int openSourceContributionId);
         Skill GetSkillByOpenSourceContributionId(int openSourceContributionId, int skillId);
@@ -85,7 +85,7 @@ namespace Capstone.DAO.Interfaces
                                         VOLUNTEER WORK SKILL CRUD
             **********************************************************************************************
         */
-// TODO SKILL VolunteerWork Controllers****
+
         Skill CreateSkillByVolunteerWorkId(int volunteerWorkId, Skill skill);
         List<Skill> GetSkillsByVolunteerWorkId(int volunteerWorkId);
         Skill GetSkillByVolunteerWorkId(int volunteerWorkId, int skillId);
