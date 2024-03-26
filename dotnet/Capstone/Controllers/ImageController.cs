@@ -1249,7 +1249,91 @@ namespace Capstone.Controllers
                                             HOBBY IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO IMAGE Hobby Controllers****        
+
+        [Authorize]
+        [HttpPost("/hobby/{hobbyId}/create-image")]
+        public ActionResult CreateImageByHobbyId(int hobbyId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByHobbyId(hobbyId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(createdImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the hobby image.");
+            }
+        }
+
+        [HttpGet("/hobby/{hobbyId}/image")]
+        public ActionResult GetImageByHobbyId(int hobbyId)
+        {
+            Image image = _imageDao.GetImageByHobbyId(hobbyId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/hobby/{hobbyId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByHobbyId(int hobbyId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByHobbyId(hobbyId, imageId, image);
+
+                if (updatedImage == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the hobby image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/hobby/{hobbyId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByHobbyId(int hobbyId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByHobbyId(hobbyId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Hobby image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the hobby image.");
+            }
+        }
+
         /*  
             **********************************************************************************************
             **********************************************************************************************
