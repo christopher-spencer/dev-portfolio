@@ -532,7 +532,7 @@ namespace Capstone.Controllers
                                 OPEN SOURCE CONTRIBUTION WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO WEBSITE OpenSourceContribution Controllers****
+
         [Authorize]
         [HttpPost("/open-source-contribution/{contributionId}/create-website")]
         public ActionResult CreateWebsiteByOpenSourceContributionId(int contributionId, Website website)
@@ -570,11 +570,153 @@ namespace Capstone.Controllers
 
             if (website == null)
             {
-                return NotFound();
+                return BadRequest();
             }
             else
             {
                 return Ok(website);
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/main-website")]
+        public ActionResult<Website> GetMainWebsiteByOpenSourceContributionId(int contributionId)
+        {
+            Website mainWebsite = _websiteDao.GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, MainWebsite);
+
+            if (mainWebsite == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(mainWebsite);
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/github")]
+        public ActionResult<Website> GetGitHubByOpenSourceContributionId(int contributionId)
+        {
+            Website gitHub = _websiteDao.GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, GitHub);
+
+            if (gitHub == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(gitHub);
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/websites")]
+        public ActionResult<List<Website>> GetAllWebsitesByOpenSourceContributionId(int contributionId)
+        {
+            List<Website> allWebsites = _websiteDao.GetAllWebsitesByOpenSourceContributionId(contributionId);
+
+            if (allWebsites == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(allWebsites);
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/pull-request-links")]
+        public ActionResult<List<Website>> GetPullRequestLinksByOpenSourceContributionId(int contributionId)
+        {
+            List<Website> pullRequestLinks = _websiteDao.GetPullRequestLinksByOpenSourceContributionId(contributionId);
+
+            if (pullRequestLinks == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pullRequestLinks);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/open-source-contribution/{contributionId}/update-website/{websiteId}")]
+        public ActionResult UpdateWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website)
+        {
+            try
+            {
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByOpenSourceContributionId(contributionId, websiteId, website);
+
+                if (updatedWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the open source contribution website.");
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/open-source-contribution/{contributionId}/update-main-website-or-github/{websiteId}")]
+        public ActionResult UpdateMainWebsiteByOpenSourceContributionId(int contributionId, int websiteId, Website website)
+        {
+            try
+            {
+                Website updatedWebsite = _websiteDao.UpdateMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, websiteId, website);
+
+                if (updatedWebsite == null)
+                {
+                    return BadRequest("The website is null. Please provide a website.");
+                }
+                else if (updatedWebsite.Type.ToLower() != MainWebsite && updatedWebsite.Type.ToLower() != GitHub)
+                {
+                    return BadRequest("Invalid websiteType. Allowed values are 'main website' and 'github'.");
+                }
+                else
+                {
+                    return Ok(updatedWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the open source contribution main website.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/open-source-contribution/{contributionId}/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsiteByOpenSourceContributionId(int contributionId, int websiteId)
+        {
+            Website website = _websiteDao.GetWebsiteByOpenSourceContributionId(contributionId, websiteId);
+
+            string websiteType = website.Type.ToLower();
+
+            if (websiteType != MainWebsite && websiteType != GitHub && websiteType != PullRequestLink)
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'main website' and 'github' and 'pull request link'.");
+            }
+
+            try
+            {
+                int rowsAffected = _websiteDao.DeleteWebsiteByOpenSourceContributionId(contributionId, websiteId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Open source contribution website deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the open source contribution website.");
             }
         }
 
