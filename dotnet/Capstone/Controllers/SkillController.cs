@@ -553,6 +553,105 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
+        [Authorize]
+        [HttpPost("/open-source-contribution/{contributionId}/create-skill")]
+        public ActionResult CreateSkillByOpenSourceContributionId(int contributionId, Skill skill)
+        {
+            try
+            {
+                Skill createdSkill = _skillDao.CreateSkillByOpenSourceContributionId(contributionId, skill);
+
+                if (createdSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetSkillByOpenSourceContributionId), new { contributionId, skillId = createdSkill.Id }, createdSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the open source contribution skill.");
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/skills")]
+        public ActionResult GetSkillsByOpenSourceContributionId(int contributionId)
+        {
+            List<Skill> skills = _skillDao.GetSkillsByOpenSourceContributionId(contributionId);
+
+            if (skills == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skills);
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/skill/{skillId}")]
+        public ActionResult<Skill> GetSkillByOpenSourceContributionId(int contributionId, int skillId)
+        {
+            Skill skill = _skillDao.GetSkillByOpenSourceContributionId(contributionId, skillId);
+
+            if (skill == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skill);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/open-source-contribution/{contributionId}/update-skill/{skillId}")]
+        public ActionResult UpdateSkillByOpenSourceContributionId(int contributionId, int skillId, Skill skill)
+        {
+            try
+            {
+                Skill updatedSkill = _skillDao.UpdateSkillByOpenSourceContributionId(contributionId, skillId, skill);
+
+                if (updatedSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the open source contribution skill.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/open-source-contribution/{contributionId}/delete-skill/{skillId}")]
+        public ActionResult DeleteSkillByOpenSourceContributionId(int contributionId, int skillId)
+        {
+            try
+            {
+                int rowsAffected = _skillDao.DeleteSkillByOpenSourceContributionId(contributionId, skillId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Open source contribution skill deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the open source contribution skill.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                             VOLUNTEER WORK SKILL CRUD CONTROLLER
