@@ -1159,7 +1159,91 @@ namespace Capstone.Controllers
                                         ACHIEVEMENT IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO IMAGE Achievement Controllers****
+
+        [Authorize]
+        [HttpPost("/achievement/{achievementId}/create-image")]
+        public ActionResult CreateImageByAchievementId(int achievementId, Image image)
+        {
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByAchievementId(achievementId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(createdImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the achievement image.");
+            }
+        }
+
+        [HttpGet("/achievement/{achievementId}/image")]
+        public ActionResult GetImageByAchievementId(int achievementId)
+        {
+            Image image = _imageDao.GetImageByAchievementId(achievementId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/achievement/{achievementId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByAchievementId(int achievementId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByAchievementId(achievementId, imageId, image);
+
+                if (updatedImage == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the achievement image.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/achievement/{achievementId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByAchievementId(int achievementId, int imageId)
+        {
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByAchievementId(achievementId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Achievement image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the achievement image.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                             HOBBY IMAGE CRUD CONTROLLER
