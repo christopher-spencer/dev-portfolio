@@ -30,28 +30,28 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        [Authorize]
-        [HttpPost("/create-website")]
-        public ActionResult CreateWebsite(Website website)
-        {
-            try
-            {
-                Website createdWebsite = _websiteDao.CreateWebsite(website);
+        // [Authorize]
+        // [HttpPost("/create-website")]
+        // public ActionResult CreateWebsite(Website website)
+        // {
+        //     try
+        //     {
+        //         Website createdWebsite = _websiteDao.CreateWebsite(website);
 
-                if (createdWebsite == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return CreatedAtAction(nameof(GetWebsite), new { websiteId = createdWebsite.Id }, createdWebsite);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while creating the website.");
-            }
-        }
+        //         if (createdWebsite == null)
+        //         {
+        //             return BadRequest();
+        //         }
+        //         else
+        //         {
+        //             return CreatedAtAction(nameof(GetWebsite), new { websiteId = createdWebsite.Id }, createdWebsite);
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while creating the website.");
+        //     }
+        // }
 
         [HttpGet("/website/{websiteId}")]
         public ActionResult<Website> GetWebsite(int websiteId)
@@ -83,51 +83,51 @@ namespace Capstone.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPut("/update-website/{websiteId}")]
-        public ActionResult UpdateWebsite(Website website, int websiteId)
-        {
-            try
-            {
-                Website updatedWebsite = _websiteDao.UpdateWebsite(website, websiteId);
+        // [Authorize]
+        // [HttpPut("/update-website/{websiteId}")]
+        // public ActionResult UpdateWebsite(Website website, int websiteId)
+        // {
+        //     try
+        //     {
+        //         Website updatedWebsite = _websiteDao.UpdateWebsite(website, websiteId);
 
-                if (updatedWebsite == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return Ok(updatedWebsite);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while updating the website.");
-            }
-        }
+        //         if (updatedWebsite == null)
+        //         {
+        //             return BadRequest();
+        //         }
+        //         else
+        //         {
+        //             return Ok(updatedWebsite);
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while updating the website.");
+        //     }
+        // }
 
-        [Authorize]
-        [HttpDelete("/delete-website/{websiteId}")]
-        public ActionResult DeleteWebsite(int websiteId)
-        {
-            try
-            {
-                int rowsAffected = _websiteDao.DeleteWebsite(websiteId);
+        // [Authorize]
+        // [HttpDelete("/delete-website/{websiteId}")]
+        // public ActionResult DeleteWebsite(int websiteId)
+        // {
+        //     try
+        //     {
+        //         int rowsAffected = _websiteDao.DeleteWebsite(websiteId);
 
-                if (rowsAffected > 0)
-                {
-                    return Ok("Website deleted successfully.");
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while deleting the website.");
-            }
-        }
+        //         if (rowsAffected > 0)
+        //         {
+        //             return Ok("Website deleted successfully.");
+        //         }
+        //         else
+        //         {
+        //             return NotFound();
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while deleting the website.");
+        //     }
+        // }
 
         /*  
             **********************************************************************************************
