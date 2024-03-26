@@ -448,6 +448,105 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
+        [Authorize]
+        [HttpPost("/credential/{credentialId}/create-skill")]
+        public ActionResult CreateSkillByCredentialId(int credentialId, Skill skill)
+        {
+            try
+            {
+                Skill createdSkill = _skillDao.CreateSkillByCredentialId(credentialId, skill);
+
+                if (createdSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetSkillByCredentialId), new { credentialId, skillId = createdSkill.Id }, createdSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the credential skill.");
+            }
+        }
+
+        [HttpGet("/credential/{credentialId}/skills")]
+        public ActionResult GetSkillsByCredentialId(int credentialId)
+        {
+            List<Skill> skills = _skillDao.GetSkillsByCredentialId(credentialId);
+
+            if (skills == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skills);
+            }
+        }
+
+        [HttpGet("/credential/{credentialId}/skill/{skillId}")]
+        public ActionResult<Skill> GetSkillByCredentialId(int credentialId, int skillId)
+        {
+            Skill skill = _skillDao.GetSkillByCredentialId(credentialId, skillId);
+
+            if (skill == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skill);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/credential/{credentialId}/update-skill/{skillId}")]
+        public ActionResult UpdateSkillByCredentialId(int credentialId, int skillId, Skill skill)
+        {
+            try
+            {
+                Skill updatedSkill = _skillDao.UpdateSkillByCredentialId(credentialId, skillId, skill);
+
+                if (updatedSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the credential skill.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/credential/{credentialId}/delete-skill/{skillId}")]
+        public ActionResult DeleteSkillByCredentialId(int credentialId, int skillId)
+        {
+            try
+            {
+                int rowsAffected = _skillDao.DeleteSkillByCredentialId(credentialId, skillId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Credential skill deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the credential skill.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                      OPEN SOURCE CONTRIBUTION SKILL CRUD CONTROLLER

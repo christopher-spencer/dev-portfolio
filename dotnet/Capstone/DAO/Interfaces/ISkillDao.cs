@@ -61,7 +61,7 @@ namespace Capstone.DAO.Interfaces
                                             CREDENTIAL SKILL CRUD
             **********************************************************************************************
         */
-// TODO SKILL Credential Controllers****
+
         Skill CreateSkillByCredentialId(int credentialId, Skill skill);
         List<Skill> GetSkillsByCredentialId(int credentialId);
         Skill GetSkillByCredentialId(int credentialId, int skillId);
