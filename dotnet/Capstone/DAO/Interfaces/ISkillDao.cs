@@ -11,11 +11,11 @@ namespace Capstone.DAO.Interfaces
                                                     SKILL CRUD
             **********************************************************************************************
         */
-        Skill CreateSkill(Skill skill);
+        // Skill CreateSkill(Skill skill);
         Skill GetSkill(int skillId);
         List<Skill> GetSkills();
-        Skill UpdateSkill(int skillId, Skill skill);
-        int DeleteSkill(int skillId);
+        // Skill UpdateSkill(int skillId, Skill skill);
+        // int DeleteSkill(int skillId);
 
         /*  
             **********************************************************************************************
@@ -26,7 +26,7 @@ namespace Capstone.DAO.Interfaces
             **********************************************************************************************
             **********************************************************************************************
         */
-// TODO SKILL Portfolio Controllers****
+
         Skill CreateSkillByPortfolioId(int portfolioId, Skill skill);
         List<Skill> GetSkillsByPortfolioId(int portfolioId);
         Skill GetSkillByPortfolioId(int portfolioId, int skillId);

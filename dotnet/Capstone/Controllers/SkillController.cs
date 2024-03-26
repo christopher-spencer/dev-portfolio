@@ -24,28 +24,28 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        [Authorize]
-        [HttpPost("/create-skill")]
-        public ActionResult CreateSkill(Skill skill)
-        {
-            try
-            {
-                Skill createdSkill = _skillDao.CreateSkill(skill);
+        // [Authorize]
+        // [HttpPost("/create-skill")]
+        // public ActionResult CreateSkill(Skill skill)
+        // {
+        //     try
+        //     {
+        //         Skill createdSkill = _skillDao.CreateSkill(skill);
 
-                if (createdSkill == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return CreatedAtAction(nameof(GetSkill), new { skillId = createdSkill.Id }, createdSkill);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while creating the skill.");
-            }
-        }
+        //         if (createdSkill == null)
+        //         {
+        //             return BadRequest();
+        //         }
+        //         else
+        //         {
+        //             return CreatedAtAction(nameof(GetSkill), new { skillId = createdSkill.Id }, createdSkill);
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while creating the skill.");
+        //     }
+        // }
 
         [HttpGet("/skill/{skillId}")]
         public ActionResult<Skill> GetSkill(int skillId)
@@ -77,13 +77,122 @@ namespace Capstone.Controllers
             }
         }
 
+        // [Authorize]
+        // [HttpPut("/update-skill/{skillId}")]
+        // public ActionResult UpdateSkill(int skillId, Skill skill)
+        // {
+        //     try
+        //     {
+        //         Skill updatedSkill = _skillDao.UpdateSkill(skillId, skill);
+
+        //         if (updatedSkill == null)
+        //         {
+        //             return BadRequest();
+        //         }
+        //         else
+        //         {
+        //             return Ok(updatedSkill);
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while updating the skill.");
+        //     }
+        // }
+
+        // [Authorize]
+        // [HttpDelete("/delete-skill/{skillId}")]
+        // public ActionResult DeleteSkill(int skillId)
+        // {
+        //     try
+        //     {
+        //         int rowsAffected = _skillDao.DeleteSkill(skillId);
+
+        //         if (rowsAffected > 0)
+        //         {
+        //             return Ok("Skill deleted successfully.");
+        //         }
+        //         else
+        //         {
+        //             return NotFound();
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while deleting the skill.");
+        //     }
+        // }
+
+        /*  
+            **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
+                                            PORTFOLIO SKILL CRUD CONTROLLER
+            **********************************************************************************************
+            **********************************************************************************************
+            **********************************************************************************************
+        */
+        
         [Authorize]
-        [HttpPut("/update-skill/{skillId}")]
-        public ActionResult UpdateSkill(int skillId, Skill skill)
+        [HttpPost("/portfolio/{portfolioId}/create-skill")]
+        public ActionResult CreateSkillByPortfolioId(int portfolioId, Skill skill)
         {
             try
             {
-                Skill updatedSkill = _skillDao.UpdateSkill(skillId, skill);
+                Skill createdSkill = _skillDao.CreateSkillByPortfolioId(portfolioId, skill);
+
+                if (createdSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetSkillByPortfolioId), new { portfolioId, skillId = createdSkill.Id }, createdSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the portfolio skill.");
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/skills")]
+        public ActionResult GetSkillsByPortfolioId(int portfolioId)
+        {
+            List<Skill> skills = _skillDao.GetSkillsByPortfolioId(portfolioId);
+
+            if (skills == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skills);
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/skill/{skillId}")]
+        public ActionResult<Skill> GetSkillByPortfolioId(int portfolioId, int skillId)
+        {
+            Skill skill = _skillDao.GetSkillByPortfolioId(portfolioId, skillId);
+
+            if (skill == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skill);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/portfolio/{portfolioId}/update-skill/{skillId}")]
+        public ActionResult UpdateSkillByPortfolioId(int portfolioId, int skillId, Skill skill)
+        {
+            try
+            {
+                Skill updatedSkill = _skillDao.UpdateSkillByPortfolioId(portfolioId, skillId, skill);
 
                 if (updatedSkill == null)
                 {
@@ -96,21 +205,21 @@ namespace Capstone.Controllers
             }
             catch (DaoException)
             {
-                return StatusCode(500, "An error occurred while updating the skill.");
+                return StatusCode(500, "An error occurred while updating the portfolio skill.");
             }
         }
 
         [Authorize]
-        [HttpDelete("/delete-skill/{skillId}")]
-        public ActionResult DeleteSkill(int skillId)
+        [HttpDelete("/portfolio/{portfolioId}/delete-skill/{skillId}")]
+        public ActionResult DeleteSkillByPortfolioId(int portfolioId, int skillId)
         {
             try
             {
-                int rowsAffected = _skillDao.DeleteSkill(skillId);
+                int rowsAffected = _skillDao.DeleteSkillByPortfolioId(portfolioId, skillId);
 
                 if (rowsAffected > 0)
                 {
-                    return Ok("Skill deleted successfully.");
+                    return Ok("Portfolio skill deleted successfully.");
                 }
                 else
                 {
@@ -119,7 +228,7 @@ namespace Capstone.Controllers
             }
             catch (DaoException)
             {
-                return StatusCode(500, "An error occurred while deleting the skill.");
+                return StatusCode(500, "An error occurred while deleting the portfolio skill.");
             }
         }
 
@@ -227,5 +336,29 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while deleting the side project skill.");
             }
         }
+
+        /*  
+            **********************************************************************************************
+                                        WORK EXPERIENCE SKILL CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                            CREDENTIAL SKILL CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                     OPEN SOURCE CONTRIBUTION SKILL CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        /*  
+            **********************************************************************************************
+                                            VOLUNTEER WORK SKILL CRUD CONTROLLER
+            **********************************************************************************************
+        */
     }
 }

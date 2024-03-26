@@ -24,37 +24,37 @@ namespace Capstone.DAO
                                                     SKILL CRUD
             **********************************************************************************************
         */
-        public Skill CreateSkill(Skill skill)
-        {
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+        // public Skill CreateSkill(Skill skill)
+        // {
+        //     if (string.IsNullOrEmpty(skill.Name))
+        //     {
+        //         throw new ArgumentException("Skill name cannot be null or empty.");
+        //     }
 
-            string sql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
+        //     string sql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@name", skill.Name);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@name", skill.Name);
 
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        skill.Id = id;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the skill.", ex);
-            }
+        //                 int id = Convert.ToInt32(cmd.ExecuteScalar());
+        //                 skill.Id = id;
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while creating the skill.", ex);
+        //     }
 
-            return skill;
-        }
+        //     return skill;
+        // }
 
         public Skill GetSkill(int skillId)
         {
@@ -125,76 +125,76 @@ namespace Capstone.DAO
             return skills;
         }
 
-        public Skill UpdateSkill(int skillId, Skill skill)
-        {
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+        // public Skill UpdateSkill(int skillId, Skill skill)
+        // {
+        //     if (string.IsNullOrEmpty(skill.Name))
+        //     {
+        //         throw new ArgumentException("Skill name cannot be null or empty.");
+        //     }
 
-            if (skillId <= 0)
-            {
-                throw new ArgumentException("SkillId must be greater than zero.");
-            }
+        //     if (skillId <= 0)
+        //     {
+        //         throw new ArgumentException("SkillId must be greater than zero.");
+        //     }
 
-            string sql = "UPDATE skills SET name = @name WHERE id = @skillId;";
+        //     string sql = "UPDATE skills SET name = @name WHERE id = @skillId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@skillId", skillId);
-                        cmd.Parameters.AddWithValue("@name", skill.Name);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@skillId", skillId);
+        //                 cmd.Parameters.AddWithValue("@name", skill.Name);
 
-                        int count = cmd.ExecuteNonQuery();
+        //                 int count = cmd.ExecuteNonQuery();
 
-                        if (count == 1)
-                        {
-                            return skill;
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the skill.", ex);
-            }
+        //                 if (count == 1)
+        //                 {
+        //                     return skill;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while updating the skill.", ex);
+        //     }
 
-            return null;
-        }
+        //     return null;
+        // }
 
-        public int DeleteSkill(int skillId)
-        {
-            if (skillId <= 0)
-            {
-                throw new ArgumentException("SkillId must be greater than zero.");
-            }
+        // public int DeleteSkill(int skillId)
+        // {
+        //     if (skillId <= 0)
+        //     {
+        //         throw new ArgumentException("SkillId must be greater than zero.");
+        //     }
 
-            string sql = "DELETE FROM skills WHERE id = @id;";
+        //     string sql = "DELETE FROM skills WHERE id = @id;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@id", skillId);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@id", skillId);
 
-                        return cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while deleting the skill.", ex);
-            }
-        }
+        //                 return cmd.ExecuteNonQuery();
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while deleting the skill.", ex);
+        //     }
+        // }
 
         /*  
             **********************************************************************************************
