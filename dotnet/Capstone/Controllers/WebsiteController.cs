@@ -334,7 +334,107 @@ namespace Capstone.Controllers
                                         CREDENTIAL WEBSITE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO WEBSITE Credential Controllers****
+
+        [Authorize]
+        [HttpPost("/credential/{credentialId}/create-website")]
+        public ActionResult CreateWebsiteByCredentialId(int credentialId, Website website)
+        {
+            string websiteType = website.Type.ToLower();
+
+            if (websiteType != MainWebsite && websiteType != SecondaryWebsite)
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'main website' and 'secondary website'.");
+            }
+
+            try
+            {
+                Website createdWebsite = _websiteDao.CreateWebsiteByCredentialId(credentialId, website);
+
+                if (createdWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetWebsiteByCredentialId), new { credentialId, websiteId = createdWebsite.Id }, createdWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the credential website.");
+            }
+        }
+
+        [HttpGet("/credential/{credentialId}/website/{websiteId}")]
+        public ActionResult<Website> GetWebsiteByCredentialId(int credentialId, int websiteId)
+        {
+            Website website = _websiteDao.GetWebsiteByCredentialId(credentialId, websiteId);
+
+            if (website == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(website);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/credential/{credentialId}/update-website/{websiteId}")]
+        public ActionResult UpdateWebsiteByCredentialId(int credentialId, int websiteId, Website website)
+        {
+            try
+            {
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByCredentialId(credentialId, websiteId, website);
+
+                if (updatedWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the credential website.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/credential/{credentialId}/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsiteByCredentialId(int credentialId, int websiteId)
+        {
+            Website website = _websiteDao.GetWebsiteByCredentialId(credentialId, websiteId);
+
+            string websiteType = website.Type.ToLower();
+
+            if (websiteType != MainWebsite && websiteType != SecondaryWebsite)
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'main website' and 'secondary website'.");
+            }
+
+            try
+            {
+                int rowsAffected = _websiteDao.DeleteWebsiteByCredentialId(credentialId, websiteId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Credential website deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the credential website.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         EDUCATION WEBSITE CRUD CONTROLLER
