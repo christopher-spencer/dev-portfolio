@@ -803,7 +803,179 @@ namespace Capstone.Controllers
                                 OPEN SOURCE CONTRIBUTION IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO IMAGE OpenSourceContribution Controllers****
+
+        [Authorize]
+        [HttpPost("/open-source-contribution/{contributionId}/create-image")]
+        public ActionResult CreateImageByOpenSourceContributionId(int contributionId, Image image)
+        {
+            string imageType = image.Type.ToLower();
+
+            if (imageType != MainImage && imageType != AdditionalImage && imageType != Logo)
+            {
+                return BadRequest("Invalid image type. Allowed values are 'main image', 'additional image', and 'logo'.");
+            }
+
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByOpenSourceContributionId(contributionId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetImageByOpenSourceContributionId), new { contributionId, imageId = createdImage.Id }, createdImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the open source contribution image.");
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/main-image")]
+        public ActionResult GetMainImageByOpenSourceContributionId(int contributionId)
+        {
+            Image mainImage = _imageDao.GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, MainImage);
+
+            if (mainImage == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(mainImage);
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/logo")]
+        public ActionResult GetOrganizationLogoByOpenSourceContributionId(int contributionId)
+        {
+            Image logo = _imageDao.GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, Logo);
+
+            if (logo == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(logo);
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/image/{imageId}")]
+        public ActionResult<Image> GetImageByOpenSourceContributionId(int contributionId, int imageId)
+        {
+            Image image = _imageDao.GetImageByOpenSourceContributionId(contributionId, imageId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [HttpGet("/open-source-contribution/{contributionId}/additional-images")]
+        public ActionResult GetAdditionalImagesByOpenSourceContributionId(int contributionId)
+        {
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByOpenSourceContributionId(contributionId);
+
+            if (additionalImages == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(additionalImages);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/open-source-contribution/{contributionId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByOpenSourceContributionId(int contributionId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByOpenSourceContributionId(contributionId, imageId, image);
+
+                if (updatedImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the open source contribution image.");
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/open-source-contribution/{contributionId}/update-main-image-or-logo")]
+        public ActionResult UpdateMainImageOrOrganizationLogoByOpenSourceContributionId(int contributionId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedMainImage = _imageDao.UpdateMainImageOrLogoByOpenSourceContributionId(contributionId, imageId, image);
+
+                if (updatedMainImage == null)
+                {
+                    return BadRequest("The image is null. Please provide a main image or logo.");
+                }
+                else if (updatedMainImage.Type != MainImage && updatedMainImage.Type != Logo)
+                {
+                    return BadRequest("The provided image is not a main image or logo. Please provide a main image or logo.");
+                }
+                else
+                {
+                    return Ok(updatedMainImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the open source contribution main image or logo.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/open-source-contribution/{contributionId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByOpenSourceContributionId(int contributionId, int imageId)
+        {
+            Image image = _imageDao.GetImageByOpenSourceContributionId(contributionId, imageId);
+
+            string imageType = image.Type.ToLower();
+
+            if (imageType != MainImage && imageType != AdditionalImage && imageType != Logo)
+            {
+                return BadRequest("Invalid imageType. Allowed values are 'main image', 'additional image', and 'logo'.");
+            }
+
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByOpenSourceContributionId(contributionId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Open source contribution image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the open source contribution image.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         VOLUNTEER WORK IMAGE CRUD CONTROLLER
