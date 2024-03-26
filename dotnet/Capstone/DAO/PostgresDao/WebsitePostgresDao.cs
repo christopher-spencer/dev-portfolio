@@ -20,10 +20,10 @@ namespace Capstone.DAO
         }
         // TODO add Blog Post Website CRUD eventually after links set up in BP Model
 
-        const string MainWebsite = "main-website";
-        const string SecondaryWebsite = "secondary-website";
+        const string MainWebsite = "main website";
+        const string SecondaryWebsite = "secondary website";
         const string GitHub = "github";
-        const string PortfolioLink = "portfolio-link";
+        const string PortfolioLink = "portfolio link";
         const string LinkedIn = "linkedin";
 
         /*  

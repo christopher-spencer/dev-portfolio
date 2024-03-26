@@ -18,10 +18,10 @@ namespace Capstone.Controllers
             _websiteDao = websiteDao;
         }
 
-        const string MainWebsite = "main-website";
-        const string SecondaryWebsite = "secondary-website";
+        const string MainWebsite = "main website";
+        const string SecondaryWebsite = "secondary website";
         const string GitHub = "github";
-        const string PortfolioLink = "portfolio-link";
+        const string PortfolioLink = "portfolio link";
         const string LinkedIn = "linkedin";
 
         /*  
@@ -138,7 +138,107 @@ namespace Capstone.Controllers
             **********************************************************************************************
             **********************************************************************************************
         */
-// TODO WEBSITE Portfolio Controllers****
+
+        [Authorize]
+        [HttpPost("/portfolio/{portfolioId}/create-website")]
+        public ActionResult CreateWebsiteByPortfolioId(int portfolioId, Website website)
+        {
+            string websiteType = website.Type.ToLower();
+
+            if (websiteType != GitHub && websiteType != LinkedIn)
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'github' and 'linkedin'.");
+            }
+
+            try
+            {
+                Website createdWebsite = _websiteDao.CreateWebsiteByPortfolioId(portfolioId, website);
+
+                if (createdWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetWebsiteByPortfolioId), new { portfolioId, websiteId = createdWebsite.Id }, createdWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the portfolio website.");
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/website/{websiteId}")]
+        public ActionResult<Website> GetWebsiteByPortfolioId(int portfolioId, int websiteId)
+        {
+            Website website = _websiteDao.GetWebsiteByPortfolioId(portfolioId, websiteId);
+
+            if (website == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(website);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/portfolio/{portfolioId}/update-website/{websiteId}")]
+        public ActionResult UpdateWebsiteByPortfolioId(int portfolioId, int websiteId, Website website)
+        {
+            try
+            {
+                Website updatedWebsite = _websiteDao.UpdateWebsiteByPortfolioId(portfolioId, websiteId, website);
+
+                if (updatedWebsite == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedWebsite);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the portfolio website.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/portfolio/{portfolioId}/delete-website/{websiteId}")]
+        public ActionResult DeleteWebsiteByPortfolioId(int portfolioId, int websiteId)
+        {
+            Website website = _websiteDao.GetWebsiteByPortfolioId(portfolioId, websiteId);
+
+            string websiteType = website.Type.ToLower();
+
+            if (websiteType != GitHub && websiteType != LinkedIn)
+            {
+                return BadRequest("Invalid websiteType. Allowed values are 'github' and 'linkedin'.");
+            }
+
+            try
+            {
+                int rowsAffected = _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, websiteId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Portfolio website deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the portfolio website.");
+            }
+        }
+
         /*   
             **********************************************************************************************
                                         WORK EXPERIENCE WEBSITE CRUD CONTROLLER
@@ -265,7 +365,6 @@ namespace Capstone.Controllers
             
             string websiteType = website.Type.ToLower();
 
-//TODO change to "main website" or something
             if (websiteType != MainWebsite && websiteType != GitHub)
             {
                 return BadRequest("Invalid websiteType. Allowed values are 'main-website' and 'github'.");
