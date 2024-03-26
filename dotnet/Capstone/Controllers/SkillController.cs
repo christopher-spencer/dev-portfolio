@@ -132,7 +132,7 @@ namespace Capstone.Controllers
             **********************************************************************************************
             **********************************************************************************************
         */
-        
+
         [Authorize]
         [HttpPost("/portfolio/{portfolioId}/create-skill")]
         public ActionResult CreateSkillByPortfolioId(int portfolioId, Skill skill)
@@ -342,6 +342,105 @@ namespace Capstone.Controllers
                                         WORK EXPERIENCE SKILL CRUD CONTROLLER
             **********************************************************************************************
         */
+
+        [Authorize]
+        [HttpPost("/work-experience/{experienceId}/create-skill")]
+        public ActionResult CreateSkillByWorkExperienceId(int experienceId, Skill skill)
+        {
+            try
+            {
+                Skill createdSkill = _skillDao.CreateSkillByWorkExperienceId(experienceId, skill);
+
+                if (createdSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetSkillByWorkExperienceId), new { experienceId, skillId = createdSkill.Id }, createdSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the work experience skill.");
+            }
+        }
+
+        [HttpGet("/work-experience/{experienceId}/skills")]
+        public ActionResult GetSkillsByWorkExperienceId(int experienceId)
+        {
+            List<Skill> skills = _skillDao.GetSkillsByWorkExperienceId(experienceId);
+
+            if (skills == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skills);
+            }
+        }
+
+        [HttpGet("/work-experience/{experienceId}/skill/{skillId}")]
+        public ActionResult<Skill> GetSkillByWorkExperienceId(int experienceId, int skillId)
+        {
+            Skill skill = _skillDao.GetSkillByWorkExperienceId(experienceId, skillId);
+
+            if (skill == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(skill);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/work-experience/{experienceId}/update-skill/{skillId}")]
+        public ActionResult UpdateSkillByWorkExperienceId(int experienceId, int skillId, Skill skill)
+        {
+            try
+            {
+                Skill updatedSkill = _skillDao.UpdateSkillByWorkExperienceId(experienceId, skillId, skill);
+
+                if (updatedSkill == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedSkill);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the work experience skill.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/work-experience/{experienceId}/delete-skill/{skillId}")]
+        public ActionResult DeleteSkillByWorkExperienceId(int experienceId, int skillId)
+        {
+            try
+            {
+                int rowsAffected = _skillDao.DeleteSkillByWorkExperienceId(experienceId, skillId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Work experience skill deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the work experience skill.");
+            }
+        }
 
         /*  
             **********************************************************************************************

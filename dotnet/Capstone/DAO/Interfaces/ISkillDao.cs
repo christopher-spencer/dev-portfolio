@@ -49,7 +49,7 @@ namespace Capstone.DAO.Interfaces
                                         WORK EXPERIENCE SKILL CRUD
         **********************************************************************************************
     */
-    // TODO SKILL Experience Controllers****
+
         Skill CreateSkillByWorkExperienceId(int experienceId, Skill skill); 
         List<Skill> GetSkillsByWorkExperienceId(int experienceId);
         Skill GetSkillByWorkExperienceId(int experienceId, int skillId);
