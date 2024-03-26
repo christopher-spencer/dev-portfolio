@@ -981,7 +981,179 @@ namespace Capstone.Controllers
                                         VOLUNTEER WORK IMAGE CRUD CONTROLLER
             **********************************************************************************************
         */
-// TODO IMAGE VolunteerWork Controllers****
+
+        [Authorize]
+        [HttpPost("/volunteer-work/{volunteerWorkId}/create-image")]
+        public ActionResult CreateImageByVolunteerWorkId(int volunteerWorkId, Image image)
+        {
+            string imageType = image.Type.ToLower();
+
+            if (imageType != MainImage && imageType != AdditionalImage && imageType != Logo)
+            {
+                return BadRequest("Invalid image type. Allowed values are 'main image', 'additional image', and 'logo'.");
+            }
+
+            try
+            {
+                Image createdImage = _imageDao.CreateImageByVolunteerWorkId(volunteerWorkId, image);
+
+                if (createdImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetImageByVolunteerWorkId), new { volunteerWorkId, imageId = createdImage.Id }, createdImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the volunteer work image.");
+            }
+        }
+
+        [HttpGet("/volunteer-work/{volunteerWorkId}/main-image")]
+        public ActionResult GetMainImageByVolunteerWorkId(int volunteerWorkId)
+        {
+            Image mainImage = _imageDao.GetMainImageOrOrganizationLogoByVolunteerWorkId(volunteerWorkId, MainImage);
+
+            if (mainImage == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(mainImage);
+            }
+        }
+
+        [HttpGet("/volunteer-work/{volunteerWorkId}/logo")]
+        public ActionResult GetOrganizationLogoByVolunteerWorkId(int volunteerWorkId)
+        {
+            Image logo = _imageDao.GetMainImageOrOrganizationLogoByVolunteerWorkId(volunteerWorkId, Logo);
+
+            if (logo == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(logo);
+            }
+        }
+
+        [HttpGet("/volunteer-work/{volunteerWorkId}/image/{imageId}")]
+        public ActionResult<Image> GetImageByVolunteerWorkId(int volunteerWorkId, int imageId)
+        {
+            Image image = _imageDao.GetImageByVolunteerWorkId(volunteerWorkId, imageId);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(image);
+            }
+        }
+
+        [HttpGet("/volunteer-work/{volunteerWorkId}/additional-images")]
+        public ActionResult GetAdditionalImagesByVolunteerWorkId(int volunteerWorkId)
+        {
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByVolunteerWorkId(volunteerWorkId);
+
+            if (additionalImages == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(additionalImages);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/volunteer-work/{volunteerWorkId}/update-image/{imageId}")]
+        public ActionResult UpdateImageByVolunteerWorkId(int volunteerWorkId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedImage = _imageDao.UpdateImageByVolunteerWorkId(volunteerWorkId, imageId, image);
+
+                if (updatedImage == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the volunteer work image.");
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/volunteer-work/{volunteerWorkId}/update-main-image-or-logo")]
+        public ActionResult UpdateMainImageOrOrganizationLogoByVolunteerWorkId(int volunteerWorkId, int imageId, Image image)
+        {
+            try
+            {
+                Image updatedMainImage = _imageDao.UpdateMainImageOrLogoByVolunteerWorkId(volunteerWorkId, imageId, image);
+
+                if (updatedMainImage == null)
+                {
+                    return BadRequest("The image is null. Please provide a main image or logo.");
+                }
+                else if (updatedMainImage.Type != MainImage && updatedMainImage.Type != Logo)
+                {
+                    return BadRequest("The provided image is not a main image or logo. Please provide a main image or logo.");
+                }
+                else
+                {
+                    return Ok(updatedMainImage);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the volunteer work main image or logo.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/volunteer-work/{volunteerWorkId}/delete-image/{imageId}")]
+        public ActionResult DeleteImageByVolunteerWorkId(int volunteerWorkId, int imageId)
+        {
+            Image image = _imageDao.GetImageByVolunteerWorkId(volunteerWorkId, imageId);
+
+            string imageType = image.Type.ToLower();
+
+            if (imageType != MainImage && imageType != AdditionalImage && imageType != Logo)
+            {
+                return BadRequest("Invalid imageType. Allowed values are 'main image', 'additional image', and 'logo'.");
+            }
+
+            try
+            {
+                int rowsAffected = _imageDao.DeleteImageByVolunteerWorkId(volunteerWorkId, imageId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Volunteer work image deleted successfully.");
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the volunteer work image.");
+            }
+        }
+
         /*  
             **********************************************************************************************
                                         ACHIEVEMENT IMAGE CRUD CONTROLLER
