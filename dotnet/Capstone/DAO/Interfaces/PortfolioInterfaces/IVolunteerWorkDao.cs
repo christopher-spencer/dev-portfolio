@@ -10,7 +10,6 @@ namespace Capstone.DAO.Interfaces
                                             VOLUNTEER WORK CRUD
             **********************************************************************************************
         */
-// TODO VOLUNTEER WORK Controllers****
         VolunteerWork CreateVolunteerWork(VolunteerWork volunteerWork);
         List<VolunteerWork> GetVolunteerWorks();
         VolunteerWork GetVolunteerWork(int volunteerWorkId);
@@ -21,7 +20,6 @@ namespace Capstone.DAO.Interfaces
                                             PORTFOLIO VOLUNTEER WORK CRUD
             **********************************************************************************************
         */
-// TODO create PORTFOLIO Volunteer Work Controllers
         VolunteerWork CreateVolunteerWorkByPortfolioId(int portfolioId, VolunteerWork volunteerWork);
         List<VolunteerWork> GetVolunteerWorksByPortfolioId(int portfolioId);
         VolunteerWork GetVolunteerWorkByPortfolioId(int portfolioId, int volunteerWorkId);
