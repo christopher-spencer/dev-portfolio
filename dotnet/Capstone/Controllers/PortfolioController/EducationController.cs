@@ -207,11 +207,11 @@ namespace Capstone.Controllers
         {
             try
             {
-                int result = _educationDao.DeleteEducationByPortfolioId(portfolioId, educationId);
+                int rowsAffected = _educationDao.DeleteEducationByPortfolioId(portfolioId, educationId);
 
-                if (result == 0)
+                if (rowsAffected > 0)
                 {
-                    return BadRequest();
+                    return Ok("Side Project deleted successfully.");
                 }
                 else
                 {
