@@ -10,7 +10,6 @@ namespace Capstone.DAO.Interfaces
                                             OPEN SOURCE CONTRIBUTION CRUD
             **********************************************************************************************
         */
-// TODO OPEN SOURCE CONTRIBUTION Controllers****
         OpenSourceContribution CreateOpenSourceContribution(OpenSourceContribution contribution);
         List<OpenSourceContribution> GetOpenSourceContributions();
         OpenSourceContribution GetOpenSourceContribution(int contributionId);
@@ -22,7 +21,6 @@ namespace Capstone.DAO.Interfaces
                                         PORTFOLIO OPEN SOURCE CONTRIBUTION CRUD
             **********************************************************************************************
         */
-// TODO create PORTFOLIO Open Source Contribution Controllers
         OpenSourceContribution CreateOpenSourceContributionByPortfolioId(int portfolioId, OpenSourceContribution contribution);
         List<OpenSourceContribution> GetOpenSourceContributionsByPortfolioId(int portfolioId);
         OpenSourceContribution GetOpenSourceContributionByPortfolioId(int portfolioId, int contributionId);
