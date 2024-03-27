@@ -46,7 +46,7 @@ namespace Capstone.DAO
                                             PORTFOLIO CRUD
             **********************************************************************************************
         */
-        // TODO finish CRUD, helper methods and maprow
+
         public Portfolio CreatePortfolio(Portfolio portfolio)
         {
             if (string.IsNullOrEmpty(portfolio.Name))
