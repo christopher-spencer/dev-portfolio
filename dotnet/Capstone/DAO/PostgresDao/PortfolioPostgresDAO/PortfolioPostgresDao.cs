@@ -23,30 +23,30 @@ namespace Capstone.DAO
 
 
         public PortfolioPostgresDao(string dbConnectionString, ISideProjectDao sideProjectDao,
-            IWebsiteDao websiteDao, IImageDao imageDao, ISkillDao skillDao, 
+            IWebsiteDao websiteDao, IImageDao imageDao, ISkillDao skillDao,
             IWorkExperienceDao workExperienceDao, IEducationDao educationDao, ICredentialDao credentialDao,
             IVolunteerWorkDao volunteerWorkDao, IOpenSourceContributionDao openSourceContributionDao,
             IHobbyDao hobbyDao)
-            {
-                connectionString = dbConnectionString;
-                _sideProjectDao = sideProjectDao;
-                _websiteDao = websiteDao;
-                _imageDao = imageDao;
-                _skillDao = skillDao;
-                _workExperienceDao = workExperienceDao;
-                _educationDao = educationDao;
-                _credentialDao = credentialDao;
-                _volunteerWorkDao = volunteerWorkDao;
-                _openSourceContributionDao = openSourceContributionDao;
-                _hobbyDao = hobbyDao;
-            }
+        {
+            connectionString = dbConnectionString;
+            _sideProjectDao = sideProjectDao;
+            _websiteDao = websiteDao;
+            _imageDao = imageDao;
+            _skillDao = skillDao;
+            _workExperienceDao = workExperienceDao;
+            _educationDao = educationDao;
+            _credentialDao = credentialDao;
+            _volunteerWorkDao = volunteerWorkDao;
+            _openSourceContributionDao = openSourceContributionDao;
+            _hobbyDao = hobbyDao;
+        }
 
         /*  
             **********************************************************************************************
                                             PORTFOLIO CRUD
             **********************************************************************************************
         */
-// TODO finish CRUD, helper methods and maprow
+        // TODO finish CRUD, helper methods and maprow
         public Portfolio CreatePortfolio(Portfolio portfolio)
         {
             if (string.IsNullOrEmpty(portfolio.Name))
@@ -217,7 +217,85 @@ namespace Capstone.DAO
             }
         }
 
-        
+        public int DeletePortfolio(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            string sql = "DELETE FROM portfolios WHERE id = @portfolioId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? mainImageId = GetMainImageIdByPortfolioId(portfolioId);
+                            int? gitHubIt = GetGitHubIdByPortfolioId(portfolioId);
+                            int? linkedInId = GetLinkedInIdByPortfolioId(portfolioId);
+
+                            if (mainImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageByPortfolioId(portfolioId, mainImageId.Value);
+                            }
+
+                            if (gitHubIt.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, gitHubIt.Value);
+                            }
+
+                            if (linkedInId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, linkedInId.Value);
+                            }
+
+                            DeleteAdditionalImagesByPortfolioId(portfolioId);
+                            DeleteHobbiesByPortfolioId(portfolioId);
+                            DeleteTechSkillsByPortfolioId(portfolioId);
+                            DeleteWorkExperiencesByPortfolioId(portfolioId);
+                            DeleteEducationsByPortfolioId(portfolioId);
+                            DeleteCredentialsByPortfolioId(portfolioId);
+                            DeleteVolunteerWorksByPortfolioId(portfolioId);
+                            DeleteOpenSourceContributionsByPortfolioId(portfolioId);
+                            DeleteSideProjectsByPortfolioId(portfolioId);
+
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Transaction = transaction;
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the portfolio.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************
