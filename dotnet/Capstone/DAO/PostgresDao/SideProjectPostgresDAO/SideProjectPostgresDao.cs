@@ -296,7 +296,7 @@ namespace Capstone.DAO
                                             PORTFOLIO SIDE PROJECT CRUD
             **********************************************************************************************
         */
-        // TODO create Portfolio Side Project PGDAO, DAO, and Controllers
+
         public SideProject CreateSideProjectByPortfolioId(int portfolioId, SideProject sideProject)
         {
             if (portfolioId <= 0)
