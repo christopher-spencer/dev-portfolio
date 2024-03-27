@@ -15,10 +15,10 @@ namespace Capstone.Models
         public string ProfessionalSummary { get; set; }
         public List<Hobby> Hobbies { get; set; }
         public string Email { get; set; }
-        public int GitHubRepoLinkId { get; set; }
-        public Website GitHubRepoLink { get; set; }
+        public int GitHubId { get; set; }
+        public Website GitHub { get; set; }
         public int LinkedInId { get; set; }
-        public Website LinkedInURL { get; set; }
+        public Website LinkedIn { get; set; }
         public List<Skill> TechSkills { get; set; }
         public List<SideProject> SideProjects { get; set; }
         public List<WorkExperience> BackgroundExperiences { get; set; }

@@ -225,6 +225,321 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        private int? GetMainImageIdByPortfolioId(int portfolioId)
+        {
+            string sql = "SELECT main_image_id FROM portfolios WHERE id = @portfolioId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the Main Image ID by Portfolio ID.", ex);
+            }
+        }
+
+        private int? GetGitHubIdByPortfolioId(int portfolioId)
+        {
+            string sql = "SELECT github_repo_link_id FROM portfolios WHERE id = @portfolioId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the GitHub ID by Portfolio ID.", ex);
+            }
+        }
+
+        private int? GetLinkedInIdByPortfolioId(int portfolioId)
+        {
+            string sql = "SELECT linkedin_id FROM portfolios WHERE id = @portfolioId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the LinkedIn ID by Portfolio ID.", ex);
+            }
+        }
+
+        private int DeleteHobbiesByPortfolioId(int portfolioId)
+        {
+            List<Hobby> hobbies = _hobbyDao.GetHobbiesByPortfolioId(portfolioId);
+
+            int hobbiesDeletedCount = 0;
+
+            foreach (Hobby hobby in hobbies)
+            {
+                int hobbyId = hobby.Id;
+
+                try
+                {
+                    _hobbyDao.DeleteHobbyByPortfolioId(portfolioId, hobbyId);
+                    hobbiesDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the hobby with ID {hobbyId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return hobbiesDeletedCount;
+        }
+
+        private int DeleteTechSkillsByPortfolioId(int portfolioId)
+        {
+            List<Skill> skills = _skillDao.GetSkillsByPortfolioId(portfolioId);
+
+            int skillsDeletedCount = 0;
+
+            foreach (Skill skill in skills)
+            {
+                int skillId = skill.Id;
+
+                try
+                {
+                    _skillDao.DeleteSkillByPortfolioId(portfolioId, skillId);
+                    skillsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the skill with ID {skillId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return skillsDeletedCount;
+        }
+
+        private int DeleteSideProjectsByPortfolioId(int portfolioId)
+        {
+            List<SideProject> sideProjects = _sideProjectDao.GetSideProjectsByPortfolioId(portfolioId);
+
+            int sideProjectsDeletedCount = 0;
+
+            foreach (SideProject sideProject in sideProjects)
+            {
+                int sideProjectId = sideProject.Id;
+
+                try
+                {
+                    _sideProjectDao.DeleteSideProjectByPortfolioId(portfolioId, sideProjectId);
+                    sideProjectsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the side project with ID {sideProjectId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return sideProjectsDeletedCount;
+        }
+
+        private int DeleteWorkExperiencesByPortfolioId(int portfolioId)
+        {
+            List<WorkExperience> workExperiences = _workExperienceDao.GetWorkExperiencesByPortfolioId(portfolioId);
+
+            int workExperiencesDeletedCount = 0;
+
+            foreach (WorkExperience workExperience in workExperiences)
+            {
+                int workExperienceId = workExperience.Id;
+
+                try
+                {
+                    _workExperienceDao.DeleteWorkExperienceByPortfolioId(portfolioId, workExperienceId);
+                    workExperiencesDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the work experience with ID {workExperienceId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return workExperiencesDeletedCount;
+        }
+
+        private int DeleteEducationsByPortfolioId(int portfolioId)
+        {
+            List<Education> educations = _educationDao.GetEducationsByPortfolioId(portfolioId);
+
+            int educationsDeletedCount = 0;
+
+            foreach (Education education in educations)
+            {
+                int educationId = education.Id;
+
+                try
+                {
+                    _educationDao.DeleteEducationByPortfolioId(portfolioId, educationId);
+                    educationsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the education with ID {educationId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return educationsDeletedCount;
+        }
+
+        private int DeleteCredentialsByPortfolioId(int portfolioId)
+        {
+            List<Credential> credentials = _credentialDao.GetCredentialsByPortfolioId(portfolioId);
+
+            int credentialsDeletedCount = 0;
+
+            foreach (Credential credential in credentials)
+            {
+                int credentialId = credential.Id;
+
+                try
+                {
+                    _credentialDao.DeleteCredentialByPortfolioId(portfolioId, credentialId);
+                    credentialsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the credential with ID {credentialId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return credentialsDeletedCount;
+        }
+
+        private int DeleteVolunteerWorksByPortfolioId(int portfolioId)
+        {
+            List<VolunteerWork> volunteerWorks = _volunteerWorkDao.GetVolunteerWorksByPortfolioId(portfolioId);
+
+            int volunteerWorksDeletedCount = 0;
+
+            foreach (VolunteerWork volunteerWork in volunteerWorks)
+            {
+                int volunteerWorkId = volunteerWork.Id;
+
+                try
+                {
+                    _volunteerWorkDao.DeleteVolunteerWorkByPortfolioId(portfolioId, volunteerWorkId);
+                    volunteerWorksDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the volunteer work with ID {volunteerWorkId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return volunteerWorksDeletedCount;
+        }
+
+        private int DeleteOpenSourceContributionsByPortfolioId(int portfolioId)
+        {
+            List<OpenSourceContribution> openSourceContributions = _openSourceContributionDao.GetOpenSourceContributionsByPortfolioId(portfolioId);
+
+            int openSourceContributionsDeletedCount = 0;
+
+            foreach (OpenSourceContribution openSourceContribution in openSourceContributions)
+            {
+                int openSourceContributionId = openSourceContribution.Id;
+
+                try
+                {
+                    _openSourceContributionDao.DeleteOpenSourceContributionByPortfolioId(portfolioId, openSourceContributionId);
+                    openSourceContributionsDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the open source contribution with ID {openSourceContributionId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return openSourceContributionsDeletedCount;
+        }
+
+        private int DeleteAdditionalImagesByPortfolioId(int portfolioId)
+        {
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByPortfolioId(portfolioId);
+
+            int additionalImagesDeletedCount = 0;
+
+            foreach (Image image in additionalImages)
+            {
+                int imageId = image.Id;
+
+                try
+                {
+                    _imageDao.DeleteImageByPortfolioId(portfolioId, imageId);
+                    additionalImagesDeletedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while deleting the additional image with ID {imageId} for portfolio with ID {portfolioId}: {ex.Message}");
+                }
+            }
+
+            return additionalImagesDeletedCount;
+        }
+
         /*  
             **********************************************************************************************
                                             PORTFOLIO MAP ROW
@@ -245,7 +560,18 @@ namespace Capstone.DAO
             int portfolioId = portfolio.Id;
 
             SetPortfolioMainImageIdProperties(reader, portfolio, portfolioId);
+            SetPortfolioGitHubRepoLinkIdProperties(reader, portfolio, portfolioId);
+            SetPortfolioLinkedInIdProperties(reader, portfolio, portfolioId);
 
+            portfolio.Hobbies = _hobbyDao.GetHobbiesByPortfolioId(portfolioId);
+            portfolio.TechSkills = _skillDao.GetSkillsByPortfolioId(portfolioId);
+            portfolio.SideProjects = _sideProjectDao.GetSideProjectsByPortfolioId(portfolioId);
+            portfolio.BackgroundExperiences = _workExperienceDao.GetWorkExperiencesByPortfolioId(portfolioId);
+            portfolio.EducationHistory = _educationDao.GetEducationsByPortfolioId(portfolioId);
+            portfolio.CertificationsAndCredentials = _credentialDao.GetCredentialsByPortfolioId(portfolioId);
+            portfolio.VolunteerWorks = _volunteerWorkDao.GetVolunteerWorksByPortfolioId(portfolioId);
+            portfolio.OpenSourceContributions = _openSourceContributionDao.GetOpenSourceContributionsByPortfolioId(portfolioId);
+            portfolio.AdditionalImages = _imageDao.GetAdditionalImagesByPortfolioId(portfolioId);
 
             return portfolio;
         }
@@ -264,14 +590,32 @@ namespace Capstone.DAO
             }
         }
 
-        // private void SetPortfolioGitHubRepoLinkIdProperties(NpgsqlDataReader reader, Portfolio portfolio, int portfolioId)
-        // {
-        //     if (reader["github_repo_link_id"] != DBNull.Value)
-        //     {
-        //         portfolio.GitHubRepoLinkId = Convert.ToInt32(reader["github_repo_link_id"]);
+        private void SetPortfolioGitHubRepoLinkIdProperties(NpgsqlDataReader reader, Portfolio portfolio, int portfolioId)
+        {
+            if (reader["github_repo_link_id"] != DBNull.Value)
+            {
+                portfolio.GitHubId = Convert.ToInt32(reader["github_repo_link_id"]);
 
-        //         portfolio.GitHubRepoLink = _websiteDao.GetWebsiteByPortfolioId(portfolioId);
-        //     }
-        // }
+                portfolio.GitHub = _websiteDao.GetWebsiteByPortfolioId(portfolioId, portfolio.GitHubId);
+            }
+            else
+            {
+                portfolio.GitHubId = 0;
+            }
+        }
+
+        private void SetPortfolioLinkedInIdProperties(NpgsqlDataReader reader, Portfolio portfolio, int portfolioId)
+        {
+            if (reader["linkedin_id"] != DBNull.Value)
+            {
+                portfolio.LinkedInId = Convert.ToInt32(reader["linkedin_id"]);
+
+                portfolio.LinkedIn = _websiteDao.GetWebsiteByPortfolioId(portfolioId, portfolio.LinkedInId);
+            }
+            else
+            {
+                portfolio.LinkedInId = 0;
+            }
+        }
     }
 }
