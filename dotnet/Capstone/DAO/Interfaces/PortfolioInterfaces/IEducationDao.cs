@@ -10,7 +10,6 @@ namespace Capstone.DAO.Interfaces
                                                 EDUCATION CRUD
             **********************************************************************************************
         */
-// TODO EDUCATION Controllers****
         Education CreateEducation(Education education);
         List<Education> GetEducations();
         Education GetEducation(int educationId);
@@ -22,7 +21,6 @@ namespace Capstone.DAO.Interfaces
                                             PORTFOLIO EDUCATION CRUD
             **********************************************************************************************
         */
-// TODO create PORTFOLIO Education Controllers      
         Education CreateEducationByPortfolioId(int portfolioId, Education education);
         List<Education> GetEducationsByPortfolioId(int portfolioId);
         Education GetEducationByPortfolioId(int portfolioId, int educationId);

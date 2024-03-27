@@ -121,5 +121,13 @@ namespace Capstone.Controllers
                 return StatusCode(500, "An error occurred while deleting the side project.");
             }
         }
+
+        /*  
+            **********************************************************************************************
+                                        PORTFOLIO SIDEPROJECT CRUD CONTROLLER
+            **********************************************************************************************
+        */
+
+        
     }
 }
