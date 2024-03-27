@@ -84,11 +84,11 @@ namespace Capstone
             IOpenSourceContributionDao openSourceContributionDao = new OpenSourceContributionPostgresDao(connectionString, 
                 imageDao, websiteDao, achievementDao, skillDao);
             IEducationDao educationDao = new EducationPostgresDao(connectionString, imageDao, websiteDao, achievementDao);
-            IWorkExperienceDao experienceDao = new WorkExperiencePostgresDao(connectionString, imageDao, skillDao, websiteDao, 
+            IWorkExperienceDao workExperienceDao = new WorkExperiencePostgresDao(connectionString, imageDao, skillDao, websiteDao, 
                 achievementDao);
 
             IPortfolioDao portfolioDao = new PortfolioPostgresDao(connectionString, sideProjectDao, websiteDao, imageDao, 
-                skillDao);
+                skillDao, workExperienceDao, educationDao, credentialDao, volunteerWorkDao, openSourceContributionDao, hobbyDao);
 
             // Register services with DI container
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
@@ -98,7 +98,8 @@ namespace Capstone
             services.AddTransient<IBlogPostDao>(m => new BlogPostPostgresDao(connectionString, imageDao));
 
             services.AddTransient<IPortfolioDao>(m => new PortfolioPostgresDao(
-                connectionString, sideProjectDao, websiteDao, imageDao, skillDao));
+                connectionString, sideProjectDao, websiteDao, imageDao, skillDao, workExperienceDao, educationDao,
+                credentialDao, volunteerWorkDao, openSourceContributionDao, hobbyDao));
 
             services.AddTransient<IWorkExperienceDao>(m => new WorkExperiencePostgresDao(connectionString, imageDao, skillDao, 
                 websiteDao, achievementDao));
