@@ -296,7 +296,325 @@ namespace Capstone.DAO
                                             PORTFOLIO SIDE PROJECT CRUD
             **********************************************************************************************
         */
-// TODO create Portfolio Side Project PGDAO, DAO, and Controllers
+        // TODO create Portfolio Side Project PGDAO, DAO, and Controllers
+        public SideProject CreateSideProjectByPortfolioId(int portfolioId, SideProject sideProject)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(sideProject.Name))
+            {
+                throw new ArgumentException("Side Project name is required to create a Side Project.");
+            }
+
+            if (string.IsNullOrEmpty(sideProject.Description))
+            {
+                throw new ArgumentException("Side Project description is required to create a Side Project.");
+            }
+
+            string insertSideProjectSql = "INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, " +
+                                         "start_date, finish_date) " +
+                                         "VALUES (@name, @description, @video_walkthrough_url, @project_status, @start_date, " +
+                                         "@finish_date) " +
+                                         "RETURNING id";
+
+            string insertPortfolioSideProjectSql = "INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id) " +
+                                                    "VALUES (@portfolioId, @sideProjectId)";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int sideProjectId;
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertSideProjectSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@name", sideProject.Name);
+                                cmd.Parameters.AddWithValue("@description", sideProject.Description);
+                                cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
+                                cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
+                                cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
+                                cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                                cmd.Transaction = transaction;
+
+                                sideProjectId = Convert.ToInt32(cmd.ExecuteScalar());
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(insertPortfolioSideProjectSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProject.Id);
+                                cmd.Transaction = transaction;
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            sideProject.Id = sideProjectId;
+
+                            return sideProject;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while creating the side project by portfolio ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
+
+        public List<SideProject> GetSideProjectsByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            List<SideProject> sideProjects = new List<SideProject>();
+
+            string sql = "SELECT sp.id, sp.name, sp.main_image_id, sp.description, sp.video_walkthrough_url, " +
+                    "sp.website_id, sp.github_repo_link_id, sp.project_status, sp.start_date, sp.finish_date " +
+                    "FROM sideprojects sp " +
+                    "JOIN portfolio_sideprojects psp ON sp.id = psp.sideproject_id " +
+                    "WHERE psp.portfolio_id = @portfolioId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                SideProject sideProject = MapRowToSideProject(reader);
+                                sideProjects.Add(sideProject);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the side projects by portfolio ID.", ex);
+            }
+
+            return sideProjects;
+        }
+
+        public SideProject GetSideProjectByPortfolioId(int portfolioId, int sideProjectId)
+        {
+            if (portfolioId <= 0 || sideProjectId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and SideProjectId must be greater than zero.");
+            }
+
+            SideProject sideProject = null;
+
+            string sql = "SELECT sp.id, sp.name, sp.main_image_id, sp.description, sp.video_walkthrough_url, " +
+                    "sp.website_id, sp.github_repo_link_id, sp.project_status, sp.start_date, sp.finish_date " +
+                    "FROM sideprojects sp " +
+                    "JOIN portfolio_sideprojects psp ON sp.id = psp.sideproject_id " +
+                    "WHERE psp.portfolio_id = @portfolioId AND sp.id = @sideProjectId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                sideProject = MapRowToSideProject(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the side project by portfolio ID.", ex);
+            }
+
+            return sideProject;
+        }
+
+        public SideProject UpdateSideProjectByPortfolioId(int portfolioId, int sideProjectId, SideProject sideProject)
+        {
+            if (portfolioId <= 0 || sideProjectId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and SideProjectId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(sideProject.Name))
+            {
+                throw new ArgumentException("SideProject name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(sideProject.Description))
+            {
+                throw new ArgumentException("SideProject description cannot be null or empty.");
+            }
+
+            string sql = "UPDATE sideprojects SET name = @name, description = @description, " +
+                         "video_walkthrough_url = @video_walkthrough_url, project_status = @project_status, " +
+                         "start_date = @start_date, finish_date = @finish_date " +
+                         "FROM portfolio_sideprojects psp " +
+                         "WHERE psp.portfolio_id = @portfolioId AND psp.sideproject_id = @sideProjectId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@name", sideProject.Name);
+                        cmd.Parameters.AddWithValue("@description", sideProject.Description);
+                        cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
+                        cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
+                        cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
+                        cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return sideProject;
+                        }
+
+
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred updating the side project by portfolio ID.", ex);
+            }
+
+            return null;
+        }
+
+        public int DeleteSideProjectByPortfolioId(int portfolioId, int sideProjectId)
+        {
+            if (portfolioId <= 0 || sideProjectId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and SideProjectId must be greater than zero.");
+            }
+
+            string deletePortfolioSideProjectSql = "DELETE FROM portfolio_sideprojects " +
+                                                   "WHERE portfolio_id = @portfolioId " +
+                                                   "AND sideproject_id = @sideProjectId";
+
+            string deleteSideProjectSql = "DELETE FROM sideprojects WHERE id = @sideProjectId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            int rowsAffected;
+
+                            int? mainImageId = GetMainImageIdBySideProjectId(sideProjectId);
+                            int? websiteId = GetWebsiteIdBySideProjectId(sideProjectId);
+                            int? gitHubId = GetGithubIdBySideProjectId(sideProjectId);
+
+                            if (mainImageId.HasValue)
+                            {
+                                _imageDao.DeleteImageBySideProjectId(sideProjectId, mainImageId.Value);
+                            }
+
+                            if (websiteId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId.Value);
+                            }
+
+                            if (gitHubId.HasValue)
+                            {
+                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, gitHubId.Value);
+                            }
+
+                            DeleteGoalsAndObjectivesBySideProjectId(sideProjectId);
+                            DeleteAdditionalImagesBySideProjectId(sideProjectId);
+                            DeleteToolsUsedBySideProjectId(sideProjectId);
+                            DeleteContributorsBySideProjectId(sideProjectId);
+                            DeleteExternalApisAndServicesUsedBySideProjectId(sideProjectId);
+                            DeleteDependenciesAndLibrariesUsedBySideProjectId(sideProjectId);
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deletePortfolioSideProjectSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Transaction = transaction;
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            using (NpgsqlCommand cmd = new NpgsqlCommand(deleteSideProjectSql, connection))
+                            {
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                                cmd.Transaction = transaction;
+
+                                rowsAffected = cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+
+                            return rowsAffected;
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+
+                            transaction.Rollback();
+
+                            throw new DaoException("An error occurred while deleting the side project by portfolio ID.", ex);
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while connecting to the database.", ex);
+            }
+        }
 
         /*  
             **********************************************************************************************

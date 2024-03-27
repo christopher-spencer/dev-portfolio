@@ -128,6 +128,104 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        
+        [Authorize]
+        [HttpPost("/portfolio/{portfolioId}/create-sideproject")]
+        public ActionResult CreateSideProjectByPortfolioId(int portfolioId, SideProject sideProject)
+        {
+            try
+            {
+                SideProject createdSideProject = _sideProjectDao.CreateSideProjectByPortfolioId(portfolioId, sideProject);
+
+                if (createdSideProject == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetSideProjectByPortfolioId), new { portfolioId = portfolioId, sideProjectId = createdSideProject.Id }, createdSideProject);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while creating the side project.");
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/sideprojects")]
+        public ActionResult<List<SideProject>> GetSideProjectsByPortfolioId(int portfolioId)
+        {
+            List<SideProject> sideProjects = _sideProjectDao.GetSideProjectsByPortfolioId(portfolioId);
+
+            if (sideProjects == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(sideProjects);
+            }
+        }
+
+        [HttpGet("/portfolio/{portfolioId}/sideproject/{sideProjectId}")]
+        public ActionResult<SideProject> GetSideProjectByPortfolioId(int portfolioId, int sideProjectId)
+        {
+            SideProject sideProject = _sideProjectDao.GetSideProjectByPortfolioId(portfolioId, sideProjectId);
+
+            if (sideProject == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(sideProject);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("/portfolio/{portfolioId}/update-sideproject/{sideProjectId}")]
+        public ActionResult UpdateSideProjectByPortfolioId(int portfolioId, int sideProjectId, SideProject sideProject)
+        {
+            try
+            {
+                SideProject updatedSideProject = _sideProjectDao.UpdateSideProjectByPortfolioId(portfolioId, sideProjectId, sideProject);
+
+                if (updatedSideProject == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    return Ok(updatedSideProject);
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while updating the side project.");
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("/portfolio/{portfolioId}/sideproject/delete/{sideProjectId}")]
+        public ActionResult<int> DeleteSideProjectByPortfolioId(int portfolioId, int sideProjectId)
+        {
+            try
+            {
+                int rowsAffected = _sideProjectDao.DeleteSideProjectByPortfolioId(portfolioId, sideProjectId);
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Side Project deleted successfully.");
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            catch (DaoException)
+            {
+                return StatusCode(500, "An error occurred while deleting the side project.");
+            }
+        }
+
     }
 }

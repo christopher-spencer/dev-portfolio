@@ -22,5 +22,10 @@ namespace Capstone.DAO.Interfaces
                                             PORTFOLIO SIDE PROJECT CRUD
             **********************************************************************************************
         */
+        SideProject CreateSideProjectByPortfolioId(int portfolioId, SideProject sideProject);
+        List<SideProject> GetSideProjectsByPortfolioId(int portfolioId);
+        SideProject GetSideProjectByPortfolioId(int portfolioId, int sideProjectId);
+        SideProject UpdateSideProjectByPortfolioId(int portfolioId, int sideProjectId, SideProject sideProject);
+        int DeleteSideProjectByPortfolioId(int portfolioId, int sideProjectId);
     }
 }
