@@ -34,61 +34,61 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public Education CreateEducation(Education education)
-        {
-            if (string.IsNullOrEmpty(education.InstitutionName))
-            {
-                throw new ArgumentException("Institution Name is required to create an Education.");
-            }
+        // public Education CreateEducation(Education education)
+        // {
+        //     if (string.IsNullOrEmpty(education.InstitutionName))
+        //     {
+        //         throw new ArgumentException("Institution Name is required to create an Education.");
+        //     }
 
-            if (string.IsNullOrEmpty(education.Location))
-            {
-                throw new ArgumentException("Location is required to create an Education.");
-            }
+        //     if (string.IsNullOrEmpty(education.Location))
+        //     {
+        //         throw new ArgumentException("Location is required to create an Education.");
+        //     }
 
-            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
-            }
+        //     if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
+        //     {
+        //         throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
+        //     }
 
-            string sql = "INSERT INTO educations (institution_name, location, description, field_of_study, major, minor, " +
-                         "degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date) " +
-                         "VALUES (@institutionName, @location, @description, @fieldOfStudy, @major, @minor, @degreeObtained, " +
-                         "@gpaOverall, @gpaInMajor, @startDate, @graduationDate) " +
-                         "RETURNING id;";
+        //     string sql = "INSERT INTO educations (institution_name, location, description, field_of_study, major, minor, " +
+        //                  "degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date) " +
+        //                  "VALUES (@institutionName, @location, @description, @fieldOfStudy, @major, @minor, @degreeObtained, " +
+        //                  "@gpaOverall, @gpaInMajor, @startDate, @graduationDate) " +
+        //                  "RETURNING id;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
-                        cmd.Parameters.AddWithValue("@location", education.Location);
-                        cmd.Parameters.AddWithValue("@description", education.Description);
-                        cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
-                        cmd.Parameters.AddWithValue("@major", education.Major);
-                        cmd.Parameters.AddWithValue("@minor", education.Minor);
-                        cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
-                        cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
-                        cmd.Parameters.AddWithValue("@gpaInMajor", education.GPAInMajor);
-                        cmd.Parameters.AddWithValue("@startDate", education.StartDate);
-                        cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
+        //                 cmd.Parameters.AddWithValue("@location", education.Location);
+        //                 cmd.Parameters.AddWithValue("@description", education.Description);
+        //                 cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
+        //                 cmd.Parameters.AddWithValue("@major", education.Major);
+        //                 cmd.Parameters.AddWithValue("@minor", education.Minor);
+        //                 cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
+        //                 cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
+        //                 cmd.Parameters.AddWithValue("@gpaInMajor", education.GPAInMajor);
+        //                 cmd.Parameters.AddWithValue("@startDate", education.StartDate);
+        //                 cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
 
-                        int educationId = Convert.ToInt32(cmd.ExecuteScalar());
-                        education.Id = educationId;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the Education.", ex);
-            }
+        //                 int educationId = Convert.ToInt32(cmd.ExecuteScalar());
+        //                 education.Id = educationId;
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while creating the Education.", ex);
+        //     }
 
-            return education;
-        }
+        //     return education;
+        // }
 
         public List<Education> GetEducations()
         {
@@ -166,143 +166,143 @@ namespace Capstone.DAO
             return education;
         }
 
-        public Education UpdateEducation(int educationId, Education education)
-        {
-            if (educationId <= 0)
-            {
-                throw new ArgumentException("Education ID must be greater than zero.");
-            }
+        // public Education UpdateEducation(int educationId, Education education)
+        // {
+        //     if (educationId <= 0)
+        //     {
+        //         throw new ArgumentException("Education ID must be greater than zero.");
+        //     }
 
-            if (string.IsNullOrEmpty(education.InstitutionName))
-            {
-                throw new ArgumentException("Institution Name is required to update an Education.");
-            }
+        //     if (string.IsNullOrEmpty(education.InstitutionName))
+        //     {
+        //         throw new ArgumentException("Institution Name is required to update an Education.");
+        //     }
 
-            if (string.IsNullOrEmpty(education.Location))
-            {
-                throw new ArgumentException("Location is required to update an Education.");
-            }
+        //     if (string.IsNullOrEmpty(education.Location))
+        //     {
+        //         throw new ArgumentException("Location is required to update an Education.");
+        //     }
 
-            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to update an Education.");
-            }
+        //     if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
+        //     {
+        //         throw new ArgumentException("Start Date must be a valid date in the past or present to update an Education.");
+        //     }
 
-            string sql = "UPDATE educations SET institution_name = @institutionName, location = @location, description = @description, " +
-                         "field_of_study = @fieldOfStudy, major = @major, minor = @minor, degree_obtained = @degreeObtained, " +
-                         "gpa_overall = @gpaOverall, gpa_in_major = @gpaInMajor, start_date = @startDate, graduation_date = @graduationDate " +
-                         "WHERE id = @educationId;";
+        //     string sql = "UPDATE educations SET institution_name = @institutionName, location = @location, description = @description, " +
+        //                  "field_of_study = @fieldOfStudy, major = @major, minor = @minor, degree_obtained = @degreeObtained, " +
+        //                  "gpa_overall = @gpaOverall, gpa_in_major = @gpaInMajor, start_date = @startDate, graduation_date = @graduationDate " +
+        //                  "WHERE id = @educationId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
-                        cmd.Parameters.AddWithValue("@location", education.Location);
-                        cmd.Parameters.AddWithValue("@description", education.Description);
-                        cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
-                        cmd.Parameters.AddWithValue("@major", education.Major);
-                        cmd.Parameters.AddWithValue("@minor", education.Minor);
-                        cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
-                        cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
-                        cmd.Parameters.AddWithValue("@gpaInMajor", education.GPAInMajor);
-                        cmd.Parameters.AddWithValue("@startDate", education.StartDate);
-                        cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
-                        cmd.Parameters.AddWithValue("@educationId", educationId);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
+        //                 cmd.Parameters.AddWithValue("@location", education.Location);
+        //                 cmd.Parameters.AddWithValue("@description", education.Description);
+        //                 cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
+        //                 cmd.Parameters.AddWithValue("@major", education.Major);
+        //                 cmd.Parameters.AddWithValue("@minor", education.Minor);
+        //                 cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
+        //                 cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
+        //                 cmd.Parameters.AddWithValue("@gpaInMajor", education.GPAInMajor);
+        //                 cmd.Parameters.AddWithValue("@startDate", education.StartDate);
+        //                 cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
+        //                 cmd.Parameters.AddWithValue("@educationId", educationId);
 
-                        int count = cmd.ExecuteNonQuery();
+        //                 int count = cmd.ExecuteNonQuery();
 
-                        if (count == 1)
-                        {
-                            return education;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the Education.", ex);
-            }
-        }
+        //                 if (count == 1)
+        //                 {
+        //                     return education;
+        //                 }
+        //                 else
+        //                 {
+        //                     return null;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while updating the Education.", ex);
+        //     }
+        // }
 
-        public int DeleteEducation(int educationId)
-        {
-            if (educationId <= 0)
-            {
-                throw new ArgumentException("EducationId must be greater than zero.");
-            }
+        // public int DeleteEducation(int educationId)
+        // {
+        //     if (educationId <= 0)
+        //     {
+        //         throw new ArgumentException("EducationId must be greater than zero.");
+        //     }
 
-            string sql = "DELETE FROM educations WHERE id = @educationId;";
+        //     string sql = "DELETE FROM educations WHERE id = @educationId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            int rowsAffected;
+        //             using (NpgsqlTransaction transaction = connection.BeginTransaction())
+        //             {
+        //                 try
+        //                 {
+        //                     int rowsAffected;
 
-                            int? institutionLogoId = GetInstitutionLogoIdByEducationId(educationId);
-                            int? mainImageId = GetMainImageIdByEducationId(educationId);
-                            int? institutionWebsiteId = GetWebsiteIdByEducationId(educationId);
+        //                     int? institutionLogoId = GetInstitutionLogoIdByEducationId(educationId);
+        //                     int? mainImageId = GetMainImageIdByEducationId(educationId);
+        //                     int? institutionWebsiteId = GetWebsiteIdByEducationId(educationId);
 
-                            if (institutionLogoId.HasValue)
-                            {
-                                _imageDao.DeleteImageByEducationId(educationId, institutionLogoId.Value);
-                            }
+        //                     if (institutionLogoId.HasValue)
+        //                     {
+        //                         _imageDao.DeleteImageByEducationId(educationId, institutionLogoId.Value);
+        //                     }
 
-                            if (mainImageId.HasValue)
-                            {
-                                _imageDao.DeleteImageByEducationId(educationId, mainImageId.Value);
-                            }
+        //                     if (mainImageId.HasValue)
+        //                     {
+        //                         _imageDao.DeleteImageByEducationId(educationId, mainImageId.Value);
+        //                     }
 
-                            if (institutionWebsiteId.HasValue)
-                            {
-                                _websiteDao.DeleteWebsiteByEducationId(educationId, institutionWebsiteId.Value);
-                            }
+        //                     if (institutionWebsiteId.HasValue)
+        //                     {
+        //                         _websiteDao.DeleteWebsiteByEducationId(educationId, institutionWebsiteId.Value);
+        //                     }
 
-                            DeleteHonorsAndAwardsByEducationId(educationId);
-                            DeleteAdditionalImagesByEducationId(educationId);
+        //                     DeleteHonorsAndAwardsByEducationId(educationId);
+        //                     DeleteAdditionalImagesByEducationId(educationId);
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                            {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@educationId", educationId);
-                                rowsAffected = cmd.ExecuteNonQuery();
-                            }
+        //                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //                     {
+        //                         cmd.Transaction = transaction;
+        //                         cmd.Parameters.AddWithValue("@educationId", educationId);
+        //                         rowsAffected = cmd.ExecuteNonQuery();
+        //                     }
 
-                            transaction.Commit();
+        //                     transaction.Commit();
 
-                            return rowsAffected;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.ToString());
+        //                     return rowsAffected;
+        //                 }
+        //                 catch (Exception ex)
+        //                 {
+        //                     Console.WriteLine(ex.ToString());
 
-                            transaction.Rollback();
+        //                     transaction.Rollback();
 
-                            throw new DaoException("An error occurred while deleting the Education.", ex);
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while connecting to the database.", ex);
-            }
-        }
+        //                     throw new DaoException("An error occurred while deleting the Education.", ex);
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while connecting to the database.", ex);
+        //     }
+        // }
 
         /*  
             **********************************************************************************************

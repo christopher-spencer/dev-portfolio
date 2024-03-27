@@ -10,11 +10,11 @@ namespace Capstone.DAO.Interfaces
                                                 EDUCATION CRUD
             **********************************************************************************************
         */
-        Education CreateEducation(Education education);
+        // Education CreateEducation(Education education);
         List<Education> GetEducations();
         Education GetEducation(int educationId);
-        Education UpdateEducation(int educationId, Education education);
-        int DeleteEducation(int educationId);
+        // Education UpdateEducation(int educationId, Education education);
+        // int DeleteEducation(int educationId);
 
         /*  
             **********************************************************************************************
