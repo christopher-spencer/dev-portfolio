@@ -53,8 +53,8 @@ namespace Capstone.DAO
 
             string sql = "INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, " +
                         "start_date, finish_date) " +
-                         "VALUES (@name, @description, @video_walkthrough_url, @project_status, @start_date, " +
-                         "@finish_date) " +
+                         "VALUES (@name, @description, @videoWalkthroughUrl, @projectStatus, @startDate, " +
+                         "@finishDate) " +
                          "RETURNING id";
 
             try
@@ -67,13 +67,13 @@ namespace Capstone.DAO
                     {
                         cmd.Parameters.AddWithValue("@name", sideProject.Name);
                         cmd.Parameters.AddWithValue("@description", sideProject.Description);
-                        cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
-                        cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
-                        cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
-                        cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                        cmd.Parameters.AddWithValue("@videoWalkthroughUrl", sideProject.VideoWalkthroughUrl);
+                        cmd.Parameters.AddWithValue("@projectStatus", sideProject.ProjectStatus);
+                        cmd.Parameters.AddWithValue("@startDate", sideProject.StartDate);
+                        cmd.Parameters.AddWithValue("@finishDate", sideProject.FinishDate);
 
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        sideProject.Id = id;
+                        int sideProjectId = Convert.ToInt32(cmd.ExecuteScalar());
+                        sideProject.Id = sideProjectId;
                     }
                 }
             }

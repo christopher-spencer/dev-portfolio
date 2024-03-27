@@ -40,13 +40,55 @@ namespace Capstone.DAO
                 _openSourceContributionDao = openSourceContributionDao;
                 _hobbyDao = hobbyDao;
             }
-            
+
         /*  
             **********************************************************************************************
                                             PORTFOLIO CRUD
             **********************************************************************************************
         */
 // TODO finish CRUD, helper methods and maprow
+        public Portfolio CreatePortfolio(Portfolio portfolio)
+        {
+            if (string.IsNullOrEmpty(portfolio.Name))
+            {
+                throw new ArgumentException("Portfolio name is required.");
+            }
+
+            if (string.IsNullOrEmpty(portfolio.ProfessionalSummary))
+            {
+                throw new ArgumentException("Professional summary is required.");
+            }
+
+            string sql = "INSERT INTO portfolios (name, location, professional_summary, email) " +
+                         "VALUES (@name, @location, @professionalSummary, @email) " +
+                         "RETURNING id";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", portfolio.Name);
+                        cmd.Parameters.AddWithValue("@location", portfolio.Location);
+                        cmd.Parameters.AddWithValue("@professionalSummary", portfolio.ProfessionalSummary);
+                        cmd.Parameters.AddWithValue("@email", portfolio.Email);
+
+                        int portfolioId = (int)cmd.ExecuteScalar();
+                        portfolio.Id = portfolioId;
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while creating the portfolio.", ex);
+            }
+
+            return portfolio;
+        }
+
         public List<Portfolio> GetPortfolios()
         {
             List<Portfolio> portfolios = new List<Portfolio>();
@@ -120,6 +162,62 @@ namespace Capstone.DAO
 
             return portfolio;
         }
+
+        public Portfolio UpdatePortfolio(Portfolio portfolio, int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            if (string.IsNullOrEmpty(portfolio.Name))
+            {
+                throw new ArgumentException("Portfolio name is required.");
+            }
+
+            if (string.IsNullOrEmpty(portfolio.ProfessionalSummary))
+            {
+                throw new ArgumentException("Professional summary is required.");
+            }
+
+            string sql = "UPDATE portfolios SET name = @name, location = @location, " +
+                         "professional_summary = @professionalSummary, email = @email " +
+                         "WHERE id = @portfolioId";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@name", portfolio.Name);
+                        cmd.Parameters.AddWithValue("@location", portfolio.Location);
+                        cmd.Parameters.AddWithValue("@professionalSummary", portfolio.ProfessionalSummary);
+                        cmd.Parameters.AddWithValue("@email", portfolio.Email);
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count == 1)
+                        {
+                            return portfolio;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the portfolio.", ex);
+            }
+        }
+
+        
 
         /*  
             **********************************************************************************************
