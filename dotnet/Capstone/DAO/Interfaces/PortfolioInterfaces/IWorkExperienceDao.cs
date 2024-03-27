@@ -10,7 +10,6 @@ namespace Capstone.DAO.Interfaces
                                               WORK EXPERIENCE CRUD
             **********************************************************************************************
         */
-// TODO WORK EXPERIENCE Controllers****
         WorkExperience CreateWorkExperience(WorkExperience experience);
         List<WorkExperience> GetWorkExperiences();
         WorkExperience GetWorkExperience(int experienceId);
@@ -22,7 +21,6 @@ namespace Capstone.DAO.Interfaces
                                            PORTFOLIO WORK EXPERIENCE CRUD
             **********************************************************************************************
         */
-// TODO create PORTFOLIO Work Experience Controllers      
         WorkExperience CreateWorkExperienceByPortfolioId(int portfolioId, WorkExperience experience);
         List<WorkExperience> GetWorkExperiencesByPortfolioId(int portfolioId);
         WorkExperience GetWorkExperienceByPortfolioId(int portfolioId, int experienceId);
