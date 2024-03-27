@@ -14,17 +14,33 @@ namespace Capstone.DAO
         private readonly IWebsiteDao _websiteDao;
         private readonly IImageDao _imageDao;
         private readonly ISkillDao _skillDao;
+        private readonly IWorkExperienceDao _workExperienceDao;
+        private readonly IEducationDao _educationDao;
+        private readonly ICredentialDao _credentialDao;
+        private readonly IVolunteerWorkDao _volunteerWorkDao;
+        private readonly IOpenSourceContributionDao _openSourceContributionDao;
+        private readonly IHobbyDao _hobbyDao;
+
 
         public PortfolioPostgresDao(string dbConnectionString, ISideProjectDao sideProjectDao,
-            IWebsiteDao websiteDao, IImageDao imageDao, ISkillDao skillDao)
-        {
-            connectionString = dbConnectionString;
-            this._sideProjectDao = sideProjectDao;
-            this._websiteDao = websiteDao;
-            this._imageDao = imageDao;
-            this._skillDao = skillDao;
-        }
-
+            IWebsiteDao websiteDao, IImageDao imageDao, ISkillDao skillDao, 
+            IWorkExperienceDao workExperienceDao, IEducationDao educationDao, ICredentialDao credentialDao,
+            IVolunteerWorkDao volunteerWorkDao, IOpenSourceContributionDao openSourceContributionDao,
+            IHobbyDao hobbyDao)
+            {
+                connectionString = dbConnectionString;
+                _sideProjectDao = sideProjectDao;
+                _websiteDao = websiteDao;
+                _imageDao = imageDao;
+                _skillDao = skillDao;
+                _workExperienceDao = workExperienceDao;
+                _educationDao = educationDao;
+                _credentialDao = credentialDao;
+                _volunteerWorkDao = volunteerWorkDao;
+                _openSourceContributionDao = openSourceContributionDao;
+                _hobbyDao = hobbyDao;
+            }
+            
         /*  
             **********************************************************************************************
                                             PORTFOLIO CRUD
