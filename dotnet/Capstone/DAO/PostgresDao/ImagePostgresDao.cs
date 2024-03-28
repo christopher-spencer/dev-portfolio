@@ -941,7 +941,8 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageOrLogoByWorkExperienceId(int experienceId, int imageId, Image image)
         {
-            if (image.Type != MainImage || image.Type != Logo)
+//FIXME check other places where "||" here might need changed to "&&"
+            if (image.Type != MainImage && image.Type != Logo)
             {
                 throw new ArgumentException("The image provided is not a main image or company logo. Please provide a main image or company logo.");
             }
@@ -4018,7 +4019,7 @@ namespace Capstone.DAO
                                             SKILL IMAGE CRUD
             **********************************************************************************************
         */
-
+// FIXME main image type check here, set it to main image before sql query
         public Image CreateImageBySkillId(int skillId, Image image)
         {
             if (skillId <= 0)

@@ -430,7 +430,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/work-experience/{experienceId}/update-main-image-or-logo")]
+        [HttpPut("/work-experience/{experienceId}/update-main-image-or-logo/{imageId}")]
         public ActionResult UpdateMainImageOrCompanyLogoByWorkExperienceId(int experienceId, int imageId, Image image)
         {
             try
