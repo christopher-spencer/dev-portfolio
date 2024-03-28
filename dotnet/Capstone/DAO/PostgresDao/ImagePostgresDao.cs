@@ -4046,7 +4046,7 @@ namespace Capstone.DAO
                 {
                     connection.Open();
 
-                    using (var transaction = connection.BeginTransaction())
+                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -4057,7 +4057,7 @@ namespace Capstone.DAO
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
                                 cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
-
+                                cmdInsertImage.Transaction = transaction;
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
 
@@ -4065,6 +4065,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertSkillImage.Parameters.AddWithValue("@skillId", skillId);
                                 cmdInsertSkillImage.Parameters.AddWithValue("@imageId", imageId);
+                                cmdInsertSkillImage.Transaction = transaction;
                                 cmdInsertSkillImage.ExecuteNonQuery();
                             }
 
@@ -4072,6 +4073,7 @@ namespace Capstone.DAO
                             {
                                 cmdUpdateSkillImageId.Parameters.AddWithValue("@skillId", skillId);
                                 cmdUpdateSkillImageId.Parameters.AddWithValue("@imageId", imageId);
+                                cmdUpdateSkillImageId.Transaction = transaction;
                                 cmdUpdateSkillImageId.ExecuteNonQuery();
                             }
 
