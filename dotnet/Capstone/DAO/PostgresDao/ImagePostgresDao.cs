@@ -2850,7 +2850,11 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
-// TODO have to add type to create Hobby, perhaps we should just auto put "main image" everywhere like this before running sql query
+
+// FIXME have to add type to create Hobby due to included in sql query, maybe just auto put "main image" everywhere like this 
+
+            // image.Type = MainImage;
+
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertHobbyImageSql = "INSERT INTO hobby_images (hobby_id, image_id) VALUES (@hobbyId, @imageId);";
             string updateHobbyIconIdSql = "UPDATE hobbies SET icon_id = @imageId WHERE id = @hobbyId;";
