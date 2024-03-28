@@ -211,7 +211,7 @@ namespace Capstone.Controllers
 
                 if (rowsAffected > 0)
                 {
-                    return Ok("Side Project deleted successfully.");
+                    return Ok("Education deleted successfully.");
                 }
                 else
                 {
