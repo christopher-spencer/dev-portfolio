@@ -30,61 +30,61 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public WorkExperience CreateWorkExperience(WorkExperience experience)
-        {
-            if (string.IsNullOrEmpty(experience.PositionTitle))
-            {
-                throw new ArgumentException("Position Title is required to create a Work Experience.");
-            }
+        // public WorkExperience CreateWorkExperience(WorkExperience experience)
+        // {
+        //     if (string.IsNullOrEmpty(experience.PositionTitle))
+        //     {
+        //         throw new ArgumentException("Position Title is required to create a Work Experience.");
+        //     }
 
-            if (string.IsNullOrEmpty(experience.CompanyName))
-            {
-                throw new ArgumentException("Company Name is required to create a Work Experience.");
-            }
+        //     if (string.IsNullOrEmpty(experience.CompanyName))
+        //     {
+        //         throw new ArgumentException("Company Name is required to create a Work Experience.");
+        //     }
 
-            if (string.IsNullOrEmpty(experience.Location))
-            {
-                throw new ArgumentException("Location is required to create a Work Experience.");
-            }
+        //     if (string.IsNullOrEmpty(experience.Location))
+        //     {
+        //         throw new ArgumentException("Location is required to create a Work Experience.");
+        //     }
 
-            if (experience.StartDate == DateTime.MinValue || experience.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to create a Work Experience.");
-            }
+        //     if (experience.StartDate == DateTime.MinValue || experience.StartDate > DateTime.Now)
+        //     {
+        //         throw new ArgumentException("Start Date must be a valid date in the past or present to create a Work Experience.");
+        //     }
 
-            string sql = "INSERT INTO work_experiences (position_title, company_name, location, description, start_date, " +
-                         "end_date) " +
-                         "VALUES (@positionTitle, @companyName, @location, @description, @startDate, @endDate) " +
-                         "RETURNING id;";
+        //     string sql = "INSERT INTO work_experiences (position_title, company_name, location, description, start_date, " +
+        //                  "end_date) " +
+        //                  "VALUES (@positionTitle, @companyName, @location, @description, @startDate, @endDate) " +
+        //                  "RETURNING id;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@positionTitle", experience.PositionTitle);
-                        cmd.Parameters.AddWithValue("@companyName", experience.CompanyName);
-                        cmd.Parameters.AddWithValue("@location", experience.Location);
-                        cmd.Parameters.AddWithValue("@description", experience.Description);
-                        cmd.Parameters.AddWithValue("@startDate", experience.StartDate);
-                        cmd.Parameters.AddWithValue("@endDate", experience.EndDate);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@positionTitle", experience.PositionTitle);
+        //                 cmd.Parameters.AddWithValue("@companyName", experience.CompanyName);
+        //                 cmd.Parameters.AddWithValue("@location", experience.Location);
+        //                 cmd.Parameters.AddWithValue("@description", experience.Description);
+        //                 cmd.Parameters.AddWithValue("@startDate", experience.StartDate);
+        //                 cmd.Parameters.AddWithValue("@endDate", experience.EndDate);
 
-                        int experienceId = Convert.ToInt32(cmd.ExecuteScalar());
+        //                 int experienceId = Convert.ToInt32(cmd.ExecuteScalar());
 
-                        experience.Id = experienceId;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new DaoException("An error occurred while creating the Work Experience.", ex);
-            }
+        //                 experience.Id = experienceId;
+        //             }
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         throw new DaoException("An error occurred while creating the Work Experience.", ex);
+        //     }
 
-            return experience;
-        }
+        //     return experience;
+        // }
 
         public List<WorkExperience> GetWorkExperiences()
         {
@@ -159,141 +159,141 @@ namespace Capstone.DAO
             return experience;
         }
 
-        public WorkExperience UpdateWorkExperience(int experienceId, WorkExperience experience)
-        {
-            if (string.IsNullOrEmpty(experience.PositionTitle))
-            {
-                throw new ArgumentException("Position Title is required to update a Work Experience.");
-            }
+        // public WorkExperience UpdateWorkExperience(int experienceId, WorkExperience experience)
+        // {
+        //     if (string.IsNullOrEmpty(experience.PositionTitle))
+        //     {
+        //         throw new ArgumentException("Position Title is required to update a Work Experience.");
+        //     }
 
-            if (string.IsNullOrEmpty(experience.CompanyName))
-            {
-                throw new ArgumentException("Company Name is required to update a Work Experience.");
-            }
+        //     if (string.IsNullOrEmpty(experience.CompanyName))
+        //     {
+        //         throw new ArgumentException("Company Name is required to update a Work Experience.");
+        //     }
 
-            if (string.IsNullOrEmpty(experience.Location))
-            {
-                throw new ArgumentException("Location is required to update a Work Experience.");
-            }
+        //     if (string.IsNullOrEmpty(experience.Location))
+        //     {
+        //         throw new ArgumentException("Location is required to update a Work Experience.");
+        //     }
 
-            if (experience.StartDate == DateTime.MinValue || experience.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to update a Work Experience.");
-            }
+        //     if (experience.StartDate == DateTime.MinValue || experience.StartDate > DateTime.Now)
+        //     {
+        //         throw new ArgumentException("Start Date must be a valid date in the past or present to update a Work Experience.");
+        //     }
 
-            string sql = "UPDATE work_experiences " +
-                         "SET position_title = @positionTitle, company_name = @companyName, location = @location, " +
-                         "description = @description, start_date = @startDate, end_date = @endDate " +
-                         "WHERE id = @experienceId;";
+        //     string sql = "UPDATE work_experiences " +
+        //                  "SET position_title = @positionTitle, company_name = @companyName, location = @location, " +
+        //                  "description = @description, start_date = @startDate, end_date = @endDate " +
+        //                  "WHERE id = @experienceId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@positionTitle", experience.PositionTitle);
-                        cmd.Parameters.AddWithValue("@companyName", experience.CompanyName);
-                        cmd.Parameters.AddWithValue("@location", experience.Location);
-                        cmd.Parameters.AddWithValue("@description", experience.Description);
-                        cmd.Parameters.AddWithValue("@startDate", experience.StartDate);
-                        cmd.Parameters.AddWithValue("@endDate", experience.EndDate);
-                        cmd.Parameters.AddWithValue("@experienceId", experienceId);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@positionTitle", experience.PositionTitle);
+        //                 cmd.Parameters.AddWithValue("@companyName", experience.CompanyName);
+        //                 cmd.Parameters.AddWithValue("@location", experience.Location);
+        //                 cmd.Parameters.AddWithValue("@description", experience.Description);
+        //                 cmd.Parameters.AddWithValue("@startDate", experience.StartDate);
+        //                 cmd.Parameters.AddWithValue("@endDate", experience.EndDate);
+        //                 cmd.Parameters.AddWithValue("@experienceId", experienceId);
 
-                        int count = cmd.ExecuteNonQuery();
+        //                 int count = cmd.ExecuteNonQuery();
 
-                        if (count == 1)
-                        {
-                            return experience;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the Work Experience.", ex);
-            }
-        }
+        //                 if (count == 1)
+        //                 {
+        //                     return experience;
+        //                 }
+        //                 else
+        //                 {
+        //                     return null;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while updating the Work Experience.", ex);
+        //     }
+        // }
 
-        public int DeleteWorkExperience(int experienceId)
-        {
-            if (experienceId <= 0)
-            {
-                throw new ArgumentException("Experience ID must be greater than zero.");
-            }
+        // public int DeleteWorkExperience(int experienceId)
+        // {
+        //     if (experienceId <= 0)
+        //     {
+        //         throw new ArgumentException("Experience ID must be greater than zero.");
+        //     }
 
-            string sql = "DELETE FROM work_experiences WHERE id = @experienceId;";
+        //     string sql = "DELETE FROM work_experiences WHERE id = @experienceId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            int rowsAffected;
+        //             using (NpgsqlTransaction transaction = connection.BeginTransaction())
+        //             {
+        //                 try
+        //                 {
+        //                     int rowsAffected;
 
-                            int? companyLogoId = GetCompanyLogoIdByWorkExperienceId(experienceId);
-                            int? companyWebsiteId = GetCompanyWebsiteIdByWorkExperienceId(experienceId);
-                            int? mainImageId = GetMainImageIdByWorkExperienceId(experienceId);
+        //                     int? companyLogoId = GetCompanyLogoIdByWorkExperienceId(experienceId);
+        //                     int? companyWebsiteId = GetCompanyWebsiteIdByWorkExperienceId(experienceId);
+        //                     int? mainImageId = GetMainImageIdByWorkExperienceId(experienceId);
 
-                            if (companyLogoId.HasValue)
-                            {
-                                _imageDao.DeleteImageByWorkExperienceId(experienceId, companyLogoId.Value);
-                            }
+        //                     if (companyLogoId.HasValue)
+        //                     {
+        //                         _imageDao.DeleteImageByWorkExperienceId(experienceId, companyLogoId.Value);
+        //                     }
 
-                            if (companyWebsiteId.HasValue)
-                            {
-                                _websiteDao.DeleteWebsiteByWorkExperienceId(experienceId, companyWebsiteId.Value);
-                            }
+        //                     if (companyWebsiteId.HasValue)
+        //                     {
+        //                         _websiteDao.DeleteWebsiteByWorkExperienceId(experienceId, companyWebsiteId.Value);
+        //                     }
 
-                            if (mainImageId.HasValue)
-                            {
-                                _imageDao.DeleteImageByWorkExperienceId(experienceId, mainImageId.Value);
-                            }
+        //                     if (mainImageId.HasValue)
+        //                     {
+        //                         _imageDao.DeleteImageByWorkExperienceId(experienceId, mainImageId.Value);
+        //                     }
 
-                            DeleteResponsibilitiesAndAchievementsByWorkExperienceId(experienceId);
-                            DeleteSkillsUsedOrObtainedByWorkExperienceId(experienceId);
-                            DeleteAdditionalImagesByWorkExperienceId(experienceId);
+        //                     DeleteResponsibilitiesAndAchievementsByWorkExperienceId(experienceId);
+        //                     DeleteSkillsUsedOrObtainedByWorkExperienceId(experienceId);
+        //                     DeleteAdditionalImagesByWorkExperienceId(experienceId);
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                            {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@experienceId", experienceId);
+        //                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //                     {
+        //                         cmd.Transaction = transaction;
+        //                         cmd.Parameters.AddWithValue("@experienceId", experienceId);
 
-                                rowsAffected = cmd.ExecuteNonQuery();
-                            }
+        //                         rowsAffected = cmd.ExecuteNonQuery();
+        //                     }
 
-                            transaction.Commit();
+        //                     transaction.Commit();
 
-                            return rowsAffected;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.ToString());
+        //                     return rowsAffected;
+        //                 }
+        //                 catch (Exception ex)
+        //                 {
+        //                     Console.WriteLine(ex.ToString());
 
-                            transaction.Rollback();
+        //                     transaction.Rollback();
 
-                            throw new DaoException("An error occurred while deleting the Work Experience.", ex);
-                        }
+        //                     throw new DaoException("An error occurred while deleting the Work Experience.", ex);
+        //                 }
 
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while connecting to the database.", ex);
-            }
-        }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while connecting to the database.", ex);
+        //     }
+        // }
 
         /*  
             **********************************************************************************************
