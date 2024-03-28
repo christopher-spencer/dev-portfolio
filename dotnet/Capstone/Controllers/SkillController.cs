@@ -290,9 +290,9 @@ namespace Capstone.Controllers
                 return Ok(skill);
             }
         }
-// FIXME update paths like this with multiple "updates" or "deletes" to be more specific*******
+
         [Authorize]
-        [HttpPut("/update-sideproject/{sideProjectId}/update-skill/{skillId}")]
+        [HttpPut("/sideproject/{sideProjectId}/update-skill/{skillId}")]
         public ActionResult UpdateSkillBySideProjectId(int sideProjectId, int skillId, Skill skill)
         {
             try

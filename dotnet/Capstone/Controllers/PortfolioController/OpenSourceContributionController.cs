@@ -24,28 +24,28 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        [Authorize]
-        [HttpPost("/create-open-source-contribution")]
-        public ActionResult CreateOpenSourceContribution(OpenSourceContribution contribution)
-        {
-            try
-            {
-                OpenSourceContribution createdContribution = _openSourceContributionDao.CreateOpenSourceContribution(contribution);
+        // [Authorize]
+        // [HttpPost("/create-open-source-contribution")]
+        // public ActionResult CreateOpenSourceContribution(OpenSourceContribution contribution)
+        // {
+        //     try
+        //     {
+        //         OpenSourceContribution createdContribution = _openSourceContributionDao.CreateOpenSourceContribution(contribution);
 
-                if (createdContribution == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return CreatedAtAction(nameof(GetOpenSourceContribution), new { contributionId = createdContribution.Id }, createdContribution);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while creating the open source contribution.");
-            }
-        }
+        //         if (createdContribution == null)
+        //         {
+        //             return BadRequest();
+        //         }
+        //         else
+        //         {
+        //             return CreatedAtAction(nameof(GetOpenSourceContribution), new { contributionId = createdContribution.Id }, createdContribution);
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while creating the open source contribution.");
+        //     }
+        // }
 
         [HttpGet("/open-source-contributions")]
         public ActionResult<List<OpenSourceContribution>> GetOpenSourceContributions()
@@ -77,51 +77,51 @@ namespace Capstone.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPut("/update-open-source-contribution/{contributionId}")]
-        public ActionResult UpdateOpenSourceContribution(int contributionId, OpenSourceContribution contribution)
-        {
-            try
-            {
-                OpenSourceContribution updatedContribution = _openSourceContributionDao.UpdateOpenSourceContribution(contributionId, contribution);
+        // [Authorize]
+        // [HttpPut("/update-open-source-contribution/{contributionId}")]
+        // public ActionResult UpdateOpenSourceContribution(int contributionId, OpenSourceContribution contribution)
+        // {
+        //     try
+        //     {
+        //         OpenSourceContribution updatedContribution = _openSourceContributionDao.UpdateOpenSourceContribution(contributionId, contribution);
 
-                if (updatedContribution == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return Ok(updatedContribution);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while updating the open source contribution.");
-            }
-        }
+        //         if (updatedContribution == null)
+        //         {
+        //             return BadRequest();
+        //         }
+        //         else
+        //         {
+        //             return Ok(updatedContribution);
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while updating the open source contribution.");
+        //     }
+        // }
 
-        [Authorize]
-        [HttpDelete("/delete-open-source-contribution/{contributionId}")]
-        public ActionResult DeleteOpenSourceContribution(int contributionId)
-        {
-            try
-            {
-                int rowsAffected = _openSourceContributionDao.DeleteOpenSourceContribution(contributionId);
+        // [Authorize]
+        // [HttpDelete("/delete-open-source-contribution/{contributionId}")]
+        // public ActionResult DeleteOpenSourceContribution(int contributionId)
+        // {
+        //     try
+        //     {
+        //         int rowsAffected = _openSourceContributionDao.DeleteOpenSourceContribution(contributionId);
 
-                if (rowsAffected > 0)
-                {
-                    return Ok("Open Source Contribution deleted successfully.");
-                }
-                else
-                {
-                    return NoContent();
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while deleting the open source contribution.");
-            }
-        }
+        //         if (rowsAffected > 0)
+        //         {
+        //             return Ok("Open Source Contribution deleted successfully.");
+        //         }
+        //         else
+        //         {
+        //             return NoContent();
+        //         }
+        //     }
+        //     catch (DaoException)
+        //     {
+        //         return StatusCode(500, "An error occurred while deleting the open source contribution.");
+        //     }
+        // }
 
         /*  
             **********************************************************************************************
