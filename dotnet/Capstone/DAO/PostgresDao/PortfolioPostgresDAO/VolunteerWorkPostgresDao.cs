@@ -36,56 +36,56 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        public VolunteerWork CreateVolunteerWork(VolunteerWork volunteerWork)
-        {
-            if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
-            {
-                throw new ArgumentException("Organization Name is required to create a Volunteer Work.");
-            }
+        // public VolunteerWork CreateVolunteerWork(VolunteerWork volunteerWork)
+        // {
+        //     if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
+        //     {
+        //         throw new ArgumentException("Organization Name is required to create a Volunteer Work.");
+        //     }
 
-            if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
-            {
-                throw new ArgumentException("Position Title is required to create a Volunteer Work.");
-            }
+        //     if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
+        //     {
+        //         throw new ArgumentException("Position Title is required to create a Volunteer Work.");
+        //     }
 
-            if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to create a Volunteer Work.");
-            }
+        //     if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
+        //     {
+        //         throw new ArgumentException("Start Date must be a valid date in the past or present to create a Volunteer Work.");
+        //     }
 
-            string sql = "INSERT INTO volunteer_works (organization_name, location, organization_description, " +
-                         "position_title, start_date, end_date) " +
-                         "VALUES (@organizationName, @location, @organizationDescription, @positionTitle, @startDate, " +
-                         "@endDate) " +
-                         "RETURNING id;";
+        //     string sql = "INSERT INTO volunteer_works (organization_name, location, organization_description, " +
+        //                  "position_title, start_date, end_date) " +
+        //                  "VALUES (@organizationName, @location, @organizationDescription, @positionTitle, @startDate, " +
+        //                  "@endDate) " +
+        //                  "RETURNING id;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@organizationName", volunteerWork.OrganizationName);
-                        cmd.Parameters.AddWithValue("@location", volunteerWork.Location);
-                        cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription);
-                        cmd.Parameters.AddWithValue("@positionTitle", volunteerWork.PositionTitle);
-                        cmd.Parameters.AddWithValue("@startDate", volunteerWork.StartDate);
-                        cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@organizationName", volunteerWork.OrganizationName);
+        //                 cmd.Parameters.AddWithValue("@location", volunteerWork.Location);
+        //                 cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription);
+        //                 cmd.Parameters.AddWithValue("@positionTitle", volunteerWork.PositionTitle);
+        //                 cmd.Parameters.AddWithValue("@startDate", volunteerWork.StartDate);
+        //                 cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate);
 
-                        int volunteerWorkId = Convert.ToInt32(cmd.ExecuteScalar());
-                        volunteerWork.Id = volunteerWorkId;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the Volunteer Work.", ex);
-            }
+        //                 int volunteerWorkId = Convert.ToInt32(cmd.ExecuteScalar());
+        //                 volunteerWork.Id = volunteerWorkId;
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while creating the Volunteer Work.", ex);
+        //     }
 
-            return volunteerWork;
-        }
+        //     return volunteerWork;
+        // }
 
         public List<VolunteerWork> GetVolunteerWorks()
         {
@@ -162,139 +162,139 @@ namespace Capstone.DAO
             return volunteerWork;
         }
 
-        public VolunteerWork UpdateVolunteerWork(int volunteerWorkId, VolunteerWork volunteerWork)
-        {
-            if (volunteerWorkId <= 0)
-            {
-                throw new ArgumentException("Volunteer Work ID must be greater than zero.");
-            }
+        // public VolunteerWork UpdateVolunteerWork(int volunteerWorkId, VolunteerWork volunteerWork)
+        // {
+        //     if (volunteerWorkId <= 0)
+        //     {
+        //         throw new ArgumentException("Volunteer Work ID must be greater than zero.");
+        //     }
 
-            if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
-            {
-                throw new ArgumentException("Organization Name is required to update a Volunteer Work.");
-            }
+        //     if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
+        //     {
+        //         throw new ArgumentException("Organization Name is required to update a Volunteer Work.");
+        //     }
 
-            if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
-            {
-                throw new ArgumentException("Position Title is required to update a Volunteer Work.");
-            }
+        //     if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
+        //     {
+        //         throw new ArgumentException("Position Title is required to update a Volunteer Work.");
+        //     }
 
-            if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to update a Volunteer Work.");
-            }
+        //     if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
+        //     {
+        //         throw new ArgumentException("Start Date must be a valid date in the past or present to update a Volunteer Work.");
+        //     }
 
-            string sql = "UPDATE volunteer_works SET organization_name = @organizationName, location = @location, " +
-                         "organization_description = @organizationDescription, position_title = @positionTitle, " +
-                         "start_date = @startDate, end_date = @endDate " +
-                         "WHERE id = @volunteerWorkId;";
+        //     string sql = "UPDATE volunteer_works SET organization_name = @organizationName, location = @location, " +
+        //                  "organization_description = @organizationDescription, position_title = @positionTitle, " +
+        //                  "start_date = @startDate, end_date = @endDate " +
+        //                  "WHERE id = @volunteerWorkId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@organizationName", volunteerWork.OrganizationName);
-                        cmd.Parameters.AddWithValue("@location", volunteerWork.Location);
-                        cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription);
-                        cmd.Parameters.AddWithValue("@positionTitle", volunteerWork.PositionTitle);
-                        cmd.Parameters.AddWithValue("@startDate", volunteerWork.StartDate);
-                        cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate);
-                        cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //             {
+        //                 cmd.Parameters.AddWithValue("@organizationName", volunteerWork.OrganizationName);
+        //                 cmd.Parameters.AddWithValue("@location", volunteerWork.Location);
+        //                 cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription);
+        //                 cmd.Parameters.AddWithValue("@positionTitle", volunteerWork.PositionTitle);
+        //                 cmd.Parameters.AddWithValue("@startDate", volunteerWork.StartDate);
+        //                 cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate);
+        //                 cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
 
-                        int count = cmd.ExecuteNonQuery();
+        //                 int count = cmd.ExecuteNonQuery();
 
-                        if (count == 1)
-                        {
-                            return volunteerWork;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the Volunteer Work.", ex);
-            }
-        }
+        //                 if (count == 1)
+        //                 {
+        //                     return volunteerWork;
+        //                 }
+        //                 else
+        //                 {
+        //                     return null;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while updating the Volunteer Work.", ex);
+        //     }
+        // }
 
-        public int DeleteVolunteerWork(int volunteerWorkId)
-        {
-            if (volunteerWorkId <= 0)
-            {
-                throw new ArgumentException("Volunteer Work ID must be greater than zero.");
-            }
+        // public int DeleteVolunteerWork(int volunteerWorkId)
+        // {
+        //     if (volunteerWorkId <= 0)
+        //     {
+        //         throw new ArgumentException("Volunteer Work ID must be greater than zero.");
+        //     }
 
-            string sql = "DELETE FROM volunteer_works WHERE id = @volunteerWorkId;";
+        //     string sql = "DELETE FROM volunteer_works WHERE id = @volunteerWorkId;";
 
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
+        //     try
+        //     {
+        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        //         {
+        //             connection.Open();
 
-                    using (NpgsqlTransaction transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            int rowsAffected;
+        //             using (NpgsqlTransaction transaction = connection.BeginTransaction())
+        //             {
+        //                 try
+        //                 {
+        //                     int rowsAffected;
 
-                            int? mainImageId = GetMainImageIdByVolunteerWorkId(volunteerWorkId);
-                            int? organizationLogoId = GetOrganizationLogoIdByVolunteerWorkId(volunteerWorkId);
-                            int? organizationWebsiteId = GetOrganizationWebsiteIdByVolunteerWorkId(volunteerWorkId);
+        //                     int? mainImageId = GetMainImageIdByVolunteerWorkId(volunteerWorkId);
+        //                     int? organizationLogoId = GetOrganizationLogoIdByVolunteerWorkId(volunteerWorkId);
+        //                     int? organizationWebsiteId = GetOrganizationWebsiteIdByVolunteerWorkId(volunteerWorkId);
 
-                            if (mainImageId.HasValue)
-                            {
-                                _imageDao.DeleteImageByVolunteerWorkId(volunteerWorkId, mainImageId.Value);
-                            }
+        //                     if (mainImageId.HasValue)
+        //                     {
+        //                         _imageDao.DeleteImageByVolunteerWorkId(volunteerWorkId, mainImageId.Value);
+        //                     }
 
-                            if (organizationLogoId.HasValue)
-                            {
-                                _imageDao.DeleteImageByVolunteerWorkId(volunteerWorkId, organizationLogoId.Value);
-                            }
+        //                     if (organizationLogoId.HasValue)
+        //                     {
+        //                         _imageDao.DeleteImageByVolunteerWorkId(volunteerWorkId, organizationLogoId.Value);
+        //                     }
 
-                            if (organizationWebsiteId.HasValue)
-                            {
-                                _websiteDao.DeleteWebsiteByVolunteerWorkId(volunteerWorkId, organizationWebsiteId.Value);
-                            }
+        //                     if (organizationWebsiteId.HasValue)
+        //                     {
+        //                         _websiteDao.DeleteWebsiteByVolunteerWorkId(volunteerWorkId, organizationWebsiteId.Value);
+        //                     }
 
-                            DeleteResponsibilitiesAndAchievementsByVolunteerWorkId(volunteerWorkId);
-                            DeleteSkillsUsedAndObtainedByVolunteerWorkId(volunteerWorkId);
-                            DeleteAdditionalImagesByVolunteerWorkId(volunteerWorkId);
+        //                     DeleteResponsibilitiesAndAchievementsByVolunteerWorkId(volunteerWorkId);
+        //                     DeleteSkillsUsedAndObtainedByVolunteerWorkId(volunteerWorkId);
+        //                     DeleteAdditionalImagesByVolunteerWorkId(volunteerWorkId);
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                            {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
-                                rowsAffected = cmd.ExecuteNonQuery();
-                            }
+        //                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+        //                     {
+        //                         cmd.Transaction = transaction;
+        //                         cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
+        //                         rowsAffected = cmd.ExecuteNonQuery();
+        //                     }
 
-                            transaction.Commit();
+        //                     transaction.Commit();
 
-                            return rowsAffected;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.ToString());
+        //                     return rowsAffected;
+        //                 }
+        //                 catch (Exception ex)
+        //                 {
+        //                     Console.WriteLine(ex.ToString());
 
-                            transaction.Rollback();
+        //                     transaction.Rollback();
 
-                            throw new DaoException("An error occurred while deleting the Volunteer Work.", ex);
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while connecting to the database.", ex);
-            }
-        }
+        //                     throw new DaoException("An error occurred while deleting the Volunteer Work.", ex);
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     catch (NpgsqlException ex)
+        //     {
+        //         throw new DaoException("An error occurred while connecting to the database.", ex);
+        //     }
+        // }
 
         /*  
             **********************************************************************************************

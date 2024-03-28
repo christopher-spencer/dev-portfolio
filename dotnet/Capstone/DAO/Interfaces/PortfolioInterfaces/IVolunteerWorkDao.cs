@@ -10,11 +10,11 @@ namespace Capstone.DAO.Interfaces
                                             VOLUNTEER WORK CRUD
             **********************************************************************************************
         */
-        VolunteerWork CreateVolunteerWork(VolunteerWork volunteerWork);
+        // VolunteerWork CreateVolunteerWork(VolunteerWork volunteerWork);
         List<VolunteerWork> GetVolunteerWorks();
         VolunteerWork GetVolunteerWork(int volunteerWorkId);
-        VolunteerWork UpdateVolunteerWork(int volunteerWorkId, VolunteerWork volunteerWork);
-        int DeleteVolunteerWork(int volunteerWorkId);
+        // VolunteerWork UpdateVolunteerWork(int volunteerWorkId, VolunteerWork volunteerWork);
+        // int DeleteVolunteerWork(int volunteerWorkId);
         /*  
             **********************************************************************************************
                                             PORTFOLIO VOLUNTEER WORK CRUD
