@@ -215,7 +215,7 @@ namespace Capstone.Controllers
 
                 if (result == 0)
                 {
-                    return NotFound();
+                    return NotFound("Portfolio hobby deleted successfully.");
                 }
                 else
                 {

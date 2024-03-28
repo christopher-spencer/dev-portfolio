@@ -1,4 +1,6 @@
 // TODO AUTOCONNECT DB UPDATES****
+// NOTE updated educations GPA to NUMERIC(3,2) 
+// NOTE NUMERIC(3,2) NULL (can add NULL?)****
 
 BEGIN TRANSACTION;
 
@@ -190,8 +192,8 @@ CREATE TABLE educations (
     major VARCHAR(100),
     minor VARCHAR(100),
     degree_obtained VARCHAR(200),
-    gpa_overall NUMERIC(1,2),
-    gpa_in_major NUMERIC(1,2),
+    gpa_overall NUMERIC(3,2),
+    gpa_in_major NUMERIC(3,2),
     start_date TIMESTAMP NOT NULL,
     graduation_date TIMESTAMP,
     main_image_id INTEGER,
