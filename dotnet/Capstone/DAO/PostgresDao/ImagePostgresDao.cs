@@ -1691,6 +1691,8 @@ namespace Capstone.DAO
                 case Logo:
                     updateEducationImageIdSql = "UPDATE educations SET institution_logo_id = NULL WHERE institution_logo_id = @imageId;";
                     break;
+                case AdditionalImage:
+                    break;
                 default:
                     throw new ArgumentException("Invalid website type.");
 
