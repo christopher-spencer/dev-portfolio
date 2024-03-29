@@ -97,7 +97,8 @@ namespace Capstone.DAO
             List<OpenSourceContribution> contributions = new List<OpenSourceContribution>();
 
             string sql = "SELECT id, project_name, organization_name, start_date, " +
-                         "end_date, project_description, contribution_details " +
+                         "end_date, project_description, contribution_details, " +
+                         "organization_logo_id, organization_website_id, organization_github_id, main_image_id " +
                          "FROM open_source_contributions;";
 
             try
@@ -137,7 +138,8 @@ namespace Capstone.DAO
             OpenSourceContribution contribution = null;
 
             string sql = "SELECT id, project_name, organization_name, start_date, " +
-                         "end_date, project_description, contribution_details " +
+                         "end_date, project_description, contribution_details, " +
+                         "organization_logo_id, organization_website_id, organization_github_id, main_image_id " +
                          "FROM open_source_contributions WHERE id = @contributionId;";
 
             try
@@ -426,7 +428,8 @@ namespace Capstone.DAO
             List<OpenSourceContribution> contributions = new List<OpenSourceContribution>();
 
             string sql = "SELECT osc.id, osc.project_name, osc.organization_name, osc.start_date, " +
-                         "osc.end_date, osc.project_description, osc.contribution_details " +
+                         "osc.end_date, osc.project_description, osc.contribution_details, " +
+                         "osc.organization_logo_id, osc.organization_website_id, osc.organization_github_id, osc.main_image_id " +
                          "FROM open_source_contributions osc " +
                          "JOIN portfolio_open_source_contributions psc ON osc.id = psc.contribution_id " +
                          "WHERE psc.portfolio_id = @portfolioId;";
@@ -470,7 +473,8 @@ namespace Capstone.DAO
             OpenSourceContribution contribution = null;
 
             string sql = "SELECT osc.id, osc.project_name, osc.organization_name, osc.start_date, " +
-                         "osc.end_date, osc.project_description, osc.contribution_details " +
+                         "osc.end_date, osc.project_description, osc.contribution_details, " +
+                         "osc.organization_logo_id, osc.organization_website_id, osc.organization_github_id, osc.main_image_id " +
                          "FROM open_source_contributions osc " +
                          "JOIN portfolio_open_source_contributions psc ON osc.id = psc.contribution_id " +
                          "WHERE psc.portfolio_id = @portfolioId AND osc.id = @contributionId;";

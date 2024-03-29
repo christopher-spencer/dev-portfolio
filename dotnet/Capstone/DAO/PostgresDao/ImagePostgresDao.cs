@@ -1908,7 +1908,7 @@ namespace Capstone.DAO
             string sql = "SELECT i.id, i.name, i.url, i.type " +
                          "FROM images i " +
                          "JOIN open_source_contribution_images oci ON i.id = oci.image_id " +
-                         "WHERE oci.open_source_contribution_id = @contributionId AND i.type = @imageType;";
+                         "WHERE oci.contribution_id = @contributionId AND i.type = @imageType;";
 
             try
             {
@@ -1951,7 +1951,7 @@ namespace Capstone.DAO
             string sql = "SELECT i.id, i.name, i.url, i.type " +
                          "FROM images i " +
                          "JOIN open_source_contribution_images oci ON i.id = oci.image_id " +
-                         "WHERE oci.open_source_contribution_id = @contributionId AND i.id = @imageId";
+                         "WHERE oci.contribution_id = @contributionId AND i.id = @imageId";
 
             try
             {
@@ -1994,7 +1994,7 @@ namespace Capstone.DAO
             string sql = "SELECT i.id, i.name, i.url, i.type " +
                          "FROM images i " +
                          "JOIN open_source_contribution_images oci ON i.id = oci.image_id " +
-                         "WHERE oci.open_source_contribution_id = @contributionId AND i.type = @imageType;";
+                         "WHERE oci.contribution_id = @contributionId AND i.type = @imageType;";
 
             try
             {
@@ -2036,7 +2036,7 @@ namespace Capstone.DAO
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
                                     "FROM open_source_contribution_images " +
-                                    "WHERE images.id = open_source_contribution_images.image_id AND open_source_contribution_images.open_source_contribution_id = @contributionId " +
+                                    "WHERE images.id = open_source_contribution_images.image_id AND open_source_contribution_images.contribution_id = @contributionId " +
                                     "AND images.id = @imageId;";
 
             try
@@ -2085,9 +2085,9 @@ namespace Capstone.DAO
             return image;
         }
 
-        public int DeleteImageByOpenSourceContributionId(int openSourceContributionId, int imageId)
+        public int DeleteImageByOpenSourceContributionId(int contributionId, int imageId)
         {
-            if (openSourceContributionId <= 0 || imageId <= 0)
+            if (contributionId <= 0 || imageId <= 0)
             {
                 throw new ArgumentException("OpenSourceContributionId and imageId must be greater than zero.");
             }
@@ -2095,7 +2095,7 @@ namespace Capstone.DAO
             // UpdateOpenSourceContributionImageIdSql only runs if the image is the Main Image or Logo
             string updateOpenSourceContributionImageIdSql = null;
 
-            string deleteOpenSourceContributionImageSql = "DELETE FROM open_source_contribution_images WHERE open_source_contribution_id = @openSourceContributionId AND image_id = @imageId;";
+            string deleteOpenSourceContributionImageSql = "DELETE FROM open_source_contribution_images WHERE contribution_id = @contributionId AND image_id = @imageId;";
             string deleteImageSql = "DELETE FROM images WHERE id = @imageId;";
 
             Image image = GetImageByImageId(imageId);
@@ -2140,7 +2140,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteOpenSourceContributionImageSql, connection))
                             {
                                 cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@openSourceContributionId", openSourceContributionId);
+                                cmd.Parameters.AddWithValue("@contributionId", contributionId);
                                 cmd.Parameters.AddWithValue("@imageId", imageId);
 
                                 cmd.ExecuteNonQuery();

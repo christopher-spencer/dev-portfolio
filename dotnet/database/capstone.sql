@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS portfolio_credentials;
 DROP TABLE IF EXISTS portfolio_open_source_contributions;
 DROP TABLE IF EXISTS portfolio_volunteer_works;
 DROP TABLE IF EXISTS portfolio_hobbies;
-DROP TABLE IF EXISTS professional_sideprojects;
+DROP TABLE IF EXISTS portfolio_sideprojects;
 
 DROP TABLE IF EXISTS sideproject_websites;
 DROP TABLE IF EXISTS sideproject_dependencies_and_libraries;
@@ -409,10 +409,10 @@ CREATE TABLE volunteer_work_images (
 );
 
 CREATE TABLE open_source_contribution_images (
-    open_source_contribution_id INTEGER,
+    contribution_id INTEGER,
     image_id INTEGER,
-    PRIMARY KEY (open_source_contribution_id, image_id),
-    FOREIGN KEY (open_source_contribution_id) REFERENCES open_source_contributions(id),
+    PRIMARY KEY (contribution_id, image_id),
+    FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id),
     FOREIGN Key (image_id) REFERENCES images(id)
 );
 
@@ -449,10 +449,10 @@ CREATE TABLE volunteer_work_websites (
 );
 
 CREATE TABLE open_source_contribution_websites (
-    open_source_contribution_id INTEGER,
+    contribution_id INTEGER,
     website_id INTEGER,
-    PRIMARY KEY (open_source_contribution_id, website_id),
-    FOREIGN KEY (open_source_contribution_id) REFERENCES open_source_contributions(id),
+    PRIMARY KEY (contribution_id, website_id),
+    FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id),
     FOREIGN KEY (website_id) REFERENCES websites(id)
 );
 
