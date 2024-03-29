@@ -918,7 +918,7 @@ namespace Capstone.Controllers
         }
 
         [Authorize]
-        [HttpPut("/open-source-contribution/{contributionId}/update-main-image-or-logo")]
+        [HttpPut("/open-source-contribution/{contributionId}/update-main-image-or-logo/{imageId}")]
         public ActionResult UpdateMainImageOrOrganizationLogoByOpenSourceContributionId(int contributionId, int imageId, Image image)
         {
             try

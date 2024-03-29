@@ -1788,7 +1788,7 @@ namespace Capstone.DAO
             }
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
-            string insertContributionImageSql = "INSERT INTO open_source_contribution_images (open_source_contribution_id, image_id) VALUES (@contributionId, @imageId);";
+            string insertContributionImageSql = "INSERT INTO open_source_contribution_images (contribution_id, image_id) VALUES (@contributionId, @imageId);";
 
             string updateContributionImageIdSql = null;
 

@@ -934,7 +934,7 @@ namespace Capstone.DAO
             SetOpenSourceContributionMainImageIdProperties(reader, openSourceContribution, contributionId);
 
             openSourceContribution.TechSkillsUtilized = _skillDao.GetSkillsByOpenSourceContributionId(contributionId);
-            openSourceContribution.PullRequestsLinks = _websiteDao.GetAllWebsitesByOpenSourceContributionId(contributionId);
+            openSourceContribution.PullRequestsLinks = _websiteDao.GetPullRequestLinksByOpenSourceContributionId(contributionId);
             openSourceContribution.ReviewCommentsAndFeedbackReceived = _achievementDao.GetAchievementsByOpenSourceContributionId(contributionId);
             openSourceContribution.AdditionalImages = _imageDao.GetAdditionalImagesByOpenSourceContributionId(contributionId);
 
