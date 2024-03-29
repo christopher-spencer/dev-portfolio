@@ -96,7 +96,7 @@ namespace Capstone.DAO
         {
             List<OpenSourceContribution> contributions = new List<OpenSourceContribution>();
 
-            string sql = "SELECT project_name, organization_name, start_date, " +
+            string sql = "SELECT id, project_name, organization_name, start_date, " +
                          "end_date, project_description, contribution_details " +
                          "FROM open_source_contributions;";
 
@@ -136,7 +136,7 @@ namespace Capstone.DAO
 
             OpenSourceContribution contribution = null;
 
-            string sql = "SELECT project_name, organization_name, start_date, " +
+            string sql = "SELECT id, project_name, organization_name, start_date, " +
                          "end_date, project_description, contribution_details " +
                          "FROM open_source_contributions WHERE id = @contributionId;";
 
@@ -425,7 +425,7 @@ namespace Capstone.DAO
 
             List<OpenSourceContribution> contributions = new List<OpenSourceContribution>();
 
-            string sql = "SELECT osc.project_name, osc.organization_name, osc.start_date, " +
+            string sql = "SELECT osc.id, osc.project_name, osc.organization_name, osc.start_date, " +
                          "osc.end_date, osc.project_description, osc.contribution_details " +
                          "FROM open_source_contributions osc " +
                          "JOIN portfolio_open_source_contributions psc ON osc.id = psc.contribution_id " +
@@ -469,7 +469,7 @@ namespace Capstone.DAO
 
             OpenSourceContribution contribution = null;
 
-            string sql = "SELECT osc.project_name, osc.organization_name, osc.start_date, " +
+            string sql = "SELECT osc.id, osc.project_name, osc.organization_name, osc.start_date, " +
                          "osc.end_date, osc.project_description, osc.contribution_details " +
                          "FROM open_source_contributions osc " +
                          "JOIN portfolio_open_source_contributions psc ON osc.id = psc.contribution_id " +
