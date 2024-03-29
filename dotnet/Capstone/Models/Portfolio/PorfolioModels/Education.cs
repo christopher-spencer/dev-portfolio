@@ -14,7 +14,7 @@ namespace Capstone.Models
         public string Location { get; set; }
         public string Description { get; set; }
         public string FieldOfStudy { get; set; }
-        //FIXME update all fields and methods accordingly where NULL necessary
+        //FIXME update all fields and methods accordingly where NULL necessary?
         public string? Major { get; set; }
         public string Minor { get; set; }
         public string DegreeObtained { get; set; }
