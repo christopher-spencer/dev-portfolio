@@ -84,8 +84,10 @@ namespace Capstone.DAO
         {
             List<Credential> credentials = new List<Credential>();
 
-            string sql = "SELECT name, issuing_organization, description, issue_date, " +
-                         "expiration_date, credential_id_number FROM credentials;";
+            string sql = "SELECT id, name, issuing_organization, description, issue_date, " +
+                         "expiration_date, credential_id_number, organization_logo_id, " +
+                         "organization_website_id, credential_website_id, main_image_id " +
+                          "FROM credentials;";
 
             try
             {
@@ -123,8 +125,10 @@ namespace Capstone.DAO
 
             Credential credential = null;
 
-            string sql = "SELECT name, issuing_organization, description, issue_date, " +
-                         "expiration_date, credential_id_number FROM credentials WHERE id = @credentialId;";
+            string sql = "SELECT id, name, issuing_organization, description, issue_date, " +
+                         "expiration_date, credential_id_number, organization_logo_id, " +
+                         "organization_website_id, credential_website_id, main_image_id " +
+                         "FROM credentials WHERE id = @credentialId;";
 
             try
             {
@@ -337,8 +341,13 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
                                 cmd.Parameters.AddWithValue("@description", credential.Description);
                                 cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
-                                cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
-                                cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
+                               // cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
+                                //cmd.Parameters.AddWithValue("@expirationDate", (object)credential.ExpirationDate ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate.HasValue ? (object)credential.ExpirationDate : DBNull.Value);
+
+                                //cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
+                                cmd.Parameters.AddWithValue("@credentialIdNumber", (object)credential.CredentialIdNumber ?? DBNull.Value);
+
                                 cmd.Transaction = transaction;
 
                                 credentialId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -385,7 +394,8 @@ namespace Capstone.DAO
             List<Credential> credentials = new List<Credential>();
 
             string sql = "SELECT c.id, c.name, c.issuing_organization, c.description, c.issue_date, " +
-                         "c.expiration_date, c.credential_id_number " +
+                         "c.expiration_date, c.credential_id_number, c.organization_logo_id, " +
+                         "c.organization_website_id, c.credential_website_id, c.main_image_id " +
                          "FROM credentials c " +
                          "JOIN portfolio_credentials pc ON c.id = pc.credential_id " +
                          "WHERE pc.portfolio_id = @portfolioId;";
@@ -429,7 +439,8 @@ namespace Capstone.DAO
             Credential credential = null;
 
             string sql = "SELECT c.id, c.name, c.issuing_organization, c.description, c.issue_date, " +
-                         "c.expiration_date, c.credential_id_number " +
+                         "c.expiration_date, c.credential_id_number, c.organization_logo_id, " +
+                         "c.organization_website_id, c.credential_website_id, c.main_image_id " +
                          "FROM credentials c " +
                          "JOIN portfolio_credentials pc ON c.id = pc.credential_id " +
                          "WHERE pc.portfolio_id = @portfolioId AND c.id = @credentialId;";
@@ -793,9 +804,13 @@ namespace Capstone.DAO
                 IssuingOrganization = Convert.ToString(reader["issuing_organization"]),
                 Description = Convert.ToString(reader["description"]),
                 IssueDate = Convert.ToDateTime(reader["issue_date"]),
-                ExpirationDate = Convert.ToDateTime(reader["expiration_date"]),
-                CredentialIdNumber = Convert.ToInt32(reader["credential_id_number"])
+                // ExpirationDate = Convert.ToDateTime(reader["expiration_date"]),
+                // CredentialIdNumber = Convert.ToInt32(reader["credential_id_number"])
             };
+
+                // Handle nullable properties like ExpirationDate and CredentialIdNumber
+                credential.ExpirationDate = reader["expiration_date"] == DBNull.Value ? null : (DateTime?)reader["expiration_date"];
+                credential.CredentialIdNumber = reader["credential_id_number"] == DBNull.Value ? null : (int?)reader["credential_id_number"];
 
             int credentialId = credential.Id;
 

@@ -14,8 +14,8 @@ namespace Capstone.Models
         public int OrganizationWebsiteId { get; set; }
         public Website OrganizationWebsite { get; set; }
         public DateTime IssueDate { get; set; }
-        public DateTime ExpirationDate { get; set; }
-        public int CredentialIdNumber { get; set; }
+        public DateTime? ExpirationDate { get; set; }
+        public int? CredentialIdNumber { get; set; }
         public int CredentialWebsiteId { get; set; }
         public Website CredentialWebsite { get; set; }
         public int MainImageId { get; set; }
