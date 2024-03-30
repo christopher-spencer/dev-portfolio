@@ -347,7 +347,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmd = new NpgsqlCommand(insertPortfolioCredentialSql, connection))
                             {
                                 cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
-                                cmd.Parameters.AddWithValue("@credentialId", credential.Id);
+                                cmd.Parameters.AddWithValue("@credentialId", credentialId);
                                 cmd.Transaction = transaction;
                                 cmd.ExecuteNonQuery();
                             }
