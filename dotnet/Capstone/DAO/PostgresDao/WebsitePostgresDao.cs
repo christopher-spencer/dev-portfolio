@@ -1678,7 +1678,7 @@ namespace Capstone.DAO
 
             Website website = GetWebsiteByOpenSourceContributionId(contributionId, websiteId);
 
-            string updateContributionWebsiteIdSql;
+            string updateContributionWebsiteIdSql = null;
 
             switch (website.Type)
             {
@@ -1687,6 +1687,8 @@ namespace Capstone.DAO
                     break;
                 case GitHub:
                     updateContributionWebsiteIdSql = "UPDATE open_source_contributions SET organization_github_id = NULL WHERE organization_github_id = @websiteId;";
+                    break;
+                case PullRequestLink:
                     break;
                 default:
                     throw new ArgumentException("Invalid website type.");
@@ -1709,12 +1711,15 @@ namespace Capstone.DAO
 
                             int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
 
-                            using (NpgsqlCommand cmd = new NpgsqlCommand(updateContributionWebsiteIdSql, connection))
+                            if (website.Type == MainWebsite || website.Type == GitHub)
                             {
-                                cmd.Transaction = transaction;
-                                cmd.Parameters.AddWithValue("@websiteId", websiteId);
+                                using (NpgsqlCommand cmd = new NpgsqlCommand(updateContributionWebsiteIdSql, connection))
+                                {
+                                    cmd.Transaction = transaction;
+                                    cmd.Parameters.AddWithValue("@websiteId", websiteId);
 
-                                cmd.ExecuteNonQuery();
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteContributionWebsiteSql, connection))
