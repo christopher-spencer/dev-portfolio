@@ -334,7 +334,7 @@ namespace Capstone.DAO
                         try
                         {
                             int sideProjectId;
-
+//FIXME switched up Parameters.AddWithValue here for null, do elsewhere***********
                             using (NpgsqlCommand cmd = new NpgsqlCommand(insertSideProjectSql, connection))
                             {
                                 cmd.Parameters.AddWithValue("@name", sideProject.Name);
@@ -342,7 +342,8 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
                                 cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
                                 cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
-                                cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                                //cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                                cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate.HasValue? (object)sideProject.FinishDate : DBNull.Value);
                                 cmd.Transaction = transaction;
 
                                 sideProjectId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -351,7 +352,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmd = new NpgsqlCommand(insertPortfolioSideProjectSql, connection))
                             {
                                 cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
-                                cmd.Parameters.AddWithValue("@sideProjectId", sideProject.Id);
+                                cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                                 cmd.Transaction = transaction;
 
                                 cmd.ExecuteNonQuery();
@@ -496,6 +497,7 @@ namespace Capstone.DAO
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
+//FIXME switched up Parameters.AddWithValue here for null, do elsewhere***********
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
@@ -506,7 +508,8 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
                         cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
                         cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
-                        cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                        //cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                        cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate.HasValue? (object)sideProject.FinishDate : DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -873,8 +876,11 @@ namespace Capstone.DAO
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
                 ProjectStatus = Convert.ToString(reader["project_status"]),
                 StartDate = Convert.ToDateTime(reader["start_date"]),
-                FinishDate = Convert.ToDateTime(reader["finish_date"])
+                //FinishDate = Convert.ToDateTime(reader["finish_date"])
             };
+// FIXME switched up MAPROW here for null
+
+            sideProject.FinishDate = reader["finish_date"] == DBNull.Value ? null : (DateTime?)reader["finish_date"];
 
             int projectId = sideProject.Id;
 

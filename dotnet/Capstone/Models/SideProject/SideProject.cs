@@ -23,7 +23,7 @@ namespace Capstone.Models
         public List<DependencyLibrary> DependenciesOrLibrariesUsed { get; set; }
         public string ProjectStatus { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime FinishDate { get; set; }
+        public DateTime? FinishDate { get; set; }
 
     }
 }
