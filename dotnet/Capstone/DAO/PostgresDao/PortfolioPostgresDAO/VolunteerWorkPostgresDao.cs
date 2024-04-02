@@ -554,7 +554,7 @@ namespace Capstone.DAO
 
             string deletePortfolioVolunteerWorkSql = "DELETE FROM portfolio_volunteer_works " +
                                                      "WHERE portfolio_id = @portfolioId " +
-                                                     "AND volunteer_id = @volunteerWorkId;";
+                                                     "AND volunteer_id = @volunteerId;";
 
             string deleteVolunteerWorkSql = "DELETE FROM volunteer_works " +
                                              "WHERE id = @volunteerWorkId;";
