@@ -146,7 +146,7 @@ namespace Capstone.Controllers
 
                 if (result == 0)
                 {
-                    return BadRequest();
+                    return Ok("Credential deleted successfully.");
                 }
                 else
                 {
