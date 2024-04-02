@@ -554,7 +554,7 @@ namespace Capstone.DAO
 
             string deletePortfolioVolunteerWorkSql = "DELETE FROM portfolio_volunteer_works " +
                                                      "WHERE portfolio_id = @portfolioId " +
-                                                     "AND volunteer_id = @volunteerId;";
+                                                     "AND volunteer_id = @volunteerWorkId;";
 
             string deleteVolunteerWorkSql = "DELETE FROM volunteer_works " +
                                              "WHERE id = @volunteerWorkId;";
@@ -599,7 +599,7 @@ namespace Capstone.DAO
                                 cmd.Transaction = transaction;
                                 cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
                                 cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
-                                rowsAffected = cmd.ExecuteNonQuery();
+                                cmd.ExecuteNonQuery();
                             }
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteVolunteerWorkSql, connection))
@@ -775,7 +775,7 @@ namespace Capstone.DAO
 
                 try
                 {
-                    _skillDao.DeleteSkillByVolunteerWorkId(skillId, volunteerWorkId);
+                    _skillDao.DeleteSkillByVolunteerWorkId(volunteerWorkId, skillId);
                     skillsDeletedCount++;
                 }
                 catch (Exception ex)
