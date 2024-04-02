@@ -91,8 +91,10 @@ namespace Capstone.DAO
         {
             List<VolunteerWork> volunteerWorks = new List<VolunteerWork>();
 
-            string sql = "SELECT organization_name, location, organization_description, " +
-                         "position_title, start_date, end_date FROM volunteer_works;";
+            string sql = "SELECT id, organization_name, location, organization_description, " +
+                         "position_title, start_date, end_date, " +
+                         "organization_logo_id, organization_website_id, main_image_id " +
+                         "FROM volunteer_works;";
 
             try
             {
@@ -130,8 +132,9 @@ namespace Capstone.DAO
 
             VolunteerWork volunteerWork = null;
 
-            string sql = "SELECT organization_name, location, organization_description, " +
-                         "position_title, start_date, end_date " +
+            string sql = "SELECT id, organization_name, location, organization_description, " +
+                         "position_title, start_date, end_date, " +
+                         "organization_logo_id, organization_website_id, main_image_id " +
                          "FROM volunteer_works WHERE id = @volunteerWorkId;";
 
             try
@@ -400,7 +403,8 @@ namespace Capstone.DAO
             List<VolunteerWork> volunteerWorks = new List<VolunteerWork>();
 
             string sql = "SELECT vw.id, vw.organization_name, vw.location, vw.organization_description, " +
-                         "vw.position_title, vw.start_date, vw.end_date " +
+                         "vw.position_title, vw.start_date, vw.end_date, " +
+                         "vw.organization_logo_id, vw.organization_website_id, vw.main_image_id " +
                          "FROM volunteer_works vw " +
                          "JOIN portfolio_volunteer_works pvw ON vw.id = pvw.volunteer_id " +
                          "WHERE pvw.portfolio_id = @portfolioId;";
@@ -444,7 +448,8 @@ namespace Capstone.DAO
             VolunteerWork volunteerWork = null;
 
             string sql = "SELECT vw.id, vw.organization_name, vw.location, vw.organization_description, " +
-                         "vw.position_title, vw.start_date, vw.end_date " +
+                         "vw.position_title, vw.start_date, vw.end_date, " +
+                         "vw.organization_logo_id, vw.organization_website_id, vw.main_image_id " +
                          "FROM volunteer_works vw " +
                          "JOIN portfolio_volunteer_works pvw ON vw.id = pvw.volunteer_id " +
                          "WHERE pvw.portfolio_id = @portfolioId AND vw.id = @volunteerWorkId;";
