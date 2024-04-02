@@ -1238,10 +1238,10 @@ namespace Capstone.DAO
 
             return mainImageOrLogo;
         }
-
+//FIXME switched || to &&, check elsewhere******
         public Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image)
         {
-            if (image.Type != MainImage || image.Type != Logo)
+            if (image.Type != MainImage && image.Type != Logo)
             {
                 throw new ArgumentException("The image provided is not a main image or organization logo. Please provide a main image or organization logo.");
             }
