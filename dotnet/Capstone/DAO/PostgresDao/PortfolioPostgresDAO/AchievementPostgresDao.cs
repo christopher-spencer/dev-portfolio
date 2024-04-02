@@ -1196,7 +1196,7 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
-                        cmd.Parameters.AddWithValue("achievementId", achievementId);
+                        cmd.Parameters.AddWithValue("@achievementId", achievementId);
 
                         object result = cmd.ExecuteScalar();
 

@@ -751,7 +751,7 @@ namespace Capstone.DAO
 
                 try
                 {
-                    _achievementDao.DeleteAchievementByVolunteerWorkId(achievementId, volunteerWorkId);
+                    _achievementDao.DeleteAchievementByVolunteerWorkId(volunteerWorkId, achievementId);
                     achievementsDeletedCount++;
                 }
                 catch (Exception ex)
