@@ -2,6 +2,8 @@
 // NOTE updated educations GPA to NUMERIC(3,2) 
 // NOTE NUMERIC(3,2) NULL (can add NULL?)****
 
+// FIXME Increase VARCHAR lengths!****
+
 BEGIN TRANSACTION;
 
 DROP TABLE IF EXISTS portfolio_images;

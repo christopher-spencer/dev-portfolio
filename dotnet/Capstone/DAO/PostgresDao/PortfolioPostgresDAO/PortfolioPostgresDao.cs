@@ -76,7 +76,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@professionalSummary", portfolio.ProfessionalSummary);
                         cmd.Parameters.AddWithValue("@email", portfolio.Email);
 
-                        int portfolioId = (int)cmd.ExecuteScalar();
+                        int portfolioId = Convert.ToInt32(cmd.ExecuteScalar());
                         portfolio.Id = portfolioId;
                     }
                 }
