@@ -1,7 +1,5 @@
 // TODO AUTOCONNECT DB UPDATES****
 
-// FIXME Increase VARCHAR lengths!****
-
 BEGIN TRANSACTION;
 
 DROP TABLE IF EXISTS portfolio_images;
@@ -86,37 +84,37 @@ DROP TABLE IF EXISTS images;
 
 CREATE TABLE images (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     url VARCHAR(2000) NOT NULL,
-    type VARCHAR(30)
+    type VARCHAR(50)
 );
 
 CREATE TABLE websites (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     url VARCHAR(2000) NOT NULL,
-    type VARCHAR(30) NOT NULL,
+    type VARCHAR(50) NOT NULL,
     logo_id INTEGER,
     FOREIGN KEY (logo_id) REFERENCES images(id)
 );
 
 CREATE TABLE skills (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     icon_id INTEGER,
     FOREIGN KEY (icon_id) REFERENCES images(id)
 );
 
 CREATE TABLE achievements (
     id SERIAL PRIMARY KEY,
-    description VARCHAR(350) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
     icon_id INTEGER,
     FOREIGN KEY (icon_id) REFERENCES images(id)
 );
 
 CREATE TABLE hobbies (
     id SERIAL PRIMARY KEY,
-    description VARCHAR(350) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
     icon_id INTEGER,
     FOREIGN KEY (icon_id) REFERENCES images(id)
 );
@@ -124,7 +122,7 @@ CREATE TABLE hobbies (
 CREATE TABLE dependencies_and_libraries (
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
-    description VARCHAR(400),
+    description VARCHAR(1000),
     website_id INTEGER,
     logo_id INTEGER,
     FOREIGN KEY (website_id) REFERENCES websites(id),
@@ -133,12 +131,12 @@ CREATE TABLE dependencies_and_libraries (
 
 CREATE TABLE contributors (
     id SERIAL PRIMARY KEY,
-    first_name VARCHAR(60) NOT NULL,
-    last_name VARCHAR(60) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
     contributor_image_id INTEGER,
-    email VARCHAR(75),
-    bio VARCHAR(500),
-    contribution_details VARCHAR(500),
+    email VARCHAR(150),
+    bio VARCHAR(3000),
+    contribution_details VARCHAR(3000),
     linkedin_id INTEGER,
     github_id INTEGER,
     portfolio_id INTEGER,
@@ -151,7 +149,7 @@ CREATE TABLE contributors (
 CREATE TABLE apis_and_services (
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
-    description VARCHAR(400),
+    description VARCHAR(2000),
     website_id INTEGER,
     logo_id INTEGER,
     FOREIGN KEY (website_id) REFERENCES websites(id),
@@ -160,19 +158,19 @@ CREATE TABLE apis_and_services (
 
 CREATE TABLE goals (
     id SERIAL PRIMARY KEY,
-    description VARCHAR(300) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
     icon_id INTEGER,
     FOREIGN KEY (icon_id) REFERENCES images(id)
 );
 
 CREATE TABLE work_experiences (
     id SERIAL PRIMARY KEY,
-    position_title VARCHAR(50) NOT NULL,
-    company_name VARCHAR(100) NOT NULL,
+    position_title VARCHAR(150) NOT NULL,
+    company_name VARCHAR(150) NOT NULL,
     company_logo_id INTEGER,
     company_website_id INTEGER,
-    location VARCHAR(100) NOT NULL,
-    description VARCHAR(500),
+    location VARCHAR(300) NOT NULL,
+    description VARCHAR(3000),
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP,
     main_image_id INTEGER,
@@ -183,14 +181,14 @@ CREATE TABLE work_experiences (
 
 CREATE TABLE educations (
     id SERIAL PRIMARY KEY,
-    institution_name VARCHAR(75) NOT NULL,
+    institution_name VARCHAR(150) NOT NULL,
     institution_logo_id INTEGER,
     institution_website_id INTEGER,
-    location VARCHAR(100) NOT NULL,
-    description VARCHAR(500),
-    field_of_study VARCHAR(200),
-    major VARCHAR(100),
-    minor VARCHAR(100),
+    location VARCHAR(300) NOT NULL,
+    description VARCHAR(2000),
+    field_of_study VARCHAR(300),
+    major VARCHAR(150),
+    minor VARCHAR(150),
     degree_obtained VARCHAR(200),
     gpa_overall NUMERIC(3,2),
     gpa_in_major NUMERIC(3,2),
@@ -204,9 +202,9 @@ CREATE TABLE educations (
 
 CREATE TABLE credentials (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    issuing_organization VARCHAR(100) NOT NULL,
-    description VARCHAR(400),
+    name VARCHAR(200) NOT NULL,
+    issuing_organization VARCHAR(250) NOT NULL,
+    description VARCHAR(2000),
     organization_logo_id INTEGER,
     organization_website_id INTEGER,
     issue_date TIMESTAMP,
@@ -222,13 +220,13 @@ CREATE TABLE credentials (
 
 CREATE TABLE open_source_contributions (
     id SERIAL PRIMARY KEY,
-    project_name VARCHAR(125) NOT NULL,
-    organization_name VARCHAR(125) NOT NULL,
+    project_name VARCHAR(200) NOT NULL,
+    organization_name VARCHAR(200) NOT NULL,
     organization_logo_id INTEGER,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP,
-    project_description VARCHAR(500),
-    contribution_details VARCHAR(500) NOT NULL,
+    project_description VARCHAR(2000),
+    contribution_details VARCHAR(3000) NOT NULL,
     organization_website_id INTEGER,
     organization_github_id INTEGER,
     main_image_id INTEGER,
@@ -240,12 +238,12 @@ CREATE TABLE open_source_contributions (
 
 CREATE TABLE volunteer_works (
     id SERIAL PRIMARY KEY,
-    organization_name VARCHAR(125) NOT NULL,
+    organization_name VARCHAR(200) NOT NULL,
     organization_logo_id INTEGER,
-    location VARCHAR(100),
-    organization_description VARCHAR(500),
+    location VARCHAR(300),
+    organization_description VARCHAR(2000),
     organization_website_id INTEGER,
-    position_title VARCHAR(100) NOT NULL,
+    position_title VARCHAR(200) NOT NULL,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP,
     main_image_id INTEGER,
@@ -256,18 +254,18 @@ CREATE TABLE volunteer_works (
 
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password_hash VARCHAR(200) NOT NULL,
-    salt VARCHAR(200) NOT NULL,
-    user_role VARCHAR(50) NOT NULL
+    username VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(300) NOT NULL,
+    salt VARCHAR(300) NOT NULL,
+    user_role VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE blogposts (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE,
-    author VARCHAR(50) NOT NULL,
-    description VARCHAR(300) NOT NULL,
-    content VARCHAR(5000) NOT NULL,
+    name VARCHAR(150) NOT NULL UNIQUE,
+    author VARCHAR(150) NOT NULL,
+    description VARCHAR(3000) NOT NULL,
+    content VARCHAR(15000) NOT NULL,
     main_image_id INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -278,11 +276,11 @@ CREATE TABLE sideprojects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     main_image_id INTEGER,
-    description VARCHAR(500) NOT NULL,
+    description VARCHAR(5000) NOT NULL,
     video_walkthrough_url VARCHAR(2000),
     website_id INTEGER,
     github_repo_link_id INTEGER,
-    project_status VARCHAR(40),
+    project_status VARCHAR(75),
     start_date TIMESTAMP,
     finish_date TIMESTAMP,
     FOREIGN KEY (main_image_id) REFERENCES images(id),
@@ -292,11 +290,11 @@ CREATE TABLE sideprojects (
 
 CREATE TABLE portfolios (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(150) NOT NULL,
     main_image_id INTEGER,
-    location VARCHAR(60),
-    professional_summary VARCHAR(500) NOT NULL,
-    email VARCHAR(80),
+    location VARCHAR(250),
+    professional_summary VARCHAR(4000) NOT NULL,
+    email VARCHAR(250),
     github_repo_link_id INTEGER,
     linkedin_id INTEGER,
     FOREIGN KEY (main_image_id) REFERENCES images(id),
