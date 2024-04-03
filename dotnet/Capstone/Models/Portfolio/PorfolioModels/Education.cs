@@ -22,6 +22,7 @@ namespace Capstone.Models
         public decimal GPAInMajor { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime GraduationDate { get; set; }
+        // TODO change name to more general achievements?
         public List<Achievement> HonorsAndAwards { get; set; }
         public int MainImageId { get; set; }
         public Image MainImage { get; set; }
