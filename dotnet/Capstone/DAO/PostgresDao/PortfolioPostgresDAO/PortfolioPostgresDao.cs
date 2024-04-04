@@ -239,7 +239,7 @@ namespace Capstone.DAO
                             int rowsAffected;
 
                             int? mainImageId = GetMainImageIdByPortfolioId(portfolioId);
-                            int? gitHubIt = GetGitHubIdByPortfolioId(portfolioId);
+                            int? gitHubId = GetGitHubIdByPortfolioId(portfolioId);
                             int? linkedInId = GetLinkedInIdByPortfolioId(portfolioId);
 
                             if (mainImageId.HasValue)
@@ -247,9 +247,9 @@ namespace Capstone.DAO
                                 _imageDao.DeleteImageByPortfolioId(portfolioId, mainImageId.Value);
                             }
 
-                            if (gitHubIt.HasValue)
+                            if (gitHubId.HasValue)
                             {
-                                _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, gitHubIt.Value);
+                                _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, gitHubId.Value);
                             }
 
                             if (linkedInId.HasValue)
