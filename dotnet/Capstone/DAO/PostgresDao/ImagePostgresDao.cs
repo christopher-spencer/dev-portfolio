@@ -3780,7 +3780,7 @@ namespace Capstone.DAO
                                              WEBSITE IMAGE CRUD
             **********************************************************************************************
         */
-// FIXME issue with images in websites and probably elsewhere where if you update to new one, the old one hangs out in the database unattached but attached by the same id?
+// FIXME issue with images where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
         public Image CreateImageByWebsiteId(int websiteId, Image image)
         {
             if (websiteId <= 0)
