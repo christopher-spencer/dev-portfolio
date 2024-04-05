@@ -257,7 +257,7 @@ namespace Capstone.DAO
                         try
                         {
                             int imageId;
-
+// FIXME look at this for issues w/ FKey constraint on lost images when new ones are created
                             Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
 
                             if (existingMainImage != null)
