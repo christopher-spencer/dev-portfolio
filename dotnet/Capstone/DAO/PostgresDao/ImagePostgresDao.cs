@@ -27,45 +27,6 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        // public Image CreateImage(Image image)
-        // {
-        //     if (string.IsNullOrEmpty(image.Name))
-        //     {
-        //         throw new ArgumentException("Image name cannot be null or empty.");
-        //     }
-
-        //     if (string.IsNullOrEmpty(image.Url))
-        //     {
-        //         throw new ArgumentException("Image URL cannot be null or empty.");
-        //     }
-
-        //     string sql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
-
-        //     try
-        //     {
-        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-        //         {
-        //             connection.Open();
-
-        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-        //             {
-        //                 cmd.Parameters.AddWithValue("@name", image.Name);
-        //                 cmd.Parameters.AddWithValue("@url", image.Url);
-        //                 cmd.Parameters.AddWithValue("@type", image.Type);
-
-        //                 int id = Convert.ToInt32(cmd.ExecuteScalar());
-        //                 image.Id = id;
-        //             }
-        //         }
-        //     }
-        //     catch (NpgsqlException ex)
-        //     {
-        //         throw new DaoException("An error occurred while creating the image.", ex);
-        //     }
-
-        //     return image;
-        // }
-
         public Image GetImage(int imageId)
         {
             if (imageId <= 0)
@@ -134,84 +95,6 @@ namespace Capstone.DAO
 
             return images;
         }
-
-        // public Image UpdateImage(Image image, int imageId)
-        // {
-        //     if (string.IsNullOrEmpty(image.Name))
-        //     {
-        //         throw new ArgumentException("Image name cannot be null or empty.");
-        //     }
-
-        //     if (string.IsNullOrEmpty(image.Url))
-        //     {
-        //         throw new ArgumentException("Image URL cannot be null or empty.");
-        //     }
-
-        //     if (imageId <= 0)
-        //     {
-        //         throw new ArgumentException("ImageId must be greater than zero.");
-        //     }
-
-        //     string sql = "UPDATE images SET name = @name, url = @url, type = @type WHERE id = @id;";
-
-        //     try
-        //     {
-        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-        //         {
-        //             connection.Open();
-
-        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-        //             {
-        //                 cmd.Parameters.AddWithValue("@id", imageId);
-        //                 cmd.Parameters.AddWithValue("@name", image.Name);
-        //                 cmd.Parameters.AddWithValue("@url", image.Url);
-        //                 cmd.Parameters.AddWithValue("@type", image.Type);
-
-        //                 int count = cmd.ExecuteNonQuery();
-
-        //                 if (count == 1)
-        //                 {
-        //                     return image;
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     catch (NpgsqlException ex)
-        //     {
-        //         throw new DaoException("An error occurred while updating the image.", ex);
-        //     }
-
-        //     return null;
-        // }
-
-        // public int DeleteImage(int imageId)
-        // {
-        //     if (imageId <= 0)
-        //     {
-        //         throw new ArgumentException("ImageId must be greater than zero.");
-        //     }
-
-        //     string sql = "DELETE FROM images WHERE id = @id;";
-
-        //     try
-        //     {
-        //         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-        //         {
-        //             connection.Open();
-
-        //             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-        //             {
-        //                 cmd.Parameters.AddWithValue("@id", imageId);
-
-        //                 return cmd.ExecuteNonQuery();
-        //             }
-        //         }
-        //     }
-        //     catch (NpgsqlException ex)
-        //     {
-        //         throw new DaoException("An error occurred while deleting the image.", ex);
-        //     }
-        // }
 
         /*  
             **********************************************************************************************

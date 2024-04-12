@@ -29,29 +29,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */ 
 
-        // [Authorize]
-        // [HttpPost("/create-image")]
-        // public ActionResult CreateImage(Image image)
-        // {
-        //     try
-        //     {
-        //         Image createdImage = _imageDao.CreateImage(image);
-
-        //         if (createdImage == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return CreatedAtAction(nameof(GetImage), new { imageId = createdImage.Id }, createdImage);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while creating the image.");
-        //     }
-        // }
-
         [HttpGet("/image/{imageId}")]
         public ActionResult<Image> GetImage(int imageId)
         {
@@ -81,52 +58,6 @@ namespace Capstone.Controllers
                 return Ok(images);
             }
         }
-
-        // [Authorize]
-        // [HttpPut("/update-image/{imageId}/")]
-        // public ActionResult UpdateImage(Image image, int imageId)
-        // {
-        //     try
-        //     {
-        //         Image updatedImage = _imageDao.UpdateImage(image, imageId);
-
-        //         if (updatedImage == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return Ok(updatedImage);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while updating the image.");
-        //     }
-        // }
-
-        // [Authorize]
-        // [HttpDelete("/delete-image/{imageId}")]
-        // public ActionResult DeleteImage(int imageId)
-        // {
-        //     try
-        //     {
-        //         int rowsAffected = _imageDao.DeleteImage(imageId);
-
-        //         if (rowsAffected > 0)
-        //         {
-        //             return Ok("Image deleted successfully.");
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while deleting the image.");
-        //     }
-        // }
 
         /*  
             **********************************************************************************************
