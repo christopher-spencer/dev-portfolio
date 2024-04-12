@@ -156,12 +156,11 @@ namespace Capstone.DAO
                         try
                         {
                             int sideProjectId;
-//FIXME switched up Parameters.AddWithValue here for null, do elsewhere***********
+
                             using (NpgsqlCommand cmd = new NpgsqlCommand(insertSideProjectSql, connection))
                             {
                                 cmd.Parameters.AddWithValue("@name", sideProject.Name);
                                 cmd.Parameters.AddWithValue("@description", sideProject.Description);
-                                //TODO possible way to do strings null check? Double check!***************
                                 cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate.HasValue? (object)sideProject.StartDate : DBNull.Value);
@@ -319,7 +318,6 @@ namespace Capstone.DAO
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-//FIXME switched up Parameters.AddWithValue here for null, do elsewhere***********
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
@@ -327,10 +325,9 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@name", sideProject.Name);
                         cmd.Parameters.AddWithValue("@description", sideProject.Description);
-                        cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
-                        cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
-                        cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
-                        //cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                        cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate.HasValue? (object)sideProject.StartDate : DBNull.Value);
                         cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate.HasValue? (object)sideProject.FinishDate : DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
@@ -339,8 +336,6 @@ namespace Capstone.DAO
                         {
                             return sideProject;
                         }
-
-
                     }
                 }
             }
@@ -698,7 +693,7 @@ namespace Capstone.DAO
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
                 ProjectStatus = Convert.ToString(reader["project_status"])
             };
-// FIXME switched up MAPROW here for null
+
             sideProject.StartDate = reader["start_date"] == DBNull.Value ? null : (DateTime?)reader["start_date"];
             sideProject.FinishDate = reader["finish_date"] == DBNull.Value ? null : (DateTime?)reader["finish_date"];
 
