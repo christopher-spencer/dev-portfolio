@@ -24,29 +24,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        [Authorize]
-        [HttpPost("/create-contributor")]
-        public ActionResult CreateContributor(Contributor contributor)
-        {
-            try
-            {
-                Contributor createdContributor = _contributorDao.CreateContributor(contributor);
-
-                if (createdContributor == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return CreatedAtAction(nameof(GetContributor), new { contributorId = createdContributor.Id }, createdContributor);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while creating the contributor.");
-            }
-        }
-
         [HttpGet("/contributor/{contributorId}")]
         public ActionResult<Contributor> GetContributor(int contributorId)
         {
@@ -74,52 +51,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(contributors);
-            }
-        }
-
-        [Authorize]
-        [HttpPut("/update-contributor/{contributorId}")]
-        public ActionResult UpdateContributor(int contributorId, Contributor contributor)
-        {
-            try
-            {
-                Contributor updatedContributor = _contributorDao.UpdateContributor(contributorId, contributor);
-
-                if (updatedContributor == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return Ok(updatedContributor);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while updating the contributor.");
-            }
-        }
-
-        [Authorize]
-        [HttpDelete("/delete-contributor/{contributorId}")]
-        public ActionResult DeleteContributor(int contributorId)
-        {
-            try
-            {
-                int rowsAffected = _contributorDao.DeleteContributor(contributorId);
-
-                if (rowsAffected > 0)
-                {
-                    return Ok("Contributor deleted successfully.");
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while deleting the contributor.");
             }
         }
 

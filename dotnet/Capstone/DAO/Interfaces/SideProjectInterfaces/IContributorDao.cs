@@ -10,11 +10,9 @@ namespace Capstone.DAO.Interfaces
                                                 CONTRIBUTOR CRUD
             **********************************************************************************************
         */ 
-        Contributor CreateContributor(Contributor contributor);
+    
         Contributor GetContributor(int contributorId);
         List<Contributor> GetContributors();
-        Contributor UpdateContributor(int contributorId, Contributor contributor);
-        int DeleteContributor(int contributorId);
 
         /*  
             **********************************************************************************************
