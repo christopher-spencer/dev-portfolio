@@ -161,10 +161,10 @@ namespace Capstone.DAO
                             {
                                 cmd.Parameters.AddWithValue("@name", sideProject.Name);
                                 cmd.Parameters.AddWithValue("@description", sideProject.Description);
-                                cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl);
-                                cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus);
-                                cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate);
-                                //cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate);
+                                //TODO possible way to do strings null check? Double check!***************
+                                cmd.Parameters.AddWithValue("@video_walkthrough_url", sideProject.VideoWalkthroughUrl ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@project_status", sideProject.ProjectStatus ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@start_date", sideProject.StartDate.HasValue? (object)sideProject.StartDate : DBNull.Value);
                                 cmd.Parameters.AddWithValue("@finish_date", sideProject.FinishDate.HasValue? (object)sideProject.FinishDate : DBNull.Value);
                                 cmd.Transaction = transaction;
 
@@ -696,12 +696,10 @@ namespace Capstone.DAO
                 Name = Convert.ToString(reader["name"]),
                 Description = Convert.ToString(reader["description"]),
                 VideoWalkthroughUrl = Convert.ToString(reader["video_walkthrough_url"]),
-                ProjectStatus = Convert.ToString(reader["project_status"]),
-                StartDate = Convert.ToDateTime(reader["start_date"]),
-                //FinishDate = Convert.ToDateTime(reader["finish_date"])
+                ProjectStatus = Convert.ToString(reader["project_status"])
             };
 // FIXME switched up MAPROW here for null
-
+            sideProject.StartDate = reader["start_date"] == DBNull.Value ? null : (DateTime?)reader["start_date"];
             sideProject.FinishDate = reader["finish_date"] == DBNull.Value ? null : (DateTime?)reader["finish_date"];
 
             int projectId = sideProject.Id;
