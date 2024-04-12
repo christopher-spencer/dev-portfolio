@@ -23,28 +23,6 @@ namespace Capstone.Controllers
                                             SIDEPROJECT CRUD CONTROLLER
             **********************************************************************************************
         */
-        [Authorize]
-        [HttpPost("/create-sideproject")]
-        public ActionResult CreateSideProject(SideProject sideProject)
-        {
-            try
-            {
-                SideProject createdSideProject = _sideProjectDao.CreateSideProject(sideProject);
-
-                if (createdSideProject == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return CreatedAtAction(nameof(GetSideProject), new { sideProjectId = createdSideProject.Id }, createdSideProject);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while creating the side project.");
-            }
-        }
 
         [HttpGet("/sideprojects")]
         public ActionResult<List<SideProject>> GetSideProjects()
@@ -73,52 +51,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(sideProject);
-            }
-        }
-
-        [Authorize]
-        [HttpPut("/update-sideproject/{sideProjectId}")]
-        public ActionResult UpdateSideProject(SideProject sideProject, int sideProjectId)
-        {
-            try
-            {
-                SideProject updatedSideProject = _sideProjectDao.UpdateSideProject(sideProject, sideProjectId);
-
-                if (updatedSideProject == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return Ok(updatedSideProject);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while updating the side project.");
-            }
-        }
-
-        [Authorize]
-        [HttpDelete("/sideproject/delete/{sideProjectId}")]
-        public ActionResult<int> DeleteSideProject(int sideProjectId)
-        {
-            try
-            {
-                int rowsAffected = _sideProjectDao.DeleteSideProject(sideProjectId);
-
-                if (rowsAffected > 0)
-                {
-                    return Ok("Side Project deleted successfully.");
-                }
-                else
-                {
-                    return NoContent();
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while deleting the side project.");
             }
         }
 
