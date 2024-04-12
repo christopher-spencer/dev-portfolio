@@ -941,7 +941,7 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageOrLogoByWorkExperienceId(int experienceId, int imageId, Image image)
         {
-//FIXME check other places where "||" here might need changed to "&&"
+
             if (image.Type != MainImage && image.Type != Logo)
             {
                 throw new ArgumentException("The image provided is not a main image or company logo. Please provide a main image or company logo.");
@@ -1238,7 +1238,7 @@ namespace Capstone.DAO
 
             return mainImageOrLogo;
         }
-//FIXME switched || to &&, check elsewhere******
+
         public Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image)
         {
             if (image.Type != MainImage && image.Type != Logo)
@@ -1261,7 +1261,6 @@ namespace Capstone.DAO
                 throw new ArgumentException("CredentialId and imageId must be greater than zero.");
             }
 
-            // UpdateCredentialImageIdSql only runs if the image is the Main Image or Logo
             string updateCredentialImageIdSql = null;
 
             string deleteCredentialImageSql = "DELETE FROM credential_images WHERE credential_id = @credentialId AND image_id = @imageId;";
@@ -1675,7 +1674,6 @@ namespace Capstone.DAO
                 throw new ArgumentException("EducationId and imageId must be greater than zero.");
             }
 
-            // UpdateEducationImageIdSql only runs if the image is the Main Image or Logo
             string updateEducationImageIdSql = null;
 
             string deleteEducationImageSql = "DELETE FROM education_images WHERE education_id = @educationId AND image_id = @imageId;";
@@ -2508,7 +2506,6 @@ namespace Capstone.DAO
                 throw new ArgumentException("VolunteerWorkId and imageId must be greater than zero.");
             }
 
-            // UpdateVolunteerWorkImageIdSql only runs if the image is the Main Image or Logo
             string updateVolunteerWorkImageIdSql = null;
 
             string deleteVolunteerWorkImageSql = "DELETE FROM volunteer_work_images WHERE volunteer_work_id = @volunteerWorkId AND image_id = @imageId;";

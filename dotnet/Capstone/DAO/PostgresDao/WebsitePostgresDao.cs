@@ -26,6 +26,7 @@ namespace Capstone.DAO
         const string PortfolioLink = "portfolio link";
         const string LinkedIn = "linkedin";
         const string PullRequestLink = "pull request link";
+
 // FIXME issue with websites where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
 
         /*  
@@ -1657,7 +1658,7 @@ namespace Capstone.DAO
 
         public Website UpdateMainWebsiteOrGitHubByOpenSourceContributionId(int contributionId, int websiteId, Website website)
         {
-            if (website.Type != MainWebsite || website.Type != GitHub)
+            if (website.Type != MainWebsite && website.Type != GitHub)
             {
                 throw new ArgumentException("Website Type must be either 'main website' or 'github'.");
             }
