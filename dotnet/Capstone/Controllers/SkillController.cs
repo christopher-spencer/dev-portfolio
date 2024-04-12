@@ -24,29 +24,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        // [Authorize]
-        // [HttpPost("/create-skill")]
-        // public ActionResult CreateSkill(Skill skill)
-        // {
-        //     try
-        //     {
-        //         Skill createdSkill = _skillDao.CreateSkill(skill);
-
-        //         if (createdSkill == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return CreatedAtAction(nameof(GetSkill), new { skillId = createdSkill.Id }, createdSkill);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while creating the skill.");
-        //     }
-        // }
-
         [HttpGet("/skill/{skillId}")]
         public ActionResult<Skill> GetSkill(int skillId)
         {
@@ -76,52 +53,6 @@ namespace Capstone.Controllers
                 return Ok(skills);
             }
         }
-
-        // [Authorize]
-        // [HttpPut("/update-skill/{skillId}")]
-        // public ActionResult UpdateSkill(int skillId, Skill skill)
-        // {
-        //     try
-        //     {
-        //         Skill updatedSkill = _skillDao.UpdateSkill(skillId, skill);
-
-        //         if (updatedSkill == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return Ok(updatedSkill);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while updating the skill.");
-        //     }
-        // }
-
-        // [Authorize]
-        // [HttpDelete("/delete-skill/{skillId}")]
-        // public ActionResult DeleteSkill(int skillId)
-        // {
-        //     try
-        //     {
-        //         int rowsAffected = _skillDao.DeleteSkill(skillId);
-
-        //         if (rowsAffected > 0)
-        //         {
-        //             return Ok("Skill deleted successfully.");
-        //         }
-        //         else
-        //         {
-        //             return NotFound();
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while deleting the skill.");
-        //     }
-        // }
 
         /*  
             **********************************************************************************************
