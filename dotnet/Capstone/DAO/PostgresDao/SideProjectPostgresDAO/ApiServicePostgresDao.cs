@@ -26,39 +26,6 @@ namespace Capstone.DAO
                                             APIS AND SERVICES CRUD
             **********************************************************************************************
         */
-        public ApiService CreateAPIOrService(ApiService apiService)
-        {
-            if (string.IsNullOrEmpty(apiService.Name))
-            {
-                throw new ArgumentException("Api or Service name cannot be null or empty.");
-            }
-
-            string sql = "INSERT INTO apis_and_services (name, description) " +
-                         "VALUES (@name, @description) RETURNING id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@name", apiService.Name);
-                        cmd.Parameters.AddWithValue("@description", apiService.Description);
-
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        apiService.Id = id;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the API service.", ex);
-            }
-
-            return apiService;
-        }
 
         public ApiService GetAPIOrServiceById(int apiServiceId)
         {
@@ -131,82 +98,6 @@ namespace Capstone.DAO
             }
 
             return apiServices;
-        }
-
-        public ApiService UpdateAPIOrService(int apiServiceId, ApiService apiService)
-        {
-            if (string.IsNullOrEmpty(apiService.Name))
-            {
-                throw new ArgumentException("ApiService name cannot be null or empty.");
-            }
-
-            if (apiServiceId <= 0)
-            {
-                throw new ArgumentException("ApiServiceId must be greater than zero.");
-            }
-
-            string sql = "UPDATE apis_and_services " +
-                         "SET name = @name, description = @description " +
-                         "WHERE id = @apiServiceId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-                        cmd.Parameters.AddWithValue("@name", apiService.Name);
-                        cmd.Parameters.AddWithValue("@description", apiService.Description);
-
-                        int count = cmd.ExecuteNonQuery();
-
-                        if (count == 1)
-                        {
-                            return apiService;
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the API service.", ex);
-            }
-
-            return null;
-        }
-
-        public int DeleteAPIOrService(int apiServiceId)
-        {
-            if (apiServiceId <= 0)
-            {
-                throw new ArgumentException("ApiServiceId must be greater than zero.");
-            }
-
-            string sql = "DELETE FROM api_and_services WHERE id = @apiServiceId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        return rowsAffected;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while deleting the API service.", ex);
-            }
         }
 
         /*  

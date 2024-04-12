@@ -10,11 +10,9 @@ namespace Capstone.DAO.Interfaces
                                         APIS AND SERVICES CRUD
             **********************************************************************************************
         */ 
-        ApiService CreateAPIOrService(ApiService apiService);
+
         ApiService GetAPIOrServiceById(int apiServiceId);
         List<ApiService> GetAPIsAndServices();
-        ApiService UpdateAPIOrService(int apiServiceId, ApiService apiService);
-        int DeleteAPIOrService(int apiServiceId);
 
         /*  
             **********************************************************************************************
