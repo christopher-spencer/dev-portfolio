@@ -10,11 +10,9 @@ namespace Capstone.DAO.Interfaces
                                             OPEN SOURCE CONTRIBUTION CRUD
             **********************************************************************************************
         */
-        // OpenSourceContribution CreateOpenSourceContribution(OpenSourceContribution contribution);
+
         List<OpenSourceContribution> GetOpenSourceContributions();
         OpenSourceContribution GetOpenSourceContribution(int contributionId);
-        // OpenSourceContribution UpdateOpenSourceContribution(int contributionId, OpenSourceContribution contribution);
-        // int DeleteOpenSourceContribution(int contributionId);
 
         /*  
             **********************************************************************************************
