@@ -10,11 +10,10 @@ namespace Capstone.DAO.Interfaces
                                         DEPENDENCIES AND LIBRARIES CRUD
             **********************************************************************************************
         */    
-        DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary);
+
         DependencyLibrary GetDependencyOrLibrary(int dependencyLibraryId);
         List<DependencyLibrary> GetDependenciesAndLibraries();
-        DependencyLibrary UpdateDependencyOrLibrary(int dependencyLibraryId, DependencyLibrary dependencyLibrary);
-        int DeleteDependencyOrLibrary(int dependencyLibraryId);
+
 
         /*  
             **********************************************************************************************

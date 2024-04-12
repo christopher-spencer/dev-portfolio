@@ -24,29 +24,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        [Authorize]
-        [HttpPost("/create-dependency-or-library")]
-        public ActionResult CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
-        {
-            try
-            {
-                DependencyLibrary createdDependencyLibrary = _dependencyLibraryDao.CreateDependencyOrLibrary(dependencyLibrary);
-
-                if (createdDependencyLibrary == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return CreatedAtAction(nameof(GetDependencyOrLibrary), new { dependencyLibraryId = createdDependencyLibrary.Id }, createdDependencyLibrary);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while creating the dependency or library.");
-            }
-        }
-
         [HttpGet("/dependency-or-library/{dependencyLibraryId}")]
         public ActionResult<DependencyLibrary> GetDependencyOrLibrary(int dependencyLibraryId)
         {
@@ -74,52 +51,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(dependenciesAndLibraries);
-            }
-        }
-
-        [Authorize]
-        [HttpPut("/update-dependency-or-library/{dependencyLibraryId}")]
-        public ActionResult UpdateDependencyOrLibrary(int dependencyLibraryId, DependencyLibrary dependencyLibrary)
-        {
-            try
-            {
-                DependencyLibrary updatedDependencyLibrary = _dependencyLibraryDao.UpdateDependencyOrLibrary(dependencyLibraryId, dependencyLibrary);
-
-                if (updatedDependencyLibrary == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return Ok(updatedDependencyLibrary);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while updating the dependency or library.");
-            }
-        }
-
-        [Authorize]
-        [HttpDelete("/delete-dependency-or-library/{dependencyLibraryId}")]
-        public ActionResult DeleteDependencyOrLibrary(int dependencyLibraryId)
-        {
-            try
-            {
-                int rowsAffected = _dependencyLibraryDao.DeleteDependencyOrLibrary(dependencyLibraryId);
-
-                if (rowsAffected > 0)
-                {
-                    return Ok("Dependency or library deleted successfully.");
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while deleting the dependency or library.");
             }
         }
 

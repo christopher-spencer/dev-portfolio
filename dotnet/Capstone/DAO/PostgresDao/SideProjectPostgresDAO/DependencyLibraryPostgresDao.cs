@@ -26,40 +26,6 @@ namespace Capstone.DAO
                                         DEPENDENCIES AND LIBRARIES CRUD
             **********************************************************************************************
         */
-        public DependencyLibrary CreateDependencyOrLibrary(DependencyLibrary dependencyLibrary)
-        {
-            if (string.IsNullOrEmpty(dependencyLibrary.Name))
-            {
-                throw new ArgumentException("Dependency/Library name cannot be null or empty.");
-            }
-
-            string sql = "INSERT INTO dependencies_and_libraries (name, description) " +
-                "VALUES (@name, @description) " +
-                "RETURNING id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
-                        cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        dependencyLibrary.Id = id;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the dependency/library.", ex);
-            }
-
-            return dependencyLibrary;
-        }
 
         public DependencyLibrary GetDependencyOrLibrary(int dependencyLibraryId)
         {
@@ -129,82 +95,6 @@ namespace Capstone.DAO
 
             return dependencyLibraries;
         }
-
-        public DependencyLibrary UpdateDependencyOrLibrary(int dependencyLibraryId, DependencyLibrary dependencyLibrary)
-        {
-            if (string.IsNullOrEmpty(dependencyLibrary.Name))
-            {
-                throw new ArgumentException("Dependency/Library name cannot be null or empty.");
-            }
-
-            if (dependencyLibraryId <= 0)
-            {
-                throw new ArgumentException("DependencyLibraryId must be greater than zero.");
-            }
-
-            string sql = "UPDATE dependencies_and_libraries SET name = @name, description = @description " +
-                         "WHERE id = @dependencyLibraryId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-                        cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
-                        cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
-
-                        int count = cmd.ExecuteNonQuery();
-
-                        if (count == 1)
-                        {
-                            return dependencyLibrary;
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the dependency/library.", ex);
-            }
-
-            return null;
-        }
-
-        public int DeleteDependencyOrLibrary(int dependencyLibraryId)
-        {
-            if (dependencyLibraryId <= 0)
-            {
-                throw new ArgumentException("DependencyLibraryId must be greater than zero.");
-            }
-
-            string sql = "DELETE FROM dependencies_and_libraries WHERE id = @dependencyLibraryId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        return rowsAffected;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while deleting the dependency/library.", ex);
-            }
-        }
-
 
         /*  
             **********************************************************************************************
