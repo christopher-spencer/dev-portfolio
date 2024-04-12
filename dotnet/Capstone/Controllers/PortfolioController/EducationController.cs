@@ -24,29 +24,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        // [Authorize]
-        // [HttpPost("/create-education")]
-        // public ActionResult CreateEducation(Education education)
-        // {
-        //     try
-        //     {
-        //         Education createdEducation = _educationDao.CreateEducation(education);
-
-        //         if (createdEducation == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return CreatedAtAction(nameof(GetEducation), new { educationId = createdEducation.Id }, createdEducation);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while creating the education.");
-        //     }
-        // }
-
         [HttpGet("/educations")]
         public ActionResult<List<Education>> GetEducations()
         {
@@ -76,50 +53,6 @@ namespace Capstone.Controllers
                 return Ok(education);
             }
         }
-
-        // [HttpPut("/update-education/{educationId}")]
-        // public ActionResult UpdateEducation(int educationId, Education education)
-        // {
-        //     try
-        //     {
-        //         Education updatedEducation = _educationDao.UpdateEducation(educationId, education);
-
-        //         if (updatedEducation == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return Ok(updatedEducation);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while updating the education.");
-        //     }
-        // }
-
-        // [HttpDelete("/delete-education/{educationId}")]
-        // public ActionResult DeleteEducation(int educationId)
-        // {
-        //     try
-        //     {
-        //         int result = _educationDao.DeleteEducation(educationId);
-
-        //         if (result == 0)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return NoContent();
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while deleting the education.");
-        //     }
-        // }
 
         /*  
             **********************************************************************************************
