@@ -24,29 +24,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        // [Authorize]
-        // [HttpPost("/create-volunteer-work")]
-        // public ActionResult CreateVolunteerWork(VolunteerWork volunteerWork)
-        // {
-        //     try
-        //     {
-        //         VolunteerWork createdVolunteerWork = _volunteerWorkDao.CreateVolunteerWork(volunteerWork);
-
-        //         if (createdVolunteerWork == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return CreatedAtAction(nameof(GetVolunteerWork), new { volunteerWorkId = createdVolunteerWork.Id }, createdVolunteerWork);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while creating the volunteer work.");
-        //     }
-        // }
-
         [HttpGet("/volunteer-works")]
         public ActionResult<List<VolunteerWork>> GetVolunteerWorks()
         {
@@ -76,52 +53,6 @@ namespace Capstone.Controllers
                 return Ok(volunteerWork);
             }
         }
-
-        // [Authorize]
-        // [HttpPut("/update-volunteer-work/{volunteerWorkId}")]
-        // public ActionResult UpdateVolunteerWork(int volunteerWorkId, VolunteerWork volunteerWork)
-        // {
-        //     try
-        //     {
-        //         VolunteerWork updatedVolunteerWork = _volunteerWorkDao.UpdateVolunteerWork(volunteerWorkId, volunteerWork);
-
-        //         if (updatedVolunteerWork == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return Ok(updatedVolunteerWork);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while updating the volunteer work.");
-        //     }
-        // }
-
-        // [Authorize]
-        // [HttpDelete("/delete-volunteer-work/{volunteerWorkId}")]
-        // public ActionResult DeleteVolunteerWork(int volunteerWorkId)
-        // {
-        //     try
-        //     {
-        //         int result = _volunteerWorkDao.DeleteVolunteerWork(volunteerWorkId);
-
-        //         if (result == 0)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return Ok();
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while deleting the volunteer work.");
-        //     }
-        // }
 
         /*  
             **********************************************************************************************
