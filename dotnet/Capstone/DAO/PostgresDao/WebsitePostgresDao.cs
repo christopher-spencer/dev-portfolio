@@ -669,6 +669,8 @@ namespace Capstone.DAO
                                             CREDENTIAL WEBSITE CRUD
             **********************************************************************************************
         */
+// NOTE: Credential Website CREATE/UPDATE doesn't require Nullable => all Website fields required
+
         public Website CreateWebsiteByCredentialId(int credentialId, Website website)
         {
             if (credentialId <= 0)
@@ -816,6 +818,21 @@ namespace Capstone.DAO
                 throw new ArgumentException("CredentialId and websiteId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
                                       "FROM credential_websites " +
@@ -949,6 +966,9 @@ namespace Capstone.DAO
                                             EDUCATION WEBSITE CRUD
             **********************************************************************************************
         */
+// TODO Education Website doesn't require type, can add Nullable to Create and Update methods***
+
+
         public Website CreateWebsiteByEducationId(int educationId, Website website)
         {
             if (educationId <= 0)
@@ -1199,6 +1219,8 @@ namespace Capstone.DAO
                                         OPEN SOURCE CONTRIBUTION WEBSITE CRUD
             **********************************************************************************************
         */
+// NOTE: Open Source Contribution Website CREATE/UPDATE doesn't require Nullable => all Website fields required
+
         public Website CreateWebsiteByOpenSourceContributionId(int contributionId, Website website)
         {
             if (contributionId <= 0)
@@ -1508,6 +1530,21 @@ namespace Capstone.DAO
                 throw new ArgumentException("ContributionId and websiteId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
                                       "FROM open_source_contribution_websites " +
@@ -1659,6 +1696,8 @@ namespace Capstone.DAO
                                             VOLUNTEER WORK WEBSITE CRUD
             **********************************************************************************************
         */
+// TODO Volunteer Work Website doesn't require type, can add Nullable to Create and Update methods***
+
         public Website CreateWebsiteByVolunteerWorkId(int volunteerWorkId, Website website)
         {
             if (volunteerWorkId <= 0)
@@ -1913,6 +1952,7 @@ namespace Capstone.DAO
             **********************************************************************************************
             **********************************************************************************************
         */
+// NOTE: Side Project Website CREATE/UPDATE doesn't require Nullable => all Website fields required
 
         public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
@@ -2062,8 +2102,23 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(website.Name))
+            {
+                throw new ArgumentException("Website name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Url))
+            {
+                throw new ArgumentException("Website URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(website.Type))
+            {
+                throw new ArgumentException("Website Type cannot be null or empty.");
+            }
+// FIXME check all above and below to re-add type where necessary ****** ??????
             string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url " +
+                         "SET name = @name, url = @url, type = @type " +
                          "FROM sideproject_websites " +
                          "WHERE websites.id = sideproject_websites.website_id " +
                          "AND sideproject_websites.sideproject_id = @sideProjectId " +
@@ -2081,6 +2136,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
