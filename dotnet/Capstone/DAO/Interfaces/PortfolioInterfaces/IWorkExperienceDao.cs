@@ -10,11 +10,9 @@ namespace Capstone.DAO.Interfaces
                                               WORK EXPERIENCE CRUD
             **********************************************************************************************
         */
-        // WorkExperience CreateWorkExperience(WorkExperience experience);
+
         List<WorkExperience> GetWorkExperiences();
         WorkExperience GetWorkExperience(int experienceId);
-        // WorkExperience UpdateWorkExperience(int experienceId, WorkExperience experience);
-        // int DeleteWorkExperience(int experienceId);
 
         /*  
             **********************************************************************************************

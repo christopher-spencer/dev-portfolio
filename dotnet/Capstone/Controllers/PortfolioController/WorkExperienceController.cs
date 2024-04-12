@@ -24,29 +24,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        // [Authorize]
-        // [HttpPost("/create-work-experience")]
-        // public ActionResult CreateWorkExperience(WorkExperience experience)
-        // {
-        //     try
-        //     {
-        //         WorkExperience createdWorkExperience = _workExperienceDao.CreateWorkExperience(experience);
-
-        //         if (createdWorkExperience == null)
-        //         {
-        //             return BadRequest();
-        //         }
-        //         else
-        //         {
-        //             return CreatedAtAction(nameof(GetWorkExperience), new { experienceId = createdWorkExperience.Id }, createdWorkExperience);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while creating the work experience.");
-        //     }
-        // }
-
         [HttpGet("/work-experiences")]
         public ActionResult<List<WorkExperience>> GetWorkExperiences()
         {
@@ -76,52 +53,6 @@ namespace Capstone.Controllers
                 return Ok(workExperience);
             }
         }
-
-        // [Authorize]
-        // [HttpPut("/update-work-experience/{experienceId}")]
-        // public ActionResult UpdateWorkExperience(int experienceId, WorkExperience experience)
-        // {
-        //     try
-        //     {
-        //         WorkExperience updatedWorkExperience = _workExperienceDao.UpdateWorkExperience(experienceId, experience);
-
-        //         if (updatedWorkExperience == null)
-        //         {
-        //             return NotFound();
-        //         }
-        //         else
-        //         {
-        //             return Ok(updatedWorkExperience);
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while updating the work experience.");
-        //     }
-        // }
-
-        // [Authorize]
-        // [HttpDelete("/work-experience/delete/{experienceId}")]
-        // public ActionResult DeleteWorkExperience(int experienceId)
-        // {
-        //     try
-        //     {
-        //         int result = _workExperienceDao.DeleteWorkExperience(experienceId);
-
-        //         if (result == 0)
-        //         {
-        //             return NotFound();
-        //         }
-        //         else
-        //         {
-        //             return NoContent();
-        //         }
-        //     }
-        //     catch (DaoException)
-        //     {
-        //         return StatusCode(500, "An error occurred while deleting the work experience.");
-        //     }
-        // }
 
         /*  
             **********************************************************************************************
