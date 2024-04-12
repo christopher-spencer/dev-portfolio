@@ -24,29 +24,6 @@ namespace Capstone.Controllers
             **********************************************************************************************
         */
 
-        [Authorize]
-        [HttpPost("/create-goal")]
-        public ActionResult CreateGoal(Goal goal)
-        {
-            try
-            {
-                Goal createdGoal = _goalDao.CreateGoal(goal);
-
-                if (createdGoal == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return CreatedAtAction(nameof(GetGoal), new { goalId = createdGoal.Id }, createdGoal);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while creating the goal.");
-            }
-        }
-
         [HttpGet("/goal/{goalId}")]
         public ActionResult<Goal> GetGoal(int goalId)
         {
@@ -74,52 +51,6 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(goals);
-            }
-        }
-
-        [Authorize]
-        [HttpPut("/update-goal/{goalId}")]
-        public ActionResult UpdateGoal(int goalId, Goal goal)
-        {
-            try
-            {
-                Goal updatedGoal = _goalDao.UpdateGoal(goalId, goal);
-
-                if (updatedGoal == null)
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    return Ok(updatedGoal);
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while updating the goal.");
-            }
-        }
-
-        [Authorize]
-        [HttpDelete("/delete-goal/{goalId}")]
-        public ActionResult DeleteGoal(int goalId)
-        {
-            try
-            {
-                int rowsAffected = _goalDao.DeleteGoal(goalId);
-
-                if (rowsAffected > 0)
-                {
-                    return Ok("Goal deleted successfully.");
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (DaoException)
-            {
-                return StatusCode(500, "An error occurred while deleting the goal.");
             }
         }
 

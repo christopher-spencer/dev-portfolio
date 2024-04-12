@@ -10,11 +10,9 @@ namespace Capstone.DAO.Interfaces
                                                     GOAL CRUD
             **********************************************************************************************
         */    
-        Goal CreateGoal(Goal goal);
+
         Goal GetGoal(int goalId);
         List<Goal> GetGoals();
-        Goal UpdateGoal(int goalId, Goal goal);
-        int DeleteGoal(int goalId);
         
         /*  
             **********************************************************************************************

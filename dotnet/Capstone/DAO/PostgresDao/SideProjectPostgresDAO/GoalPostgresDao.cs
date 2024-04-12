@@ -24,37 +24,6 @@ namespace Capstone.DAO
                                                     GOAL CRUD
             **********************************************************************************************
         */
-        public Goal CreateGoal(Goal goal)
-        {
-            if (string.IsNullOrEmpty(goal.Description))
-            {
-                throw new ArgumentException("Goal description cannot be null or empty.");
-            }
-
-            string sql = "INSERT INTO goals (description) VALUES (@description) RETURNING id;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@description", goal.Description);
-
-                        int id = Convert.ToInt32(cmd.ExecuteScalar());
-                        goal.Id = id;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while creating the goal.", ex);
-            }
-
-            return goal;
-        }
 
         public Goal GetGoal(int goalId)
         {
@@ -123,79 +92,6 @@ namespace Capstone.DAO
             }
 
             return goals;
-        }
-
-        public Goal UpdateGoal(int goalId, Goal goal)
-        {
-            if (string.IsNullOrEmpty(goal.Description))
-            {
-                throw new ArgumentException("Goal description cannot be null or empty.");
-            }
-
-            if (goalId <= 0)
-            {
-                throw new ArgumentException("GoalId must be greater than zero.");
-            }
-
-            string sql = "UPDATE goals SET description = @description WHERE id = @goalId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@goalId", goalId);
-                        cmd.Parameters.AddWithValue("@description", goal.Description);
-
-                        int count = cmd.ExecuteNonQuery();
-
-                        if (count == 1)
-                        {
-                            return goal;
-                        }
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while updating the goal.", ex);
-            }
-
-            return null;
-        }
-
-        public int DeleteGoal(int goalId)
-        {
-            if (goalId <= 0)
-            {
-                throw new ArgumentException("GoalId must be greater than zero.");
-            }
-
-            string sql = "DELETE FROM goals WHERE id = @goalId;";
-
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@goalId", goalId);
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        return rowsAffected;
-                    }
-                }
-            }
-            catch (NpgsqlException ex)
-            {
-                throw new DaoException("An error occurred while deleting the goal.", ex);
-            }
         }
 
         /*  
