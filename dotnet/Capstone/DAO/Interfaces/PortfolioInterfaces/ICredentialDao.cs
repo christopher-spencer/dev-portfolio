@@ -10,11 +10,9 @@ namespace Capstone.DAO.Interfaces
                                                 CREDENTIAL CRUD
             **********************************************************************************************
         */
-        // Credential CreateCredential(Credential credential);
+
         List<Credential> GetCredentials();
         Credential GetCredential(int credentialId);
-        // Credential UpdateCredential(int credentialId, Credential credential);
-        // int DeleteCredential(int credentialId);
         
         /*  
             **********************************************************************************************
