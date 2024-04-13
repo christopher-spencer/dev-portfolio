@@ -164,12 +164,7 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
 
 //FIXME switched up Parameters.AddWithValue here for null, do elsewhere***********
-                               // cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
-                               // NOTE two ways below ???
-                                //cmd.Parameters.AddWithValue("@expirationDate", (object)credential.ExpirationDate ?? DBNull.Value);
                                 cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate.HasValue ? (object)credential.ExpirationDate : DBNull.Value);
-
-                                //cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
                                 cmd.Parameters.AddWithValue("@credentialIdNumber", (object)credential.CredentialIdNumber ?? DBNull.Value);
 
                                 cmd.Transaction = transaction;
