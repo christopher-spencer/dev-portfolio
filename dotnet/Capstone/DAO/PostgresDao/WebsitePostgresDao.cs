@@ -520,6 +520,13 @@ namespace Capstone.DAO
             string insertExperienceWebsiteSql = "INSERT INTO work_experience_websites (experience_id, website_id) VALUES (@experienceId, @websiteId);";
             string updateExperienceWebsiteIdSql = "UPDATE work_experiences SET company_website_id = @websiteId WHERE id = @experienceId;";
 
+            Website existingWebsite = GetWebsiteByWorkExperienceId(experienceId);
+
+            if (existingWebsite != null)
+            {
+                throw new ArgumentException("A website already exists for this work experience.");
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
