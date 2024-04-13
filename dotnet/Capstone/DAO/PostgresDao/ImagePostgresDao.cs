@@ -105,6 +105,7 @@ namespace Capstone.DAO
             **********************************************************************************************
             **********************************************************************************************
         */
+// NOTE: Portfolio Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByPortfolioId(int portfolioId, Image image)
         {
@@ -121,6 +122,11 @@ namespace Capstone.DAO
             if (string.IsNullOrEmpty(image.Url))
             {
                 throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
             }
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
@@ -140,7 +146,7 @@ namespace Capstone.DAO
                         try
                         {
                             int imageId;
-// FIXME look at this for issues w/ FKey constraint on lost images when new ones are created
+// FIXME look at this for issues w/ FKey constraint on lost images when new ones are created*******
                             Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
 
                             if (existingMainImage != null)
