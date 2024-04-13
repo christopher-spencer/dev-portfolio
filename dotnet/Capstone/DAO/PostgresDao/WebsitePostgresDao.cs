@@ -18,7 +18,7 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
             this._imageDao = imageDao;
         }
-        // TODO add Blog Post Website CRUD eventually after links set up in BP Model
+// TODO add Blog Post Website CRUD eventually after links set up in BP Model
 
         const string MainWebsite = "main website";
         const string SecondaryWebsite = "secondary website";
@@ -120,7 +120,7 @@ namespace Capstone.DAO
             **********************************************************************************************
             **********************************************************************************************
         */
-// NOTE: Portfolio Website CREATE/UPDATE doesn't require Nullable => all Website fields required
+
         public Website CreateWebsiteByPortfolioId(int portfolioId, Website website)
         {
             if (portfolioId <= 0)

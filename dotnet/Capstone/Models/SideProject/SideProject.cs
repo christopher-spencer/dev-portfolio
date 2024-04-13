@@ -21,6 +21,7 @@ namespace Capstone.Models
         public List<Contributor> Contributors { get; set; }
         public List<ApiService> ExternalAPIsAndServicesUsed { get; set; }
         public List<DependencyLibrary> DependenciesOrLibrariesUsed { get; set; }
+// FIXME need to set constants for Project Status like with Type (Ongoing vs Finished vs Abandoned, etc.)*****
         public string ProjectStatus { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? FinishDate { get; set; }
