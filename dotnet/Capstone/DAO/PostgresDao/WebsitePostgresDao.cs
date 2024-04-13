@@ -394,7 +394,6 @@ namespace Capstone.DAO
                                            WORK EXPERIENCE WEBSITE CRUD
             **********************************************************************************************
         */
-// TODO Work Experience Website doesn't require type, can add Nullable to Create and Update methods***
 
         public Website CreateWebsiteByWorkExperienceId(int experienceId, Website website)
         {
@@ -427,7 +426,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
                                 cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -640,7 +639,6 @@ namespace Capstone.DAO
                                             CREDENTIAL WEBSITE CRUD
             **********************************************************************************************
         */
-// NOTE: Credential Website CREATE/UPDATE doesn't require Nullable => all Website fields required
 
         public Website CreateWebsiteByCredentialId(int credentialId, Website website)
         {
@@ -915,8 +913,6 @@ namespace Capstone.DAO
                                             EDUCATION WEBSITE CRUD
             **********************************************************************************************
         */
-// TODO Education Website doesn't require type, can add Nullable to Create and Update methods***
-
 
         public Website CreateWebsiteByEducationId(int educationId, Website website)
         {
@@ -949,7 +945,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
                                 cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -1161,7 +1157,6 @@ namespace Capstone.DAO
                                         OPEN SOURCE CONTRIBUTION WEBSITE CRUD
             **********************************************************************************************
         */
-// NOTE: Open Source Contribution Website CREATE/UPDATE doesn't require Nullable => all Website fields required
 
         public Website CreateWebsiteByOpenSourceContributionId(int contributionId, Website website)
         {
@@ -1620,7 +1615,6 @@ namespace Capstone.DAO
                                             VOLUNTEER WORK WEBSITE CRUD
             **********************************************************************************************
         */
-// TODO Volunteer Work Website doesn't require type, can add Nullable to Create and Update methods***
 
         public Website CreateWebsiteByVolunteerWorkId(int volunteerWorkId, Website website)
         {
@@ -1653,7 +1647,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
                                 cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -1869,7 +1863,6 @@ namespace Capstone.DAO
             **********************************************************************************************
             **********************************************************************************************
         */
-// NOTE: Side Project Website CREATE/UPDATE doesn't require Nullable => all Website fields required
 
         public Website CreateWebsiteBySideProjectId(int sideProjectId, Website website)
         {
@@ -2150,7 +2143,6 @@ namespace Capstone.DAO
                                             CONTRIBUTOR WEBSITE CRUD
             **********************************************************************************************
         */
-// NOTE: Contributor Website CREATE/UPDATE doesn't require Nullable => all Website fields required
 
         public Website CreateWebsiteByContributorId(int contributorId, Website website)
         {
@@ -2436,7 +2428,6 @@ namespace Capstone.DAO
                                          API AND SERVICE WEBSITE CRUD
             **********************************************************************************************
         */
-// TODO API/Service Website doesn't require type, can add Nullable to Create and Update methods***
 
         public Website CreateWebsiteByApiServiceId(int apiServiceId, Website website)
         {
@@ -2469,7 +2460,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
                                 cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -2686,7 +2677,6 @@ namespace Capstone.DAO
                                         DEPENDENCY AND LIBRARY WEBSITE CRUD
             **********************************************************************************************
         */
-// TODO Dependency/Library Website doesn't require type, can add Nullable to Create and Update methods***
 
         public Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website)
         {
@@ -2719,7 +2709,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertWebsite.Parameters.AddWithValue("@name", website.Name);
                                 cmdInsertWebsite.Parameters.AddWithValue("@url", website.Url);
-                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type);
+                                cmdInsertWebsite.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
                                 cmdInsertWebsite.Transaction = transaction;
                                 websiteId = Convert.ToInt32(cmdInsertWebsite.ExecuteScalar());
                             }
@@ -2969,8 +2959,8 @@ namespace Capstone.DAO
             {
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
-                Type = Convert.ToString(reader["type"]),
-                Url = Convert.ToString(reader["url"])
+                Url = Convert.ToString(reader["url"]),
+                Type = Convert.ToString(reader["type"])
             };
 
             int websiteId = website.Id;
