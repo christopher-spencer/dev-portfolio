@@ -149,6 +149,7 @@ namespace Capstone.DAO
 // FIXME look at this for issues w/ FKey constraint on lost images when new ones are created*******
                             Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
 
+// TODO consider changing this below to an argument exception "A main image already exists" instead of auto setting to Additionl Image
                             if (existingMainImage != null)
                             {
                                 image.Type = AdditionalImage;

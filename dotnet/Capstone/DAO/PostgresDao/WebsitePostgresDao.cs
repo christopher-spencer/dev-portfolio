@@ -154,6 +154,25 @@ namespace Capstone.DAO
                     throw new ArgumentException("Invalid website type.");
             }
 
+            if (website.Type == GitHub)
+            {
+                Website existingGitHub = GetGitHubByPortfolioId(portfolioId);
+
+                if (existingGitHub != null)
+                {
+                    throw new ArgumentException("A GitHub website already exists for this portfolio.");
+                }
+            }
+            else if (website.Type == LinkedIn)
+            {
+                Website existingLinkedIn = GetLinkedInByPortfolioId(portfolioId);
+
+                if (existingLinkedIn != null)
+                {
+                    throw new ArgumentException("A LinkedIn website already exists for this portfolio.");
+                }
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -250,6 +269,92 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while retrieving the website by portfolio ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website GetGitHubByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN portfolio_websites pw ON w.id = pw.website_id " +
+                         "WHERE pw.portfolio_id = @portfolioId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@type", GitHub);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the GitHub website by portfolio ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website GetLinkedInByPortfolioId(int portfolioId)
+        {
+            if (portfolioId <= 0)
+            {
+                throw new ArgumentException("PortfolioId must be greater than zero.");
+            }
+
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN portfolio_websites pw ON w.id = pw.website_id " +
+                         "WHERE pw.portfolio_id = @portfolioId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@type", LinkedIn);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the LinkedIn website by portfolio ID.", ex);
             }
 
             return website;

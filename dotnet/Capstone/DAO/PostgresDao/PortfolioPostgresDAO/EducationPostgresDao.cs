@@ -164,10 +164,8 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@location", education.Location);
                                 cmd.Parameters.AddWithValue("@description", education.Description);
                                 cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
-                                //cmd.Parameters.AddWithValue("@major", education.Major);
-    // FIXME example line below to check for NULL or Empty????
+// FIXME example line below to check for NULL or Empty????
                                 cmd.Parameters.AddWithValue("@major", (object)education.Major ?? DBNull.Value);
-                                // cmd.Parameters.AddWithValue("@minor", education.Minor);
                                 cmd.Parameters.AddWithValue("@minor", (object)education.Minor ?? DBNull.Value);
                                 cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
                                 cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
