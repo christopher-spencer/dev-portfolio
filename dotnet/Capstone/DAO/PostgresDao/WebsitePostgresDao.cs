@@ -771,18 +771,37 @@ namespace Capstone.DAO
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertCredentialWebsiteSql = "INSERT INTO credential_websites (credential_id, website_id) VALUES (@credentialId, @websiteId);";
 
-            string updateCredentialWebsiteSql;
+            string updateOrganizationOrCredentialWebsiteSql;
 
             switch (website.Type)
             {
                 case MainWebsite:
-                    updateCredentialWebsiteSql = "UPDATE credentials SET organization_website_id = @websiteId WHERE id = @credentialId;";
+                    updateOrganizationOrCredentialWebsiteSql = "UPDATE credentials SET organization_website_id = @websiteId WHERE id = @credentialId;";
                     break;
                 case SecondaryWebsite:
-                    updateCredentialWebsiteSql = "UPDATE credentials SET credential_website_id = @websiteId WHERE id = @credentialId;";
+                    updateOrganizationOrCredentialWebsiteSql = "UPDATE credentials SET credential_website_id = @websiteId WHERE id = @credentialId;";
                     break;
                 default:
                     throw new ArgumentException("Invalid website type.");
+            }
+
+            if (website.Type == MainWebsite)
+            {
+                Website existingOrganizationWebsite = GetOrganizationWebsiteByCredentialId(credentialId);
+
+                if (existingOrganizationWebsite != null)
+                {
+                    throw new ArgumentException("An organization website already exists for this credential.");
+                }
+            }
+            else if (website.Type == SecondaryWebsite)
+            {
+                Website existingCredentialWebsite = GetCredentialWebsiteByCredentialId(credentialId);
+
+                if (existingCredentialWebsite != null)
+                {
+                    throw new ArgumentException("A credential website already exists for this credential.");
+                }
             }
 
             try
@@ -814,7 +833,7 @@ namespace Capstone.DAO
                                 cmdInsertCredentialWebsite.ExecuteNonQuery();
                             }
 
-                            using (NpgsqlCommand cmdUpdateCredentialWebsite = new NpgsqlCommand(updateCredentialWebsiteSql, connection))
+                            using (NpgsqlCommand cmdUpdateCredentialWebsite = new NpgsqlCommand(updateOrganizationOrCredentialWebsiteSql, connection))
                             {
                                 cmdUpdateCredentialWebsite.Parameters.AddWithValue("@credentialId", credentialId);
                                 cmdUpdateCredentialWebsite.Parameters.AddWithValue("@websiteId", websiteId);
@@ -881,6 +900,92 @@ namespace Capstone.DAO
             catch (NpgsqlException ex)
             {
                 throw new DaoException("An error occurred while retrieving the website by Credential ID and website ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website GetOrganizationWebsiteByCredentialId(int credentialId)
+        {
+            if (credentialId <= 0)
+            {
+                throw new ArgumentException("CredentialId must be greater than zero.");
+            }
+
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN credential_websites cw ON w.id = cw.website_id " +
+                         "WHERE cw.credential_id = @credentialId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                        cmd.Parameters.AddWithValue("@type", MainWebsite);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the organization website by Credential ID.", ex);
+            }
+
+            return website;
+        }
+
+        public Website GetCredentialWebsiteByCredentialId(int credentialId)
+        {
+            if (credentialId <= 0)
+            {
+                throw new ArgumentException("CredentialId must be greater than zero.");
+            }
+
+            Website website = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN credential_websites cw ON w.id = cw.website_id " +
+                         "WHERE cw.credential_id = @credentialId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                        cmd.Parameters.AddWithValue("@type", SecondaryWebsite);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                website = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the credential website by Credential ID.", ex);
             }
 
             return website;

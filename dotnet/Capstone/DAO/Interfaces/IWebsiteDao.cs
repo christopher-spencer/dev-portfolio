@@ -26,9 +26,11 @@ namespace Capstone.DAO.Interfaces
         */
         Website CreateWebsiteByPortfolioId(int portfolioId, Website website);
         Website GetWebsiteByPortfolioId(int portfolioId, int websiteId);
+        
         //TODO create controllers and postman checks for GetGitHub and GetLinkedIn by PortfolioId****
         Website GetGitHubByPortfolioId(int portfolioId);
         Website GetLinkedInByPortfolioId(int portfolioId);
+
         Website UpdateWebsiteByPortfolioId(int portfolioId, int websiteId, Website website);
         int DeleteWebsiteByPortfolioId(int portfolioId, int websiteId);
 
@@ -49,6 +51,11 @@ namespace Capstone.DAO.Interfaces
         */
         Website CreateWebsiteByCredentialId(int credentialId, Website website);
         Website GetWebsiteByCredentialId(int credentialId, int websiteId);
+
+        // TODO create controllers and postman checks for GetOrganizationWebsiteByCredentialId and GetCredentialWebsiteByCredentialId****
+        Website GetOrganizationWebsiteByCredentialId(int credentialId);
+        Website GetCredentialWebsiteByCredentialId(int credentialId);
+
         Website UpdateWebsiteByCredentialId(int credentialId, int websiteId, Website website);
         int DeleteWebsiteByCredentialId(int credentialId, int websiteId);
 
