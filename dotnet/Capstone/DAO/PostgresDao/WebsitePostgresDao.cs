@@ -2939,8 +2939,6 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
-        
-
         private void CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(Website website, bool isWebsiteTypeRequired)
         {
             if (string.IsNullOrEmpty(website.Name))
