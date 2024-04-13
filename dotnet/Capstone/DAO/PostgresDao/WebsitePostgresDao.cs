@@ -1504,11 +1504,10 @@ namespace Capstone.DAO
 
         public Website UpdateMainWebsiteOrGitHubByOpenSourceContributionId(int contributionId, int websiteId, Website website)
         {
-
             bool isWebsiteTypeRequired = true;
 
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
-            
+
             if (website.Type != MainWebsite && website.Type != GitHub)
             {
                 throw new ArgumentException("Website Type must be either 'main website' or 'github'.");
@@ -1630,20 +1629,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("Volunteer Work Id must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(website.Name))
-            {
-                throw new ArgumentException("Website name cannot be null or empty.");
-            }
+            bool isWebsiteTypeRequired = false;
 
-            if (string.IsNullOrEmpty(website.Url))
-            {
-                throw new ArgumentException("Website URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(website.Type))
-            {
-                throw new ArgumentException("Website Type cannot be null or empty.");
-            }
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertVolunteerWorkWebsiteSql = "INSERT INTO volunteer_work_websites (volunteer_work_id, website_id) VALUES (@volunteerWorkId, @websiteId);";
@@ -1755,6 +1743,10 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("Volunteer Work Id and websiteId must be greater than zero.");
             }
+
+            bool isWebsiteTypeRequired = false;
+
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
@@ -1886,20 +1878,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(website.Name))
-            {
-                throw new ArgumentException("Website name cannot be null or empty.");
-            }
+            bool isWebsiteTypeRequired = true;
 
-            if (string.IsNullOrEmpty(website.Url))
-            {
-                throw new ArgumentException("Website URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(website.Type))
-            {
-                throw new ArgumentException("Website Type cannot be null or empty.");
-            }
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertSideProjectWebsiteSql = "INSERT INTO sideproject_websites (sideproject_id, website_id) VALUES (@sideProjectId, @websiteId);";
@@ -2019,7 +2000,7 @@ namespace Capstone.DAO
             return website;
         }
 
-// TODO UPDATEs throughout need Website Type? ******** (Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...)
+// FIXME 1.) UPDATEs throughout need Website Type? ******** (Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...)
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
@@ -2027,21 +2008,10 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and websiteId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(website.Name))
-            {
-                throw new ArgumentException("Website name cannot be null or empty.");
-            }
+            bool isWebsiteTypeRequired = true;
 
-            if (string.IsNullOrEmpty(website.Url))
-            {
-                throw new ArgumentException("Website URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(website.Type))
-            {
-                throw new ArgumentException("Website Type cannot be null or empty.");
-            }
-// FIXME check all above and below to re-add type where necessary ****** ?????? (START POINT TOMORROW)
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
+// FIXME 2.) check all above and below to re-add type where necessary ****** ?????? 
             string sql = "UPDATE websites " +
                          "SET name = @name, url = @url " +
                          "FROM sideproject_websites " +
@@ -2189,20 +2159,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("Contributor Id must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(website.Name))
-            {
-                throw new ArgumentException("Website name cannot be null or empty.");
-            }
+            bool isWebsiteTypeRequired = true;
 
-            if (string.IsNullOrEmpty(website.Url))
-            {
-                throw new ArgumentException("Website URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(website.Type))
-            {
-                throw new ArgumentException("Website Type cannot be null or empty.");
-            }
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertContributorWebsiteSql = "INSERT INTO contributor_websites (contributor_id, website_id) VALUES (@contributorId, @websiteId);";
@@ -2331,6 +2290,10 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("ContributorId and websiteId must be greater than zero.");
             }
+
+            bool isWebsiteTypeRequired = true;
+
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
@@ -2482,20 +2445,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("API Service Id must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(website.Name))
-            {
-                throw new ArgumentException("Website name cannot be null or empty.");
-            }
+            bool isWebsiteTypeRequired = false;
 
-            if (string.IsNullOrEmpty(website.Url))
-            {
-                throw new ArgumentException("Website URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(website.Type))
-            {
-                throw new ArgumentException("Website Type cannot be null or empty.");
-            }
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertApiServiceWebsiteSql = "INSERT INTO api_service_websites (apiservice_id, website_id) VALUES (@apiServiceId, @websiteId);";
@@ -2607,6 +2559,10 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("ApiServiceId and websiteId must be greater than zero.");
             }
+
+            bool isWebsiteTypeRequired = false;
+
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
@@ -2739,20 +2695,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("Dependency Library Id must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(website.Name))
-            {
-                throw new ArgumentException("Website name cannot be null or empty.");
-            }
+            bool isWebsiteTypeRequired = false;
 
-            if (string.IsNullOrEmpty(website.Url))
-            {
-                throw new ArgumentException("Website URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(website.Type))
-            {
-                throw new ArgumentException("Website Type cannot be null or empty.");
-            }
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string insertWebsiteSql = "INSERT INTO websites (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertDependencyLibraryWebsiteSql = "INSERT INTO dependency_library_websites (dependencylibrary_id, website_id) VALUES (@dependencyLibraryId, @websiteId);";
@@ -2865,6 +2810,10 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("DependencyLibraryId and websiteId must be greater than zero.");
             }
+
+            bool isWebsiteTypeRequired = false;
+
+            CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string updateWebsiteSql = "UPDATE websites " +
                                       "SET name = @name, url = @url " +
@@ -2989,6 +2938,8 @@ namespace Capstone.DAO
                                             WEBSITE HELPER METHODS
             **********************************************************************************************
         */
+
+        
 
         private void CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(Website website, bool isWebsiteTypeRequired)
         {
