@@ -4330,6 +4330,7 @@ namespace Capstone.DAO
                                             GOAL IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Goal Image doesn't require type, can add Nullable to Create and Update methods***
 
         public Image CreateImageByGoalId(int goalId, Image image)
         {
@@ -4567,6 +4568,7 @@ namespace Capstone.DAO
                                             CONTRIBUTOR IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Contributor Image doesn't require type, can add Nullable to Create and Update methods***
 
         public Image CreateImageByContributorId(int contributorId, Image image)
         {
@@ -4805,6 +4807,9 @@ namespace Capstone.DAO
                                          API AND SERVICE IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Hobby Image doesn't require type, can add Nullable to Create and Update methods***
+
+
         public Image CreateImageByApiServiceId(int apiServiceId, Image image)
         {
             if (apiServiceId <= 0)
@@ -5042,6 +5047,7 @@ namespace Capstone.DAO
                                         DEPENDENCY AND LIBRARY IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Dependency/Library Image doesn't require type, can add Nullable to Create and Update methods***
 
         public Image CreateImageByDependencyLibraryId(int dependencyLibraryId, Image image)
         {
