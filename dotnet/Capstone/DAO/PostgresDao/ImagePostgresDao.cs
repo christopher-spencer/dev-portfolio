@@ -3113,6 +3113,7 @@ namespace Capstone.DAO
             **********************************************************************************************
             **********************************************************************************************
         */
+// NOTE: Side Project Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
@@ -3129,6 +3130,11 @@ namespace Capstone.DAO
             if (string.IsNullOrEmpty(image.Url))
             {
                 throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
             }
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
@@ -3385,6 +3391,21 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and imageId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
             string sql = "UPDATE images " +
                          "SET name = @name, url = @url, type = @type " +
                          "FROM sideproject_images " +
@@ -3431,6 +3452,16 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageBySideProjectId(int sideProjectId, int mainImageId, Image mainImage)
         {
+            if (string.IsNullOrEmpty(mainImage.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(mainImage.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             if (mainImage.Type != MainImage)
             {
                 throw new ArgumentException("The image provided is not a main image. Please provide a main image.");
@@ -3525,7 +3556,7 @@ namespace Capstone.DAO
                                             BLOG POST IMAGE CRUD
             **********************************************************************************************
         */
-        // FIXME add BLOGPOST Main Image checker and if statement checks for Main Image
+// FIXME add BLOGPOST Main Image checker and if statement checks for Main Image
         public Image CreateImageByBlogPostId(int blogPostId, Image image)
         {
             if (blogPostId <= 0)
@@ -3542,6 +3573,11 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("Image URL cannot be null or empty.");
             }
+// NOTE uncomment this check and add checks elsewhere after adding Additional Images to BlogPosts
+            // if (string.IsNullOrEmpty(image.Type))
+            // {
+            //     throw new ArgumentException("Image Type cannot be null or empty.");
+            // }
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertBlogPostImageSql = "INSERT INTO blogpost_images (blogpost_id, image_id) VALUES (@blogPostId, @imageId);";
@@ -3810,6 +3846,9 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 // FIXME issue with images where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
+
+// TODO Website Image doesn't require type, can add Nullable to Create and Update methods***
+
         public Image CreateImageByWebsiteId(int websiteId, Image image)
         {
             if (websiteId <= 0)
@@ -4050,7 +4089,8 @@ namespace Capstone.DAO
                                             SKILL IMAGE CRUD
             **********************************************************************************************
         */
-// FIXME main image type check here, set it to main image before sql query
+// TODO Skill Image doesn't require type, can add Nullable to Create and Update methods***
+
         public Image CreateImageBySkillId(int skillId, Image image)
         {
             if (skillId <= 0)
