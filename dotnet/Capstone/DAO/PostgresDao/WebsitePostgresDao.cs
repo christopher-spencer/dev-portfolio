@@ -1860,6 +1860,13 @@ namespace Capstone.DAO
             string insertVolunteerWorkWebsiteSql = "INSERT INTO volunteer_work_websites (volunteer_work_id, website_id) VALUES (@volunteerWorkId, @websiteId);";
             string updateVolunteerWorkWebsiteIdSql = "UPDATE volunteer_works SET organization_website_id = @websiteId WHERE id = @volunteerWorkId;";
 
+            Website existingWebsite = GetWebsiteByVolunteerWorkId(volunteerWorkId);
+
+            if (existingWebsite != null)
+            {
+                throw new ArgumentException("A website already exists for this volunteer work.");
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
