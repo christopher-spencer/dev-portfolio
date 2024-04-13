@@ -2128,6 +2128,25 @@ namespace Capstone.DAO
                     throw new ArgumentException("Invalid website type.");
             }
 
+            if (website.Type == MainWebsite)
+            {
+                Website existingMainWebsite = GetMainWebsiteBySideProjectId(sideProjectId);
+
+                if (existingMainWebsite != null)
+                {
+                    throw new DaoException("Main website already exists for this side project.");
+                }
+            }
+            else if (website.Type == GitHub)
+            {
+                Website existingGitHub = GetGitHubBySideProjectId(sideProjectId);
+
+                if (existingGitHub != null)
+                {
+                    throw new DaoException("GitHub already exists for this side project.");
+                }
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -2227,6 +2246,92 @@ namespace Capstone.DAO
             }
 
             return website;
+        }
+
+        public Website GetMainWebsiteBySideProjectId(int sideProjectId)
+        {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
+            Website mainWebsite = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN sideproject_websites sw ON w.id = sw.website_id " +
+                         "WHERE sw.sideproject_id = @sideProjectId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@type", MainWebsite);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                mainWebsite = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the main website by SideProjectId.", ex);
+            }
+
+            return mainWebsite;
+        }
+
+        public Website GetGitHubBySideProjectId(int sideProjectId)
+        {
+            if (sideProjectId <= 0)
+            {
+                throw new ArgumentException("SideProjectId must be greater than zero.");
+            }
+
+            Website gitHub = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN sideproject_websites sw ON w.id = sw.website_id " +
+                         "WHERE sw.sideproject_id = @sideProjectId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
+                        cmd.Parameters.AddWithValue("@type", GitHub);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                gitHub = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the GitHub by SideProjectId.", ex);
+            }
+
+            return gitHub;
         }
 
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
