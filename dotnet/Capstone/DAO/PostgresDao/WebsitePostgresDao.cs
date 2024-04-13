@@ -1151,6 +1151,13 @@ namespace Capstone.DAO
             string insertEducationWebsiteSql = "INSERT INTO education_websites (education_id, website_id) VALUES (@educationId, @websiteId);";
             string updateEducationWebsiteIdSql = "UPDATE educations SET institution_website_id = @websiteId WHERE id = @educationId;";
 
+            Website existingWebsite = GetWebsiteByEducationId(educationId);
+
+            if (existingWebsite != null)
+            {
+                throw new ArgumentException("A website already exists for this education.");
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
