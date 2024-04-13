@@ -29,6 +29,11 @@ namespace Capstone.DAO
 
 // FIXME issue with websites where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
 
+
+// FIXME 1.) Do UPDATE methods throughout need Website Type? ******** 
+// FIXME 2.) (OR... Change only once when setting type in CREATE methods? Must DELETE and CREATE new by WebsiteType to change? Consider...)
+// FIXME 3.) Or else re-add type to queries and readers for Update methods ****** ?????? 
+
         /*  
             **********************************************************************************************
                                                     WEBSITE CRUD
@@ -1993,7 +1998,6 @@ namespace Capstone.DAO
             return website;
         }
 
-// FIXME 1.) UPDATEs throughout need Website Type? ******** (Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...)
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
@@ -2004,7 +2008,7 @@ namespace Capstone.DAO
             bool isWebsiteTypeRequired = true;
 
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
-// FIXME 2.) check all above and below to re-add type where necessary ****** ?????? 
+
             string sql = "UPDATE websites " +
                          "SET name = @name, url = @url " +
                          "FROM sideproject_websites " +
