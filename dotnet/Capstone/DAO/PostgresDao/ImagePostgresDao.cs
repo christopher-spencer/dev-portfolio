@@ -441,7 +441,7 @@ namespace Capstone.DAO
 
             return null;
         }
-// FIXME need to add checks for name, url, and type to UpdateMainOrLogo methods as well *********
+// FIXME need to add checks for name and url to UpdateMainOrLogo methods as well *********
         public Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage)
         {
             if (string.IsNullOrEmpty(mainImage.Name))
@@ -452,11 +452,6 @@ namespace Capstone.DAO
             if (string.IsNullOrEmpty(mainImage.Url))
             {
                 throw new ArgumentException("Image URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(mainImage.Type))
-            {
-                throw new ArgumentException("Image Type cannot be null or empty.");
             }
 
             if (mainImage.Type != MainImage)
@@ -553,6 +548,7 @@ namespace Capstone.DAO
                                         WORK EXPERIENCE IMAGE CRUD
             **********************************************************************************************
         */
+// NOTE: Work Experience Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByWorkExperienceId(int experienceId, Image image)
         {
@@ -821,6 +817,21 @@ namespace Capstone.DAO
                 throw new ArgumentException("ExperienceId and imageId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
                                     "FROM work_experience_images " +
@@ -860,6 +871,16 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageOrLogoByWorkExperienceId(int experienceId, int imageId, Image image)
         {
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
 
             if (image.Type != MainImage && image.Type != Logo)
             {
@@ -969,6 +990,7 @@ namespace Capstone.DAO
                                             CREDENTIAL IMAGE CRUD
             **********************************************************************************************
         */
+// NOTE: Credential Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByCredentialId(int credentialId, Image image)
         {
@@ -1160,6 +1182,16 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image)
         {
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             if (image.Type != MainImage && image.Type != Logo)
             {
                 throw new ArgumentException("The image provided is not a main image or organization logo. Please provide a main image or organization logo.");
@@ -1266,6 +1298,7 @@ namespace Capstone.DAO
                                             EDUCATION IMAGE CRUD
             **********************************************************************************************
         */
+// NOTE: Education Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByEducationId(int educationId, Image image)
         {
@@ -1534,6 +1567,21 @@ namespace Capstone.DAO
                 throw new ArgumentException("EducationId and imageId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
                                     "FROM education_images " +
@@ -1573,6 +1621,16 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageOrLogoByEducationId(int educationId, int imageId, Image image)
         {
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             if (image.Type != MainImage && image.Type != Logo)
             {
                 throw new ArgumentException("The image provided is not a main image or institution logo. Please provide a main image or institution logo.");
@@ -1681,6 +1739,7 @@ namespace Capstone.DAO
                                         OPEN SOURCE CONTRIBUTION IMAGE CRUD
             **********************************************************************************************
         */
+// NOTE: Open Source Contribution Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByOpenSourceContributionId(int contributionId, Image image)
         {
@@ -1950,6 +2009,21 @@ namespace Capstone.DAO
                 throw new ArgumentException("Open Source ContributionId and imageId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
                                     "FROM open_source_contribution_images " +
@@ -1989,6 +2063,16 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageOrLogoByOpenSourceContributionId(int contributionId, int imageId, Image image)
         {
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             if (image.Type != MainImage && image.Type != Logo)
             {
                 throw new ArgumentException("The image provided is not a main image or organization logo. Please provide a main image or organization logo.");
@@ -2097,6 +2181,7 @@ namespace Capstone.DAO
                                             VOLUNTEER WORK IMAGE CRUD
             **********************************************************************************************
         */
+// NOTE: Volunteer Work Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByVolunteerWorkId(int volunteerWorkId, Image image)
         {
@@ -2366,6 +2451,21 @@ namespace Capstone.DAO
                 throw new ArgumentException("Volunteer Work Id and imageId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
                                     "FROM volunteer_work_images " +
@@ -2405,6 +2505,17 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageOrLogoByVolunteerWorkId(int volunteerWorkId, int imageId, Image image)
         {
+
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
             if (image.Type != MainImage && image.Type != Logo)
             {
                 throw new ArgumentException("The image provided is not a main image or organization logo. Please provide a main image or organization logo.");
@@ -2512,6 +2623,7 @@ namespace Capstone.DAO
                                             ACHIEVEMENT IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Achievement Image doesn't require type, can add Nullable to Create and Update methods***
 
         public Image CreateImageByAchievementId(int achievementId, Image image)
         {
@@ -2752,6 +2864,7 @@ namespace Capstone.DAO
                                             HOBBY IMAGE CRUD
             **********************************************************************************************
         */
+// TODO Hobby Image doesn't require type, can add Nullable to Create and Update methods***
 
         public Image CreateImageByHobbyId(int hobbyId, Image image)
         {
