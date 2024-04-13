@@ -383,6 +383,21 @@ namespace Capstone.DAO
                 throw new ArgumentException("PortfolioId and imageId must be greater than zero.");
             }
 
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
             string sql = "UPDATE images " +
                          "SET name = @name, url = @url, type = @type " +
                          "FROM portfolio_images " +
@@ -426,9 +441,24 @@ namespace Capstone.DAO
 
             return null;
         }
-
+// FIXME need to add checks for name, url, and type to UpdateMainOrLogo methods as well *********
         public Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage)
         {
+            if (string.IsNullOrEmpty(mainImage.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(mainImage.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(mainImage.Type))
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+
             if (mainImage.Type != MainImage)
             {
                 throw new ArgumentException("The image provided is not a main image. Please provide a main image.");
