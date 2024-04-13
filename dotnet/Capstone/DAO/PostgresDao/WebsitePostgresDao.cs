@@ -2094,7 +2094,7 @@ namespace Capstone.DAO
             return website;
         }
 
-        // TODO UPDATE need Website Type? Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...
+// TODO UPDATEs throughout need Website Type? ******** (Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...)
         public Website UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
         {
             if (sideProjectId <= 0 || websiteId <= 0)
@@ -2118,7 +2118,7 @@ namespace Capstone.DAO
             }
 // FIXME check all above and below to re-add type where necessary ****** ?????? (START POINT TOMORROW)
             string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url, type = @type " +
+                         "SET name = @name, url = @url " +
                          "FROM sideproject_websites " +
                          "WHERE websites.id = sideproject_websites.website_id " +
                          "AND sideproject_websites.sideproject_id = @sideProjectId " +
@@ -2136,7 +2136,6 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
-                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -2256,6 +2255,7 @@ namespace Capstone.DAO
                                             CONTRIBUTOR WEBSITE CRUD
             **********************************************************************************************
         */
+// NOTE: Contributor Website CREATE/UPDATE doesn't require Nullable => all Website fields required
 
         public Website CreateWebsiteByContributorId(int contributorId, Website website)
         {
@@ -2399,7 +2399,7 @@ namespace Capstone.DAO
 
             return website;
         }
-        // TODO UPDATE need Website Type? Change only once when setting type in CREATE? Must DELETE and CREATE new by WebsiteType? Consider...
+
         public Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
         {
             if (contributorId <= 0 || websiteId <= 0)
@@ -2548,6 +2548,7 @@ namespace Capstone.DAO
                                          API AND SERVICE WEBSITE CRUD
             **********************************************************************************************
         */
+// TODO API/Service Website doesn't require type, can add Nullable to Create and Update methods***
 
         public Website CreateWebsiteByApiServiceId(int apiServiceId, Website website)
         {
@@ -2804,6 +2805,8 @@ namespace Capstone.DAO
                                         DEPENDENCY AND LIBRARY WEBSITE CRUD
             **********************************************************************************************
         */
+// TODO Dependency/Library Website doesn't require type, can add Nullable to Create and Update methods***
+
         public Website CreateWebsiteByDependencyLibraryId(int dependencyLibraryId, Website website)
         {
             if (dependencyLibraryId <= 0)
