@@ -1769,20 +1769,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("ContributionId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(image.Type))
-            {
-                throw new ArgumentException("Image Type cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertContributionImageSql = "INSERT INTO open_source_contribution_images (contribution_id, image_id) VALUES (@contributionId, @imageId);";
@@ -1803,6 +1792,25 @@ namespace Capstone.DAO
                     throw new ArgumentException("Invalid image type.");
             }
 
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, MainImage);
+
+                if (existingMainImage != null)
+                {
+                    throw new ArgumentException("A main image already exists for this open source contribution. Delete the main image to replace it, or set this image to 'logo' or 'additional image.'");
+                }
+            }
+            else if (image.Type == Logo)
+            {
+                Image existingLogo = GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, Logo);
+
+                if (existingLogo != null)
+                {
+                    throw new ArgumentException("An organization logo already exists for this open source contribution. Delete the organization logo to replace it, or set this image to 'main image' or 'additional image.'");
+                }
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -1813,30 +1821,6 @@ namespace Capstone.DAO
                     {
                         try
                         {
-                            Image existingMainImage = null;
-
-                            if (image.Type == MainImage)
-                            {
-                                existingMainImage = GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, MainImage);
-
-                                if (existingMainImage != null)
-                                {
-                                    image.Type = AdditionalImage;
-                                }
-                            }
-
-                            Image existingLogo = null;
-
-                            if (image.Type == Logo)
-                            {
-                                existingLogo = GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, Logo);
-
-                                if (existingLogo != null)
-                                {
-                                    image.Type = AdditionalImage;
-                                }
-                            }
-
                             int imageId;
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
@@ -1856,7 +1840,7 @@ namespace Capstone.DAO
                                 cmdInsertContributionImage.ExecuteNonQuery();
                             }
 
-                            if ((image.Type == MainImage && existingMainImage == null) || (image.Type == Logo && existingLogo == null))
+                            if ( (image.Type == MainImage) || (image.Type == Logo) )
                             {
                                 using (NpgsqlCommand cmdUpdateContributionImageId = new NpgsqlCommand(updateContributionImageIdSql, connection))
                                 {
@@ -2030,19 +2014,13 @@ namespace Capstone.DAO
                 throw new ArgumentException("Open Source ContributionId and imageId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
-            if (string.IsNullOrEmpty(image.Type))
+            if (image.Type != MainImage && image.Type != Logo && image.Type != AdditionalImage)
             {
-                throw new ArgumentException("Image Type cannot be null or empty.");
+                throw new ArgumentException("The image provided is not a main image, logo, or additional image. Please provide a 'main image', 'logo', or 'additional image' type.");
             }
 
             string updateImageSql = "UPDATE images " +
@@ -2050,6 +2028,25 @@ namespace Capstone.DAO
                                     "FROM open_source_contribution_images " +
                                     "WHERE images.id = open_source_contribution_images.image_id AND open_source_contribution_images.contribution_id = @contributionId " +
                                     "AND images.id = @imageId;";
+
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, MainImage);
+
+                if (existingMainImage != null && existingMainImage.Id != imageId)
+                {
+                    throw new ArgumentException("A main image already exists for this open source contribution. Delete the main image to replace it, or set this image to 'logo' or 'additional image.'");
+                }
+            }
+            else if (image.Type == Logo)
+            {
+                Image existingLogo = GetMainImageOrOrganizationLogoByOpenSourceContributionId(contributionId, Logo);
+
+                if (existingLogo != null && existingLogo.Id != imageId)
+                {
+                    throw new ArgumentException("An organization logo already exists for this open source contribution. Delete the organization logo to replace it, or set this image to 'main image' or 'additional image.'");
+                }
+            }                        
 
             try
             {
@@ -2081,18 +2078,12 @@ namespace Capstone.DAO
 
             return null;
         }
-
+//FIXME Possible unnecessary after added exception checks to UpdateImageByOpenSourceContributionId*******
         public Image UpdateMainImageOrLogoByOpenSourceContributionId(int contributionId, int imageId, Image image)
         {
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             if (image.Type != MainImage && image.Type != Logo)
             {
