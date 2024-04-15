@@ -117,6 +117,11 @@ namespace Capstone.DAO
 
             CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
+            if (image.Type != MainImage && image.Type != AdditionalImage)
+            {
+                throw new ArgumentException("The image provided is not a main image or additional image. Please provide a 'main image' or 'additional image' type.");
+            }
+
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertPortfolioImageSql = "INSERT INTO portfolio_images (portfolio_id, image_id) VALUES (@portfolioId, @imageId);";
 
@@ -378,6 +383,11 @@ namespace Capstone.DAO
 
             CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
+            if (image.Type != MainImage && image.Type != AdditionalImage)
+            {
+                throw new ArgumentException("The image provided is not a main image or additional image. Please provide a 'main image' or 'additional image' type.");
+            }
+
             string sql = "UPDATE images " +
                          "SET name = @name, url = @url, type = @type " +
                          "FROM portfolio_images " +
@@ -553,7 +563,7 @@ namespace Capstone.DAO
                 case AdditionalImage:
                     break;
                 default:
-                    throw new ArgumentException("Invalid website type.");
+                    throw new ArgumentException("Invalid image type.");
             }
 
             if (image.Type == MainImage)
@@ -781,11 +791,35 @@ namespace Capstone.DAO
 
             CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
+            if (image.Type != MainImage && image.Type != Logo && image.Type != AdditionalImage)
+            {
+                throw new ArgumentException("The image provided is not a main image, logo, or additional image. Please provide a 'main image', 'logo', or 'additional image' type.");
+            }
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
                                     "FROM work_experience_images " +
                                     "WHERE images.id = work_experience_images.image_id AND work_experience_images.experience_id = @experienceId " +
                                     "AND images.id = @imageId;";
+
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageOrCompanyLogoByWorkExperienceId(experienceId, MainImage);
+
+                if (existingMainImage != null && existingMainImage.Id != imageId)
+                {
+                    throw new ArgumentException("A main image already exists for this work experience. Delete the main image to replace it, or set this image to 'logo' or 'additional image.'");
+                }
+            }
+            else if (image.Type == Logo)
+            {
+                Image existingLogo = GetMainImageOrCompanyLogoByWorkExperienceId(experienceId, Logo);
+
+                if (existingLogo != null && existingLogo.Id != imageId)
+                {
+                    throw new ArgumentException("A company logo already exists for this work experience. Delete the company logo to replace it, or set this image to 'main image' or 'additional image.'");
+                }
+            }                        
 
             try
             {
@@ -817,19 +851,13 @@ namespace Capstone.DAO
 
             return null;
         }
-
+//FIXME Possible unnecessary after updating the UpdateImageByWorkExperienceId method*******
         public Image UpdateMainImageOrLogoByWorkExperienceId(int experienceId, int imageId, Image image)
         {
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             if (image.Type != MainImage && image.Type != Logo)
             {
@@ -939,7 +967,6 @@ namespace Capstone.DAO
                                             CREDENTIAL IMAGE CRUD
             **********************************************************************************************
         */
-// NOTE: Credential Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByCredentialId(int credentialId, Image image)
         {
@@ -948,20 +975,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("CredentialId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(image.Type))
-            {
-                throw new ArgumentException("Image Type cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertCredentialImageSql = "INSERT INTO credential_images (credential_id, image_id) VALUES (@credentialId, @imageId);";
@@ -978,6 +994,25 @@ namespace Capstone.DAO
                     break;
                 default:
                     throw new ArgumentException("Invalid image type.");
+            }
+
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageOrOrganizationLogoByCredentialId(credentialId, MainImage);
+
+                if (existingMainImage != null)
+                {
+                    throw new ArgumentException("A main image already exists for this credential. Delete the main image to replace it, or set this image to 'logo'.");
+                }
+            }
+            else if (image.Type == Logo)
+            {
+                Image existingLogo = GetMainImageOrOrganizationLogoByCredentialId(credentialId, Logo);
+
+                if (existingLogo != null)
+                {
+                    throw new ArgumentException("An organization logo already exists for this credential. Delete the organization logo to replace it, or set this image to 'main image'.");
+                }
             }
 
             try
@@ -1131,27 +1166,74 @@ namespace Capstone.DAO
 
         public Image UpdateMainImageOrOrganizationLogoByCredentialId(int credentialId, int imageId, Image image)
         {
-            if (string.IsNullOrEmpty(image.Name))
+            if (credentialId <= 0 || imageId <= 0)
             {
-                throw new ArgumentException("Image name cannot be null or empty.");
+                throw new ArgumentException("CredentialId and imageId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
+
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             if (image.Type != MainImage && image.Type != Logo)
             {
                 throw new ArgumentException("The image provided is not a main image or organization logo. Please provide a main image or organization logo.");
             }
-            else
+
+            string updateImageSql = "UPDATE images " +
+                                    "SET name = @name, url = @url, type = @type " +
+                                    "FROM credential_images " +
+                                    "WHERE images.id = credential_images.image_id AND credential_images.credential_id = @credentialId " +
+                                    "AND images.id = @imageId;";
+
+            if (image.Type == MainImage)
             {
-                DeleteImageByCredentialId(credentialId, imageId);
-                CreateImageByCredentialId(credentialId, image);
+                Image existingMainImage = GetMainImageOrOrganizationLogoByCredentialId(credentialId, MainImage);
+
+                if (existingMainImage != null && existingMainImage.Id != imageId)
+                {
+                    throw new ArgumentException("A main image already exists for this credential. Delete the main image to replace it, or set this image to 'logo'.");
+                }
+            }
+            else if (image.Type == Logo)
+            {
+                Image existingLogo = GetMainImageOrOrganizationLogoByCredentialId(credentialId, Logo);
+
+                if (existingLogo != null && existingLogo.Id != imageId)
+                {
+                    throw new ArgumentException("An organization logo already exists for this credential. Delete the organization logo to replace it, or set this image to 'main image'.");
+                }
             }
 
-            return image;
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(updateImageSql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@credentialId", credentialId);
+                        cmd.Parameters.AddWithValue("@imageId", imageId);
+                        cmd.Parameters.AddWithValue("@name", image.Name);
+                        cmd.Parameters.AddWithValue("@url", image.Url);
+                        cmd.Parameters.AddWithValue("@type", image.Type);
+
+                        int count = cmd.ExecuteNonQuery();
+
+                        if (count > 0)
+                        {
+                            return image;
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while updating the image by credential ID.", ex);
+            }
+
+            return null;
         }
 
         public int DeleteImageByCredentialId(int credentialId, int imageId)
