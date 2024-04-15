@@ -105,7 +105,6 @@ namespace Capstone.DAO
             **********************************************************************************************
             **********************************************************************************************
         */
-// NOTE: Portfolio Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByPortfolioId(int portfolioId, Image image)
         {
@@ -114,26 +113,25 @@ namespace Capstone.DAO
                 throw new ArgumentException("PortfolioId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(image.Type))
-            {
-                throw new ArgumentException("Image Type cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertPortfolioImageSql = "INSERT INTO portfolio_images (portfolio_id, image_id) VALUES (@portfolioId, @imageId);";
 
             // updatePortfolioMainImageSql only occurs if IsMainImage is true and a Main Image doesn't already exist
             string updatePortfolioMainImageSql = "UPDATE portfolios SET main_image_id = @imageId WHERE id = @portfolioId;";
+
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
+
+                if (existingMainImage != null)
+                {
+                    throw new ArgumentException("A main image already exists for this portfolio. Delete the main image to replace it, or set this image to 'additional image.'");
+                }
+            }
 
             try
             {
@@ -146,14 +144,6 @@ namespace Capstone.DAO
                         try
                         {
                             int imageId;
-// FIXME look at this for issues w/ FKey constraint on lost images when new ones are created*******
-                            Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
-
-// TODO consider changing this below to an argument exception "A main image already exists" instead of auto setting to Additionl Image
-                            if (existingMainImage != null)
-                            {
-                                image.Type = AdditionalImage;
-                            }
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
                             {
@@ -172,7 +162,7 @@ namespace Capstone.DAO
                                 cmdInsertPortfolioImage.ExecuteNonQuery();
                             }
 
-                            if ((image.Type == MainImage) && (existingMainImage == null))
+                            if (image.Type == MainImage)
                             {
                                 using (NpgsqlCommand cmdUpdatePortfolioMainImage = new NpgsqlCommand(updatePortfolioMainImageSql, connection))
                                 {
@@ -384,20 +374,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("PortfolioId and imageId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(image.Type))
-            {
-                throw new ArgumentException("Image Type cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             string sql = "UPDATE images " +
                          "SET name = @name, url = @url, type = @type " +
@@ -405,18 +384,21 @@ namespace Capstone.DAO
                          "WHERE images.id = portfolio_images.image_id AND portfolio_images.portfolio_id = @portfolioId " +
                          "AND images.id = @imageId;";
 
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
+
+                if (existingMainImage != null)
+                {
+                    throw new ArgumentException("A main image already exists for this portfolio. Delete the main image to replace it, or set this image to 'additional image.'");
+                }
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-
-                    Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
-
-                    if (existingMainImage != null)
-                    {
-                        image.Type = AdditionalImage;
-                    }
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
@@ -442,18 +424,12 @@ namespace Capstone.DAO
 
             return null;
         }
-// FIXME need to add checks for name and url to UpdateMainOrLogo methods as well *********
+
         public Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage)
         {
-            if (string.IsNullOrEmpty(mainImage.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(mainImage.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(mainImage, isImageTypeRequired);
 
             if (mainImage.Type != MainImage)
             {
