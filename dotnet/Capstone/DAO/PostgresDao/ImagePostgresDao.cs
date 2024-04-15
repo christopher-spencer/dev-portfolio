@@ -5286,9 +5286,27 @@ namespace Capstone.DAO
 
         /*  
             **********************************************************************************************
-                                                HELPER METHODS
+                                            IMAGE HELPER METHODS
             **********************************************************************************************
         */
+
+        private void CheckNecessaryImagePropertiesAreNotNullOrEmpty(Image image, bool isImageTypeRequired)
+        {
+            if (string.IsNullOrEmpty(image.Name))
+            {
+                throw new ArgumentException("Image name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Url))
+            {
+                throw new ArgumentException("Image URL cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(image.Type) && isImageTypeRequired)
+            {
+                throw new ArgumentException("Image Type cannot be null or empty.");
+            }
+        }
 
         public Image GetImageByImageId(int imageId)
         {
