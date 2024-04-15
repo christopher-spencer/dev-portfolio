@@ -434,9 +434,15 @@ namespace Capstone.DAO
 
             return null;
         }
+//FIXME Possible unnecessary after added exception checks to UpdateImageByPortfolioId*******
 
         public Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage)
         {
+            if (portfolioId <= 0 || mainImageId <= 0)
+            {
+                throw new ArgumentException("PortfolioId and mainImageId must be greater than zero.");
+            }
+
             bool isImageTypeRequired = true;
 
             CheckNecessaryImagePropertiesAreNotNullOrEmpty(mainImage, isImageTypeRequired);
@@ -3118,7 +3124,6 @@ namespace Capstone.DAO
             **********************************************************************************************
             **********************************************************************************************
         */
-// NOTE: Side Project Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageBySideProjectId(int sideProjectId, Image image)
         {
@@ -3127,26 +3132,30 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
-            if (string.IsNullOrEmpty(image.Type))
+            if (image.Type != MainImage && image.Type != AdditionalImage)
             {
-                throw new ArgumentException("Image Type cannot be null or empty.");
-            }
+                throw new ArgumentException("The image provided is not a main image or additional image. Please provide a 'main image' or 'additional image' type.");
+            }            
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertSideProjectImageSql = "INSERT INTO sideproject_images (sideproject_id, image_id) VALUES (@sideProjectId, @imageId);";
 
             // updateSideProjectMainImageSql only occurs if image type is Main Image and a Main Image doesn't already exist
             string updateSideProjectMainImageSql = "UPDATE sideprojects SET main_image_id = @imageId WHERE id = @sideProjectId;";
+
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageBySideProjectId(sideProjectId);
+
+                if (existingMainImage != null)
+                {
+                    throw new ArgumentException("A main image already exists for this side project. Delete the main image to replace it, or set this image to 'additional image.'");
+                }
+            }
 
             try
             {
@@ -3159,13 +3168,6 @@ namespace Capstone.DAO
                         try
                         {
                             int imageId;
-
-                            Image existingMainImage = GetMainImageBySideProjectId(sideProjectId);
-
-                            if (existingMainImage != null)
-                            {
-                                image.Type = AdditionalImage;
-                            }
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
                             {
@@ -3184,7 +3186,7 @@ namespace Capstone.DAO
                                 cmdInsertSideProjectImage.ExecuteNonQuery();
                             }
 
-                            if ((image.Type == MainImage) && (existingMainImage == null))
+                            if (image.Type == MainImage)
                             {
                                 using (NpgsqlCommand cmdUpdateSideProjectMainImage = new NpgsqlCommand(updateSideProjectMainImageSql, connection))
                                 {
@@ -3396,19 +3398,13 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and imageId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
-            if (string.IsNullOrEmpty(image.Type))
+            if (image.Type != MainImage && image.Type != AdditionalImage)
             {
-                throw new ArgumentException("Image Type cannot be null or empty.");
+                throw new ArgumentException("The image provided is not a main image or additional image. Please provide a 'main image' or 'additional image' type.");
             }
 
             string sql = "UPDATE images " +
@@ -3417,18 +3413,21 @@ namespace Capstone.DAO
                          "WHERE images.id = sideproject_images.image_id AND sideproject_images.sideproject_id = @sideProjectId " +
                          "AND images.id = @imageId;";
 
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageBySideProjectId(sideProjectId);
+
+                if (existingMainImage != null && existingMainImage.Id != imageId)
+                {
+                    throw new ArgumentException("A main image already exists for this side project. Delete the main image to replace it, or set this image to 'additional image.'");
+                }
+            }             
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
                 {
                     connection.Open();
-
-                    Image existingMainImage = GetMainImageBySideProjectId(sideProjectId);
-
-                    if (existingMainImage != null)
-                    {
-                        image.Type = AdditionalImage;
-                    }
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
@@ -3454,18 +3453,18 @@ namespace Capstone.DAO
 
             return null;
         }
+//FIXME Possiblly unnecessary after added exception checks to UpdateImageBySideProjectId*******
 
         public Image UpdateMainImageBySideProjectId(int sideProjectId, int mainImageId, Image mainImage)
         {
-            if (string.IsNullOrEmpty(mainImage.Name))
+            if (sideProjectId <= 0 || mainImageId <= 0)
             {
-                throw new ArgumentException("Image name cannot be null or empty.");
+                throw new ArgumentException("SideProjectId and mainImageId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(mainImage.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
+
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(mainImage, isImageTypeRequired);
 
             if (mainImage.Type != MainImage)
             {
