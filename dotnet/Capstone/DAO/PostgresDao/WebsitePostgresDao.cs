@@ -2515,6 +2515,34 @@ namespace Capstone.DAO
                     throw new ArgumentException("Invalid website type.");
             }
 
+            if (website.Type == PortfolioLink)
+            {
+                Website existingPortfolioLink = GetPortfolioLinkByContributorId(contributorId);
+
+                if (existingPortfolioLink != null)
+                {
+                    throw new DaoException("Portfolio link already exists for this contributor.");
+                }
+            }
+            else if (website.Type == GitHub)
+            {
+                Website existingGitHub = GetGitHubByContributorId(contributorId);
+
+                if (existingGitHub != null)
+                {
+                    throw new DaoException("GitHub already exists for this contributor.");
+                }
+            }
+            else if (website.Type == LinkedIn)
+            {
+                Website existingLinkedIn = GetLinkedInByContributorId(contributorId);
+
+                if (existingLinkedIn != null)
+                {
+                    throw new DaoException("LinkedIn already exists for this contributor.");
+                }
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -2614,6 +2642,135 @@ namespace Capstone.DAO
             }
 
             return website;
+        }
+
+        public Website GetPortfolioLinkByContributorId(int contributorId)
+        {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
+            Website portfolioLink = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN contributor_websites cw ON w.id = cw.website_id " +
+                         "WHERE cw.contributor_id = @contributorId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@type", PortfolioLink);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                portfolioLink = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the portfolio link by contributor ID.", ex);
+            }
+
+            return portfolioLink;
+        }
+
+        public Website GetGitHubByContributorId(int contributorId)
+        {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
+            Website gitHub = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN contributor_websites cw ON w.id = cw.website_id " +
+                         "WHERE cw.contributor_id = @contributorId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@type", GitHub);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                gitHub = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the GitHub by contributor ID.", ex);
+            }
+
+            return gitHub;
+        }
+
+        public Website GetLinkedInByContributorId(int contributorId)
+        {
+            if (contributorId <= 0)
+            {
+                throw new ArgumentException("ContributorId must be greater than zero.");
+            }
+
+            Website linkedIn = null;
+
+            string sql = "SELECT w.id, w.name, w.url, w.type, w.logo_id " +
+                         "FROM websites w " +
+                         "JOIN contributor_websites cw ON w.id = cw.website_id " +
+                         "WHERE cw.contributor_id = @contributorId AND w.type = @type;";
+
+            try
+            {
+                using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@contributorId", contributorId);
+                        cmd.Parameters.AddWithValue("@type", LinkedIn);
+
+                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                linkedIn = MapRowToWebsite(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (NpgsqlException ex)
+            {
+                throw new DaoException("An error occurred while retrieving the LinkedIn by contributor ID.", ex);
+            }
+
+            return linkedIn;
         }
 
         public Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)

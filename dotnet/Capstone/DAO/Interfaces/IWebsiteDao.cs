@@ -119,6 +119,12 @@ namespace Capstone.DAO.Interfaces
         */
         Website CreateWebsiteByContributorId(int controllerId, Website website);
         Website GetWebsiteByContributorId(int contributorId, int websiteId);
+
+        //TODO create controllers and postman checks for GetPortfolioLinkByContributorId, GetGitHubByContributorId, and GetLinkedInByContributorId****
+        Website GetPortfolioLinkByContributorId(int contributorId);
+        Website GetGitHubByContributorId(int contributorId);
+        Website GetLinkedInByContributorId(int contributorId);
+
         Website UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website);
         int DeleteWebsiteByContributorId(int contributorId, int websiteId);
 
