@@ -387,8 +387,8 @@ namespace Capstone.DAO
             if (image.Type == MainImage)
             {
                 Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
-
-                if (existingMainImage != null)
+// NOTE: added ID check to ensure our current possible main image doesn't throw exception
+                if (existingMainImage != null && existingMainImage.Id != imageId)
                 {
                     throw new ArgumentException("A main image already exists for this portfolio. Delete the main image to replace it, or set this image to 'additional image.'");
                 }
@@ -525,7 +525,6 @@ namespace Capstone.DAO
                                         WORK EXPERIENCE IMAGE CRUD
             **********************************************************************************************
         */
-// NOTE: Work Experience Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByWorkExperienceId(int experienceId, Image image)
         {
@@ -534,20 +533,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("ExperienceId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(image.Type))
-            {
-                throw new ArgumentException("Image Type cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertExperienceImageSql = "INSERT INTO work_experience_images (experience_id, image_id) VALUES (@experienceId, @imageId);";
@@ -568,6 +556,25 @@ namespace Capstone.DAO
                     throw new ArgumentException("Invalid website type.");
             }
 
+            if (image.Type == MainImage)
+            {
+                Image existingMainImage = GetMainImageOrCompanyLogoByWorkExperienceId(experienceId, MainImage);
+
+                if (existingMainImage != null)
+                {
+                    throw new ArgumentException("A main image already exists for this work experience. Delete the main image to replace it, or set this image to 'logo' or 'additional image.'");
+                }
+            }
+            else if (image.Type == Logo)
+            {
+                Image existingLogo = GetMainImageOrCompanyLogoByWorkExperienceId(experienceId, Logo);
+
+                if (existingLogo != null)
+                {
+                    throw new ArgumentException("A company logo already exists for this work experience. Delete the company logo to replace it, or set this image to 'main image' or 'additional image.'");
+                }
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -578,30 +585,6 @@ namespace Capstone.DAO
                     {
                         try
                         {
-                            Image existingMainImage = null;
-
-                            if (image.Type == MainImage)
-                            {
-                                existingMainImage = GetMainImageOrCompanyLogoByWorkExperienceId(experienceId, MainImage);
-
-                                if (existingMainImage != null)
-                                {
-                                    image.Type = AdditionalImage;
-                                }
-                            }
-
-                            Image existingLogo = null;
-
-                            if (image.Type == Logo)
-                            {
-                                existingLogo = GetMainImageOrCompanyLogoByWorkExperienceId(experienceId, Logo);
-
-                                if (existingLogo != null)
-                                {
-                                    image.Type = AdditionalImage;
-                                }
-                            }
-
                             int imageId;
 
                             using (NpgsqlCommand cmdInsertImage = new NpgsqlCommand(insertImageSql, connection))
@@ -621,7 +604,7 @@ namespace Capstone.DAO
                                 cmdInsertExperienceImage.ExecuteNonQuery();
                             }
 
-                            if ((image.Type == MainImage && existingMainImage == null) || (image.Type == Logo && existingLogo == null))
+                            if ( (image.Type == MainImage) || (image.Type == Logo) )
                             {
                                 using (NpgsqlCommand cmdUpdateExperience = new NpgsqlCommand(updateExperienceImageIdSql, connection))
                                 {
@@ -794,20 +777,9 @@ namespace Capstone.DAO
                 throw new ArgumentException("ExperienceId and imageId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = true;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(image.Type))
-            {
-                throw new ArgumentException("Image Type cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
