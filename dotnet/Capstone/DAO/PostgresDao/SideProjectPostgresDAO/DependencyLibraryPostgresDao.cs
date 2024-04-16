@@ -108,10 +108,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(dependencyLibrary.Name))
-            {
-                throw new ArgumentException("Dependency/library name cannot be null or empty.");
-            }
+            CheckDependencyLibraryNameIsNotNullOrEmpty(dependencyLibrary);
 
             string sql = "INSERT INTO dependencies_and_libraries (name, description) " +
                          "VALUES (@name, @description) RETURNING id;";
@@ -134,7 +131,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                             {
                                 cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
-                                cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
+                                cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description ?? (object)DBNull.Value);
                                 cmd.Transaction = transaction;
                                 dependencyLibraryId = Convert.ToInt32(cmd.ExecuteScalar());
                             }
@@ -260,6 +257,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and dependencyLibraryId must be greater than zero.");
             }
 
+            CheckDependencyLibraryNameIsNotNullOrEmpty(dependencyLibrary);
+
             string sql = "UPDATE dependencies_and_libraries dl " +
                          "SET name = @name, description = @description " +
                          "FROM sideproject_dependencies_and_libraries pdl " +
@@ -276,7 +275,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@dependencyLibraryId", dependencyLibraryId);
                         cmd.Parameters.AddWithValue("@name", dependencyLibrary.Name);
-                        cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description);
+                        cmd.Parameters.AddWithValue("@description", dependencyLibrary.Description ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -433,6 +432,14 @@ namespace Capstone.DAO
             {
                 Console.WriteLine("Error retrieving website ID by dependencyLibraryId: " + ex.Message);
                 return null;
+            }
+        }
+
+        private void CheckDependencyLibraryNameIsNotNullOrEmpty(DependencyLibrary dependencyLibrary)
+        {
+            if (string.IsNullOrEmpty(dependencyLibrary.Name))
+            {
+                throw new ArgumentException("Dependency/library name cannot be null or empty.");
             }
         }
 
