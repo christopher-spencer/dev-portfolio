@@ -13,7 +13,7 @@ namespace Capstone.Models
         public Image OrganizationLogo { get; set; }
         public int OrganizationWebsiteId { get; set; }
         public Website OrganizationWebsite { get; set; }
-        public DateTime IssueDate { get; set; }
+        public DateTime? IssueDate { get; set; }
         public DateTime? ExpirationDate { get; set; }
         public int? CredentialIdNumber { get; set; }
         public int CredentialWebsiteId { get; set; }

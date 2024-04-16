@@ -125,15 +125,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(credential.Name))
-            {
-                throw new ArgumentException("Credential name is required to created a Credential.");
-            }
-
-            if (string.IsNullOrEmpty(credential.IssuingOrganization))
-            {
-                throw new ArgumentException("Issuing Organization is required to created a Credential.");
-            }
+            CheckCredentialNameAndIssuingOrganizationAreNotNullOrEmpty(credential);
 
             string insertCredentialSql = "INSERT INTO credentials (name, issuing_organization, description, issue_date, " +
                                          "expiration_date, credential_id_number) " +
@@ -160,8 +152,8 @@ namespace Capstone.DAO
                             {
                                 cmd.Parameters.AddWithValue("@name", credential.Name);
                                 cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
-                                cmd.Parameters.AddWithValue("@description", credential.Description);
-                                cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
+                                cmd.Parameters.AddWithValue("@description", credential.Description ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate.HasValue ? (object)credential.IssueDate : DBNull.Value);
                                 cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate.HasValue ? (object)credential.ExpirationDate : DBNull.Value);
                                 cmd.Parameters.AddWithValue("@credentialIdNumber", (object)credential.CredentialIdNumber ?? DBNull.Value);
 
@@ -298,15 +290,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID and Credential ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(credential.Name))
-            {
-                throw new ArgumentException("Credential name is required to update a Credential.");
-            }
-
-            if (string.IsNullOrEmpty(credential.IssuingOrganization))
-            {
-                throw new ArgumentException("Issuing Organization is required to update a Credential.");
-            }
+            CheckCredentialNameAndIssuingOrganizationAreNotNullOrEmpty(credential);
 
             string sql = "UPDATE credentials SET name = @name, issuing_organization = @issuingOrganization, " +
                          "description = @description, issue_date = @issueDate, expiration_date = @expirationDate, " +
@@ -325,10 +309,10 @@ namespace Capstone.DAO
                     {
                         cmd.Parameters.AddWithValue("@name", credential.Name);
                         cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
-                        cmd.Parameters.AddWithValue("@description", credential.Description);
-                        cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
-                        cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate);
-                        cmd.Parameters.AddWithValue("@credentialIdNumber", credential.CredentialIdNumber);
+                        cmd.Parameters.AddWithValue("@description", credential.Description ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate.HasValue ? (object)credential.IssueDate : DBNull.Value);
+                        cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate.HasValue ? (object)credential.ExpirationDate : DBNull.Value);
+                        cmd.Parameters.AddWithValue("@credentialIdNumber", (object)credential.CredentialIdNumber ?? DBNull.Value);
                         cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
                         cmd.Parameters.AddWithValue("@credentialId", credentialId);
 
@@ -445,6 +429,19 @@ namespace Capstone.DAO
                                             CREDENTIAL HELPER METHODS
             **********************************************************************************************
         */
+
+        private void CheckCredentialNameAndIssuingOrganizationAreNotNullOrEmpty(Credential credential)
+        {
+            if (string.IsNullOrEmpty(credential.Name))
+            {
+                throw new ArgumentException("Credential name is required to created a Credential.");
+            }
+
+            if (string.IsNullOrEmpty(credential.IssuingOrganization))
+            {
+                throw new ArgumentException("Issuing Organization is required to created a Credential.");
+            }
+        }
 
         private int? GetOrganizationLogoIdByCredentialId(int credentialId)
         {
@@ -619,10 +616,10 @@ namespace Capstone.DAO
                 Id = Convert.ToInt32(reader["id"]),
                 Name = Convert.ToString(reader["name"]),
                 IssuingOrganization = Convert.ToString(reader["issuing_organization"]),
-                Description = Convert.ToString(reader["description"]),
-                IssueDate = Convert.ToDateTime(reader["issue_date"])
+                Description = Convert.ToString(reader["description"])
             };
 
+            credential.IssueDate = reader["issue_date"] == DBNull.Value ? null : (DateTime?)reader["issue_date"];
             credential.ExpirationDate = reader["expiration_date"] == DBNull.Value ? null : (DateTime?)reader["expiration_date"];
             credential.CredentialIdNumber = reader["credential_id_number"] == DBNull.Value ? null : (int?)reader["credential_id_number"];
 
