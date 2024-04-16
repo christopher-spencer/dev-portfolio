@@ -109,10 +109,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Experience ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(achievement.Description))
-            {
-                throw new ArgumentException("Achievement description cannot be null or empty.");
-            }
+            CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string insertAchievementSql = "INSERT INTO achievements (description) VALUES (@description) RETURNING id;";
             string insertExperienceAchievementSql = "INSERT INTO work_experience_achievements (experience_id, achievement_id) VALUES (@experienceId, @achievementId);";
@@ -258,10 +255,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Experience ID and Achievement ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(achievement.Description))
-            {
-                throw new ArgumentException("Achievement description cannot be null or empty.");
-            }
+            CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string sql = "UPDATE achievements " +
                          "SET description = @description " +
@@ -381,10 +375,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Education ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(achievement.Description))
-            {
-                throw new ArgumentException("Achievement description cannot be null or empty.");
-            }
+            CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string insertAchievementSql = "INSERT INTO achievements (description) VALUES (@description) RETURNING id;";
             string insertEducationAchievementSql = "INSERT INTO education_achievements (education_id, achievement_id) VALUES (@educationId, @achievementId);";
@@ -530,10 +521,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Education ID and Achievement ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(achievement.Description))
-            {
-                throw new ArgumentException("Achievement description cannot be null or empty.");
-            }
+            CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string sql = "UPDATE achievements " +
                          "SET description = @description " +
@@ -651,10 +639,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Contribution ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(achievement.Description))
-            {
-                throw new ArgumentException("Achievement description cannot be null or empty.");
-            }
+            CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string insertAchievementSql = "INSERT INTO achievements (description) VALUES (@description) RETURNING id;";
             string insertContributionAchievementSql = "INSERT INTO open_source_contribution_achievements (contribution_id, achievement_id) VALUES (@contributionId, @achievementId);";
@@ -800,10 +785,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Contribution ID and Achievement ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(achievement.Description))
-            {
-                throw new ArgumentException("Achievement description cannot be null or empty.");
-            }
+            CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string sql = "UPDATE achievements " +
                          "SET description = @description " +
@@ -921,10 +903,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("VolunteerWorkId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(achievement.Description))
-            {
-                throw new ArgumentException("Achievement description cannot be null or empty.");
-            }
+            CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string insertAchievementSql = "INSERT INTO achievements (description) VALUES (@description) RETURNING id;";
             string insertVolunteerWorkAchievementSql = "INSERT INTO volunteer_work_achievements (volunteer_id, achievement_id) VALUES (@volunteerId, @achievementId);";
@@ -1070,10 +1049,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("VolunteerWorkId and AchievementId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(achievement.Description))
-            {
-                throw new ArgumentException("Achievement description cannot be null or empty.");
-            }
+            CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string sql = "UPDATE achievements " +
                          "SET description = @description " +
@@ -1212,6 +1188,14 @@ namespace Capstone.DAO
             {
                 Console.WriteLine("Error retrieving icon ID by achievement ID: " + ex.Message);
                 return null;
+            }
+        }
+
+        private void CheckAchievementDescriptionIsNotNullOrEmpty(Achievement achievement)
+        {
+            if (string.IsNullOrEmpty(achievement.Description))
+            {
+                throw new ArgumentException("Achievement description cannot be null or empty.");
             }
         }
 
