@@ -106,10 +106,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(goal.Description))
-            {
-                throw new ArgumentException("Goal description cannot be null or empty.");
-            }
+            CheckGoalDescriptionIsNotNullOrEmpty(goal);
 
             string insertGoalSql = "INSERT INTO goals (description) VALUES (@description) RETURNING id;";
             string insertSideProjectGoalSql = "INSERT INTO sideproject_goals (sideproject_id, goal_id) VALUES (@sideProjectId, @goalId);";
@@ -253,6 +250,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and goalId must be greater than zero.");
             }
 
+            CheckGoalDescriptionIsNotNullOrEmpty(goal);
+
             string sql = "UPDATE goals " +
                          "SET description = @description " +
                          "FROM sideproject_goals " +
@@ -390,6 +389,14 @@ namespace Capstone.DAO
             {
                 Console.WriteLine("Error retrieving icon ID by goal ID: " + ex.Message);
                 return null;
+            }
+        }
+
+        private void CheckGoalDescriptionIsNotNullOrEmpty(Goal goal)
+        {
+            if (string.IsNullOrEmpty(goal.Description))
+            {
+                throw new ArgumentException("Goal description cannot be null or empty.");
             }
         }
 
