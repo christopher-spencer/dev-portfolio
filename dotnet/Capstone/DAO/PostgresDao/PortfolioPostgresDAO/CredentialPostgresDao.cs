@@ -162,8 +162,6 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@issuingOrganization", credential.IssuingOrganization);
                                 cmd.Parameters.AddWithValue("@description", credential.Description);
                                 cmd.Parameters.AddWithValue("@issueDate", credential.IssueDate);
-
-//FIXME switched up Parameters.AddWithValue here for null, do elsewhere***********
                                 cmd.Parameters.AddWithValue("@expirationDate", credential.ExpirationDate.HasValue ? (object)credential.ExpirationDate : DBNull.Value);
                                 cmd.Parameters.AddWithValue("@credentialIdNumber", (object)credential.CredentialIdNumber ?? DBNull.Value);
 
@@ -622,14 +620,11 @@ namespace Capstone.DAO
                 Name = Convert.ToString(reader["name"]),
                 IssuingOrganization = Convert.ToString(reader["issuing_organization"]),
                 Description = Convert.ToString(reader["description"]),
-                IssueDate = Convert.ToDateTime(reader["issue_date"]),
-                // ExpirationDate = Convert.ToDateTime(reader["expiration_date"]),
-                // CredentialIdNumber = Convert.ToInt32(reader["credential_id_number"])
+                IssueDate = Convert.ToDateTime(reader["issue_date"])
             };
-// FIXME switched up MAPROW here for null
-                // Handle nullable properties like ExpirationDate and CredentialIdNumber
-                credential.ExpirationDate = reader["expiration_date"] == DBNull.Value ? null : (DateTime?)reader["expiration_date"];
-                credential.CredentialIdNumber = reader["credential_id_number"] == DBNull.Value ? null : (int?)reader["credential_id_number"];
+
+            credential.ExpirationDate = reader["expiration_date"] == DBNull.Value ? null : (DateTime?)reader["expiration_date"];
+            credential.CredentialIdNumber = reader["credential_id_number"] == DBNull.Value ? null : (int?)reader["credential_id_number"];
 
             int credentialId = credential.Id;
 

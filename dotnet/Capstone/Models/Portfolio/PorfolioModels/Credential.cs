@@ -14,7 +14,6 @@ namespace Capstone.Models
         public int OrganizationWebsiteId { get; set; }
         public Website OrganizationWebsite { get; set; }
         public DateTime IssueDate { get; set; }
-//FIXME added ? to DateTime and int CredentialIdNumber**************
         public DateTime? ExpirationDate { get; set; }
         public int? CredentialIdNumber { get; set; }
         public int CredentialWebsiteId { get; set; }
