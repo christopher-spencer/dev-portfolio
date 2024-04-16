@@ -123,20 +123,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(education.InstitutionName))
-            {
-                throw new ArgumentException("Institution Name is required to create an Education.");
-            }
-
-            if (string.IsNullOrEmpty(education.Location))
-            {
-                throw new ArgumentException("Location is required to create an Education.");
-            }
-
-            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
-            }
+            CheckEducationNameLocationAndStartDateAreNotNullOrEmpty(education);
 
             string insertEducationSql = "INSERT INTO educations (institution_name, location, description, field_of_study, major, minor, " +
                          "degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date) " +
@@ -302,20 +289,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID and Education ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(education.InstitutionName))
-            {
-                throw new ArgumentException("Institution Name is required to update an Education.");
-            }
-
-            if (string.IsNullOrEmpty(education.Location))
-            {
-                throw new ArgumentException("Location is required to update an Education.");
-            }
-
-            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to update an Education.");
-            }
+            CheckEducationNameLocationAndStartDateAreNotNullOrEmpty(education);
 
             string sql = "UPDATE educations SET institution_name = @institutionName, location = @location, description = @description, " +
                          "field_of_study = @fieldOfStudy, major = @major, minor = @minor, degree_obtained = @degreeObtained, " +
@@ -608,6 +582,24 @@ namespace Capstone.DAO
                                                EDUCATION MAP ROW
             **********************************************************************************************
         */
+
+        private void CheckEducationNameLocationAndStartDateAreNotNullOrEmpty(Education education)
+        {
+            if (string.IsNullOrEmpty(education.InstitutionName))
+            {
+                throw new ArgumentException("Institution Name is required to create an Education.");
+            }
+
+            if (string.IsNullOrEmpty(education.Location))
+            {
+                throw new ArgumentException("Location is required to create an Education.");
+            }
+
+            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
+            }
+        }
 
         private Education MapRowToEducation(NpgsqlDataReader reader)
         {
