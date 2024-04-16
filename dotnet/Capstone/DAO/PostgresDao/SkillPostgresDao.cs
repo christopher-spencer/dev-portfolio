@@ -110,10 +110,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("PortfolioId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+            CheckSkillNameIsNotNullOrEmpty(skill);
 
             string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
             string insertPortfolioSkillSql = "INSERT INTO portfolio_skills (portfolio_id, skill_id) VALUES (@portfolioId, @skillId);";
@@ -259,6 +256,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("PortfolioId and skillId must be greater than zero.");
             }
 
+            CheckSkillNameIsNotNullOrEmpty(skill);
+
             string sql = "UPDATE skills " +
                          "SET name = @name " +
                          "FROM portfolio_skills " +
@@ -375,10 +374,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ProjectId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+            CheckSkillNameIsNotNullOrEmpty(skill);
 
             string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
             string insertSideProjectSkillSql = "INSERT INTO sideproject_skills (sideproject_id, skill_id) VALUES (@projectId, @skillId);";
@@ -522,11 +518,8 @@ namespace Capstone.DAO
             {
                 throw new ArgumentException("ProjectId and skillId must be greater than zero.");
             }
-// FIXME ADD THIS NULL CHECK TO UPDATES AS WELL**********
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+
+            CheckSkillNameIsNotNullOrEmpty(skill);
 
             string sql = "UPDATE skills " +
                          "SET name = @name " +
@@ -643,10 +636,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ExperienceId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+            CheckSkillNameIsNotNullOrEmpty(skill);
 
             string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
             string insertExperienceSkillSql = "INSERT INTO work_experience_skills (experience_id, skill_id) VALUES (@experienceId, @skillId);";
@@ -792,6 +782,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("ExperienceId and skillId must be greater than zero.");
             }
 
+            CheckSkillNameIsNotNullOrEmpty(skill);            
+
             string sql = "UPDATE skills " +
                          "SET name = @name " +
                          "FROM work_experience_skills " +
@@ -907,10 +899,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("CredentialId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+            CheckSkillNameIsNotNullOrEmpty(skill);
 
             string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
             string insertCredentialSkillSql = "INSERT INTO credential_skills (credential_id, skill_id) VALUES (@credentialId, @skillId);";
@@ -1056,6 +1045,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("CredentialId and skillId must be greater than zero.");
             }
 
+            CheckSkillNameIsNotNullOrEmpty(skill);
+
             string sql = "UPDATE skills " +
                          "SET name = @name " +
                          "FROM credential_skills " +
@@ -1171,10 +1162,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("ContributionId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+            CheckSkillNameIsNotNullOrEmpty(skill);
 
             string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
             string insertContributionSkillSql = "INSERT INTO open_source_contribution_skills (contribution_id, skill_id) VALUES (@contributionId, @skillId);";
@@ -1320,6 +1308,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("ContributionId and skillId must be greater than zero.");
             }
 
+            CheckSkillNameIsNotNullOrEmpty(skill);
+
             string sql = "UPDATE skills " +
                          "SET name = @name " +
                          "FROM open_source_contribution_skills " +
@@ -1435,10 +1425,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("VolunteerWorkId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(skill.Name))
-            {
-                throw new ArgumentException("Skill name cannot be null or empty.");
-            }
+            CheckSkillNameIsNotNullOrEmpty(skill);
 
             string insertSkillSql = "INSERT INTO skills (name) VALUES (@name) RETURNING id;";
             string insertVolunteerWorkSkillSql = "INSERT INTO volunteer_work_skills (volunteer_id, skill_id) VALUES (@volunteerWorkId, @skillId);";
@@ -1584,6 +1571,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("VolunteerWorkId and skillId must be greater than zero.");
             }
 
+            CheckSkillNameIsNotNullOrEmpty(skill);
+
             string sql = "UPDATE skills " +
                          "SET name = @name " +
                          "FROM volunteer_work_skills " +
@@ -1721,6 +1710,14 @@ namespace Capstone.DAO
             {
                 Console.WriteLine("Error retrieving icon ID by skill ID: " + ex.Message);
                 return null;
+            }
+        }
+
+        private void CheckSkillNameIsNotNullOrEmpty(Skill skill)
+        {
+            if (string.IsNullOrEmpty(skill.Name))
+            {
+                throw new ArgumentException("Skill name cannot be null or empty.");
             }
         }
 
