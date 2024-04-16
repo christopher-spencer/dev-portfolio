@@ -112,15 +112,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(apiService.Name))
-            {
-                throw new ArgumentException("API service name cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(apiService.Description))
-            {
-                throw new ArgumentException("API service description cannot be null or empty.");
-            }
+            CheckApiServiceNameIsNotNullOrEmpty(apiService);
 
             string insertApiServiceSql = "INSERT INTO apis_and_services (name, description) " +
                                          "VALUES (@name, @description) RETURNING id;";
@@ -142,7 +134,7 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmdInsertApiService = new NpgsqlCommand(insertApiServiceSql, connection))
                             {
                                 cmdInsertApiService.Parameters.AddWithValue("@name", apiService.Name);
-                                cmdInsertApiService.Parameters.AddWithValue("@description", apiService.Description);
+                                cmdInsertApiService.Parameters.AddWithValue("@description", apiService.Description ?? (object)DBNull.Value);
                                 cmdInsertApiService.Transaction = transaction;
                                 apiServiceId = Convert.ToInt32(cmdInsertApiService.ExecuteScalar());
                             }
@@ -267,6 +259,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and apiServiceId must be greater than zero.");
             }
 
+            CheckApiServiceNameIsNotNullOrEmpty(apiService);
+
             string sql = "UPDATE apis_and_services " +
                          "SET name = @name, description = @description " +
                          "FROM sideproject_apis_and_services " +
@@ -285,7 +279,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@sideProjectId", sideProjectId);
                         cmd.Parameters.AddWithValue("@apiServiceId", apiServiceId);
                         cmd.Parameters.AddWithValue("@name", apiService.Name);
-                        cmd.Parameters.AddWithValue("@description", apiService.Description);
+                        cmd.Parameters.AddWithValue("@description", apiService.Description ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -326,13 +320,10 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
-                            // If associated logo exists, get the logo ID associated with the api service w/ helper method
                             int? logoId = GetLogoIdByApiServiceId(apiServiceId);
 
-                            // If associated website exists, get the website ID associated with the api service w/ helper method
                             int? websiteId = GetWebsiteIdByApiServiceId(apiServiceId);
 
-                            // Delete sideproject_apis_and_services table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceFromSideProjectSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -342,7 +333,6 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
-                            // If Api/Service logo exists, delete the logo
                             if (logoId.HasValue)
                             {
                                 _imageDao.DeleteImageByApiServiceId(apiServiceId, logoId.Value);
@@ -350,11 +340,9 @@ namespace Capstone.DAO
 
                             if (websiteId.HasValue)
                             {   
-                                // If Api/Service website exists, delete the website
                                 _websiteDao.DeleteWebsiteByApiServiceId(apiServiceId, websiteId.Value);
                             }
 
-                            // Delete the api service itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteAPIServiceSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -449,6 +437,14 @@ namespace Capstone.DAO
             {
                 Console.WriteLine("Error retrieving website ID by apiServiceId: " + ex.Message);
                 return null;
+            }
+        }
+
+        private void CheckApiServiceNameIsNotNullOrEmpty(ApiService apiService)
+        {
+            if (string.IsNullOrEmpty(apiService.Name))
+            {
+                throw new ArgumentException("API service name cannot be null or empty.");
             }
         }
 
