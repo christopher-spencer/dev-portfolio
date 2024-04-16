@@ -122,32 +122,12 @@ namespace Capstone.DAO
 
         public OpenSourceContribution CreateOpenSourceContributionByPortfolioId(int portfolioId, OpenSourceContribution contribution)
         {
-
-            //FIXME add these null checks in each PGDAO to Helper Method******
             if (portfolioId <= 0)
             {
                 throw new ArgumentException("Portfolio ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(contribution.ProjectName))
-            {
-                throw new ArgumentException("Project Name is required to create an Open Source Contribution.");
-            }
-
-            if (string.IsNullOrEmpty(contribution.OrganizationName))
-            {
-                throw new ArgumentException("Organization Name is required to create an Open Source Contribution.");
-            }
-
-            if (contribution.StartDate == DateTime.MinValue || contribution.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Open Source Contribution.");
-            }
-
-            if (string.IsNullOrEmpty(contribution.ContributionDetails))
-            {
-                throw new ArgumentException("Contribution Details are required to create an Open Source Contribution.");
-            }
+            CheckOpenSourceContributionRequiredFieldsAreNotNullOrEmpty(contribution);
 
             string insertContributionSql = "INSERT INTO open_source_contributions (project_name, organization_name, start_date, " +
                          "end_date, project_description, contribution_details) " +
@@ -175,8 +155,8 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@projectName", contribution.ProjectName);
                                 cmd.Parameters.AddWithValue("@organizationName", contribution.OrganizationName);
                                 cmd.Parameters.AddWithValue("@startDate", contribution.StartDate);
-                                cmd.Parameters.AddWithValue("@endDate", contribution.EndDate);
-                                cmd.Parameters.AddWithValue("@projectDescription", contribution.ProjectDescription);
+                                cmd.Parameters.AddWithValue("@endDate", contribution.EndDate.HasValue ? (object)contribution.EndDate : DBNull.Value);
+                                cmd.Parameters.AddWithValue("@projectDescription", contribution.ProjectDescription ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@contributionDetails", contribution.ContributionDetails);
                                 cmd.Transaction = transaction;
 
@@ -311,25 +291,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID and Contribution ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(contribution.ProjectName))
-            {
-                throw new ArgumentException("Project Name is required to update an Open Source Contribution.");
-            }
-
-            if (string.IsNullOrEmpty(contribution.OrganizationName))
-            {
-                throw new ArgumentException("Organization Name is required to update an Open Source Contribution.");
-            }
-
-            if (contribution.StartDate == DateTime.MinValue || contribution.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to update an Open Source Contribution.");
-            }
-
-            if (string.IsNullOrEmpty(contribution.ContributionDetails))
-            {
-                throw new ArgumentException("Contribution Details are required to update an Open Source Contribution.");
-            }
+            CheckOpenSourceContributionRequiredFieldsAreNotNullOrEmpty(contribution);
 
             string sql = "UPDATE open_source_contributions SET project_name = @projectName, " +
                          "organization_name = @organizationName, start_date = @startDate, " +
@@ -349,8 +311,8 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@projectName", contribution.ProjectName);
                         cmd.Parameters.AddWithValue("@organizationName", contribution.OrganizationName);
                         cmd.Parameters.AddWithValue("@startDate", contribution.StartDate);
-                        cmd.Parameters.AddWithValue("@endDate", contribution.EndDate);
-                        cmd.Parameters.AddWithValue("@projectDescription", contribution.ProjectDescription);
+                        cmd.Parameters.AddWithValue("@endDate", contribution.EndDate.HasValue ? (object)contribution.EndDate : DBNull.Value);
+                        cmd.Parameters.AddWithValue("@projectDescription", contribution.ProjectDescription ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@contributionDetails", contribution.ContributionDetails);
                         cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
                         cmd.Parameters.AddWithValue("@contributionId", contributionId);
@@ -470,6 +432,29 @@ namespace Capstone.DAO
                                                     HELPER METHODS
             **********************************************************************************************
         */
+
+        private void CheckOpenSourceContributionRequiredFieldsAreNotNullOrEmpty(OpenSourceContribution contribution)
+        {
+            if (string.IsNullOrEmpty(contribution.ProjectName))
+            {
+                throw new ArgumentException("Project Name is required to create an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.OrganizationName))
+            {
+                throw new ArgumentException("Organization Name is required to create an Open Source Contribution.");
+            }
+
+            if (contribution.StartDate == DateTime.MinValue || contribution.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Open Source Contribution.");
+            }
+
+            if (string.IsNullOrEmpty(contribution.ContributionDetails))
+            {
+                throw new ArgumentException("Contribution Details are required to create an Open Source Contribution.");
+            }
+        }
 
         private int? GetOrganizationLogoIdByOpenSourceContributionId(int contributionId)
         {

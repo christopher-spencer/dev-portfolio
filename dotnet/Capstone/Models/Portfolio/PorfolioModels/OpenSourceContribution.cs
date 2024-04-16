@@ -11,7 +11,7 @@ namespace Capstone.Models
         public int OrganizationLogoId { get; set; }
         public Image OrganizationLogo { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public string ProjectDescription { get; set; }
         public string ContributionDetails { get; set; }
         public int OrganizationWebsiteId { get; set; }
