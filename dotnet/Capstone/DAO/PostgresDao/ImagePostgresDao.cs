@@ -4826,8 +4826,6 @@ namespace Capstone.DAO
                                          API AND SERVICE IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Hobby Image doesn't require type, can add Nullable to Create and Update methods***
-
 
         public Image CreateImageByApiServiceId(int apiServiceId, Image image)
         {
@@ -4836,19 +4834,20 @@ namespace Capstone.DAO
                 throw new ArgumentException("ApiServiceId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = false;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertApiServiceImageSql = "INSERT INTO api_service_images (apiservice_id, image_id) VALUES (@apiServiceId, @imageId);";
             string updateApiServiceLogoIdSql = "UPDATE apis_and_services SET logo_id = @imageId WHERE id = @apiServiceId;";
+
+            Image existingApiServiceImage = GetImageByApiServiceId(apiServiceId);
+
+            if (existingApiServiceImage != null)
+            {
+                throw new ArgumentException("An image already exists for this API/Service.");
+            }
 
             try
             {
@@ -4866,7 +4865,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
-                                cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
+                                cmdInsertImage.Parameters.AddWithValue("@type", image.Type ?? (object)DBNull.Value);
 
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -4955,6 +4954,10 @@ namespace Capstone.DAO
                 throw new ArgumentException("ApiServiceId and imageId must be greater than zero.");
             }
 
+            bool isImageTypeRequired = false;
+
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
                                     "FROM api_service_images " +
@@ -4973,7 +4976,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
-                        cmd.Parameters.AddWithValue("@type", image.Type);
+                        cmd.Parameters.AddWithValue("@type", image.Type ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
