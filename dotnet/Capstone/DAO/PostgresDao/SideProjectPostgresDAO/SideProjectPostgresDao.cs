@@ -126,15 +126,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("PortfolioId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(sideProject.Name))
-            {
-                throw new ArgumentException("Side Project name is required to create a Side Project.");
-            }
-
-            if (string.IsNullOrEmpty(sideProject.Description))
-            {
-                throw new ArgumentException("Side Project description is required to create a Side Project.");
-            }
+            CheckSideProjectNameAndDescriptionAreNotNullOrEmpty(sideProject);
 
             string insertSideProjectSql = "INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, " +
                                          "start_date, finish_date) " +
@@ -297,15 +289,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("PortfolioId and SideProjectId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(sideProject.Name))
-            {
-                throw new ArgumentException("SideProject name cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(sideProject.Description))
-            {
-                throw new ArgumentException("SideProject description cannot be null or empty.");
-            }
+            CheckSideProjectNameAndDescriptionAreNotNullOrEmpty(sideProject);
 
             string sql = "UPDATE sideprojects SET name = @name, description = @description, " +
                          "video_walkthrough_url = @video_walkthrough_url, project_status = @project_status, " +
@@ -676,6 +660,19 @@ namespace Capstone.DAO
             }
 
             return dependenciesAndLibrariesDeleteCount;
+        }
+
+        private void CheckSideProjectNameAndDescriptionAreNotNullOrEmpty(SideProject sideProject)
+        {
+            if (string.IsNullOrEmpty(sideProject.Name))
+            {
+                throw new ArgumentException("Side Project name is required to create a Side Project.");
+            }
+
+            if (string.IsNullOrEmpty(sideProject.Description))
+            {
+                throw new ArgumentException("Side Project description is required to create a Side Project.");
+            }
         }
 
         /*  
