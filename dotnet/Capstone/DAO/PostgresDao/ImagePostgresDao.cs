@@ -20,6 +20,8 @@ namespace Capstone.DAO
         const string MainImage = "main image";
         const string AdditionalImage = "additional image";
         const string Logo = "logo";
+        
+// FIXME issue with images where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
 
         /*  
             **********************************************************************************************
@@ -434,7 +436,7 @@ namespace Capstone.DAO
 
             return null;
         }
-//FIXME Possible unnecessary after added exception checks to UpdateImageByPortfolioId*******
+//FIXME Possibly unnecessary after added exception checks to UpdateImageByPortfolioId*******
 
         public Image UpdateMainImageByPortfolioId(int portfolioId, int mainImageId, Image mainImage)
         {
@@ -857,7 +859,7 @@ namespace Capstone.DAO
 
             return null;
         }
-//FIXME Possible unnecessary after added exception checks to UpdateImageByWorkExperienceId*******
+//FIXME Possibly unnecessary after added exception checks to UpdateImageByWorkExperienceId*******
         public Image UpdateMainImageOrLogoByWorkExperienceId(int experienceId, int imageId, Image image)
         {
             bool isImageTypeRequired = true;
@@ -1334,7 +1336,6 @@ namespace Capstone.DAO
                                             EDUCATION IMAGE CRUD
             **********************************************************************************************
         */
-// NOTE: Education Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByEducationId(int educationId, Image image)
         {
@@ -1651,7 +1652,7 @@ namespace Capstone.DAO
 
             return null;
         }
-//FIXME Possible unnecessary after added exception checks to UpdateImageByEducationId *******
+//FIXME Possibly unnecessary after added exception checks to UpdateImageByEducationId *******
         public Image UpdateMainImageOrLogoByEducationId(int educationId, int imageId, Image image)
         {
             bool isImageTypeRequired = true;
@@ -1766,7 +1767,6 @@ namespace Capstone.DAO
                                         OPEN SOURCE CONTRIBUTION IMAGE CRUD
             **********************************************************************************************
         */
-// NOTE: Open Source Contribution Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByOpenSourceContributionId(int contributionId, Image image)
         {
@@ -2084,7 +2084,7 @@ namespace Capstone.DAO
 
             return null;
         }
-//FIXME Possible unnecessary after added exception checks to UpdateImageByOpenSourceContributionId*******
+//FIXME Possibly unnecessary after added exception checks to UpdateImageByOpenSourceContributionId*******
         public Image UpdateMainImageOrLogoByOpenSourceContributionId(int contributionId, int imageId, Image image)
         {
             bool isImageTypeRequired = true;
@@ -2199,7 +2199,6 @@ namespace Capstone.DAO
                                             VOLUNTEER WORK IMAGE CRUD
             **********************************************************************************************
         */
-// NOTE: Volunteer Work Image CREATE/UPDATE doesn't require Nullable => all Image fields are required
 
         public Image CreateImageByVolunteerWorkId(int volunteerWorkId, Image image)
         {
@@ -2516,7 +2515,7 @@ namespace Capstone.DAO
 
             return null;
         }
-//FIXME Possible unnecessary after added exception checks to UpdateImageByVolunteerWorkId*******
+//FIXME Possibly unnecessary after added exception checks to UpdateImageByVolunteerWorkId*******
         public Image UpdateMainImageOrLogoByVolunteerWorkId(int volunteerWorkId, int imageId, Image image)
         {
             bool isImageTypeRequired = true;
@@ -3453,7 +3452,7 @@ namespace Capstone.DAO
 
             return null;
         }
-//FIXME Possiblly unnecessary after added exception checks to UpdateImageBySideProjectId*******
+//FIXME Possibly unnecessary after added exception checks to UpdateImageBySideProjectId*******
 
         public Image UpdateMainImageBySideProjectId(int sideProjectId, int mainImageId, Image mainImage)
         {
@@ -3849,7 +3848,6 @@ namespace Capstone.DAO
                                              WEBSITE IMAGE CRUD
             **********************************************************************************************
         */
-// FIXME issue with images where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
 
         public Image CreateImageByWebsiteId(int websiteId, Image image)
         {
