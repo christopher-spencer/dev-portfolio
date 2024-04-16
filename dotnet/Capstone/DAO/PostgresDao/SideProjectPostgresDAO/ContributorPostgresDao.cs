@@ -112,15 +112,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(contributor.FirstName))
-            {
-                throw new ArgumentException("Contributor first name cannot be null or empty.");
-            }
-
-            if (string.IsNullOrEmpty(contributor.LastName))
-            {
-                throw new ArgumentException("Contributor last name cannot be null or empty.");
-            }
+            CheckContributorNameIsNotNullOrEmpty(contributor);
 
             string insertContributorSql = "INSERT INTO contributors (first_name, last_name, email, " +
                                           "bio, contribution_details) " +
@@ -146,9 +138,9 @@ namespace Capstone.DAO
                             {
                                 cmdInsertContributor.Parameters.AddWithValue("@first_name", contributor.FirstName);
                                 cmdInsertContributor.Parameters.AddWithValue("@last_name", contributor.LastName);
-                                cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email);
-                                cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio);
-                                cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+                                cmdInsertContributor.Parameters.AddWithValue("@email", contributor.Email ?? (object)DBNull.Value);
+                                cmdInsertContributor.Parameters.AddWithValue("@bio", contributor.Bio ?? (object)DBNull.Value);
+                                cmdInsertContributor.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails ?? (object)DBNull.Value);
                                 cmdInsertContributor.Transaction = transaction;
                                 contributorId = Convert.ToInt32(cmdInsertContributor.ExecuteScalar());
                             }
@@ -275,6 +267,8 @@ namespace Capstone.DAO
                 throw new ArgumentException("SideProjectId and contributorId must be greater than zero.");
             }
 
+            CheckContributorNameIsNotNullOrEmpty(contributor);
+
             string sql = "UPDATE contributors " +
                          "SET first_name = @first_name, last_name = @last_name, " +
                          "email = @email, bio = @bio, contribution_details = @contribution_details " +
@@ -295,9 +289,9 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@contributorId", contributorId);
                         cmd.Parameters.AddWithValue("@first_name", contributor.FirstName);
                         cmd.Parameters.AddWithValue("@last_name", contributor.LastName);
-                        cmd.Parameters.AddWithValue("@email", contributor.Email);
-                        cmd.Parameters.AddWithValue("@bio", contributor.Bio);
-                        cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails);
+                        cmd.Parameters.AddWithValue("@email", contributor.Email ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@bio", contributor.Bio ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@contribution_details", contributor.ContributionDetails ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -528,6 +522,19 @@ namespace Capstone.DAO
             {
                 Console.WriteLine("Error retrieving Portfolio ID: " + ex.Message);
                 return null;
+            }
+        }
+
+        private void CheckContributorNameIsNotNullOrEmpty(Contributor contributor)
+        {
+            if (string.IsNullOrEmpty(contributor.FirstName))
+            {
+                throw new ArgumentException("Contributor first name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(contributor.LastName))
+            {
+                throw new ArgumentException("Contributor last name cannot be null or empty.");
             }
         }
 
