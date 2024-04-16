@@ -109,10 +109,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(hobby.Description))
-            {
-                throw new ArgumentException("Hobby cannot be null or empty.");
-            }
+            CheckHobbyDescriptionIsNotNullOrEmpty(hobby);
 
             string insertHobbySql = "INSERT INTO hobbies (description) VALUES (@description) RETURNING id;";
             string insertPortfolioHobbySql = "INSERT INTO portfolio_hobbies (portfolio_id, hobby_id) VALUES (@portfolioId, @hobbyId);";
@@ -257,10 +254,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID and Hobby ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(hobby.Description))
-            {
-                throw new ArgumentException("Hobby cannot be null or empty.");
-            }
+            CheckHobbyDescriptionIsNotNullOrEmpty(hobby);
 
             string sql = "UPDATE hobbies " +
                          "SET description = @description " +
@@ -367,6 +361,14 @@ namespace Capstone.DAO
                                                 HELPER METHODS
             **********************************************************************************************
         */
+
+        private void CheckHobbyDescriptionIsNotNullOrEmpty(Hobby hobby)
+        {
+            if (string.IsNullOrEmpty(hobby.Description))
+            {
+                throw new ArgumentException("Hobby cannot be null or empty.");
+            }
+        }
 
         private int? GetIconByHobbyId(int hobbyId)
         {
