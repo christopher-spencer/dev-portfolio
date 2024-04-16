@@ -149,15 +149,15 @@ namespace Capstone.DAO
                             {
                                 cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
                                 cmd.Parameters.AddWithValue("@location", education.Location);
-                                cmd.Parameters.AddWithValue("@description", education.Description);
-                                cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
-                                cmd.Parameters.AddWithValue("@major", (object)education.Major ?? DBNull.Value);
-                                cmd.Parameters.AddWithValue("@minor", (object)education.Minor ?? DBNull.Value);
-                                cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
-                                cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
-                                cmd.Parameters.AddWithValue("@gpaInMajor", education.GPAInMajor);
+                                cmd.Parameters.AddWithValue("@description", education.Description ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@major", education.Major ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@minor", education.Minor ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@gpaOverall", (object)education.GPAOverall ?? DBNull.Value);
+                                cmd.Parameters.AddWithValue("@gpaInMajor", (object)education.GPAInMajor ?? DBNull.Value);
                                 cmd.Parameters.AddWithValue("@startDate", education.StartDate);
-                                cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
+                                cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate.HasValue ? (object)education.GraduationDate : DBNull.Value);
                                 cmd.Transaction = transaction;
 
                                 educationId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -309,15 +309,15 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@educationId", educationId);
                         cmd.Parameters.AddWithValue("@institutionName", education.InstitutionName);
                         cmd.Parameters.AddWithValue("@location", education.Location);
-                        cmd.Parameters.AddWithValue("@description", education.Description);
-                        cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy);
-                        cmd.Parameters.AddWithValue("@major", education.Major);
-                        cmd.Parameters.AddWithValue("@minor", education.Minor);
-                        cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained);
-                        cmd.Parameters.AddWithValue("@gpaOverall", education.GPAOverall);
-                        cmd.Parameters.AddWithValue("@gpaInMajor", education.GPAInMajor);
+                        cmd.Parameters.AddWithValue("@description", education.Description ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@fieldOfStudy", education.FieldOfStudy ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@major", education.Major ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@minor", education.Minor ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@degreeObtained", education.DegreeObtained ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@gpaOverall", (object)education.GPAOverall ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@gpaInMajor", (object)education.GPAInMajor ?? DBNull.Value);
                         cmd.Parameters.AddWithValue("@startDate", education.StartDate);
-                        cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate);
+                        cmd.Parameters.AddWithValue("@graduationDate", education.GraduationDate.HasValue ? (object)education.GraduationDate : DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -613,11 +613,12 @@ namespace Capstone.DAO
                 Major = Convert.ToString(reader["major"]),
                 Minor = Convert.ToString(reader["minor"]),
                 DegreeObtained = Convert.ToString(reader["degree_obtained"]),
-                GPAOverall = Convert.ToDecimal(reader["gpa_overall"]),
-                GPAInMajor = Convert.ToDecimal(reader["gpa_in_major"]),
-                StartDate = Convert.ToDateTime(reader["start_date"]),
-                GraduationDate = Convert.ToDateTime(reader["graduation_date"])
+                StartDate = Convert.ToDateTime(reader["start_date"])
             };
+
+            education.GPAOverall = reader["gpa_overall"] == DBNull.Value ? null : (decimal?)reader["gpa_overall"];
+            education.GPAInMajor = reader["gpa_in_major"] == DBNull.Value ? null : (decimal?)reader["gpa_in_major"];
+            education.GraduationDate = reader["graduation_date"] == DBNull.Value ? null : (DateTime?)reader["graduation_date"];
 
             int educationId = education.Id;
 

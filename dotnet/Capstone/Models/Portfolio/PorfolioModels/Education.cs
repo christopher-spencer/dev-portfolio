@@ -17,10 +17,10 @@ namespace Capstone.Models
         public string Major { get; set; }
         public string Minor { get; set; }
         public string DegreeObtained { get; set; }
-        public decimal GPAOverall { get; set; }
-        public decimal GPAInMajor { get; set; }
+        public decimal? GPAOverall { get; set; }
+        public decimal? GPAInMajor { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime GraduationDate { get; set; }
+        public DateTime? GraduationDate { get; set; }
         // TODO change name to more general achievements?
         public List<Achievement> HonorsAndAwards { get; set; }
         public int MainImageId { get; set; }
