@@ -4341,7 +4341,6 @@ namespace Capstone.DAO
                                             GOAL IMAGE CRUD
             **********************************************************************************************
         */
-// TODO Goal Image doesn't require type, can add Nullable to Create and Update methods***
 
         public Image CreateImageByGoalId(int goalId, Image image)
         {
@@ -4350,19 +4349,20 @@ namespace Capstone.DAO
                 throw new ArgumentException("GoalId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(image.Name))
-            {
-                throw new ArgumentException("Image name cannot be null or empty.");
-            }
+            bool isImageTypeRequired = false;
 
-            if (string.IsNullOrEmpty(image.Url))
-            {
-                throw new ArgumentException("Image URL cannot be null or empty.");
-            }
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
 
             string insertImageSql = "INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;";
             string insertGoalImageSql = "INSERT INTO goal_images (goal_id, image_id) VALUES (@goalId, @imageId);";
             string updateGoalImageIdSql = "UPDATE goals SET icon_id = @imageId WHERE id = @goalId;";
+
+            Image existingGoalImage = GetImageByGoalId(goalId);
+
+            if (existingGoalImage != null)
+            {
+                throw new ArgumentException("An image already exists for this goal.");
+            }
 
             try
             {
@@ -4380,7 +4380,7 @@ namespace Capstone.DAO
                             {
                                 cmdInsertImage.Parameters.AddWithValue("@name", image.Name);
                                 cmdInsertImage.Parameters.AddWithValue("@url", image.Url);
-                                cmdInsertImage.Parameters.AddWithValue("@type", image.Type);
+                                cmdInsertImage.Parameters.AddWithValue("@type", image.Type ?? (object)DBNull.Value);
 
                                 imageId = Convert.ToInt32(cmdInsertImage.ExecuteScalar());
                             }
@@ -4468,6 +4468,10 @@ namespace Capstone.DAO
                 throw new ArgumentException("GoalId and imageId must be greater than zero.");
             }
 
+            bool isImageTypeRequired = false;
+
+            CheckNecessaryImagePropertiesAreNotNullOrEmpty(image, isImageTypeRequired);
+
             string updateImageSql = "UPDATE images " +
                                     "SET name = @name, url = @url, type = @type " +
                                     "FROM goal_images " +
@@ -4486,7 +4490,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@imageId", imageId);
                         cmd.Parameters.AddWithValue("@name", image.Name);
                         cmd.Parameters.AddWithValue("@url", image.Url);
-                        cmd.Parameters.AddWithValue("@type", image.Type);
+                        cmd.Parameters.AddWithValue("@type", image.Type ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
