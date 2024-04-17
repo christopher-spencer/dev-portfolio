@@ -2874,7 +2874,7 @@ namespace Capstone.DAO
                                             HOBBY IMAGE CRUD
             **********************************************************************************************
         */
-
+// TODO remove type and test just setting to null with no other option since unnecessary, or create "unnecessary" constant and set?
         public Image CreateImageByHobbyId(int hobbyId, Image image)
         {
             if (hobbyId <= 0)
