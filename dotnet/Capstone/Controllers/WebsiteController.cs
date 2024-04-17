@@ -116,7 +116,7 @@ namespace Capstone.Controllers
                 return Ok(website);
             }
         }
-        
+
 // TODO add controller to postman and integration test
         [HttpGet("/portfolio/{portfolioId}/github")]
         public ActionResult<Website> GetGitHubByPortfolioId(int portfolioId)
@@ -342,6 +342,38 @@ namespace Capstone.Controllers
             else
             {
                 return Ok(website);
+            }
+        }
+
+// TODO add controller to postman and integration test
+        [HttpGet("/credential/{credentialId}/organization-website")]
+        public ActionResult<Website> GetOrganizationWebsiteByCredentialId(int credentialId)
+        {
+            Website organizationWebsite = _websiteDao.GetOrganizationWebsiteByCredentialId(credentialId);
+
+            if (organizationWebsite == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(organizationWebsite);
+            }
+        }
+
+// TODO add controller to postman and integration test
+        [HttpGet("/credential/{credentialId}/credential-website")]
+        public ActionResult<Website> GetCredentialWebsiteByCredentialId(int credentialId)
+        {
+            Website credentialWebsite = _websiteDao.GetCredentialWebsiteByCredentialId(credentialId);
+
+            if (credentialWebsite == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(credentialWebsite);
             }
         }
 
