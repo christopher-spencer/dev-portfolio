@@ -116,6 +116,38 @@ namespace Capstone.Controllers
                 return Ok(website);
             }
         }
+        
+// TODO add controller to postman and integration test
+        [HttpGet("/portfolio/{portfolioId}/github")]
+        public ActionResult<Website> GetGitHubByPortfolioId(int portfolioId)
+        {
+            Website gitHub = _websiteDao.GetGitHubByPortfolioId(portfolioId);
+
+            if (gitHub == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(gitHub);
+            }
+        }
+
+// TODO add controller to postman and integration test
+        [HttpGet("/portfolio/{portfolioId}/linkedin")]
+        public ActionResult<Website> GetLinkedInByPortfolioId(int portfolioId)
+        {
+            Website linkedIn = _websiteDao.GetLinkedInByPortfolioId(portfolioId);
+
+            if (linkedIn == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(linkedIn);
+            }
+        }
 
         [Authorize]
         [HttpPut("/portfolio/{portfolioId}/update-website/{websiteId}")]
