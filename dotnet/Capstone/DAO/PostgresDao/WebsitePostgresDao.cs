@@ -1028,12 +1028,36 @@ namespace Capstone.DAO
 
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
+            if (website.Type != MainWebsite && website.Type != SecondaryWebsite)
+            {
+                throw new ArgumentException("Invalid website type. Website type must be 'main website' or 'secondary website'.");
+            }
+
             string updateWebsiteSql = "UPDATE websites " +
-                                      "SET name = @name, url = @url " +
+                                      "SET name = @name, url = @url, type = @type " +
                                       "FROM credential_websites " +
                                       "WHERE websites.id = credential_websites.website_id " +
                                       "AND credential_websites.credential_id = @credentialId " +
                                       "AND websites.id = @websiteId;";
+            
+            if (website.Type == MainWebsite)
+            {
+                Website existingOrganizationWebsite = GetOrganizationWebsiteByCredentialId(credentialId);
+
+                if (existingOrganizationWebsite != null && existingOrganizationWebsite.Id != websiteId)
+                {
+                    throw new ArgumentException("An organization website already exists for this credential. Delete the organization website to replace it, or you can set this website as a credential website using 'secondary website' type.");
+                }
+            }
+            else if (website.Type == SecondaryWebsite)
+            {
+                Website existingCredentialWebsite = GetCredentialWebsiteByCredentialId(credentialId);
+
+                if (existingCredentialWebsite != null && existingCredentialWebsite.Id != websiteId)
+                {
+                    throw new ArgumentException("A credential website already exists for this credential. Delete the credential website to replace it, or you can set this website as an organization website using 'main website' type.");
+                }
+            }
 
             try
             {
@@ -1047,6 +1071,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
