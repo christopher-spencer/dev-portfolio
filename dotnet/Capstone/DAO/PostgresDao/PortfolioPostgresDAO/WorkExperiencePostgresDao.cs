@@ -116,25 +116,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(experience.PositionTitle))
-            {
-                throw new ArgumentException("Position Title is required to create a Work Experience.");
-            }
-
-            if (string.IsNullOrEmpty(experience.CompanyName))
-            {
-                throw new ArgumentException("Company Name is required to create a Work Experience.");
-            }
-
-            if (string.IsNullOrEmpty(experience.Location))
-            {
-                throw new ArgumentException("Location is required to create a Work Experience.");
-            }
-
-            if (experience.StartDate == DateTime.MinValue || experience.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to create a Work Experience.");
-            }
+            CheckWorkExperiencePositionTitleCompanyNameLocationAndStartDateAreNotNullOrEmpty(experience);
 
             string insertExperienceSql = "INSERT INTO work_experiences (position_title, company_name, location, description, " +
                                          "start_date, end_date) " +
@@ -297,25 +279,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID and Experience ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(experience.PositionTitle))
-            {
-                throw new ArgumentException("Position Title is required to update a Work Experience.");
-            }
-
-            if (string.IsNullOrEmpty(experience.CompanyName))
-            {
-                throw new ArgumentException("Company Name is required to update a Work Experience.");
-            }
-
-            if (string.IsNullOrEmpty(experience.Location))
-            {
-                throw new ArgumentException("Location is required to update a Work Experience.");
-            }
-
-            if (experience.StartDate == DateTime.MinValue || experience.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to update a Work Experience.");
-            }
+            CheckWorkExperiencePositionTitleCompanyNameLocationAndStartDateAreNotNullOrEmpty(experience);
 
             string sql = "UPDATE work_experiences " +
                          "SET position_title = @positionTitle, company_name = @companyName, location = @location, " +
@@ -449,6 +413,29 @@ namespace Capstone.DAO
                                           WORK EXPERIENCE HELPER METHODS
             **********************************************************************************************
         */
+
+        private void CheckWorkExperiencePositionTitleCompanyNameLocationAndStartDateAreNotNullOrEmpty(WorkExperience experience)
+        {
+            if (string.IsNullOrEmpty(experience.PositionTitle))
+            {
+                throw new ArgumentException("Position Title is required to create a Work Experience.");
+            }
+
+            if (string.IsNullOrEmpty(experience.CompanyName))
+            {
+                throw new ArgumentException("Company Name is required to create a Work Experience.");
+            }
+
+            if (string.IsNullOrEmpty(experience.Location))
+            {
+                throw new ArgumentException("Location is required to create a Work Experience.");
+            }
+
+            if (experience.StartDate == DateTime.MinValue || experience.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create a Work Experience.");
+            }
+        }
 
         private int? GetMainImageIdByWorkExperienceId(int experienceId)
         {
