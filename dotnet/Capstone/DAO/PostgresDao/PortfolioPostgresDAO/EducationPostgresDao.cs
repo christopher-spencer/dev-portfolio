@@ -427,6 +427,24 @@ namespace Capstone.DAO
             **********************************************************************************************
         */
 
+        private void CheckEducationNameLocationAndStartDateAreNotNullOrEmpty(Education education)
+        {
+            if (string.IsNullOrEmpty(education.InstitutionName))
+            {
+                throw new ArgumentException("Institution Name is required to create an Education.");
+            }
+
+            if (string.IsNullOrEmpty(education.Location))
+            {
+                throw new ArgumentException("Location is required to create an Education.");
+            }
+
+            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
+            }
+        }
+
         private int? GetMainImageIdByEducationId(int educationId)
         {
             string sql = "SELECT main_image_id FROM educations WHERE id = @educationId;";
@@ -582,24 +600,6 @@ namespace Capstone.DAO
                                                EDUCATION MAP ROW
             **********************************************************************************************
         */
-
-        private void CheckEducationNameLocationAndStartDateAreNotNullOrEmpty(Education education)
-        {
-            if (string.IsNullOrEmpty(education.InstitutionName))
-            {
-                throw new ArgumentException("Institution Name is required to create an Education.");
-            }
-
-            if (string.IsNullOrEmpty(education.Location))
-            {
-                throw new ArgumentException("Location is required to create an Education.");
-            }
-
-            if (education.StartDate == DateTime.MinValue || education.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to create an Education.");
-            }
-        }
 
         private Education MapRowToEducation(NpgsqlDataReader reader)
         {
