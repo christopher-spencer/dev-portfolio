@@ -1466,7 +1466,26 @@ namespace Capstone.DAO
                 case PullRequestLink:
                     break;
                 default:
-                    throw new ArgumentException("Invalid website type.");
+                    throw new ArgumentException("Invalid website type. Website type must be 'main website', 'github', or 'pull request link'.");
+            }
+
+            if (website.Type == MainWebsite)
+            {
+                Website existingMainWebsite = GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, MainWebsite);
+
+                if (existingMainWebsite != null)
+                {
+                    throw new DaoException("Main website already exists for this open source contribution.");
+                }
+            }
+            else if (website.Type == GitHub)
+            {
+                Website existingGitHub = GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, GitHub);
+
+                if (existingGitHub != null)
+                {
+                    throw new DaoException("GitHub already exists for this open source contribution.");
+                }
             }
 
             try
@@ -1479,30 +1498,6 @@ namespace Capstone.DAO
                     {
                         try
                         {
-                            Website existingMainWebsite = null;
-
-                            if (website.Type == MainWebsite)
-                            {
-                                existingMainWebsite = GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, MainWebsite);
-
-                                if (existingMainWebsite != null)
-                                {
-                                    throw new DaoException("Main website already exists for this open source contribution.");
-                                }
-                            }
-
-                            Website existingGitHub = null;
-
-                            if (website.Type == GitHub)
-                            {
-                                existingGitHub = GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, GitHub);
-
-                                if (existingGitHub != null)
-                                {
-                                    throw new DaoException("GitHub already exists for this open source contribution.");
-                                }
-                            }
-
                             int websiteId;
 
                             using (NpgsqlCommand cmdInsertWebsite = new NpgsqlCommand(insertWebsiteSql, connection))
@@ -1522,7 +1517,7 @@ namespace Capstone.DAO
                                 cmdInsertContributionWebsite.ExecuteNonQuery();
                             }
 
-                            if ((website.Type == MainWebsite && existingMainWebsite == null) || (website.Type == GitHub && existingGitHub == null))
+                            if ( (website.Type == MainWebsite) || (website.Type == GitHub) )
                             {
                                 using (NpgsqlCommand cmdUpdateContribution = new NpgsqlCommand(updateContributionWebsiteIdSql, connection))
                                 {
@@ -1741,12 +1736,36 @@ namespace Capstone.DAO
 
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
+            if (website.Type != MainWebsite && website.Type != GitHub && website.Type != PullRequestLink)
+            {
+                throw new ArgumentException("Invalid website type. Website type must be 'main website', 'github', or 'pull request link'.");
+            }
+
             string updateWebsiteSql = "UPDATE websites " +
-                                      "SET name = @name, url = @url " +
+                                      "SET name = @name, url = @url, type = @type " +
                                       "FROM open_source_contribution_websites " +
                                       "WHERE websites.id = open_source_contribution_websites.website_id " +
                                       "AND open_source_contribution_websites.contribution_id = @contributionId " +
                                       "AND websites.id = @websiteId;";
+            
+            if (website.Type == MainWebsite)
+            {
+                Website existingMainWebsite = GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, MainWebsite);
+
+                if (existingMainWebsite != null && existingMainWebsite.Id != websiteId)
+                {
+                    throw new DaoException("Main website already exists for this open source contribution.");
+                }
+            }
+            else if (website.Type == GitHub)
+            {
+                Website existingGitHub = GetMainWebsiteOrGitHubByOpenSourceContributionId(contributionId, GitHub);
+
+                if (existingGitHub != null && existingGitHub.Id != websiteId)
+                {
+                    throw new DaoException("GitHub already exists for this open source contribution.");
+                }
+            }
 
             try
             {
@@ -1760,6 +1779,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -1778,8 +1798,14 @@ namespace Capstone.DAO
             return null;
         }
 
+//FIXME Possibly unnecessary after added exception checks to UpdateWebsiteByOpenSourceContributionId*******
         public Website UpdateMainWebsiteOrGitHubByOpenSourceContributionId(int contributionId, int websiteId, Website website)
         {
+            if (contributionId <= 0 || websiteId <= 0)
+            {
+                throw new ArgumentException("ContributionId and websiteId must be greater than zero.");
+            }
+
             bool isWebsiteTypeRequired = true;
 
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
