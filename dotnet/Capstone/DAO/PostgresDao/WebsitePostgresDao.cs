@@ -371,12 +371,36 @@ namespace Capstone.DAO
 
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
+            if (website.Type != GitHub && website.Type != LinkedIn)
+            {
+                throw new ArgumentException("Invalid website type. Website type must be 'github' or 'linkedin'.");
+            }
+
             string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url " +
+                         "SET name = @name, url = @url, type = @type " +
                          "FROM portfolio_websites " +
                          "WHERE websites.id = portfolio_websites.website_id " +
                          "AND portfolio_websites.portfolio_id = @portfolioId " +
                          "AND websites.id = @websiteId;";
+
+            if (website.Type == GitHub)
+            {
+                Website existingGitHub = GetGitHubByPortfolioId(portfolioId);
+
+                if (existingGitHub != null && existingGitHub.Id != websiteId)
+                {
+                    throw new ArgumentException("A GitHub website already exists for this portfolio. Delete the GitHub to replace it, or you can set this website as a 'linkedin' site.");
+                }
+            }
+            else if (website.Type == LinkedIn)
+            {
+                Website existingLinkedIn = GetLinkedInByPortfolioId(portfolioId);
+
+                if (existingLinkedIn != null && existingLinkedIn.Id != websiteId)
+                {
+                    throw new ArgumentException("A LinkedIn website already exists for this portfolio. Delete the LinkedIn to replace it, or you can set this website as a 'github' site.");
+                }
+            }
 
             try
             {
@@ -390,6 +414,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -639,7 +664,7 @@ namespace Capstone.DAO
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string updateWebsiteSql = "UPDATE websites " +
-                                      "SET name = @name, url = @url " +
+                                      "SET name = @name, url = @url, type = @type " +
                                       "FROM work_experience_websites " +
                                       "WHERE websites.id = work_experience_websites.website_id " +
                                       "AND work_experience_websites.experience_id = @experienceId " +
@@ -657,6 +682,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 

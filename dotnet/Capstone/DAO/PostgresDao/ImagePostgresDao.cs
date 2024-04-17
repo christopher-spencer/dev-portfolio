@@ -399,7 +399,7 @@ namespace Capstone.DAO
             if (image.Type == MainImage)
             {
                 Image existingMainImage = GetMainImageByPortfolioId(portfolioId);
-// NOTE: added ID check to ensure our current possible main image doesn't throw exception
+                
                 if (existingMainImage != null && existingMainImage.Id != imageId)
                 {
                     throw new ArgumentException("A main image already exists for this portfolio. Delete the main image to replace it, or set this image to 'additional image.'");
