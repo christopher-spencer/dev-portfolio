@@ -1028,7 +1028,23 @@ namespace Capstone.Controllers
             {
                 return Ok(gitHub);
             }
-        }    
+        }  
+
+// TODO add controller to postman and integration test
+        [HttpGet("/contributor/{contributorId}/linkedin")]
+        public ActionResult<Website> GetLinkedInByContributorId(int contributorId)
+        {
+            Website linkedIn = _websiteDao.GetLinkedInByContributorId(contributorId);
+
+            if (linkedIn == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(linkedIn);
+            }
+        }
 
         [Authorize]
         [HttpPut("/contributor/{contributorId}/update-website/{websiteId}")]
