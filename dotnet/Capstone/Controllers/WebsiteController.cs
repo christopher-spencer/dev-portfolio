@@ -1012,7 +1012,23 @@ namespace Capstone.Controllers
             {
                 return Ok(portfolioLink);
             }
-        }        
+        }    
+
+// TODO add controller to postman and integration test
+        [HttpGet("/contributor/{contributorId}/github")]
+        public ActionResult<Website> GetGitHubByContributorId(int contributorId)
+        {
+            Website gitHub = _websiteDao.GetGitHubByContributorId(contributorId);
+
+            if (gitHub == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(gitHub);
+            }
+        }    
 
         [Authorize]
         [HttpPut("/contributor/{contributorId}/update-website/{websiteId}")]
