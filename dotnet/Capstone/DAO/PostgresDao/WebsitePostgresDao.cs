@@ -3321,6 +3321,13 @@ namespace Capstone.DAO
             string insertDependencyLibraryWebsiteSql = "INSERT INTO dependency_library_websites (dependencylibrary_id, website_id) VALUES (@dependencyLibraryId, @websiteId);";
             string updateDependencyLibraryWebsiteIdSql = "UPDATE dependencies_and_libraries SET website_id = @websiteId WHERE id = @dependencyLibraryId;";
 
+            Website existingWebsite = GetWebsiteByDependencyLibraryId(dependencyLibraryId, website.Id);
+
+            if (existingWebsite != null)
+            {
+                throw new DaoException("Website already exists for this dependency/library.");
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -3434,7 +3441,7 @@ namespace Capstone.DAO
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string updateWebsiteSql = "UPDATE websites " +
-                                      "SET name = @name, url = @url " +
+                                      "SET name = @name, url = @url, type = @type " +
                                       "FROM dependency_library_websites " +
                                       "WHERE websites.id = dependency_library_websites.website_id " +
                                       "AND dependency_library_websites.dependencylibrary_id = @dependencyLibraryId " +
@@ -3452,6 +3459,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
