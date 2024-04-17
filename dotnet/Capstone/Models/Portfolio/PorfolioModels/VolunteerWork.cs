@@ -15,7 +15,7 @@ namespace Capstone.Models
         public Website OrganizationWebsite { get; set; }
         public string PositionTitle { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public List<Achievement> ResponsibilitiesAndAchievements { get; set; }
         public List<Skill> SkillsUsedAndObtained { get; set; }
         public int MainImageId { get; set; }

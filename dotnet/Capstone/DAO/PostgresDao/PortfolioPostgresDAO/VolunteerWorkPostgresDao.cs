@@ -154,11 +154,11 @@ namespace Capstone.DAO
                             using (NpgsqlCommand cmd = new NpgsqlCommand(insertVolunteerWorkSql, connection))
                             {
                                 cmd.Parameters.AddWithValue("@organizationName", volunteerWork.OrganizationName);
-                                cmd.Parameters.AddWithValue("@location", volunteerWork.Location);
-                                cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription);
+                                cmd.Parameters.AddWithValue("@location", volunteerWork.Location ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@positionTitle", volunteerWork.PositionTitle);
                                 cmd.Parameters.AddWithValue("@startDate", volunteerWork.StartDate);
-                                cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate);
+                                cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate.HasValue? (object)volunteerWork.EndDate : DBNull.Value);
                                 cmd.Transaction = transaction;
 
                                 volunteerWorkId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -311,11 +311,11 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
                         cmd.Parameters.AddWithValue("@volunteerWorkId", volunteerWorkId);
                         cmd.Parameters.AddWithValue("@organizationName", volunteerWork.OrganizationName);
-                        cmd.Parameters.AddWithValue("@location", volunteerWork.Location);
-                        cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription);
+                        cmd.Parameters.AddWithValue("@location", volunteerWork.Location ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@organizationDescription", volunteerWork.OrganizationDescription ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@positionTitle", volunteerWork.PositionTitle);
                         cmd.Parameters.AddWithValue("@startDate", volunteerWork.StartDate);
-                        cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate);
+                        cmd.Parameters.AddWithValue("@endDate", volunteerWork.EndDate.HasValue ? (object)volunteerWork.EndDate : DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -633,9 +633,10 @@ namespace Capstone.DAO
                 Location = Convert.ToString(reader["location"]),
                 OrganizationDescription = Convert.ToString(reader["organization_description"]),
                 PositionTitle = Convert.ToString(reader["position_title"]),
-                StartDate = Convert.ToDateTime(reader["start_date"]),
-                EndDate = Convert.ToDateTime(reader["end_date"])
+                StartDate = Convert.ToDateTime(reader["start_date"])
             };
+
+            volunteerWork.EndDate = reader["end_date"] == DBNull.Value ? null : (DateTime?)reader["end_date"];
 
             int volunteerWorkId = volunteerWork.Id;
 
