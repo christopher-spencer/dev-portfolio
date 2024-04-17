@@ -2883,12 +2883,45 @@ namespace Capstone.DAO
 
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
+            if (website.Type != PortfolioLink && website.Type != GitHub && website.Type != LinkedIn)
+            {
+                throw new ArgumentException("Invalid website type. Website type must be 'portfolio link', 'github', or 'linkedin'.");
+            }
+
             string updateWebsiteSql = "UPDATE websites " +
-                                      "SET name = @name, url = @url " +
+                                      "SET name = @name, url = @url, type = @type " +
                                       "FROM contributor_websites " +
                                       "WHERE websites.id = contributor_websites.website_id " +
                                       "AND contributor_websites.contributor_id = @contributorId " +
                                       "AND websites.id = @websiteId;";
+
+            if (website.Type == PortfolioLink)
+            {
+                Website existingPortfolioLink = GetPortfolioLinkByContributorId(contributorId);
+
+                if (existingPortfolioLink != null && existingPortfolioLink.Id != websiteId)
+                {
+                    throw new DaoException("Portfolio link already exists for this contributor.");
+                }
+            }
+            else if (website.Type == GitHub)
+            {
+                Website existingGitHub = GetGitHubByContributorId(contributorId);
+
+                if (existingGitHub != null && existingGitHub.Id != websiteId)
+                {
+                    throw new DaoException("GitHub already exists for this contributor.");
+                }
+            }
+            else if (website.Type == LinkedIn)
+            {
+                Website existingLinkedIn = GetLinkedInByContributorId(contributorId);
+
+                if (existingLinkedIn != null && existingLinkedIn.Id != websiteId)
+                {
+                    throw new DaoException("LinkedIn already exists for this contributor.");
+                }
+            }
 
             try
             {
@@ -2902,6 +2935,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
