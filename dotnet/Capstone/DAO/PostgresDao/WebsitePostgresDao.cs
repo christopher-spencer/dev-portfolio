@@ -3069,6 +3069,13 @@ namespace Capstone.DAO
             string insertApiServiceWebsiteSql = "INSERT INTO api_service_websites (apiservice_id, website_id) VALUES (@apiServiceId, @websiteId);";
             string updateApiServiceWebsiteIdSql = "UPDATE apis_and_services SET website_id = @websiteId WHERE id = @apiServiceId;";
 
+            Website existingWebsite = GetWebsiteByApiServiceId(apiServiceId);
+
+            if (existingWebsite != null)
+            {
+                throw new DaoException("Website already exists for this API/Service.");
+            }
+
             try
             {
                 using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -3181,7 +3188,7 @@ namespace Capstone.DAO
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string updateWebsiteSql = "UPDATE websites " +
-                                      "SET name = @name, url = @url " +
+                                      "SET name = @name, url = @url, type = @type " +
                                       "FROM api_service_websites " +
                                       "WHERE websites.id = api_service_websites.website_id AND api_service_websites.apiservice_id = @apiServiceId " +
                                       "AND websites.id = @websiteId;";
@@ -3198,6 +3205,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -3239,10 +3247,8 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
-                            // Get the image ID associated with the website
                             int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
 
-                            // Update api_service websiteId reference to null
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateApiServiceWebsiteIdSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -3251,7 +3257,6 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
-                            // Delete api_service_websites association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteApiServiceWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -3261,13 +3266,11 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
-                            //Delete Website Image, if exists
                             if (imageId.HasValue)
                             {
                                 _imageDao.DeleteImageByWebsiteId(websiteId, imageId.Value);
                             }
 
-                            // Delete the website itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
