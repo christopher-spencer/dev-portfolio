@@ -143,9 +143,9 @@ namespace Capstone.DAO
                                 cmd.Parameters.AddWithValue("@positionTitle", experience.PositionTitle);
                                 cmd.Parameters.AddWithValue("@companyName", experience.CompanyName);
                                 cmd.Parameters.AddWithValue("@location", experience.Location);
-                                cmd.Parameters.AddWithValue("@description", experience.Description);
+                                cmd.Parameters.AddWithValue("@description", experience.Description ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@startDate", experience.StartDate);
-                                cmd.Parameters.AddWithValue("@endDate", experience.EndDate);
+                                cmd.Parameters.AddWithValue("@endDate", experience.EndDate.HasValue ? (object)experience.EndDate : DBNull.Value);
                                 cmd.Transaction = transaction;
 
                                 experienceId = Convert.ToInt32(cmd.ExecuteScalar());
@@ -300,9 +300,9 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@positionTitle", experience.PositionTitle);
                         cmd.Parameters.AddWithValue("@companyName", experience.CompanyName);
                         cmd.Parameters.AddWithValue("@location", experience.Location);
-                        cmd.Parameters.AddWithValue("@description", experience.Description);
+                        cmd.Parameters.AddWithValue("@description", experience.Description ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@startDate", experience.StartDate);
-                        cmd.Parameters.AddWithValue("@endDate", experience.EndDate);
+                        cmd.Parameters.AddWithValue("@endDate", experience.EndDate.HasValue ? (object)experience.EndDate : DBNull.Value);
                         cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
                         cmd.Parameters.AddWithValue("@experienceId", experienceId);
 
@@ -629,9 +629,10 @@ namespace Capstone.DAO
                 CompanyName = Convert.ToString(reader["company_name"]),
                 Location = Convert.ToString(reader["location"]),
                 Description = Convert.ToString(reader["description"]),
-                StartDate = Convert.ToDateTime(reader["start_date"]),
-                EndDate = Convert.ToDateTime(reader["end_date"])
+                StartDate = Convert.ToDateTime(reader["start_date"])
             };
+
+            experience.EndDate = reader["end_date"] == DBNull.Value ? null : (DateTime?)reader["end_date"];
 
             int experienceId = experience.Id;
 
