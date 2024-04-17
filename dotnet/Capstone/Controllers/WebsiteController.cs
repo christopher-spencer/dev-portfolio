@@ -860,6 +860,38 @@ namespace Capstone.Controllers
             }
         }
 
+// TODO add controller to postman and integration test
+        [HttpGet("/sideproject/{sideProjectId}/main-website")]
+        public ActionResult<Website> GetMainWebsiteBySideProjectId(int sideProjectId)
+        {
+            Website mainWebsite = _websiteDao.GetMainWebsiteBySideProjectId(sideProjectId);
+
+            if (mainWebsite == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(mainWebsite);
+            }
+        }
+
+// TODO add controller to postman and integration test
+        [HttpGet("/sideproject/{sideProjectId}/github")]
+        public ActionResult<Website> GetGitHubBySideProjectId(int sideProjectId)
+        {
+            Website gitHub = _websiteDao.GetGitHubBySideProjectId(sideProjectId);
+
+            if (gitHub == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(gitHub);
+            }
+        }
+
         [Authorize]
         [HttpPut("/update-sideproject/{sideProjectId}/update-website/{websiteId}")]
         public ActionResult UpdateWebsiteBySideProjectId(int sideProjectId, int websiteId, Website website)
