@@ -49,15 +49,7 @@ namespace Capstone.DAO
 
         public Portfolio CreatePortfolio(Portfolio portfolio)
         {
-            if (string.IsNullOrEmpty(portfolio.Name))
-            {
-                throw new ArgumentException("Portfolio name is required.");
-            }
-
-            if (string.IsNullOrEmpty(portfolio.ProfessionalSummary))
-            {
-                throw new ArgumentException("Professional summary is required.");
-            }
+            CheckPortfolioNameAndProfessionalSummaryAreNotNullOrEmpty(portfolio);
 
             string sql = "INSERT INTO portfolios (name, location, professional_summary, email) " +
                          "VALUES (@name, @location, @professionalSummary, @email) " +
@@ -72,9 +64,9 @@ namespace Capstone.DAO
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
                         cmd.Parameters.AddWithValue("@name", portfolio.Name);
-                        cmd.Parameters.AddWithValue("@location", portfolio.Location);
+                        cmd.Parameters.AddWithValue("@location", portfolio.Location ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@professionalSummary", portfolio.ProfessionalSummary);
-                        cmd.Parameters.AddWithValue("@email", portfolio.Email);
+                        cmd.Parameters.AddWithValue("@email", portfolio.Email ?? (object)DBNull.Value);
 
                         int portfolioId = Convert.ToInt32(cmd.ExecuteScalar());
                         portfolio.Id = portfolioId;
@@ -170,15 +162,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("PortfolioId must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(portfolio.Name))
-            {
-                throw new ArgumentException("Portfolio name is required.");
-            }
-
-            if (string.IsNullOrEmpty(portfolio.ProfessionalSummary))
-            {
-                throw new ArgumentException("Professional summary is required.");
-            }
+            CheckPortfolioNameAndProfessionalSummaryAreNotNullOrEmpty(portfolio);
 
             string sql = "UPDATE portfolios SET name = @name, location = @location, " +
                          "professional_summary = @professionalSummary, email = @email " +
@@ -192,11 +176,11 @@ namespace Capstone.DAO
 
                     using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                     {
+                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);                        
                         cmd.Parameters.AddWithValue("@name", portfolio.Name);
-                        cmd.Parameters.AddWithValue("@location", portfolio.Location);
+                        cmd.Parameters.AddWithValue("@location", portfolio.Location ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@professionalSummary", portfolio.ProfessionalSummary);
-                        cmd.Parameters.AddWithValue("@email", portfolio.Email);
-                        cmd.Parameters.AddWithValue("@portfolioId", portfolioId);
+                        cmd.Parameters.AddWithValue("@email", portfolio.Email ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -302,6 +286,19 @@ namespace Capstone.DAO
                                         PORTFOLIO HELPER METHODS
             **********************************************************************************************
         */
+
+        private void CheckPortfolioNameAndProfessionalSummaryAreNotNullOrEmpty(Portfolio portfolio)
+        {
+            if (string.IsNullOrEmpty(portfolio.Name))
+            {
+                throw new ArgumentException("Portfolio name is required.");
+            }
+
+            if (string.IsNullOrEmpty(portfolio.ProfessionalSummary))
+            {
+                throw new ArgumentException("Professional summary is required.");
+            }
+        }
 
         private int? GetMainImageIdByPortfolioId(int portfolioId)
         {
