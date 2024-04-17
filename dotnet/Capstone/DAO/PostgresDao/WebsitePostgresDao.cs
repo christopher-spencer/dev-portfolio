@@ -1321,7 +1321,7 @@ namespace Capstone.DAO
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
             string updateWebsiteSql = "UPDATE websites " +
-                                      "SET name = @name, url = @url " +
+                                      "SET name = @name, url = @url, type = @type " +
                                       "FROM education_websites " +
                                       "WHERE websites.id = education_websites.website_id AND education_websites.education_id = @educationId " +
                                       "AND websites.id = @websiteId;";
@@ -1338,6 +1338,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type ?? (object)DBNull.Value);
 
                         int count = cmd.ExecuteNonQuery();
 
