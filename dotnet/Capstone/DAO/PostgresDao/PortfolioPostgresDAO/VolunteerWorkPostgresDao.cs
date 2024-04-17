@@ -127,20 +127,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
-            {
-                throw new ArgumentException("Organization Name is required to create a Volunteer Work.");
-            }
-
-            if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
-            {
-                throw new ArgumentException("Position Title is required to create a Volunteer Work.");
-            }
-
-            if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to create a Volunteer Work.");
-            }
+            CheckVolunteerWorkOrganizationNamePositionTitleAndStartDateAreNotNullOrEmpty(volunteerWork);
 
             string insertVolunteerWorkSql = "INSERT INTO volunteer_works (organization_name, location, " +
                                              "organization_description, position_title, start_date, end_date) " +
@@ -305,20 +292,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("Portfolio ID and Volunteer Work ID must be greater than zero.");
             }
 
-            if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
-            {
-                throw new ArgumentException("Organization Name is required to update a Volunteer Work.");
-            }
-
-            if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
-            {
-                throw new ArgumentException("Position Title is required to update a Volunteer Work.");
-            }
-
-            if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
-            {
-                throw new ArgumentException("Start Date must be a valid date in the past or present to update a Volunteer Work.");
-            }
+            CheckVolunteerWorkOrganizationNamePositionTitleAndStartDateAreNotNullOrEmpty(volunteerWork);
 
             string sql = "UPDATE volunteer_works SET organization_name = @organizationName, location = @location, " +
                          "organization_description = @organizationDescription, position_title = @positionTitle, " +
@@ -451,6 +425,24 @@ namespace Capstone.DAO
                                         VOLUNTEER WORK HELPER METHODS
             **********************************************************************************************
         */
+
+        private void CheckVolunteerWorkOrganizationNamePositionTitleAndStartDateAreNotNullOrEmpty(VolunteerWork volunteerWork)
+        {
+            if (string.IsNullOrEmpty(volunteerWork.OrganizationName))
+            {
+                throw new ArgumentException("Organization Name is required to create a Volunteer Work.");
+            }
+
+            if (string.IsNullOrEmpty(volunteerWork.PositionTitle))
+            {
+                throw new ArgumentException("Position Title is required to create a Volunteer Work.");
+            }
+
+            if (volunteerWork.StartDate == DateTime.MinValue || volunteerWork.StartDate > DateTime.Now)
+            {
+                throw new ArgumentException("Start Date must be a valid date in the past or present to create a Volunteer Work.");
+            }
+        }
 
         private int? GetMainImageIdByVolunteerWorkId(int volunteerWorkdId)
         {
