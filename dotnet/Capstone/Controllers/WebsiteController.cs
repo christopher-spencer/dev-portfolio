@@ -998,6 +998,22 @@ namespace Capstone.Controllers
             }
         }
 
+// TODO add controller to postman and integration test
+        [HttpGet("/contributor/{contributorId}/portfolio-link")]
+        public ActionResult<Website> GetPortfolioLinkByContributorId(int contributorId)
+        {
+            Website portfolioLink = _websiteDao.GetPortfolioLinkByContributorId(contributorId);
+
+            if (portfolioLink == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(portfolioLink);
+            }
+        }        
+
         [Authorize]
         [HttpPut("/contributor/{contributorId}/update-website/{websiteId}")]
         public ActionResult UpdateWebsiteByContributorId(int contributorId, int websiteId, Website website)
