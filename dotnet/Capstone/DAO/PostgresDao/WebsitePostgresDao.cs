@@ -27,12 +27,10 @@ namespace Capstone.DAO
         const string LinkedIn = "linkedin";
         const string PullRequestLink = "pull request link";
 
-// FIXME issue with websites where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
+// NOTE: (TEST IF FIXED) issue with websites where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
 
 
-// FIXME 1.) Do UPDATE methods throughout need Website Type? ******** 
-// FIXME 2.) (OR... Change only once when setting type in CREATE methods? Must DELETE and CREATE new by WebsiteType to change? Consider...)
-// FIXME 3.) Or else re-add type to queries and readers for Update methods ****** ?????? 
+// NOTE: (TEST IF FIXED) Do UPDATE methods throughout need Website Type? OR take back off? ********
 
         /*  
             **********************************************************************************************

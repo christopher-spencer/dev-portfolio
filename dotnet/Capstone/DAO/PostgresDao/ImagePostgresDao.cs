@@ -21,7 +21,7 @@ namespace Capstone.DAO
         const string AdditionalImage = "additional image";
         const string Logo = "logo";
         
-// FIXME issue with images where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
+// NOTE: (TEST IF FIXED) issue with images where if you update to new one, the old one hangs out in the database (NOT DELETED) unattached but attached by the same id, causing foreign key constraints in join tables
 
         /*  
             **********************************************************************************************
@@ -3559,7 +3559,7 @@ namespace Capstone.DAO
                                             BLOG POST IMAGE CRUD
             **********************************************************************************************
         */
-// FIXME add BLOGPOST Main Image checker and if statement checks for Main Image
+// TODO add BLOGPOST Main Image checker and if statement checks for Main Image
         public Image CreateImageByBlogPostId(int blogPostId, Image image)
         {
             if (blogPostId <= 0)
