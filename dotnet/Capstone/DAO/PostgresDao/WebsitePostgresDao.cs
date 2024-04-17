@@ -2424,12 +2424,36 @@ namespace Capstone.DAO
 
             CheckNecessaryWebsitePropertiesAreNotNullOrEmpty(website, isWebsiteTypeRequired);
 
+            if (website.Type != MainWebsite && website.Type != GitHub)
+            {
+                throw new ArgumentException("Invalid website type. Website type must be 'main website' or 'github'.");
+            }
+
             string sql = "UPDATE websites " +
-                         "SET name = @name, url = @url " +
+                         "SET name = @name, url = @url, type = @type " +
                          "FROM sideproject_websites " +
                          "WHERE websites.id = sideproject_websites.website_id " +
                          "AND sideproject_websites.sideproject_id = @sideProjectId " +
                          "AND websites.id = @websiteId;";
+
+            if (website.Type == MainWebsite)
+            {
+                Website existingMainWebsite = GetMainWebsiteBySideProjectId(sideProjectId);
+
+                if (existingMainWebsite != null && existingMainWebsite.Id != websiteId)
+                {
+                    throw new DaoException("Main website already exists for this side project.");
+                }
+            }
+            else if (website.Type == GitHub)
+            {
+                Website existingGitHub = GetGitHubBySideProjectId(sideProjectId);
+
+                if (existingGitHub != null && existingGitHub.Id != websiteId)
+                {
+                    throw new DaoException("GitHub already exists for this side project.");
+                }
+            }
 
             try
             {
@@ -2443,6 +2467,7 @@ namespace Capstone.DAO
                         cmd.Parameters.AddWithValue("@websiteId", websiteId);
                         cmd.Parameters.AddWithValue("@name", website.Name);
                         cmd.Parameters.AddWithValue("@url", website.Url);
+                        cmd.Parameters.AddWithValue("@type", website.Type);
 
                         int count = cmd.ExecuteNonQuery();
 
@@ -2499,10 +2524,8 @@ namespace Capstone.DAO
                         {
                             int rowsAffected;
 
-                            // Get the image ID associated with the website
                             int? imageId = _imageDao.GetImageIdByWebsiteId(websiteId);
 
-                            // Update side project websiteId reference to null
                             using (NpgsqlCommand cmd = new NpgsqlCommand(updateSideProjectWebsiteIdSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -2511,7 +2534,6 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
-                            // Delete sideproject_websites table association
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteFromSideProjectSql, connection))
                             {
                                 cmd.Transaction = transaction;
@@ -2521,13 +2543,11 @@ namespace Capstone.DAO
                                 cmd.ExecuteNonQuery();
                             }
 
-                            //Delete Website Image, if exists
                             if (imageId.HasValue)
                             {
                                 _imageDao.DeleteImageByWebsiteId(websiteId, imageId.Value);
                             }
 
-                            // Delete the website itself
                             using (NpgsqlCommand cmd = new NpgsqlCommand(deleteWebsiteSql, connection))
                             {
                                 cmd.Transaction = transaction;
