@@ -117,7 +117,6 @@ namespace Capstone.Controllers
             }
         }
 
-// TODO add controller to postman and integration test
         [HttpGet("/portfolio/{portfolioId}/github")]
         public ActionResult<Website> GetGitHubByPortfolioId(int portfolioId)
         {
@@ -133,7 +132,6 @@ namespace Capstone.Controllers
             }
         }
 
-// TODO add controller to postman and integration test
         [HttpGet("/portfolio/{portfolioId}/linkedin")]
         public ActionResult<Website> GetLinkedInByPortfolioId(int portfolioId)
         {
