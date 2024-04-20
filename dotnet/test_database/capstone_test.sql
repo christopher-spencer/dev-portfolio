@@ -676,7 +676,21 @@ CREATE TABLE portfolio_volunteer_works (
     FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id)
 );
 
-INSERT INTO users (username, password_hash, salt, user_role) VALUES ('user', 'Jg45HuwT7PZkfuKTz6IB90CtWY4=', 'LHxP4Xh7bN0=', 'user');
-INSERT INTO users (username, password_hash, salt, user_role) VALUES ('admin', 'YhyGVQ+Ch69n4JMBncM4lNF/i9s=', 'Ar/aB2thQTI=', 'admin');
+INSERT INTO users (username, password_hash, salt, user_role) 
+VALUES ('testUser', 'Jg45HuwT7PZkfuKTz6IB90CtWY4=', 'LHxP4Xh7bN0=', 'test_user');
+INSERT INTO users (username, password_hash, salt, user_role) 
+VALUES ('testAdmin', 'YhyGVQ+Ch69n4JMBncM4lNF/i9s=', 'Ar/aB2thQTI=', 'test_admin');
+
+INSERT INTO portfolios (name, location, professional_summary, email) 
+VALUES ('Test Portfolio', 'Test Location', 'Test Professional Summary', 'email1@test.com');
+
+INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
+    start_date, finish_date) 
+VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
+    'Test Project Status', '2021-01-01', '2021-01-02');
+INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
+    start_date, finish_date)
+VALUES ('Test Sideproject 2', 'Test Description 2', 'Test Video Walkthrough URL 2', 
+    'Test Project Status 2', '2021-01-01', '2021-01-02');
 
 COMMIT TRANSACTION;
