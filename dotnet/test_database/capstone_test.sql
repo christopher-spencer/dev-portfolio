@@ -684,6 +684,7 @@ VALUES ('testAdmin', 'YhyGVQ+Ch69n4JMBncM4lNF/i9s=', 'Ar/aB2thQTI=', 'test_admin
 INSERT INTO portfolios (name, location, professional_summary, email) 
 VALUES ('Test Portfolio', 'Test Location', 'Test Professional Summary', 'email1@test.com');
 
+// TODO need to join portfolio table and images table
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
     start_date, finish_date) 
 VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
