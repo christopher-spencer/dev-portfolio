@@ -723,6 +723,55 @@ INSERT INTO websites (name, url, type)
 VALUES ('Test Portfolio LinkedIn', 'https://www.linkedin.com/portfolio-test', 'linkedin')
 RETURNING id INTO test_portfolio_linkedin_id;
 
+--Creating test portfolio website images
+INSERT INTO images (name, url)
+VALUES ('Portfolio GitHub Icon', 'GitHubIcon.jpeg')
+RETURNING id INTO test_portfolio_github_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_portfolio_github_id, test_portfolio_github_image_id);
+
+INSERT INTO images (name, url)
+VALUES ('Portfolio LinkedIn Icon', 'LinkedInIcon.jpeg')
+RETURNING id INTO test_portfolio_linkedin_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_portfolio_linkedin_id, test_portfolio_linkedin_image_id);
+
+--Creating test portfolio hobbies
+INSERT INTO hobbies (description)
+VALUES ('Test Hobby Description 1')
+RETURNING id INTO test_hobby_1_id;
+
+INSERT INTO portfolio_hobbies (portfolio_id, hobby_id)
+VALUES (test_portfolio_id, test_hobby_1_id);
+
+INSERT INTO hobbies (description)
+VALUES ('Test Hobby Description 2')
+RETURNING id INTO test_hobby_2_id;
+
+INSERT INTO portfolio_hobbies (portfolio_id, hobby_id)
+VALUES (test_portfolio_id, test_hobby_2_id);
+
+--Creating test portfolio hobby images
+INSERT INTO images (name, url)
+VALUES ('Hobby Image 1', 'HobbyImage1.jpeg')
+RETURNING id INTO test_hobby_image_1_id;
+
+INSERT INTO hobby_images (hobby_id, image_id)
+VALUES (test_hobby_1_id, test_hobby_image_1_id);
+
+INSERT INTO images (name, url)
+VALUES ('Hobby Image 2', 'HobbyImage2.jpeg')
+RETURNING id INTO test_hobby_image_2_id;
+
+INSERT INTO hobby_images (hobby_id, image_id)
+VALUES (test_hobby_2_id, test_hobby_image_2_id);
+
+
+
+
+
 
 --Creating test sideprojects
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
