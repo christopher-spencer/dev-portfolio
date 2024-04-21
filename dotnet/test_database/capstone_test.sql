@@ -681,10 +681,23 @@ VALUES ('testUser', 'Jg45HuwT7PZkfuKTz6IB90CtWY4=', 'LHxP4Xh7bN0=', 'test_user')
 INSERT INTO users (username, password_hash, salt, user_role) 
 VALUES ('testAdmin', 'YhyGVQ+Ch69n4JMBncM4lNF/i9s=', 'Ar/aB2thQTI=', 'test_admin');
 
+--Creating a test portfolio
 INSERT INTO portfolios (name, location, professional_summary, email) 
 VALUES ('Test Portfolio', 'Test Location', 'Test Professional Summary', 'email1@test.com');
 
+-- Retrieve the ID of the inserted portfolio
+SELECT id FROM portfolios WHERE name = 'Test Portfolio';
+
+--Creating a test portfolio main image
+INSERT INTO images (name, url, type) VALUES ('Portfolio Main Image', "MainImage.jpeg", 'main image') RETURNING id;
+INSERT INTO portfolio_images (portfolio_id, image_id) VALUES (?, ?);
+UPDATE portfolios SET main_image_id = ? WHERE id = ?;
+
+-- Retrieve the ID of the inserted portfolio main image
+SELECT id FROM images WHERE name = 'Portfolio Main Image';
+
 // TODO need to join portfolio table and images table
+--Creating test sideprojects
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
     start_date, finish_date) 
 VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
@@ -694,9 +707,9 @@ INSERT INTO sideprojects (name, description, video_walkthrough_url, project_stat
 VALUES ('Test Sideproject 2', 'Test Description 2', 'Test Video Walkthrough URL 2', 
     'Test Project Status 2', '2021-01-01', '2021-01-02');
 
-INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;
-INSERT INTO portfolio_images (portfolio_id, image_id) VALUES (@portfolioId, @imageId);
-UPDATE portfolios SET main_image_id = @imageId WHERE id = @portfolioId;
+-- Retrieve the IDs of the inserted sideprojects
+SELECT id FROM sideprojects WHERE name = 'Test Sideproject';
+SELECT id FROM sideprojects WHERE name = 'Test Sideproject 2';
 
 
 COMMIT TRANSACTION;
