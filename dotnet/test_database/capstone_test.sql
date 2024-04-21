@@ -768,12 +768,37 @@ RETURNING id INTO test_hobby_image_2_id;
 INSERT INTO hobby_images (hobby_id, image_id)
 VALUES (test_hobby_2_id, test_hobby_image_2_id);
 
+--Creating test portfolio tech skills
+INSERT INTO skills (name)
+VALUES ('Test Skill 1')
+RETURNING id INTO test_skill_1_id;
 
+INSERT INTO portfolio_skills (portfolio_id, skill_id)
+VALUES (test_portfolio_id, test_skill_1_id);
 
+INSERT INTO skills (name)
+VALUES ('Test Skill 2')
+RETURNING id INTO test_skill_2_id;
 
+INSERT INTO portfolio_skills (portfolio_id, skill_id)
+VALUES (test_portfolio_id, test_skill_2_id);
 
+--Creating test portfolio tech skill icons
+INSERT INTO images (name, url)
+VALUES ('Skill Icon 1', 'SkillIcon1.jpeg')
+RETURNING id INTO test_skill_icon_1_id;
 
---Creating test sideprojects
+INSERT INTO skill_images (skill_id, image_id)
+VALUES (test_skill_1_id, test_skill_icon_1_id);
+
+INSERT INTO images (name, url)
+VALUES ('Skill Icon 2', 'SkillIcon2.jpeg')
+RETURNING id INTO test_skill_icon_2_id;
+
+INSERT INTO skill_images (skill_id, image_id)
+VALUES (test_skill_2_id, test_skill_icon_2_id);
+
+--Creating test portfolio sideprojects
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
     start_date, finish_date) 
 VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
@@ -785,6 +810,92 @@ INSERT INTO sideprojects (name, description, video_walkthrough_url, project_stat
 VALUES ('Test Sideproject 2', 'Test Description 2', 'Test Video Walkthrough URL 2', 
     'Test Project Status 2', '2021-01-01', '2021-01-02')
 RETURNING id INTO test_sideproject_2_id;
+
+--Creating test portfolio sideproject 1 main image
+INSERT INTO images (name, url, type)
+VALUES ('Sideproject 1 Main Image', 'Sideproject1MainImage.jpeg', 'main image')
+RETURNING id INTO test_sideproject_1_main_image_id;
+
+INSERT INTO sideproject_images (sideproject_id, image_id)
+VALUES (test_sideproject_1_id, test_sideproject_1_main_image_id);
+
+UPDATE sideprojects SET main_image_id = test_sideproject_1_main_image_id
+WHERE id = test_sideproject_1_id;
+
+--Creating test portfolio sideproject 1 additional images 1 and 2
+INSERT INTO images (name, url, type)
+VALUES ('Sideproject 1 Additional Image 1', 'Sideproject1AdditionalImage1.jpeg', 'additional image')
+RETURNING id INTO test_sideproject_1_additional_image_1_id;
+
+INSERT INTO sideproject_images (sideproject_id, image_id)
+VALUES (test_sideproject_1_id, test_sideproject_1_additional_image_1_id);
+
+INSERT INTO images (name, url, type)
+VALUES ('Sideproject 1 Additional Image 2', 'Sideproject1AdditionalImage2.jpeg', 'additional image')
+RETURNING id INTO test_sideproject_1_additional_image_2_id;
+
+INSERT INTO sideproject_images (sideproject_id, image_id)
+VALUES (test_sideproject_1_id, test_sideproject_1_additional_image_2_id);
+
+--Creating test portfolio sideproject 1 goals
+INSERT INTO goals (description)
+VALUES ('Test Goal 1')
+RETURNING id INTO test_goal_1_id;
+
+INSERT INTO sideproject_goals (sideproject_id, goal_id)
+VALUES (test_sideproject_1_id, test_goal_1_id);
+
+INSERT INTO goals (description)
+VALUES ('Test Goal 2')
+RETURNING id INTO test_goal_2_id;
+
+INSERT INTO sideproject_goals (sideproject_id, goal_id)
+VALUES (test_sideproject_1_id, test_goal_2_id);
+
+--Creating test portfolio sideproject goal icons
+INSERT INTO images (name, url)
+VALUES ('Goal Icon 1', 'GoalIcon1.jpeg')
+RETURNING id INTO test_goal_icon_1_id;
+
+INSERT INTO goal_images (goal_id, image_id)
+VALUES (test_goal_1_id, test_goal_icon_1_id);
+
+INSERT INTO images (name, url)
+VALUES ('Goal Icon 2', 'GoalIcon2.jpeg')
+RETURNING id INTO test_goal_icon_2_id;
+
+INSERT INTO goal_images (goal_id, image_id)
+VALUES (test_goal_2_id, test_goal_icon_2_id);
+
+--Creating test portfolio sideproject 1 tools used
+INSERT INTO skills (name)
+VALUES ('Test Tool 1')
+RETURNING id INTO test_tool_1_id;
+
+INSERT INTO sideproject_skills (sideproject_id, skill_id)
+VALUES (test_sideproject_1_id, test_tool_1_id);
+
+INSERT INTO skills (name)
+VALUES ('Test Tool 2')
+RETURNING id INTO test_tool_2_id;
+
+INSERT INTO sideproject_skills (sideproject_id, skill_id)
+VALUES (test_sideproject_1_id, test_tool_2_id);
+
+--Creating test portfolio sideproject 1 tools used icons
+INSERT INTO images (name, url)
+VALUES ('Tool 1 Icon', 'Tool1Icon.jpeg')
+RETURNING id INTO test_tool_1_icon_id;
+
+INSERT INTO skill_images (skill_id, image_id)
+VALUES (test_tool_1_id, test_tool_1_icon_id);
+
+INSERT INTO images (name, url)
+VALUES ('Tool 2 Icon', 'Tool2Icon.jpeg')
+RETURNING id INTO test_tool_2_icon_id;
+
+INSERT INTO skill_images (skill_id, image_id)
+VALUES (test_tool_2_id, test_tool_2_icon_id);
 
 
 COMMIT TRANSACTION;
