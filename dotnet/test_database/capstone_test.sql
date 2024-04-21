@@ -694,4 +694,9 @@ INSERT INTO sideprojects (name, description, video_walkthrough_url, project_stat
 VALUES ('Test Sideproject 2', 'Test Description 2', 'Test Video Walkthrough URL 2', 
     'Test Project Status 2', '2021-01-01', '2021-01-02');
 
+INSERT INTO images (name, url, type) VALUES (@name, @url, @type) RETURNING id;
+INSERT INTO portfolio_images (portfolio_id, image_id) VALUES (@portfolioId, @imageId);
+UPDATE portfolios SET main_image_id = @imageId WHERE id = @portfolioId;
+
+
 COMMIT TRANSACTION;
