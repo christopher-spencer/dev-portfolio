@@ -824,18 +824,36 @@ WHERE id = test_sideproject_1_id;
 
 --Creating test portfolio sideproject 1 additional images 1 and 2
 INSERT INTO images (name, url, type)
-VALUES ('Sideproject 1 Additional Image 1', 'Sideproject1AdditionalImage1.jpeg', 'additional image')
+VALUES ('Sideproject 1 Additional Image 1', 'Sideproject1AdditionalImage1.jpeg', 
+    'additional image')
 RETURNING id INTO test_sideproject_1_additional_image_1_id;
 
 INSERT INTO sideproject_images (sideproject_id, image_id)
 VALUES (test_sideproject_1_id, test_sideproject_1_additional_image_1_id);
 
 INSERT INTO images (name, url, type)
-VALUES ('Sideproject 1 Additional Image 2', 'Sideproject1AdditionalImage2.jpeg', 'additional image')
+VALUES ('Sideproject 1 Additional Image 2', 'Sideproject1AdditionalImage2.jpeg', 
+    'additional image')
 RETURNING id INTO test_sideproject_1_additional_image_2_id;
 
 INSERT INTO sideproject_images (sideproject_id, image_id)
 VALUES (test_sideproject_1_id, test_sideproject_1_additional_image_2_id);
+
+--Creating test portfolio sideproject 1 websites
+INSERT INTO websites (name, url, type)
+VALUES ('Sideproject 1 GitHub', 'https://www.github.com/sideproject1', 'github')
+RETURNING id INTO test_sideproject_1_github_id;
+
+INSERT INTO sideproject_websites (sideproject_id, website_id)
+VALUES (test_sideproject_1_id, test_sideproject_1_github_id);
+
+INSERT INTO websites (name, url, type)
+VALUES ('Sideproject 1 Main Website', 'https://www.main-website.com/sideproject1', 
+    'main website')
+RETURNING id INTO test_sideproject_1_main_website_id;
+
+INSERT INTO sideproject_websites (sideproject_id, website_id)
+VALUES (test_sideproject_1_id, test_sideproject_1_main_website_id);
 
 --Creating test portfolio sideproject 1 goals
 INSERT INTO goals (description)
@@ -906,7 +924,8 @@ INSERT INTO sideproject_contributors (sideproject_id, contributor_id)
 VALUES (test_sideproject_1_id, test_contributor_1_id);
 
 INSERT INTO contributors (first_name, last_name, email, bio, contribution_details)
-VALUES ('Jane', 'Testwoman', 'janetestwoman@test.com', 'Test Bio 2', 'Test Contribution Details 2')
+VALUES ('Jane', 'Testwoman', 'janetestwoman@test.com', 'Test Bio 2', 
+    'Test Contribution Details 2')
 RETURNING id INTO test_contributor_2_id;
 
 INSERT INTO sideproject_contributors (sideproject_id, contributor_id)
@@ -936,11 +955,80 @@ INSERT INTO contributor_websites (contributor_id, website_id)
 VALUES (test_contributor_1_id, test_contributor_1_linkedin_id);
 
 INSERT INTO websites (name, url, type)
-VALUES ('Johnny Testman Portfolio Link', 'https://www.portfolio.com/johnny-testman', 'portfolio link')
+VALUES ('Johnny Testman Portfolio Link', 'https://www.portfolio.com/johnny-testman', 
+    'portfolio link')
 RETURNING id INTO test_contributor_1_portfolio_id;
 
 INSERT INTO contributor_websites (contributor_id, website_id)
 VALUES (test_contributor_1_id, test_contributor_1_portfolio_id);
+
+--Creating test portfolio sideproject 1 APIs and services used
+INSERT INTO apis_and_services (name, description) 
+VALUES ('Test API/Service 1', 'Test API/Service Description 1')
+RETURNING id INTO test_api_service_1_id;
+
+INSERT INTO sideproject_apis_and_services (sideproject_id, apiservice_id)
+VALUES (test_sideproject_1_id, test_api_service_1_id);
+
+--Creating test portfolio sideproject 1 API and service image
+INSERT INTO images (name, url)
+VALUES ('API/Service 1 Image', 'API_Service1Image.jpeg')
+RETURNING id INTO test_api_service_1_image_id;
+
+INSERT INTO api_service_images (apiservice_id, image_id)
+VALUES (test_api_service_1_id, test_api_service_1_image_id);
+
+--Creating test portfolio sideproject 1 API and service website
+INSERT INTO websites (name, url)
+VALUES ('API/Service 1 Website', 'https://www.api-service1.com')
+RETURNING id INTO test_api_service_1_website_id;
+
+INSERT INTO api_service_websites (apiservice_id, website_id)
+VALUES (test_api_service_1_id, test_api_service_1_website_id);
+
+--Creating test portfolio sideproject 1 dependencies and libraries used
+INSERT INTO dependencies_and_libraries (name, description)
+VALUES ('Test Dependency/Library 1', 'Test Dependency/Library Description 1')
+RETURNING id INTO test_dependency_library_1_id;
+
+INSERT INTO sideproject_dependencies_and_libraries (sideproject_id, dependencylibrary_id)
+VALUES (test_sideproject_1_id, test_dependency_library_1_id);
+
+--Creating test portfolio sideproject 1 dependency/library image
+INSERT INTO images (name, url)
+VALUES ('Dependency/Library 1 Image', 'Dependency_Library1Image.jpeg')
+RETURNING id INTO test_dependency_library_1_image_id;
+
+INSERT INTO dependency_library_images (dependencylibrary_id, image_id)
+VALUES (test_dependency_library_1_id, test_dependency_library_1_image_id);
+
+--Creating test portfolio sideproject 1 dependency/library website
+INSERT INTO websites (name, url)
+VALUES ('Dependency/Library 1 Website', 'https://www.dependency-library1.com')
+RETURNING id INTO test_dependency_library_1_website_id;
+
+INSERT INTO dependency_library_websites (dependencylibrary_id, website_id)
+VALUES (test_dependency_library_1_id, test_dependency_library_1_website_id);
+
+--Creating test portfolio background work experiences
+INSERT INTO work_experiences (position_title, company_name, location, description, 
+    start_date, end_date)
+VALUES ('Test Position Title 1', 'Test Company 1', 'Test Location 1', 'Test Description 1', 
+    '2021-01-01', '2021-01-02')
+RETURNING id INTO test_work_experience_1_id;
+
+INSERT INTO portfolio_work_experiences (portfolio_id, experience_id)
+VALUES (test_portfolio_id, test_work_experience_1_id);
+
+INSERT INTO work_experiences (position_title, company_name, location, description, 
+    start_date)
+VALUES ('Test Position Title 2', 'Test Company 2', 'Test Location 2', 'Test Description 2',
+    '2021-01-01')
+RETURNING id INTO test_work_experience_2_id;
+
+INSERT INTO portfolio_work_experiences (portfolio_id, experience_id)
+VALUES (test_portfolio_id, test_work_experience_2_id);
+
 
 
 COMMIT TRANSACTION;
