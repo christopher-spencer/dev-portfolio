@@ -683,33 +683,59 @@ VALUES ('testAdmin', 'YhyGVQ+Ch69n4JMBncM4lNF/i9s=', 'Ar/aB2thQTI=', 'test_admin
 
 --Creating a test portfolio
 INSERT INTO portfolios (name, location, professional_summary, email) 
-VALUES ('Test Portfolio', 'Test Location', 'Test Professional Summary', 'email1@test.com');
-
--- Retrieve the ID of the inserted portfolio
-SELECT id FROM portfolios WHERE name = 'Test Portfolio';
+VALUES ('Test Portfolio', 'Test Location', 'Test Professional Summary', 'email1@test.com')
+RETURNING id INTO test_portfolio_id;
 
 --Creating a test portfolio main image
-INSERT INTO images (name, url, type) VALUES ('Portfolio Main Image', "MainImage.jpeg", 'main image') RETURNING id;
-INSERT INTO portfolio_images (portfolio_id, image_id) VALUES (?, ?);
-UPDATE portfolios SET main_image_id = ? WHERE id = ?;
+INSERT INTO images (name, url, type) VALUES ('Portfolio Main Image', "MainImage.jpeg", 'main image') 
+RETURNING id INTO test_main_image_id;
 
--- Retrieve the ID of the inserted portfolio main image
-SELECT id FROM images WHERE name = 'Portfolio Main Image';
+INSERT INTO portfolio_images (portfolio_id, image_id) 
+VALUES (test_portfolio_id, test_main_image_id);
 
-// TODO need to join portfolio table and images table
+UPDATE portfolios SET main_image_id = test_main_image_id 
+WHERE id = test_portfolio_id;
+
+--Creating test portfolio additional images 1 and 2
+INSERT INTO images (name, url, type) 
+VALUES ('Portfolio Additional Image 1', "AdditionalImage1.jpeg", 'additional image')
+RETURNING id INTO test_additional_image_1_id;
+
+INSERT INTO portfolio_images (portfolio_id, image_id)
+VALUES (test_portfolio_id, test_additional_image_1_id);
+
+INSERT INTO images (name, url, type) 
+VALUES ('Portfolio Additional Image 2', "AdditionalImage2.jpeg", 'additional image')
+RETURNING id INTO test_additional_image_2_id;
+
+INSERT INTO portfolio_images (portfolio_id, image_id)
+VALUES (test_portfolio_id, test_additional_image_2_id);
+
+--Creating test portfolio websites
+INSERT INTO websites (name, url, type)
+VALUES ('Test Portfolio GitHub', 'https://www.github.com/portfolio-test', 'github')
+RETURNING id INTO test_portfolio_github_id;
+
+INSERT INTO portfolio_websites (portfolio_id, website_id)
+VALUES (test_portfolio_id, test_portfolio_github_id);
+
+INSERT INTO websites (name, url, type)
+VALUES ('Test Portfolio LinkedIn', 'https://www.linkedin.com/portfolio-test', 'linkedin')
+RETURNING id INTO test_portfolio_linkedin_id;
+
+
 --Creating test sideprojects
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
     start_date, finish_date) 
 VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
-    'Test Project Status', '2021-01-01', '2021-01-02');
+    'Test Project Status', '2021-01-01', '2021-01-02')
+RETURNING id INTO test_sideproject_1_id;
+
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
     start_date, finish_date)
 VALUES ('Test Sideproject 2', 'Test Description 2', 'Test Video Walkthrough URL 2', 
-    'Test Project Status 2', '2021-01-01', '2021-01-02');
-
--- Retrieve the IDs of the inserted sideprojects
-SELECT id FROM sideprojects WHERE name = 'Test Sideproject';
-SELECT id FROM sideprojects WHERE name = 'Test Sideproject 2';
+    'Test Project Status 2', '2021-01-01', '2021-01-02')
+RETURNING id INTO test_sideproject_2_id;
 
 
 COMMIT TRANSACTION;
