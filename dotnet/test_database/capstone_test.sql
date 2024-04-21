@@ -897,5 +897,50 @@ RETURNING id INTO test_tool_2_icon_id;
 INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_tool_2_id, test_tool_2_icon_id);
 
+--Creating test portfolio sideproject 1 contributors
+INSERT INTO contributors (first_name, last_name, email, bio, contribution_details)
+VALUES ('Johnny', 'Testman', 'johnnytestman@test.com', 'Test Bio', 'Test Contribution Details')
+RETURNING id INTO test_contributor_1_id;
+
+INSERT INTO sideproject_contributors (sideproject_id, contributor_id)
+VALUES (test_sideproject_1_id, test_contributor_1_id);
+
+INSERT INTO contributors (first_name, last_name, email, bio, contribution_details)
+VALUES ('Jane', 'Testwoman', 'janetestwoman@test.com', 'Test Bio 2', 'Test Contribution Details 2')
+RETURNING id INTO test_contributor_2_id;
+
+INSERT INTO sideproject_contributors (sideproject_id, contributor_id)
+VALUES (test_sideproject_1_id, test_contributor_2_id);
+
+--Creating test portfolio sideproject 1 contributor images
+INSERT INTO images (name, url)
+VALUES ('Johnny Testman Image', 'JohnnyTestmanImage.jpeg')
+RETURNING id INTO test_contributor_1_image_id;
+
+INSERT INTO contributor_images (contributor_id, image_id)
+VALUES (test_contributor_1_id, test_contributor_1_image_id);
+
+--Creating test portfolio sideproject 1 contributor websites
+INSERT INTO websites (name, url, type)
+VALUES ('Johnny Testman GitHub', 'https://www.github.com/johnny-testman', 'github')
+RETURNING id INTO test_contributor_1_github_id;
+
+INSERT INTO contributor_websites (contributor_id, website_id)
+VALUES (test_contributor_1_id, test_contributor_1_github_id);
+
+INSERT INTO websites (name, url, type)
+VALUES ('Johnny Testman LinkedIn', 'https://www.linkedin.com/johnny-testman', 'linkedin')
+RETURNING id INTO test_contributor_1_linkedin_id;
+
+INSERT INTO contributor_websites (contributor_id, website_id)
+VALUES (test_contributor_1_id, test_contributor_1_linkedin_id);
+
+INSERT INTO websites (name, url, type)
+VALUES ('Johnny Testman Portfolio Link', 'https://www.portfolio.com/johnny-testman', 'portfolio link')
+RETURNING id INTO test_contributor_1_portfolio_id;
+
+INSERT INTO contributor_websites (contributor_id, website_id)
+VALUES (test_contributor_1_id, test_contributor_1_portfolio_id);
+
 
 COMMIT TRANSACTION;
