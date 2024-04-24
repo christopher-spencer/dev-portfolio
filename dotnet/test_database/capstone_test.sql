@@ -1107,5 +1107,28 @@ RETURNING id INTO test_achievement_1_image_id;
 INSERT INTO achievement_images (achievement_id, image_id)
 VALUES (test_achievement_1_id, test_achievement_1_image_id);
 
+--Creating test portfolio background work experience skills used and obtained
+INSERT INTO skills (name)
+VALUES ('Work Experience Test Skill 1')
+RETURNING id INTO test_work_experience_skill_1_id;
+
+INSERT INTO work_experience_skills (experience_id, skill_id)
+VALUES (test_work_experience_1_id, test_work_experience_skill_1_id);
+
+INSERT INTO skills (name)
+VALUES ('Work Experience Test Skill 2')
+RETURNING id INTO test_work_experience_skill_2_id;
+
+INSERT INTO work_experience_skills (experience_id, skill_id)
+VALUES (test_work_experience_1_id, test_work_experience_skill_2_id);
+
+--Creating test portfolio background work experience skill 1 icon
+INSERT INTO images (name, url)
+VALUES ('Work Experience Skill 1 Icon', 'WorkExperienceSkill1Icon.jpeg')
+RETURNING id INTO test_work_experience_skill_1_icon_id;
+
+INSERT INTO skill_images (skill_id, image_id)
+VALUES (test_work_experience_skill_1_id, test_work_experience_skill_1_icon_id);
+
 
 COMMIT TRANSACTION;
