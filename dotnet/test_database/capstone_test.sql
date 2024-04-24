@@ -1151,7 +1151,27 @@ RETURNING id INTO test_education_2_id;
 INSERT INTO portfolio_educations (portfolio_id, education_id)
 VALUES (test_portfolio_id, test_education_2_id);
 
+--Creating test portfolio education 1 institution logo image
+INSERT INTO images (name, url, type)
+VALUES ('Institution 1 Logo', 'Institution1Logo.jpeg', 'logo')
+RETURNING id INTO test_institution_1_logo_id;
 
+INSERT INTO education_images (education_id, image_id)
+VALUES (test_education_1_id, test_institution_1_logo_id);
+
+UPDATE educations SET institution_logo_id = test_institution_1_logo_id
+WHERE id = test_education_1_id;
+
+--Creating test portfolio education 1 main image
+INSERT INTO images (name, url, type)
+VALUES ('Education 1 Main Image', 'Education1MainImage.jpeg', 'main image')
+RETURNING id INTO test_education_1_main_image_id;
+
+INSERT INTO education_images (education_id, image_id)
+VALUES (test_education_1_id, test_education_1_main_image_id);
+
+UPDATE educations SET main_image_id = test_education_1_main_image_id
+WHERE id = test_education_1_id;
 
 
 COMMIT TRANSACTION;
