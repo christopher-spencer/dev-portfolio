@@ -1029,6 +1029,45 @@ RETURNING id INTO test_work_experience_2_id;
 INSERT INTO portfolio_work_experiences (portfolio_id, experience_id)
 VALUES (test_portfolio_id, test_work_experience_2_id);
 
+--Creating test portfolio background work experience company logo image
+INSERT INTO images (name, url, type)
+VALUES ('Company 1 Logo', 'Company1Logo.jpeg', 'logo')
+RETURNING id INTO test_company_1_logo_id;
+
+INSERT INTO work_experience_images (experience_id, image_id)
+VALUES (test_work_experience_1_id, test_company_1_logo_id);
+
+UPDATE work_experiences SET company_logo_id = test_company_1_logo_id
+WHERE id = test_work_experience_1_id;
+
+--Creating test portfolio background work experience main image
+INSERT INTO images (name, url, type)
+VALUES ('Work Experience 1 Main Image', 'WorkExperience1MainImage.jpeg', 'main image')
+RETURNING id INTO test_work_experience_1_main_image_id;
+
+INSERT INTO work_experience_images (experience_id, image_id)
+VALUES (test_work_experience_1_id, test_work_experience_1_main_image_id);
+
+UPDATE work_experiences SET main_image_id = test_work_experience_1_main_image_id
+WHERE id = test_work_experience_1_id;
+
+--Creating test portfolio background work experience additional images 1 and 2
+INSERT INTO images (name, url, type)
+VALUES ('Work Experience 1 Additional Image 1', 'WorkExperience1AdditionalImage1.jpeg', 
+    'additional image')
+RETURNING id INTO test_work_experience_1_additional_image_1_id;
+
+INSERT INTO work_experience_images (experience_id, image_id)
+VALUES (test_work_experience_1_id, test_work_experience_1_additional_image_1_id);
+
+INSERT INTO images (name, url, type)
+VALUES ('Work Experience 1 Additional Image 2', 'WorkExperience1AdditionalImage2.jpeg', 
+    'additional image')
+RETURNING id INTO test_work_experience_1_additional_image_2_id;
+
+INSERT INTO work_experience_images (experience_id, image_id)
+VALUES (test_work_experience_1_id, test_work_experience_1_additional_image_2_id);
+
 
 
 COMMIT TRANSACTION;
