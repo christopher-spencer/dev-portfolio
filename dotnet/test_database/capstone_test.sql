@@ -1258,7 +1258,16 @@ VALUES (test_credential_1_id, test_credential_1_organization_logo_id);
 UPDATE credentials SET organization_logo_id = test_credential_1_organization_logo_id
 WHERE id = test_credential_1_id;
 
+--Creating test portfolio credential 1 main image
+INSERT INTO images (name, url, type)
+VALUES ('Credential 1 Main Image', 'Credential1MainImage.jpeg', 'main image')
+RETURNING id INTO test_credential_1_main_image_id;
 
+INSERT INTO credential_images (credential_id, image_id)
+VALUES (test_credential_1_id, test_credential_1_main_image_id);
+
+UPDATE credentials SET main_image_id = test_credential_1_main_image_id
+WHERE id = test_credential_1_id;
 
 
 COMMIT TRANSACTION;
