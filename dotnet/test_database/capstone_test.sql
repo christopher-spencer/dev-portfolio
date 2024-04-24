@@ -1173,5 +1173,22 @@ VALUES (test_education_1_id, test_education_1_main_image_id);
 UPDATE educations SET main_image_id = test_education_1_main_image_id
 WHERE id = test_education_1_id;
 
+--Creating test portfolio education 1 additional images 1 and 2
+INSERT INTO images (name, url, type)
+VALUES ('Education 1 Additional Image 1', 'Education1AdditionalImage1.jpeg', 
+    'additional image')
+RETURNING id INTO test_education_1_additional_image_1_id;
+
+INSERT INTO education_images (education_id, image_id)
+VALUES (test_education_1_id, test_education_1_additional_image_1_id);
+
+INSERT INTO images (name, url, type)
+VALUES ('Education 1 Additional Image 2', 'Education1AdditionalImage2.jpeg', 
+    'additional image')
+RETURNING id INTO test_education_1_additional_image_2_id;
+
+INSERT INTO education_images (education_id, image_id)
+VALUES (test_education_1_id, test_education_1_additional_image_2_id);
+
 
 COMMIT TRANSACTION;
