@@ -1206,7 +1206,20 @@ RETURNING id INTO test_education_1_website_image_id;
 INSERT INTO website_images (website_id, image_id)
 VALUES (test_education_1_website_id, test_education_1_website_image_id);
 
+--Creating test portfolio education 1 honors and awards (achievements)
+INSERT INTO achievements (description)
+VALUES ('Test Honor/Award 1')
+RETURNING id INTO test_honor_1_id;
 
+INSERT INTO education_achievements (education_id, achievement_id)
+VALUES (test_education_1_id, test_honor_1_id);
+
+INSERT INTO achievements (description)
+VALUES ('Test Honor/Award 2')
+RETURNING id INTO test_honor_2_id;
+
+INSERT INTO education_achievements (education_id, achievement_id)
+VALUES (test_education_1_id, test_honor_2_id);
 
 
 COMMIT TRANSACTION;
