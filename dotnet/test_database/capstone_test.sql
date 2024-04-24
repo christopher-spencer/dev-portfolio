@@ -1230,5 +1230,24 @@ RETURNING id INTO test_honor_1_image_id;
 INSERT INTO achievement_images (achievement_id, image_id)
 VALUES (test_honor_1_id, test_honor_1_image_id);
 
+--Creating test portfolio credentials obtained
+INSERT INTO credentials (name, issuing_organization, description, issue_date, 
+    expiration_date, credential_id_number)
+VALUES ('Test Credential 1', 'Test Issuing Organization 1', 'Test Description 1',
+    '2021-01-01', '2021-01-02', 1111111)
+RETURNING id INTO test_credential_1_id;
+
+INSERT INTO portfolio_credentials (portfolio_id, credential_id)
+VALUES (test_portfolio_id, test_credential_1_id);
+
+INSERT INTO credentials (name, issuing_organization, description)
+VALUES ('Test Credential 2', 'Test Issuing Organization 2', 'Test Description 2')
+RETURNING id INTO test_credential_2_id;
+
+INSERT INTO portfolio_credentials (portfolio_id, credential_id)
+VALUES (test_portfolio_id, test_credential_2_id);
+
+
+
 
 COMMIT TRANSACTION;
