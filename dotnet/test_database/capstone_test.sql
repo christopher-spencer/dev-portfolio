@@ -1099,7 +1099,13 @@ RETURNING id INTO test_achievement_2_id;
 INSERT INTO work_experience_achievements (experience_id, achievement_id)
 VALUES (test_work_experience_1_id, test_achievement_2_id);
 
---Creating test portfolio background work experience 1 achievement images
+--Creating test portfolio background work experience 1 achievement 1 image
+INSERT INTO images (name, url)
+VALUES ('Achievement 1 Image', 'Achievement1Image.jpeg')
+RETURNING id INTO test_achievement_1_image_id;
+
+INSERT INTO achievement_images (achievement_id, image_id)
+VALUES (test_achievement_1_id, test_achievement_1_image_id);
 
 
 COMMIT TRANSACTION;
