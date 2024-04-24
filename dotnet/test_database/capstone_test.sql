@@ -1130,5 +1130,28 @@ RETURNING id INTO test_work_experience_skill_1_icon_id;
 INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_work_experience_skill_1_id, test_work_experience_skill_1_icon_id);
 
+--Creating test portfolio educations obtained
+INSERT INTO educations (institution_name, location, description, field_of_study, major, 
+    minor, degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date)
+VALUES ('Test Institution 1', 'Test Location 1', 'Test Description 1', 
+    'Test Field of Study 1', 'Test Major 1', 'Test Minor 1', 'Test Degree Obtained 1', 
+    3.5, 3.7, '2021-01-01', '2021-01-02')
+RETURNING id INTO test_education_1_id;
+
+INSERT INTO portfolio_educations (portfolio_id, education_id)
+VALUES (test_portfolio_id, test_education_1_id);
+
+INSERT INTO educations (institution_name, location, description, field_of_study, major, 
+    minor, degree_obtained, start_date)
+VALUES ('Test Institution 2', 'Test Location 2', 'Test Description 2', 
+    'Test Field of Study 2', 'Test Major 2', 'Test Minor 2', 'Test Degree Obtained 2',
+    '2021-01-01')
+RETURNING id INTO test_education_2_id;
+
+INSERT INTO portfolio_educations (portfolio_id, education_id)
+VALUES (test_portfolio_id, test_education_2_id);
+
+
+
 
 COMMIT TRANSACTION;
