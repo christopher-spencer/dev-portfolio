@@ -1190,5 +1190,13 @@ RETURNING id INTO test_education_1_additional_image_2_id;
 INSERT INTO education_images (education_id, image_id)
 VALUES (test_education_1_id, test_education_1_additional_image_2_id);
 
+--Creating test portfolio education 1 website
+INSERT INTO websites (name, url)
+VALUES ('Education 1 Institution Website', 'https://www.education1.com')
+RETURNING id INTO test_education_1_website_id;
+
+INSERT INTO education_websites (education_id, website_id)
+VALUES (test_education_1_id, test_education_1_website_id);
+
 
 COMMIT TRANSACTION;
