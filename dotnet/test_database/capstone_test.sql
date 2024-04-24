@@ -1247,6 +1247,17 @@ RETURNING id INTO test_credential_2_id;
 INSERT INTO portfolio_credentials (portfolio_id, credential_id)
 VALUES (test_portfolio_id, test_credential_2_id);
 
+--Creating test portfolio credential 1 organization logo
+INSERT INTO images (name, url, type)
+VALUES ('Credential 1 Organization Logo', 'Credential1OrganizationLogo.jpeg', 'logo')
+RETURNING id INTO test_credential_1_organization_logo_id;
+
+INSERT INTO credential_images (credential_id, image_id)
+VALUES (test_credential_1_id, test_credential_1_organization_logo_id);
+
+UPDATE credentials SET organization_logo_id = test_credential_1_organization_logo_id
+WHERE id = test_credential_1_id;
+
 
 
 
