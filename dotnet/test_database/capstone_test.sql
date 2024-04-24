@@ -1076,6 +1076,14 @@ RETURNING id INTO test_work_experience_1_website_id;
 INSERT INTO work_experience_websites (experience_id, website_id)
 VALUES (test_work_experience_1_id, test_work_experience_1_website_id);
 
+--Creating test portfolio background work experience 1 website image
+INSERT INTO images (name, url)
+VALUES ('Work Experience 1 Website Image', 'WorkExperience1WebsiteImage.jpeg')
+RETURNING id INTO test_work_experience_1_website_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_work_experience_1_website_id, test_work_experience_1_website_image_id);
+
 --Creating test portfolio background work experience 1 responsibilities/achievements
 INSERT INTO achievements (description)
 VALUES ('Test Achievement 1')
@@ -1090,6 +1098,8 @@ RETURNING id INTO test_achievement_2_id;
 
 INSERT INTO work_experience_achievements (experience_id, achievement_id)
 VALUES (test_work_experience_1_id, test_achievement_2_id);
+
+--Creating test portfolio background work experience 1 achievement images
 
 
 COMMIT TRANSACTION;
