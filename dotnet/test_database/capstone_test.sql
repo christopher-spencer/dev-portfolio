@@ -1221,5 +1221,14 @@ RETURNING id INTO test_honor_2_id;
 INSERT INTO education_achievements (education_id, achievement_id)
 VALUES (test_education_1_id, test_honor_2_id);
 
+--Creating test portfolio education 1 honor/award achievement 1 image
+
+INSERT INTO images (name, url)
+VALUES ('Honor/Award 1 Image', 'HonorAward1Image.jpeg')
+RETURNING id INTO test_honor_1_image_id;
+
+INSERT INTO achievement_images (achievement_id, image_id)
+VALUES (test_honor_1_id, test_honor_1_image_id);
+
 
 COMMIT TRANSACTION;
