@@ -1068,6 +1068,15 @@ RETURNING id INTO test_work_experience_1_additional_image_2_id;
 INSERT INTO work_experience_images (experience_id, image_id)
 VALUES (test_work_experience_1_id, test_work_experience_1_additional_image_2_id);
 
+--Creating test portfolio background work experience 1 website
+INSERT INTO websites (name, url)
+VALUES ('Work Experience 1 Company Website', 'https://www.work-experience1.com')
+RETURNING id INTO test_work_experience_1_website_id;
+
+INSERT INTO work_experience_websites (experience_id, website_id)
+VALUES (test_work_experience_1_id, test_work_experience_1_website_id);
+
+
 
 
 COMMIT TRANSACTION;
