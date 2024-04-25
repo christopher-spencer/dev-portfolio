@@ -1269,5 +1269,19 @@ VALUES (test_credential_1_id, test_credential_1_main_image_id);
 UPDATE credentials SET main_image_id = test_credential_1_main_image_id
 WHERE id = test_credential_1_id;
 
+--Creating test portfolio credential organization website
+INSERT INTO websites (name, url, type)
+VALUES ('Credential 1 Organization Website', 'https://www.credential1.com', 
+    'main website')
+RETURNING id INTO test_credential_1_website_id;
+
+INSERT INTO credential_websites (credential_id, website_id)
+VALUES (test_credential_1_id, test_credential_1_website_id);
+
+UPDATE credentials SET organization_website_id = test_credential_1_website_id
+WHERE id = test_credential_1_id;
+
+--Creating test portfolio credential organization website image 
+
 
 COMMIT TRANSACTION;
