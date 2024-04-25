@@ -719,9 +719,18 @@ RETURNING id INTO test_portfolio_github_id;
 INSERT INTO portfolio_websites (portfolio_id, website_id)
 VALUES (test_portfolio_id, test_portfolio_github_id);
 
+UPDATE portfolios SET github_repo_link_id = test_portfolio_github_id
+WHERE id = test_portfolio_id;
+
 INSERT INTO websites (name, url, type)
 VALUES ('Test Portfolio LinkedIn', 'https://www.linkedin.com/portfolio-test', 'linkedin')
 RETURNING id INTO test_portfolio_linkedin_id;
+
+INSERT INTO portfolio_websites (portfolio_id, website_id)
+VALUES (test_portfolio_id, test_portfolio_linkedin_id);
+
+UPDATE portfolios SET linkedin_id = test_portfolio_linkedin_id
+WHERE id = test_portfolio_id;
 
 --Creating test portfolio website images
 INSERT INTO images (name, url)
@@ -847,6 +856,9 @@ RETURNING id INTO test_sideproject_1_github_id;
 INSERT INTO sideproject_websites (sideproject_id, website_id)
 VALUES (test_sideproject_1_id, test_sideproject_1_github_id);
 
+UPDATE sideprojects SET github_repo_link_id = test_sideproject_1_github_id
+WHERE id = test_sideproject_1_id;
+
 INSERT INTO websites (name, url, type)
 VALUES ('Sideproject 1 Main Website', 'https://www.main-website.com/sideproject1', 
     'main website')
@@ -854,6 +866,9 @@ RETURNING id INTO test_sideproject_1_main_website_id;
 
 INSERT INTO sideproject_websites (sideproject_id, website_id)
 VALUES (test_sideproject_1_id, test_sideproject_1_main_website_id);
+
+UPDATE sideprojects SET website_id = test_sideproject_1_main_website_id
+WHERE id = test_sideproject_1_id;
 
 --Creating test portfolio sideproject 1 goals
 INSERT INTO goals (description)
@@ -947,12 +962,18 @@ RETURNING id INTO test_contributor_1_github_id;
 INSERT INTO contributor_websites (contributor_id, website_id)
 VALUES (test_contributor_1_id, test_contributor_1_github_id);
 
+UPDATE contributors SET github_id = test_contributor_1_github_id
+WHERE id = test_contributor_1_id;
+
 INSERT INTO websites (name, url, type)
 VALUES ('Johnny Testman LinkedIn', 'https://www.linkedin.com/johnny-testman', 'linkedin')
 RETURNING id INTO test_contributor_1_linkedin_id;
 
 INSERT INTO contributor_websites (contributor_id, website_id)
 VALUES (test_contributor_1_id, test_contributor_1_linkedin_id);
+
+UPDATE contributors SET linkedin_id = test_contributor_1_linkedin_id
+WHERE id = test_contributor_1_id;
 
 INSERT INTO websites (name, url, type)
 VALUES ('Johnny Testman Portfolio Link', 'https://www.portfolio.com/johnny-testman', 
@@ -961,6 +982,9 @@ RETURNING id INTO test_contributor_1_portfolio_id;
 
 INSERT INTO contributor_websites (contributor_id, website_id)
 VALUES (test_contributor_1_id, test_contributor_1_portfolio_id);
+
+UPDATE contributors SET portfolio_id = test_contributor_1_portfolio_id
+WHERE id = test_contributor_1_id;
 
 --Creating test portfolio sideproject 1 APIs and services used
 INSERT INTO apis_and_services (name, description) 
@@ -1282,6 +1306,23 @@ UPDATE credentials SET organization_website_id = test_credential_1_website_id
 WHERE id = test_credential_1_id;
 
 --Creating test portfolio credential organization website image 
+INSERT INTO images (name, url)
+VALUES ('Credential 1 Website Image', 'Credential1WebsiteImage.jpeg')
+RETURNING id INTO test_credential_1_website_image_id;
 
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_credential_1_website_id, test_credential_1_website_image_id);
+
+--Creating test portfolio credential 'credential website'
+INSERT INTO websites (name, url, type)
+VALUES ('Credential 1 Credential Website', 'https://www.credential1.com/credential', 
+    'secondary website')
+RETURNING id INTO test_credential_1_credential_website_id;
+
+INSERT INTO credential_websites (credential_id, website_id)
+VALUES (test_credential_1_id, test_credential_1_credential_website_id);
+
+UPDATE credentials SET credential_website_id = test_credential_1_credential_website_id
+WHERE id = test_credential_1_id;
 
 COMMIT TRANSACTION;
