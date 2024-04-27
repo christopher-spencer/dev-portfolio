@@ -953,7 +953,7 @@ RETURNING id INTO test_contributor_1_image_id;
 
 INSERT INTO contributor_images (contributor_id, image_id)
 VALUES (test_contributor_1_id, test_contributor_1_image_id);
-//NOTE starting here, rechecking for missing id updates 
+
 --Creating test portfolio sideproject 1 contributor websites
 INSERT INTO websites (name, url, type)
 VALUES ('Johnny Testman GitHub', 'https://www.github.com/johnny-testman', 'github')
