@@ -1373,6 +1373,17 @@ VALUES (test_volunteer_1_id, test_volunteer_1_organization_logo_id);
 UPDATE volunteer_works SET organization_logo_id = test_volunteer_1_organization_logo_id
 WHERE id = test_volunteer_1_id;
 
+--Creating test portfolio volunteer work main image
+INSERT INTO images (name, url, type)
+VALUES ('Volunteer Work 1 Main Image', 'VolunteerWork1MainImage.jpeg', 'main image')
+RETURNING id INTO test_volunteer_1_main_image_id;
+
+INSERT INTO volunteer_images (volunteer_id, image_id)
+VALUES (test_volunteer_1_id, test_volunteer_1_main_image_id);
+
+UPDATE volunteer_works SET main_image_id = test_volunteer_1_main_image_id
+WHERE id = test_volunteer_1_id;
+
 
 
 
