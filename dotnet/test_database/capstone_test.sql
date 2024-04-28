@@ -1334,6 +1334,16 @@ INSERT INTO website_images (website_id, image_id)
 VALUES (test_credential_1_credential_website_id, 
     test_credential_1_credential_website_image_id);
 
+--Creating test portfolio credential associated skills
+INSERT INTO skills (name)
+VALUES ('Credential Test Skill 1')
+RETURNING id INTO test_credential_skill_1_id;
+
+INSERT INTO credential_skills (credential_id, skill_id)
+VALUES (test_credential_1_id, test_credential_skill_1_id);
+
+
+
 
 
 COMMIT TRANSACTION;
