@@ -1384,6 +1384,25 @@ VALUES (test_volunteer_1_id, test_volunteer_1_main_image_id);
 UPDATE volunteer_works SET main_image_id = test_volunteer_1_main_image_id
 WHERE id = test_volunteer_1_id;
 
+--Creating test portfolio volunteer work additional images 1 and 2
+INSERT INTO images (name, url, type)
+VALUES ('Volunteer Work 1 Additional Image 1', 'VolunteerWork1AdditionalImage1.jpeg', 
+    'additional image')
+RETURNING id INTO test_volunteer_1_additional_image_1_id;
+
+INSERT INTO volunteer_images (volunteer_id, image_id)
+VALUES (test_volunteer_1_id, test_volunteer_1_additional_image_1_id);
+
+INSERT INTO images (name, url, type)
+VALUES ('Volunteer Work 1 Additional Image 2', 'VolunteerWork1AdditionalImage2.jpeg', 
+    'additional image')
+RETURNING id INTO test_volunteer_1_additional_image_2_id;
+
+INSERT INTO volunteer_images (volunteer_id, image_id)
+VALUES (test_volunteer_1_id, test_volunteer_1_additional_image_2_id);
+
+
+
 
 
 
