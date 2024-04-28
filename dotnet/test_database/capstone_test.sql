@@ -1361,7 +1361,17 @@ RETURNING id INTO test_volunteer_2_id;
 INSERT INTO portfolio_volunteer_works (portfolio_id, volunteer_id)
 VALUES (test_portfolio_id, test_volunteer_2_id);
 
+--Creating test portfolio volunteer work organization logo
+INSERT INTO images (name, url, type)
+VALUES ('Volunteer Work 1 Organization Logo', 'VolunteerWork1OrganizationLogo.jpeg', 
+    'logo')
+RETURNING id INTO test_volunteer_1_organization_logo_id;
 
+INSERT INTO volunteer_images (volunteer_id, image_id)
+VALUES (test_volunteer_1_id, test_volunteer_1_organization_logo_id);
+
+UPDATE volunteer_works SET organization_logo_id = test_volunteer_1_organization_logo_id
+WHERE id = test_volunteer_1_id;
 
 
 
