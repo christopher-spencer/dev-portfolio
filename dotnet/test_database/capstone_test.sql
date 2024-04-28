@@ -1342,6 +1342,26 @@ RETURNING id INTO test_credential_skill_1_id;
 INSERT INTO credential_skills (credential_id, skill_id)
 VALUES (test_credential_1_id, test_credential_skill_1_id);
 
+--Creating test portfolio volunteer works   
+INSERT INTO volunteer_works (organization_name, location, organization_description, 
+    position_title, start_date, end_date)
+VALUES ('Test Organization 1', 'Test Location 1', 'Test Organization Description 1',
+    'Test Position Title 1', '2021-01-01', '2021-01-02')
+RETURNING id INTO test_volunteer_1_id;
+
+INSERT INTO portfolio_volunteer_works (portfolio_id, volunteer_id)
+VALUES (test_portfolio_id, test_volunteer_1_id);
+
+INSERT INTO volunteer_works (organization_name, location, organization_description, 
+    position_title, start_date)
+VALUES ('Test Organization 2', 'Test Location 2', 'Test Organization Description 2',
+    'Test Position Title 2', '2021-01-01')
+RETURNING id INTO test_volunteer_2_id;
+
+INSERT INTO portfolio_volunteer_works (portfolio_id, volunteer_id)
+VALUES (test_portfolio_id, test_volunteer_2_id);
+
+
 
 
 
