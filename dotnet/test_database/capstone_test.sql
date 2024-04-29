@@ -1490,6 +1490,18 @@ RETURNING id INTO test_open_source_2_id;
 INSERT INTO portfolio_open_source_contributions (portfolio_id, contribution_id)
 VALUES (test_portfolio_id, test_open_source_2_id);
 
+--Creating test portfolio open source contribution organization logo
+INSERT INTO images (name, url, type)
+VALUES ('Open Source 1 Organization Logo', 'OpenSource1OrganizationLogo.jpeg', 'logo')
+RETURNING id INTO test_open_source_1_organization_logo_id;
+
+INSERT INTO open_source_contribution_images (contribution_id, image_id)
+VALUES (test_open_source_1_id, test_open_source_1_organization_logo_id);
+
+UPDATE open_source_contributions 
+SET organization_logo_id = test_open_source_1_organization_logo_id
+WHERE id = test_open_source_1_id;
+
 
 
 
