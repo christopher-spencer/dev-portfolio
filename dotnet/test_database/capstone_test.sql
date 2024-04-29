@@ -1463,6 +1463,14 @@ RETURNING id INTO test_volunteer_1_skill_1_icon_id;
 INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_volunteer_1_skill_1_id, test_volunteer_1_skill_1_icon_id);
 
+--Creating test portfolio volunteer work 1 skill 2 icon
+INSERT INTO images (name, url)
+VALUES ('Volunteer Work Skill 2 Icon', 'VolunteerWorkSkill2Icon.jpeg')
+RETURNING id INTO test_volunteer_1_skill_2_icon_id;
+
+INSERT INTO skill_images (skill_id, image_id)
+VALUES (test_volunteer_1_skill_2_id, test_volunteer_1_skill_2_icon_id);
+
 
 
 
