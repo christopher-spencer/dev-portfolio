@@ -1440,6 +1440,21 @@ RETURNING id INTO test_volunteer_1_achievement_1_image_id;
 INSERT INTO achievement_images (achievement_id, image_id)
 VALUES (test_volunteer_1_achievement_1_id, test_volunteer_1_achievement_1_image_id);
 
+--Creating test portfolio volunteer work 1 skills used and obtained
+INSERT INTO skills (name)
+VALUES ('Volunteer Work Test Skill 1')
+RETURNING id INTO test_volunteer_1_skill_1_id;
+
+INSERT INTO volunteer_skills (volunteer_id, skill_id)
+VALUES (test_volunteer_1_id, test_volunteer_1_skill_1_id);
+
+INSERT INTO skills (name)
+VALUES ('Volunteer Work Test Skill 2')
+RETURNING id INTO test_volunteer_1_skill_2_id;
+
+INSERT INTO volunteer_skills (volunteer_id, skill_id)
+VALUES (test_volunteer_1_id, test_volunteer_1_skill_2_id);
+
 
 
 
