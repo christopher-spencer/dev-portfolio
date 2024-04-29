@@ -1417,6 +1417,21 @@ RETURNING id INTO test_volunteer_1_website_image_id;
 INSERT INTO website_images (website_id, image_id)
 VALUES (test_volunteer_1_website_id, test_volunteer_1_website_image_id);
 
+--Creating test portfolio volunteer work 1 responsibilities/achievements
+INSERT INTO achievements (description)
+VALUES ('Test Volunteer Work 1 Achievement 1')
+RETURNING id INTO test_volunteer_1_achievement_1_id;
+
+INSERT INTO volunteer_achievements (volunteer_id, achievement_id)
+VALUES (test_volunteer_1_id, test_volunteer_1_achievement_1_id);
+
+INSERT INTO achievements (description)
+VALUES ('Test Volunteer Work 1 Achievement 2')
+RETURNING id INTO test_volunteer_1_achievement_2_id;
+
+INSERT INTO volunteer_achievements (volunteer_id, achievement_id)
+VALUES (test_volunteer_1_id, test_volunteer_1_achievement_2_id);
+
 
 
 
