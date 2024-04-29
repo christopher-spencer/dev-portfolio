@@ -1409,6 +1409,14 @@ RETURNING id INTO test_volunteer_1_website_id;
 INSERT INTO volunteer_websites (volunteer_id, website_id)
 VALUES (test_volunteer_1_id, test_volunteer_1_website_id);
 
+--Creating test portfolio volunteer work 1 website image
+INSERT INTO images (name, url)
+VALUES ('Volunteer Work 1 Website Image', 'VolunteerWork1WebsiteImage.jpeg')
+RETURNING id INTO test_volunteer_1_website_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_volunteer_1_website_id, test_volunteer_1_website_image_id);
+
 
 
 
