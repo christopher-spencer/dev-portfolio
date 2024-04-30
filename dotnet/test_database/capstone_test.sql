@@ -1597,6 +1597,14 @@ RETURNING id INTO test_open_source_1_pull_request_1_image_id;
 INSERT INTO website_images (website_id, image_id)
 VALUES (test_open_source_1_pull_request_1_id, test_open_source_1_pull_request_1_image_id);
 
+--Creating test portfolio open source contribution 1 tech skills utilized
+INSERT INTO skills (name)
+VALUES ('Open Source 1 Tech Skill 1')
+RETURNING id INTO test_open_source_1_tech_skill_1_id;
+
+INSERT INTO open_source_contribution_skills (contribution_id, skill_id)
+VALUES (test_open_source_1_id, test_open_source_1_tech_skill_1_id);
+
 
 
 
