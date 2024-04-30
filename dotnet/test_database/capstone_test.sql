@@ -1613,6 +1613,21 @@ RETURNING id INTO test_open_source_1_tech_skill_1_icon_id;
 INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_open_source_1_tech_skill_1_id, test_open_source_1_tech_skill_1_icon_id);
 
+--Creating test portfolio open source contribution 1 review comments and feedback received (achievements)
+INSERT INTO achievements (description)
+VALUES ('Open Source 1 Review Comment 1')
+RETURNING id INTO test_open_source_1_review_comment_1_id;
+
+INSERT INTO open_source_contribution_achievements (contribution_id, achievement_id)
+VALUES (test_open_source_1_id, test_open_source_1_review_comment_1_id);
+
+INSERT INTO achievements (description)
+VALUES ('Open Source 1 Review Comment 2')
+RETURNING id INTO test_open_source_1_review_comment_2_id;
+
+INSERT INTO open_source_contribution_achievements (contribution_id, achievement_id)
+VALUES (test_open_source_1_id, test_open_source_1_review_comment_2_id);
+
 
 
 
