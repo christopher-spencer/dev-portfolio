@@ -1531,7 +1531,18 @@ RETURNING id INTO test_open_source_1_additional_image_2_id;
 INSERT INTO open_source_contribution_images (contribution_id, image_id)
 VALUES (test_open_source_1_id, test_open_source_1_additional_image_2_id);
 
+--Creating test portfolio open source contribution 1 organization website
+INSERT INTO websites (name, url, type)
+VALUES ('Open Source 1 Organization Website', 'https://www.open-source1.com', 
+    'main website')
+RETURNING id INTO test_open_source_1_website_id;
 
+INSERT INTO open_source_contribution_websites (contribution_id, website_id)
+VALUES (test_open_source_1_id, test_open_source_1_website_id);
+
+UPDATE open_source_contributions
+SET organization_website_id = test_open_source_1_website_id
+WHERE id = test_open_source_1_id;
 
 
 
