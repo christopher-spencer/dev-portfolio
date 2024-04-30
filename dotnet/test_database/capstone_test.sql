@@ -1544,6 +1544,16 @@ UPDATE open_source_contributions
 SET organization_website_id = test_open_source_1_website_id
 WHERE id = test_open_source_1_id;
 
+--Creating test portfolio open source contribution 1 organization website image
+INSERT INTO images (name, url)
+VALUES ('Open Source 1 Website Image', 'OpenSource1WebsiteImage.jpeg')
+RETURNING id INTO test_open_source_1_website_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_open_source_1_website_id, test_open_source_1_website_image_id);
+
+
+
 
 
 COMMIT TRANSACTION;
