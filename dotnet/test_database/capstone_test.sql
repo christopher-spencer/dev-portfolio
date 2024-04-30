@@ -1589,6 +1589,14 @@ RETURNING id INTO test_open_source_1_pull_request_2_id;
 INSERT INTO open_source_contribution_websites (contribution_id, website_id)
 VALUES (test_open_source_1_id, test_open_source_1_pull_request_2_id);
 
+--Creating test portfolio open source contribution 1 pull request link 1 image
+INSERT INTO images (name, url)
+VALUES ('Open Source 1 Pull Request 1 Image', 'OpenSource1PullRequest1Image.jpeg')
+RETURNING id INTO test_open_source_1_pull_request_1_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_open_source_1_pull_request_1_id, test_open_source_1_pull_request_1_image_id);
+
 
 
 
