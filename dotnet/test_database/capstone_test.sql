@@ -1636,5 +1636,17 @@ RETURNING id INTO test_open_source_1_review_comment_1_image_id;
 INSERT INTO achievement_images (achievement_id, image_id)
 VALUES (test_open_source_1_review_comment_1_id, test_open_source_1_review_comment_1_image_id);
 
+--Creating test blog posts
+INSERT INTO blogposts (name, author, description, content, created_at, updated_at)
+VALUES ('Test Blog Post 1', 'Test Author 1', 'Test Description 1', 'Test Content 1', 
+    '2021-01-01', '2021-01-02')
+RETURNING id INTO test_blog_post_1_id;
+
+INSERT INTO blogposts (name, author, description, content, created_at, updated_at)
+VALUES ('Test Blog Post 2', 'Test Author 2', 'Test Description 2', 'Test Content 2', 
+    '2021-01-01', '2021-01-02')
+RETURNING id INTO test_blog_post_2_id;
+
+
 
 COMMIT TRANSACTION;
