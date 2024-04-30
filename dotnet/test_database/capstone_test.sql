@@ -1647,6 +1647,17 @@ VALUES ('Test Blog Post 2', 'Test Author 2', 'Test Description 2', 'Test Content
     '2021-01-01', '2021-01-02')
 RETURNING id INTO test_blog_post_2_id;
 
+--Creating test blog post 1 main image
+INSERT INTO images (name, url, type)
+VALUES ('Blog Post 1 Main Image', 'BlogPost1MainImage.jpeg', 'main image')
+RETURNING id INTO test_blog_post_1_main_image_id;
+
+INSERT INTO blogpost_images (blogpost_id, image_id)
+VALUES (test_blog_post_1_id, test_blog_post_1_main_image_id);
+
+UPDATE blogposts SET main_image_id = test_blog_post_1_main_image_id
+WHERE id = test_blog_post_1_id;
+
 
 
 COMMIT TRANSACTION;
