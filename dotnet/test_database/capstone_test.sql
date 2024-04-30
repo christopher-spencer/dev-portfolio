@@ -1628,19 +1628,13 @@ RETURNING id INTO test_open_source_1_review_comment_2_id;
 INSERT INTO open_source_contribution_achievements (contribution_id, achievement_id)
 VALUES (test_open_source_1_id, test_open_source_1_review_comment_2_id);
 
---Creating test portfolio open source contribution 1 review comment 1 image
+--Creating test portfolio open source contribution 1 review comment/achievement 1 image
 INSERT INTO images (name, url)
 VALUES ('Open Source 1 Review Comment 1 Image', 'OpenSource1ReviewComment1Image.jpeg')
 RETURNING id INTO test_open_source_1_review_comment_1_image_id;
 
 INSERT INTO achievement_images (achievement_id, image_id)
 VALUES (test_open_source_1_review_comment_1_id, test_open_source_1_review_comment_1_image_id);
-
-
-
-
-
-
 
 
 COMMIT TRANSACTION;
