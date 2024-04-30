@@ -1502,6 +1502,18 @@ UPDATE open_source_contributions
 SET organization_logo_id = test_open_source_1_organization_logo_id
 WHERE id = test_open_source_1_id;
 
+--Creating test portfolio open source contribution main image
+INSERT INTO images (name, url, type)
+VALUES ('Open Source 1 Main Image', 'OpenSource1MainImage.jpeg', 'main image')
+RETURNING id INTO test_open_source_1_main_image_id;
+
+INSERT INTO open_source_contribution_images (contribution_id, image_id)
+VALUES (test_open_source_1_id, test_open_source_1_main_image_id);
+
+UPDATE open_source_contributions
+SET main_image_id = test_open_source_1_main_image_id
+WHERE id = test_open_source_1_id;
+
 
 
 
