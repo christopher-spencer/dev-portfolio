@@ -292,5 +292,9 @@ namespace Capstone.DAO
             }
         }
 
+        public object Setup(Func<object, object> value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
