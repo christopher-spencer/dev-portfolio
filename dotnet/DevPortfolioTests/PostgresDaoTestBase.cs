@@ -27,7 +27,7 @@ namespace Capstone.UnitTests.DAO
                 // Assert.AreEqual(1, count, "Insert into user failed");
 
                 // Read user-related SQL queries from the test_users.sql file
-                string userSqlFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\test_database\test_users.sql");
+                string userSqlFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\test_database\test_users.sql");
                 string userSqlQueries = File.ReadAllText(userSqlFilePath);
 
                 // Split user-related SQL queries by semicolon and execute them one by one
@@ -39,7 +39,7 @@ namespace Capstone.UnitTests.DAO
                 }
 
                 // Read SQL queries from the test_data.sql file
-                string dataSqlFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\test_database\test_data.sql");
+                string dataSqlFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\test_database\test_data.sql");
                 string sqlQueries = File.ReadAllText(dataSqlFile);
 
                 // Split SQL queries by semicolon and execute them one by one
