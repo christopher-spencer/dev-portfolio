@@ -18,7 +18,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             var imageDaoMock = new Mock<IImageDao>(); // Mock IImageDao
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(ConnectionString, imageDaoMock.Object);
+            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
 
             // Act
             List<BlogPost> blogPosts = dao.GetBlogPosts();
@@ -47,7 +47,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             var imageDaoMock = new Mock<IImageDao>(); // Mock IImageDao
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(ConnectionString, imageDaoMock.Object);
+            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
 
             // Act
             BlogPost blogPost = dao.GetBlogPost(1);
@@ -72,7 +72,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             var imageDaoMock = new Mock<IImageDao>(); // Mock IImageDao
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(ConnectionString, imageDaoMock.Object);
+            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
             BlogPost newBlogPost = new BlogPost
             {
                 Name = "New Blog Post",
@@ -104,7 +104,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             var imageDaoMock = new Mock<IImageDao>(); // Mock IImageDao
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(ConnectionString, imageDaoMock.Object);
+            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
  
             BlogPost updatedBlogPost = new BlogPost
             {
@@ -140,7 +140,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             var imageDaoMock = new Mock<IImageDao>(); // Mock IImageDao
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(ConnectionString, imageDaoMock.Object);
+            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
 
             // Act
             int rowsAffected = dao.DeleteBlogPost(1);

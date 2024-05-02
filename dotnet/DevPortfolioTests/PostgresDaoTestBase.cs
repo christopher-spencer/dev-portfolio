@@ -5,7 +5,7 @@ namespace Capstone.UnitTests.DAO
 {
     public abstract class PostgresDaoTestBase
     {
-        protected string ConnectionString = @"Host=localhost;Port=5432;Database=test_dev_portfolio;Username=test_dev_portfolio_appuser;Password=test_password";
+        protected string TestConnectionString = @"Host=localhost;Port=5432;Database=test_dev_portfolio;Username=test_dev_portfolio_appuser;Password=test_password";
 
         private TransactionScope transaction;
 
@@ -14,7 +14,7 @@ namespace Capstone.UnitTests.DAO
         {
             transaction = new TransactionScope();
 
-            using (NpgsqlConnection conn = new NpgsqlConnection(ConnectionString))
+            using (NpgsqlConnection conn = new NpgsqlConnection(TestConnectionString))
             {
                 conn.Open();
 

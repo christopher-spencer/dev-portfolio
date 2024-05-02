@@ -13,7 +13,7 @@ namespace Capstone.UnitTests.DAO
         [TestMethod]
         public void GetUserTest()
         {
-            UserPostgresDao access = new UserPostgresDao(ConnectionString);
+            UserPostgresDao access = new UserPostgresDao(TestConnectionString);
 
             User user = access.GetUserByUsername("notauser");
 
@@ -25,7 +25,7 @@ namespace Capstone.UnitTests.DAO
         [TestMethod]
         public void AddUserTest()
         {
-            UserPostgresDao access = new UserPostgresDao(ConnectionString);
+            UserPostgresDao access = new UserPostgresDao(TestConnectionString);
 
             User user = access.CreateUser("testuser", "password", "admin");
 
