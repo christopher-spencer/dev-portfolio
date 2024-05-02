@@ -5,7 +5,7 @@ namespace Capstone.UnitTests.DAO
 {
     public abstract class PostgresDaoTestBase
     {
-        protected string ConnectionString = @"Host=localhost;Port=5432;Database=dev_portfolio;Username=dev_portfolio_appuser;Password=finalcapstone";
+        protected string ConnectionString = @"Host=localhost;Port=5432;Database=test_dev_portfolio;Username=test_dev_portfolio_appuser;Password=test_password";
 
         private TransactionScope transaction;
 
