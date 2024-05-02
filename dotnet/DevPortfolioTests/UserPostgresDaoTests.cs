@@ -15,7 +15,7 @@ namespace Capstone.UnitTests.DAO
         {
             UserPostgresDao access = new UserPostgresDao(TestConnectionString);
 
-            User user = access.GetUserByUsername("notauser");
+            User user = access.GetUserByUsername("testUser");
 
             Assert.IsNotNull(user);
 
@@ -27,13 +27,13 @@ namespace Capstone.UnitTests.DAO
         {
             UserPostgresDao access = new UserPostgresDao(TestConnectionString);
 
-            User user = access.CreateUser("testuser", "password", "admin");
+            User user = access.CreateUser("notAUser", "password", "admin");
 
             Assert.IsNotNull(user);
 
             Assert.AreEqual("admin", user.Role);
 
-            user = access.GetUserByUsername("testuser");
+            user = access.GetUserByUsername("notAUser");
 
             Assert.IsNotNull(user);
 

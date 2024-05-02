@@ -2,9 +2,9 @@ BEGIN TRANSACTION;
 
 --Creating test user and test admin
 INSERT INTO users (username, password_hash, salt, user_role) 
-VALUES ('testUser', 'Jg45HuwT7PZkfuKTz6IB90CtWY4=', 'LHxP4Xh7bN0=', 'test_user');
+VALUES ('testUser', 'jjjjjjjjj', 'kkkkkkkkkk', 'user');
 INSERT INTO users (username, password_hash, salt, user_role) 
-VALUES ('testAdmin', 'YhyGVQ+Ch69n4JMBncM4lNF/i9s=', 'Ar/aB2thQTI=', 'test_admin');
+VALUES ('testAdmin', 'jjjjjjjjj', 'kkkkkkkkkk', 'admin');
 
 --Creating a test portfolio
 INSERT INTO portfolios (name, location, professional_summary, email) 
