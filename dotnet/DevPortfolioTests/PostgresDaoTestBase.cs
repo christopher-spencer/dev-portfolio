@@ -13,7 +13,7 @@ namespace Capstone.UnitTests.DAO
         public void Initialize()
         {
             transaction = new TransactionScope();
-            // FIXME check exceptions here and work on getting tests rolling
+            // FIXME check exceptions here and figure out updated infrastructure to get tests rolling again
             using (NpgsqlConnection conn = new NpgsqlConnection(TestConnectionString))
             {
                 conn.Open();
