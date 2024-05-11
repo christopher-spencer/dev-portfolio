@@ -236,8 +236,6 @@ RETURNING id INTO test_sideproject_2_id;
 INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id)
 VALUES (test_portfolio_id, test_sideproject_2_id);
 
-// FIXME need to update Portfolio 1 with Sideproject ID
-
 --Creating test portfolio sideproject 1 main image
 INSERT INTO images (name, url, type)
 VALUES ('Sideproject 1 Main Image', 'Sideproject1MainImage.jpeg', 'main image')
