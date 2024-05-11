@@ -1,7 +1,9 @@
 DO $$
 DECLARE
 
+--************************************************************************************
 --PORTFOLIO 1 VARIABLES
+--************************************************************************************
 
     test_portfolio_id INT;
     test_portfolio_main_image_id INT;
@@ -20,7 +22,9 @@ DECLARE
     test_portfolio_skill_1_icon_id INT;
     test_portfolio_skill_2_icon_id INT;
 
+--************************************************************************************
 --PORTFOLIO 1 SIDEPROJECTS VARIABLES
+--************************************************************************************
 
     test_sideproject_1_id INT;
     test_sideproject_2_id INT;
@@ -40,7 +44,9 @@ DECLARE
     test_sideproject_1_skill_1_icon_id INT;
     test_sideproject_1_skill_2_icon_id INT;
 
---PORTFOLIO 1 SIDEPROJECT 1 CONTRIBUTORS VARIABLES    
+--************************************************************************************
+--PORTFOLIO 1 SIDEPROJECT 1 CONTRIBUTORS VARIABLES 
+--************************************************************************************
 
     test_sideproject_1_contributor_1_id INT;
     test_sideproject_1_contributor_2_id INT;
@@ -59,11 +65,11 @@ DECLARE
     test_dependency_library_1_image_id INT;
     test_dependency_library_1_website_id INT;
 
+--************************************************************************************
 --PORTFOLIO 1 BACKGROUND WORK EXPERIENCES VARIABLES
+--************************************************************************************
 
     test_work_experience_1_id INT;
-    
-
 
 BEGIN
 
