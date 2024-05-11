@@ -58,9 +58,19 @@ DECLARE
     test_sideproject_1_contributor_1_linkedin_icon_id INT;
     test_sideproject_1_contributor_1_portfolio_link_icon_id INT;
     // FIXME set up below like sideproject contributors
+
+--************************************************************************************
+--PORTFOLIO 1 SIDEPROJECT 1 APIS AND SERVICES VARIABLES
+--************************************************************************************
+    
     test_sideproject_1_api_service_1_id INT;
     test_api_service_1_image_id INT;
     test_api_service_1_website_id INT;
+
+--************************************************************************************
+--PORTFOLIO 1 SIDEPROJECT 1 DEPENDENCIES AND LIBRARIES VARIABLES
+--************************************************************************************
+    
     test_dependency_library_1_id INT;
     test_dependency_library_1_image_id INT;
     test_dependency_library_1_website_id INT;
