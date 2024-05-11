@@ -1,21 +1,22 @@
 DO $$
 DECLARE
     test_portfolio_id INT;
-    test_main_image_id INT;
-    test_additional_image_1_id INT;
-    test_additional_image_2_id INT;
+    test_portfolio_main_image_id INT;
+    test_portfolio_additional_image_1_id INT;
+    test_portfolio_additional_image_2_id INT;
     test_portfolio_github_id INT;
     test_portfolio_linkedin_id INT;
     test_portfolio_github_image_id INT;
     test_portfolio_linkedin_image_id INT;
-    test_hobby_1_id INT;
-    test_hobby_2_id INT;
-    test_hobby_image_1_id INT;
-    test_hobby_image_2_id INT;
-    test_skill_1_id INT;
-    test_skill_2_id INT;
-    test_skill_icon_1_id INT;
-    test_skill_icon_2_id INT;
+    test_portfolio_hobby_1_id INT;
+    test_portfolio_hobby_2_id INT;
+    test_portfolio_hobby_1_image_id INT;
+    test_portfolio_hobby_2_image_id INT;
+    test_portfolio_skill_1_id INT;
+    test_portfolio_skill_2_id INT;
+    test_portfolio_skill_1_icon_id INT;
+    test_portfolio_skill_2_icon_id INT;
+
     test_sideproject_1_id INT;
     test_sideproject_2_id INT;
     test_sideproject_1_main_image_id INT;
@@ -25,6 +26,8 @@ DECLARE
     test_sideproject_1_main_website_id INT;
     test_sideproject_1_github_image_id INT;
     test_sideproject_1_main_website_image_id INT;
+    test_sideproject_1_goal_1_id INT;
+    test_sideproject_1_goal_2_id INT;
 
 
 BEGIN
@@ -42,28 +45,28 @@ RETURNING id INTO test_portfolio_id;
 
 --Creating a test portfolio main image
 INSERT INTO images (name, url, type) VALUES ('Portfolio Main Image', "MainImage.jpeg", 'main image') 
-RETURNING id INTO test_main_image_id;
+RETURNING id INTO test_portfolio_main_image_id;
 
 INSERT INTO portfolio_images (portfolio_id, image_id) 
-VALUES (test_portfolio_id, test_main_image_id);
+VALUES (test_portfolio_id, test_portfolio_main_image_id);
 
-UPDATE portfolios SET main_image_id = test_main_image_id 
+UPDATE portfolios SET main_image_id = test_portfolio_main_image_id 
 WHERE id = test_portfolio_id;
 
 --Creating test portfolio additional images 1 and 2
 INSERT INTO images (name, url, type) 
 VALUES ('Portfolio Additional Image 1', "AdditionalImage1.jpeg", 'additional image')
-RETURNING id INTO test_additional_image_1_id;
+RETURNING id INTO test_portfolio_additional_image_1_id;
 
 INSERT INTO portfolio_images (portfolio_id, image_id)
-VALUES (test_portfolio_id, test_additional_image_1_id);
+VALUES (test_portfolio_id, test_portfolio_additional_image_1_id);
 
 INSERT INTO images (name, url, type) 
 VALUES ('Portfolio Additional Image 2', "AdditionalImage2.jpeg", 'additional image')
-RETURNING id INTO test_additional_image_2_id;
+RETURNING id INTO test_portfolio_additional_image_2_id;
 
 INSERT INTO portfolio_images (portfolio_id, image_id)
-VALUES (test_portfolio_id, test_additional_image_2_id);
+VALUES (test_portfolio_id, test_portfolio_additional_image_2_id);
 
 --Creating test portfolio websites
 INSERT INTO websites (name, url, type)
@@ -104,62 +107,62 @@ VALUES (test_portfolio_linkedin_id, test_portfolio_linkedin_image_id);
 --Creating test portfolio hobbies
 INSERT INTO hobbies (description)
 VALUES ('Test Hobby Description 1')
-RETURNING id INTO test_hobby_1_id;
+RETURNING id INTO test_portfolio_hobby_1_id;
 
 INSERT INTO portfolio_hobbies (portfolio_id, hobby_id)
-VALUES (test_portfolio_id, test_hobby_1_id);
+VALUES (test_portfolio_id, test_portfolio_hobby_1_id);
 
 INSERT INTO hobbies (description)
 VALUES ('Test Hobby Description 2')
-RETURNING id INTO test_hobby_2_id;
+RETURNING id INTO test_portfolio_hobby_2_id;
 
 INSERT INTO portfolio_hobbies (portfolio_id, hobby_id)
-VALUES (test_portfolio_id, test_hobby_2_id);
+VALUES (test_portfolio_id, test_portfolio_hobby_2_id);
 
 --Creating test portfolio hobby images
 INSERT INTO images (name, url)
 VALUES ('Hobby Image 1', 'HobbyImage1.jpeg')
-RETURNING id INTO test_hobby_image_1_id;
+RETURNING id INTO test_portfolio_hobby_1_image_id;
 
 INSERT INTO hobby_images (hobby_id, image_id)
-VALUES (test_hobby_1_id, test_hobby_image_1_id);
+VALUES (test_portfolio_hobby_1_id, test_portfolio_hobby_1_image_id);
 
 INSERT INTO images (name, url)
 VALUES ('Hobby Image 2', 'HobbyImage2.jpeg')
-RETURNING id INTO test_hobby_image_2_id;
+RETURNING id INTO test_portfolio_hobby_2_image_id;
 
 INSERT INTO hobby_images (hobby_id, image_id)
-VALUES (test_hobby_2_id, test_hobby_image_2_id);
+VALUES (test_portfolio_hobby_2_id, test_portfolio_hobby_2_image_id);
 
 --Creating test portfolio tech skills
 INSERT INTO skills (name)
 VALUES ('Test Skill 1')
-RETURNING id INTO test_skill_1_id;
+RETURNING id INTO test_portfolio_skill_1_id;
 
 INSERT INTO portfolio_skills (portfolio_id, skill_id)
-VALUES (test_portfolio_id, test_skill_1_id);
+VALUES (test_portfolio_id, test_portfolio_skill_1_id);
 
 INSERT INTO skills (name)
 VALUES ('Test Skill 2')
-RETURNING id INTO test_skill_2_id;
+RETURNING id INTO test_portfolio_skill_2_id;
 
 INSERT INTO portfolio_skills (portfolio_id, skill_id)
-VALUES (test_portfolio_id, test_skill_2_id);
+VALUES (test_portfolio_id, test_portfolio_skill_2_id);
 
 --Creating test portfolio tech skill icons
 INSERT INTO images (name, url)
 VALUES ('Skill Icon 1', 'SkillIcon1.jpeg')
-RETURNING id INTO test_skill_icon_1_id;
+RETURNING id INTO test_portfolio_skill_1_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
-VALUES (test_skill_1_id, test_skill_icon_1_id);
+VALUES (test_portfolio_skill_1_id, test_portfolio_skill_1_icon_id);
 
 INSERT INTO images (name, url)
 VALUES ('Skill Icon 2', 'SkillIcon2.jpeg')
-RETURNING id INTO test_skill_icon_2_id;
+RETURNING id INTO test_portfolio_skill_2_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
-VALUES (test_skill_2_id, test_skill_icon_2_id);
+VALUES (test_portfolio_skill_2_id, test_portfolio_skill_2_icon_id);
 
 --Creating test portfolio sideprojects
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
@@ -243,17 +246,17 @@ VALUES (test_sideproject_1_main_website_id, test_sideproject_1_main_website_imag
 --Creating test portfolio sideproject 1 goals
 INSERT INTO goals (description)
 VALUES ('Test Goal 1')
-RETURNING id INTO test_goal_1_id;
+RETURNING id INTO test_sideproject_1_goal_1_id;
 
 INSERT INTO sideproject_goals (sideproject_id, goal_id)
-VALUES (test_sideproject_1_id, test_goal_1_id);
+VALUES (test_sideproject_1_id, test_sideproject_1_goal_1_id);
 
 INSERT INTO goals (description)
 VALUES ('Test Goal 2')
-RETURNING id INTO test_goal_2_id;
+RETURNING id INTO test_sideproject_1_goal_2_id;
 
 INSERT INTO sideproject_goals (sideproject_id, goal_id)
-VALUES (test_sideproject_1_id, test_goal_2_id);
+VALUES (test_sideproject_1_id, test_sideproject_1_goal_2_id);
 
 --Creating test portfolio sideproject goal icons
 INSERT INTO images (name, url)
@@ -261,14 +264,14 @@ VALUES ('Goal Icon 1', 'GoalIcon1.jpeg')
 RETURNING id INTO test_goal_icon_1_id;
 
 INSERT INTO goal_images (goal_id, image_id)
-VALUES (test_goal_1_id, test_goal_icon_1_id);
+VALUES (test_sideproject_1_goal_1_id, test_goal_icon_1_id);
 
 INSERT INTO images (name, url)
 VALUES ('Goal Icon 2', 'GoalIcon2.jpeg')
 RETURNING id INTO test_goal_icon_2_id;
 
 INSERT INTO goal_images (goal_id, image_id)
-VALUES (test_goal_2_id, test_goal_icon_2_id);
+VALUES (test_sideproject_1_goal_2_id, test_goal_icon_2_id);
 
 --Creating test portfolio sideproject 1 tools used
 INSERT INTO skills (name)
