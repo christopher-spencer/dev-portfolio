@@ -34,6 +34,7 @@ DECLARE
     test_sideproject_1_skill_2_id INT;
     test_sideproject_1_skill_1_icon_id INT;
     test_sideproject_1_skill_2_icon_id INT;
+
     test_sideproject_1_contributor_1_id INT;
     test_sideproject_1_contributor_2_id INT;
     test_sideproject_1_contributor_1_image_id INT;
@@ -201,6 +202,8 @@ INSERT INTO sideprojects (name, description, video_walkthrough_url, project_stat
 VALUES ('Test Sideproject 2', 'Test Description 2', 'Test Video Walkthrough URL 2', 
     'Test Project Status 2', '2021-01-01', '2021-01-02')
 RETURNING id INTO test_sideproject_2_id;
+
+// FIXME need to update Portfolio 1 with Sideproject ID
 
 --Creating test portfolio sideproject 1 main image
 INSERT INTO images (name, url, type)
