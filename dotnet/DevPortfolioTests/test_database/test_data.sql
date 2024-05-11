@@ -1,4 +1,9 @@
-BEGIN TRANSACTION;
+DO $$
+DECLARE
+    test_portfolio_id INT;
+    test_main_image_id INT;
+
+BEGIN
 
 --Creating test user and test admin
 INSERT INTO users (username, password_hash, salt, user_role) 
@@ -983,4 +988,4 @@ VALUES (test_blog_post_1_id, test_blog_post_1_main_image_id);
 UPDATE blogposts SET main_image_id = test_blog_post_1_main_image_id
 WHERE id = test_blog_post_1_id;
 
-COMMIT TRANSACTION;
+END $$;
