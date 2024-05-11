@@ -28,6 +28,30 @@ DECLARE
     test_sideproject_1_main_website_image_id INT;
     test_sideproject_1_goal_1_id INT;
     test_sideproject_1_goal_2_id INT;
+    test_sideproject_1_goal_1_icon_id INT;
+    test_sideproject_1_goal_2_icon_id INT;
+    test_sideproject_1_skill_1_id INT;
+    test_sideproject_1_skill_2_id INT;
+    test_sideproject_1_skill_1_icon_id INT;
+    test_sideproject_1_skill_2_icon_id INT;
+    test_sideproject_1_contributor_1_id INT;
+    test_sideproject_1_contributor_2_id INT;
+    test_sideproject_1_contributor_1_image_id INT;
+    test_sideproject_1_contributor_1_github_id INT;
+    test_sideproject_1_contributor_1_linkedin_id INT;
+    test_sideproject_1_contributor_1_portfolio_link_id INT;
+    test_sideproject_1_contributor_1_github_icon_id INT;
+    test_sideproject_1_contributor_1_linkedin_icon_id INT;
+    test_sideproject_1_contributor_1_portfolio_link_icon_id INT;
+    test_sideproject_1_api_service_1_id INT;
+    test_api_service_1_image_id INT;
+    test_api_service_1_website_id INT;
+    test_dependency_library_1_id INT;
+    test_dependency_library_1_image_id INT;
+    test_dependency_library_1_website_id INT;
+
+    test_work_experience_1_id INT;
+    
 
 
 BEGIN
@@ -261,111 +285,140 @@ VALUES (test_sideproject_1_id, test_sideproject_1_goal_2_id);
 --Creating test portfolio sideproject goal icons
 INSERT INTO images (name, url)
 VALUES ('Goal Icon 1', 'GoalIcon1.jpeg')
-RETURNING id INTO test_goal_icon_1_id;
+RETURNING id INTO test_sideproject_1_goal_1_icon_id;
 
 INSERT INTO goal_images (goal_id, image_id)
-VALUES (test_sideproject_1_goal_1_id, test_goal_icon_1_id);
+VALUES (test_sideproject_1_goal_1_id, test_sideproject_1_goal_1_icon_id);
 
 INSERT INTO images (name, url)
 VALUES ('Goal Icon 2', 'GoalIcon2.jpeg')
-RETURNING id INTO test_goal_icon_2_id;
+RETURNING id INTO test_sideproject_1_goal_2_icon_id;
 
 INSERT INTO goal_images (goal_id, image_id)
-VALUES (test_sideproject_1_goal_2_id, test_goal_icon_2_id);
+VALUES (test_sideproject_1_goal_2_id, test_sideproject_1_goal_2_icon_id);
 
 --Creating test portfolio sideproject 1 tools used
 INSERT INTO skills (name)
 VALUES ('Test Tool 1')
-RETURNING id INTO test_tool_1_id;
+RETURNING id INTO test_sideproject_1_skill_1_id;
 
 INSERT INTO sideproject_skills (sideproject_id, skill_id)
-VALUES (test_sideproject_1_id, test_tool_1_id);
+VALUES (test_sideproject_1_id, test_sideproject_1_skill_1_id);
 
 INSERT INTO skills (name)
 VALUES ('Test Tool 2')
-RETURNING id INTO test_tool_2_id;
+RETURNING id INTO test_sideproject_1_skill_2_id;
 
 INSERT INTO sideproject_skills (sideproject_id, skill_id)
-VALUES (test_sideproject_1_id, test_tool_2_id);
+VALUES (test_sideproject_1_id, test_sideproject_1_skill_2_id);
 
 --Creating test portfolio sideproject 1 tools used icons
 INSERT INTO images (name, url)
 VALUES ('Tool 1 Icon', 'Tool1Icon.jpeg')
-RETURNING id INTO test_tool_1_icon_id;
+RETURNING id INTO test_sideproject_1_skill_1_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
-VALUES (test_tool_1_id, test_tool_1_icon_id);
+VALUES (test_sideproject_1_skill_1_id, test_sideproject_1_skill_1_icon_id);
 
 INSERT INTO images (name, url)
 VALUES ('Tool 2 Icon', 'Tool2Icon.jpeg')
-RETURNING id INTO test_tool_2_icon_id;
+RETURNING id INTO test_sideproject_1_skill_2_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
-VALUES (test_tool_2_id, test_tool_2_icon_id);
+VALUES (test_sideproject_1_skill_2_id, test_sideproject_1_skill_2_icon_id);
 
 --Creating test portfolio sideproject 1 contributors
 INSERT INTO contributors (first_name, last_name, email, bio, contribution_details)
 VALUES ('Johnny', 'Testman', 'johnnytestman@test.com', 'Test Bio', 'Test Contribution Details')
-RETURNING id INTO test_contributor_1_id;
+RETURNING id INTO test_sideproject_1_contributor_1_id;
 
 INSERT INTO sideproject_contributors (sideproject_id, contributor_id)
-VALUES (test_sideproject_1_id, test_contributor_1_id);
+VALUES (test_sideproject_1_id, test_sideproject_1_contributor_1_id);
 
 INSERT INTO contributors (first_name, last_name, email, bio, contribution_details)
 VALUES ('Jane', 'Testwoman', 'janetestwoman@test.com', 'Test Bio 2', 
     'Test Contribution Details 2')
-RETURNING id INTO test_contributor_2_id;
+RETURNING id INTO test_sideproject_1_contributor_2_id;
 
 INSERT INTO sideproject_contributors (sideproject_id, contributor_id)
-VALUES (test_sideproject_1_id, test_contributor_2_id);
+VALUES (test_sideproject_1_id, test_sideproject_1_contributor_2_id);
 
 --Creating test portfolio sideproject 1 contributor images
 INSERT INTO images (name, url)
 VALUES ('Johnny Testman Image', 'JohnnyTestmanImage.jpeg')
-RETURNING id INTO test_contributor_1_image_id;
+RETURNING id INTO test_sideproject_1_contributor_1_image_id;
 
 INSERT INTO contributor_images (contributor_id, image_id)
-VALUES (test_contributor_1_id, test_contributor_1_image_id);
+VALUES (test_sideproject_1_contributor_1_id, test_sideproject_1_contributor_1_image_id);
 
---Creating test portfolio sideproject 1 contributor websites
+--Creating test portfolio sideproject 1 contributor github
 INSERT INTO websites (name, url, type)
 VALUES ('Johnny Testman GitHub', 'https://www.github.com/johnny-testman', 'github')
-RETURNING id INTO test_contributor_1_github_id;
+RETURNING id INTO test_sideproject_1_contributor_1_github_id;
 
 INSERT INTO contributor_websites (contributor_id, website_id)
-VALUES (test_contributor_1_id, test_contributor_1_github_id);
+VALUES (test_sideproject_1_contributor_1_id, test_sideproject_1_contributor_1_github_id);
 
-UPDATE contributors SET github_id = test_contributor_1_github_id
-WHERE id = test_contributor_1_id;
+UPDATE contributors SET github_id = test_sideproject_1_contributor_1_github_id
+WHERE id = test_sideproject_1_contributor_1_id;
+
+--Creating test portfolio sideproject 1 contributor linkedin
 
 INSERT INTO websites (name, url, type)
 VALUES ('Johnny Testman LinkedIn', 'https://www.linkedin.com/johnny-testman', 'linkedin')
-RETURNING id INTO test_contributor_1_linkedin_id;
+RETURNING id INTO test_sideproject_1_contributor_1_linkedin_id;
 
 INSERT INTO contributor_websites (contributor_id, website_id)
-VALUES (test_contributor_1_id, test_contributor_1_linkedin_id);
+VALUES (test_sideproject_1_contributor_1_id, test_sideproject_1_contributor_1_linkedin_id);
 
-UPDATE contributors SET linkedin_id = test_contributor_1_linkedin_id
-WHERE id = test_contributor_1_id;
+UPDATE contributors SET linkedin_id = test_sideproject_1_contributor_1_linkedin_id
+WHERE id = test_sideproject_1_contributor_1_id;
+
+--Creating test portfolio sideproject 1 contributor portfolio link
 
 INSERT INTO websites (name, url, type)
 VALUES ('Johnny Testman Portfolio Link', 'https://www.portfolio.com/johnny-testman', 
     'portfolio link')
-RETURNING id INTO test_contributor_1_portfolio_id;
+RETURNING id INTO test_sideproject_1_contributor_1_portfolio_link_id;
 
 INSERT INTO contributor_websites (contributor_id, website_id)
-VALUES (test_contributor_1_id, test_contributor_1_portfolio_id);
+VALUES (test_sideproject_1_contributor_1_id, test_sideproject_1_contributor_1_portfolio_link_id);
 
-UPDATE contributors SET portfolio_id = test_contributor_1_portfolio_id
-WHERE id = test_contributor_1_id;
+UPDATE contributors SET portfolio_id = test_sideproject_1_contributor_1_portfolio_link_id
+WHERE id = test_sideproject_1_contributor_1_id;
+
+--Creating test portfolio sideproject 1 github icon
+INSERT INTO images (name, url)
+VALUES ('Johnny Testman GitHub Icon', 'JohnnyTestmanGitHubIcon.jpeg')
+RETURNING id INTO test_sideproject_1_contributor_1_github_icon_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_sideproject_1_contributor_1_github_id, test_sideproject_1_contributor_1_github_icon_id);
+
+--Creating test portfolio sideproject 1 linkedin icon
+INSERT INTO images (name, url)
+VALUES ('Johnny Testman LinkedIn Icon', 'JohnnyTestmanLinkedInIcon.jpeg')
+RETURNING id INTO test_sideproject_1_contributor_1_linkedin_icon_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_sideproject_1_contributor_1_linkedin_id, test_sideproject_1_contributor_1_linkedin_icon_id);
+
+--Creating test portfolio sideproject 1 portfolio link icon
+INSERT INTO images (name, url)
+VALUES ('Johnny Testman Portfolio Link Icon', 'JohnnyTestmanPortfolioLinkIcon.jpeg')
+RETURNING id INTO test_sideproject_1_contributor_1_portfolio_link_icon_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_sideproject_1_contributor_1_portfolio_link_id, 
+    test_sideproject_1_contributor_1_portfolio_link_icon_id);
 
 --Creating test portfolio sideproject 1 APIs and services used
 INSERT INTO apis_and_services (name, description) 
 VALUES ('Test API/Service 1', 'Test API/Service Description 1')
-RETURNING id INTO test_api_service_1_id;
+RETURNING id INTO test_sideproject_1_api_service_1_id;
 
 INSERT INTO sideproject_apis_and_services (sideproject_id, apiservice_id)
-VALUES (test_sideproject_1_id, test_api_service_1_id);
+VALUES (test_sideproject_1_id, test_sideproject_1_api_service_1_id);
 
 --Creating test portfolio sideproject 1 API and service image
 INSERT INTO images (name, url)
@@ -373,7 +426,7 @@ VALUES ('API/Service 1 Image', 'API_Service1Image.jpeg')
 RETURNING id INTO test_api_service_1_image_id;
 
 INSERT INTO api_service_images (apiservice_id, image_id)
-VALUES (test_api_service_1_id, test_api_service_1_image_id);
+VALUES (test_sideproject_1_api_service_1_id, test_api_service_1_image_id);
 
 --Creating test portfolio sideproject 1 API and service website
 INSERT INTO websites (name, url)
@@ -381,7 +434,7 @@ VALUES ('API/Service 1 Website', 'https://www.api-service1.com')
 RETURNING id INTO test_api_service_1_website_id;
 
 INSERT INTO api_service_websites (apiservice_id, website_id)
-VALUES (test_api_service_1_id, test_api_service_1_website_id);
+VALUES (test_sideproject_1_api_service_1_id, test_api_service_1_website_id);
 
 --Creating test portfolio sideproject 1 dependencies and libraries used
 INSERT INTO dependencies_and_libraries (name, description)
