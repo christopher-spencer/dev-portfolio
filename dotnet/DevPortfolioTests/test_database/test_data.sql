@@ -1,5 +1,8 @@
 DO $$
 DECLARE
+
+--PORTFOLIO 1 VARIABLES
+
     test_portfolio_id INT;
     test_portfolio_main_image_id INT;
     test_portfolio_additional_image_1_id INT;
@@ -16,6 +19,8 @@ DECLARE
     test_portfolio_skill_2_id INT;
     test_portfolio_skill_1_icon_id INT;
     test_portfolio_skill_2_icon_id INT;
+
+--PORTFOLIO 1 SIDEPROJECTS VARIABLES
 
     test_sideproject_1_id INT;
     test_sideproject_2_id INT;
@@ -35,6 +40,8 @@ DECLARE
     test_sideproject_1_skill_1_icon_id INT;
     test_sideproject_1_skill_2_icon_id INT;
 
+--PORTFOLIO 1 SIDEPROJECT 1 CONTRIBUTORS VARIABLES    
+
     test_sideproject_1_contributor_1_id INT;
     test_sideproject_1_contributor_2_id INT;
     test_sideproject_1_contributor_1_image_id INT;
@@ -52,17 +59,27 @@ DECLARE
     test_dependency_library_1_image_id INT;
     test_dependency_library_1_website_id INT;
 
+--PORTFOLIO 1 BACKGROUND WORK EXPERIENCES VARIABLES
+
     test_work_experience_1_id INT;
     
 
 
 BEGIN
 
+--************************************************************************************
+--CREATE USERS
+--************************************************************************************
+
 --Creating test user and test admin
 INSERT INTO users (username, password_hash, salt, user_role) 
 VALUES ('testUser', 'jjjjjjjjj', 'kkkkkkkkkk', 'user');
 INSERT INTO users (username, password_hash, salt, user_role) 
 VALUES ('testAdmin', 'jjjjjjjjj', 'kkkkkkkkkk', 'admin');
+
+--************************************************************************************
+--CREATE PORTFOLIO 1
+--************************************************************************************
 
 --Creating a test portfolio
 INSERT INTO portfolios (name, location, professional_summary, email) 
@@ -190,6 +207,10 @@ RETURNING id INTO test_portfolio_skill_2_icon_id;
 INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_portfolio_skill_2_id, test_portfolio_skill_2_icon_id);
 
+--************************************************************************************
+--CREATE PORTFOLIO 1 SIDEPROJECTS
+--************************************************************************************
+
 --Creating test portfolio sideprojects
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
     start_date, finish_date) 
@@ -197,11 +218,17 @@ VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL',
     'Test Project Status', '2021-01-01', '2021-01-02')
 RETURNING id INTO test_sideproject_1_id;
 
+INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id)
+VALUES (test_portfolio_id, test_sideproject_1_id);
+
 INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
     start_date, finish_date)
 VALUES ('Test Sideproject 2', 'Test Description 2', 'Test Video Walkthrough URL 2', 
     'Test Project Status 2', '2021-01-01', '2021-01-02')
 RETURNING id INTO test_sideproject_2_id;
+
+INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id)
+VALUES (test_portfolio_id, test_sideproject_2_id);
 
 // FIXME need to update Portfolio 1 with Sideproject ID
 
@@ -330,6 +357,10 @@ RETURNING id INTO test_sideproject_1_skill_2_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_sideproject_1_skill_2_id, test_sideproject_1_skill_2_icon_id);
+
+--************************************************************************************
+-- CREATE PORTFOLIO 1 SIDEPROJECT 1 CONTRIBUTORS
+--************************************************************************************
 
 --Creating test portfolio sideproject 1 contributors
 INSERT INTO contributors (first_name, last_name, email, bio, contribution_details)
@@ -463,6 +494,10 @@ RETURNING id INTO test_dependency_library_1_website_id;
 
 INSERT INTO dependency_library_websites (dependencylibrary_id, website_id)
 VALUES (test_dependency_library_1_id, test_dependency_library_1_website_id);
+
+--************************************************************************************
+--CREATE PORTFOLIO 1 BACKGROUND WORK EXPERIENCES
+--************************************************************************************
 
 --Creating test portfolio background work experiences
 INSERT INTO work_experiences (position_title, company_name, location, description, 
