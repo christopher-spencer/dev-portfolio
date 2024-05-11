@@ -2,6 +2,30 @@ DO $$
 DECLARE
     test_portfolio_id INT;
     test_main_image_id INT;
+    test_additional_image_1_id INT;
+    test_additional_image_2_id INT;
+    test_portfolio_github_id INT;
+    test_portfolio_linkedin_id INT;
+    test_portfolio_github_image_id INT;
+    test_portfolio_linkedin_image_id INT;
+    test_hobby_1_id INT;
+    test_hobby_2_id INT;
+    test_hobby_image_1_id INT;
+    test_hobby_image_2_id INT;
+    test_skill_1_id INT;
+    test_skill_2_id INT;
+    test_skill_icon_1_id INT;
+    test_skill_icon_2_id INT;
+    test_sideproject_1_id INT;
+    test_sideproject_2_id INT;
+    test_sideproject_1_main_image_id INT;
+    test_sideproject_1_additional_image_1_id INT;
+    test_sideproject_1_additional_image_2_id INT;
+    test_sideproject_1_github_id INT;
+    test_sideproject_1_main_website_id INT;
+    test_sideproject_1_github_image_id INT;
+    test_sideproject_1_main_website_image_id INT;
+
 
 BEGIN
 
@@ -199,6 +223,22 @@ VALUES (test_sideproject_1_id, test_sideproject_1_main_website_id);
 
 UPDATE sideprojects SET website_id = test_sideproject_1_main_website_id
 WHERE id = test_sideproject_1_id;
+
+--Creating test portfolio sideproject 1 Github image
+INSERT INTO images (name, url)
+VALUES ('Sideproject 1 GitHub Icon', 'GitHubIcon1.jpeg')
+RETURNING id INTO test_sideproject_1_github_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_sideproject_1_github_id, test_sideproject_1_github_image_id);
+
+--Creating test portfolio sideproject 1 main website image
+INSERT INTO images (name, url)
+VALUES ('Sideproject 1 Main Website Image', 'MainWebsiteImage1.jpeg')
+RETURNING id INTO test_sideproject_1_main_website_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_sideproject_1_main_website_id, test_sideproject_1_main_website_image_id);
 
 --Creating test portfolio sideproject 1 goals
 INSERT INTO goals (description)
