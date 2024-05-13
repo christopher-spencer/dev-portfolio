@@ -75,7 +75,7 @@ DECLARE
     test_dependency_library_1_website_id INT;
 
 --************************************************************************************
---PORTFOLIO 1 BACKGROUND WORK EXPERIENCES VARIABLES
+--PORTFOLIO 1 SIDEPROJECT 1 BACKGROUND WORK EXPERIENCES VARIABLES
 --************************************************************************************
 // FIXME  update Portfolio 1 Background Work Experiences Variables
     test_work_experience_1_id INT;
