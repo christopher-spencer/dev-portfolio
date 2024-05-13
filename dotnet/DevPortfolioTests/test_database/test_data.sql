@@ -79,6 +79,13 @@ DECLARE
 --************************************************************************************
 // FIXME  update Portfolio 1 Background Work Experiences Variables
     test_work_experience_1_id INT;
+    test_work_experience_2_id INT;
+    test_company_1_logo_id INT;
+    test_work_experience_1_main_image_id INT;
+    test_work_experience_1_additional_image_1_id INT;
+    test_work_experience_1_additional_image_2_id INT;
+    test_work_experience_1_website_id INT;
+    test_work_experience_1_website_image_id INT;
 
 BEGIN
 
