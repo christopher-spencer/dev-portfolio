@@ -461,6 +461,10 @@ INSERT INTO website_images (website_id, image_id)
 VALUES (test_sideproject_1_contributor_1_portfolio_link_id, 
     test_sideproject_1_contributor_1_portfolio_link_icon_id);
 
+--************************************************************************************
+--CREATE PORTFOLIO 1 SIDEPROJECT 1 APIS AND SERVICES
+--************************************************************************************
+
 --Creating test portfolio sideproject 1 APIs and services used
 INSERT INTO apis_and_services (name, description) 
 VALUES ('Test API/Service 1', 'Test API/Service Description 1')
