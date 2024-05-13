@@ -510,7 +510,7 @@ INSERT INTO dependency_library_websites (dependencylibrary_id, website_id)
 VALUES (test_dependency_library_1_id, test_dependency_library_1_website_id);
 
 --************************************************************************************
---CREATE PORTFOLIO 1 BACKGROUND WORK EXPERIENCES
+--CREATE PORTFOLIO 1 SIDEPROJECT 1 BACKGROUND WORK EXPERIENCES
 --************************************************************************************
 
 --Creating test portfolio background work experiences
