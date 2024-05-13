@@ -488,6 +488,10 @@ RETURNING id INTO test_api_service_1_website_id;
 INSERT INTO api_service_websites (apiservice_id, website_id)
 VALUES (test_sideproject_1_api_service_1_id, test_api_service_1_website_id);
 
+--************************************************************************************
+--CREATE PORTFOLIO 1 SIDEPROJECT 1 DEPENDENCIES AND LIBRARIES
+--************************************************************************************
+
 --Creating test portfolio sideproject 1 dependencies and libraries used
 INSERT INTO dependencies_and_libraries (name, description)
 VALUES ('Test Dependency/Library 1', 'Test Dependency/Library Description 1')
