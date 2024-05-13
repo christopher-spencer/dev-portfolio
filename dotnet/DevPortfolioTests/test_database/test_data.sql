@@ -87,6 +87,11 @@ DECLARE
     test_work_experience_1_website_id INT;
     test_work_experience_1_website_image_id INT;
 
+--************************************************************************************
+--PORTFOLIO 1 SIDEPROJECT 1 EDUCATIONS VARIABLES
+--************************************************************************************
+
+
 BEGIN
 
 --************************************************************************************
@@ -647,6 +652,10 @@ RETURNING id INTO test_work_experience_skill_1_icon_id;
 INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_work_experience_skill_1_id, test_work_experience_skill_1_icon_id);
 
+--************************************************************************************
+--CREATE PORTFOLIO 1 SIDEPROJECT 1 EDUCATIONS
+--************************************************************************************
+// TODO check Portfolio 1 Sideproject 1 Educations
 --Creating test portfolio educations obtained
 INSERT INTO educations (institution_name, location, description, field_of_study, major, 
     minor, degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date)
