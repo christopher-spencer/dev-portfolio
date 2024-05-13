@@ -69,7 +69,7 @@ DECLARE
 --************************************************************************************
 --PORTFOLIO 1 SIDEPROJECT 1 DEPENDENCIES AND LIBRARIES VARIABLES
 --************************************************************************************
-    
+// FIXME  update Portfolio 1 Sideproject 1 Dependencies & Libraries Variables
     test_dependency_library_1_id INT;
     test_dependency_library_1_image_id INT;
     test_dependency_library_1_website_id INT;
@@ -491,7 +491,7 @@ VALUES (test_sideproject_1_api_service_1_id, test_api_service_1_website_id);
 --************************************************************************************
 --CREATE PORTFOLIO 1 SIDEPROJECT 1 DEPENDENCIES AND LIBRARIES
 --************************************************************************************
-
+// FIXME  update Portfolio 1 Sideproject 1 Dependencies & Libraries
 --Creating test portfolio sideproject 1 dependencies and libraries used
 INSERT INTO dependencies_and_libraries (name, description)
 VALUES ('Test Dependency/Library 1', 'Test Dependency/Library Description 1')
