@@ -148,6 +148,26 @@ DECLARE
 --PORTFOLIO 1 OPEN SOURCE CONTRIBUTIONS VARIABLES
 --************************************************************************************
 
+    test_open_source_1_id INT;
+    test_open_source_2_id INT;
+    test_open_source_1_organization_logo_id INT;
+    test_open_source_1_main_image_id INT;
+    test_open_source_1_additional_image_1_id INT;
+    test_open_source_1_additional_image_2_id INT;
+    test_open_source_1_website_id INT;
+    test_open_source_1_website_image_id INT;
+    test_open_source_1_github_id INT;
+    test_open_source_1_github_image_id INT;
+    test_open_source_1_pull_request_1_id INT;
+    test_open_source_1_pull_request_2_id INT;
+    test_open_source_1_pull_request_1_image_id INT;
+    test_open_source_1_tech_skill_1_id INT;
+    test_open_source_1_tech_skill_1_icon_id INT;
+    test_open_source_1_review_comment_1_id INT;
+    test_open_source_1_review_comment_2_id INT;
+    test_open_source_1_review_comment_1_image_id INT;
+
+
 --************************************************************************************
 --BLOG POST 1 VARIABLES
 --************************************************************************************
