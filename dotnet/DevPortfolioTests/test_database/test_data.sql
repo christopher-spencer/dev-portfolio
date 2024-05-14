@@ -7,6 +7,8 @@
 // FIXME PL/pgSQL function inline_code_block line 587 at SQL statement
 // FIXME CREATE ROLE"
 
+// TODO ****CheckPoint: review nullable issues with sql is first step to fix the issue
+
 DO $$
 DECLARE
 
