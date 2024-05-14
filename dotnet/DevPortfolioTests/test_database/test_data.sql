@@ -520,9 +520,9 @@ RETURNING id INTO test_dependency_library_1_id;
 INSERT INTO sideproject_dependencies_and_libraries (sideproject_id, dependencylibrary_id)
 VALUES (test_sideproject_1_id, test_dependency_library_1_id);
 
---Creating test portfolio sideproject 1 dependency/library image
+--Creating test portfolio sideproject 1 dependency/library logo
 INSERT INTO images (name, url)
-VALUES ('Dependency/Library 1 Image', 'Dependency_Library1Image.jpeg')
+VALUES ('Dependency/Library 1 Logo', 'Dependency_Library1Logo.jpeg')
 RETURNING id INTO test_dependency_library_1_image_id;
 
 INSERT INTO dependency_library_images (dependencylibrary_id, image_id)
@@ -535,6 +535,14 @@ RETURNING id INTO test_dependency_library_1_website_id;
 
 INSERT INTO dependency_library_websites (dependencylibrary_id, website_id)
 VALUES (test_dependency_library_1_id, test_dependency_library_1_website_id);
+
+--Creating test portfolio sideproject 1 dependency/library website image
+INSERT INTO images (name, url)
+VALUES ('Dependency/Library 1 Website Image', 'Dependency_Library1WebsiteImage.jpeg')
+RETURNING id INTO test_dependency_library_1_website_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_dependency_library_1_website_id, test_dependency_library_1_website_image_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 SIDEPROJECT 1 BACKGROUND WORK EXPERIENCES
