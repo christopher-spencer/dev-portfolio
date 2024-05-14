@@ -484,9 +484,9 @@ RETURNING id INTO test_sideproject_1_api_service_1_id;
 INSERT INTO sideproject_apis_and_services (sideproject_id, apiservice_id)
 VALUES (test_sideproject_1_id, test_sideproject_1_api_service_1_id);
 
---Creating test portfolio sideproject 1 API and service image
+--Creating test portfolio sideproject 1 API and service logo
 INSERT INTO images (name, url)
-VALUES ('API/Service 1 Image', 'API_Service1Image.jpeg')
+VALUES ('API/Service 1 Logo', 'API_Service1Logo.jpeg')
 RETURNING id INTO test_api_service_1_image_id;
 
 INSERT INTO api_service_images (apiservice_id, image_id)
@@ -499,6 +499,14 @@ RETURNING id INTO test_api_service_1_website_id;
 
 INSERT INTO api_service_websites (apiservice_id, website_id)
 VALUES (test_sideproject_1_api_service_1_id, test_api_service_1_website_id);
+
+--Creating test portfolio sideproject 1 API and service website image
+INSERT INTO images (name, url)
+VALUES ('API/Service 1 Website Image', 'API_Service1WebsiteImage.jpeg')
+RETURNING id INTO test_api_service_1_website_image_id;
+
+INSERT INTO website_images (website_id, image_id)
+VALUES (test_api_service_1_website_id, test_api_service_1_website_image_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 SIDEPROJECT 1 DEPENDENCIES AND LIBRARIES
