@@ -65,6 +65,7 @@ DECLARE
     test_sideproject_1_api_service_1_id INT;
     test_api_service_1_image_id INT;
     test_api_service_1_website_id INT;
+    test_api_service_1_website_image_id INT;
 
 --************************************************************************************
 --PORTFOLIO 1 SIDEPROJECT 1 DEPENDENCIES AND LIBRARIES VARIABLES
