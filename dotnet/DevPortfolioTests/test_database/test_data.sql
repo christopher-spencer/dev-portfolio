@@ -80,12 +80,18 @@ DECLARE
 
     test_work_experience_1_id INT;
     test_work_experience_2_id INT;
-    test_company_1_logo_id INT;
+    test_work_experience_1_company_logo_id INT;
     test_work_experience_1_main_image_id INT;
     test_work_experience_1_additional_image_1_id INT;
     test_work_experience_1_additional_image_2_id INT;
     test_work_experience_1_website_id INT;
     test_work_experience_1_website_image_id INT;
+    test_work_experience_1_achievement_1_id INT;
+    test_work_experience_1_achievement_2_id INT;
+    test_work_experience_1_achievement_1_image_id INT;
+    test_work_experience_1_skill_1_id INT;
+    test_work_experience_1_skill_2_id INT;
+    test_work_experience_1_skill_1_icon_id INT;
 
 --************************************************************************************
 --PORTFOLIO 1 EDUCATIONS VARIABLES
@@ -586,12 +592,12 @@ VALUES (test_portfolio_id, test_work_experience_2_id);
 --Creating test portfolio background work experience company logo image
 INSERT INTO images (name, url, type)
 VALUES ('Company 1 Logo', 'Company1Logo.jpeg', 'logo')
-RETURNING id INTO test_company_1_logo_id;
+RETURNING id INTO test_work_experience_1_company_logo_id;
 
 INSERT INTO work_experience_images (experience_id, image_id)
-VALUES (test_work_experience_1_id, test_company_1_logo_id);
+VALUES (test_work_experience_1_id, test_work_experience_1_company_logo_id);
 
-UPDATE work_experiences SET company_logo_id = test_company_1_logo_id
+UPDATE work_experiences SET company_logo_id = test_work_experience_1_company_logo_id
 WHERE id = test_work_experience_1_id;
 
 --Creating test portfolio background work experience main image
@@ -641,48 +647,48 @@ VALUES (test_work_experience_1_website_id, test_work_experience_1_website_image_
 --Creating test portfolio background work experience 1 responsibilities/achievements
 INSERT INTO achievements (description)
 VALUES ('Test Achievement 1')
-RETURNING id INTO test_achievement_1_id;
+RETURNING id INTO test_work_experience_1_achievement_1_id;
 
 INSERT INTO work_experience_achievements (experience_id, achievement_id)
-VALUES (test_work_experience_1_id, test_achievement_1_id);
+VALUES (test_work_experience_1_id, test_work_experience_1_achievement_1_id);
 
 INSERT INTO achievements (description)
 VALUES ('Test Achievement 2')
-RETURNING id INTO test_achievement_2_id;
+RETURNING id INTO test_work_experience_1_achievement_2_id;
 
 INSERT INTO work_experience_achievements (experience_id, achievement_id)
-VALUES (test_work_experience_1_id, test_achievement_2_id);
+VALUES (test_work_experience_1_id, test_work_experience_1_achievement_2_id);
 
 --Creating test portfolio background work experience 1 achievement 1 image
 INSERT INTO images (name, url)
 VALUES ('Achievement 1 Image', 'Achievement1Image.jpeg')
-RETURNING id INTO test_achievement_1_image_id;
+RETURNING id INTO test_work_experience_1_achievement_1_image_id;
 
 INSERT INTO achievement_images (achievement_id, image_id)
-VALUES (test_achievement_1_id, test_achievement_1_image_id);
+VALUES (test_work_experience_1_achievement_1_id, test_work_experience_1_achievement_1_image_id);
 
 --Creating test portfolio background work experience skills used and obtained
 INSERT INTO skills (name)
 VALUES ('Work Experience Test Skill 1')
-RETURNING id INTO test_work_experience_skill_1_id;
+RETURNING id INTO test_work_experience_1_skill_1_id;
 
 INSERT INTO work_experience_skills (experience_id, skill_id)
-VALUES (test_work_experience_1_id, test_work_experience_skill_1_id);
+VALUES (test_work_experience_1_id, test_work_experience_1_skill_1_id);
 
 INSERT INTO skills (name)
 VALUES ('Work Experience Test Skill 2')
-RETURNING id INTO test_work_experience_skill_2_id;
+RETURNING id INTO test_work_experience_1_skill_2_id;
 
 INSERT INTO work_experience_skills (experience_id, skill_id)
-VALUES (test_work_experience_1_id, test_work_experience_skill_2_id);
+VALUES (test_work_experience_1_id, test_work_experience_1_skill_2_id);
 
 --Creating test portfolio background work experience skill 1 icon
 INSERT INTO images (name, url)
 VALUES ('Work Experience Skill 1 Icon', 'WorkExperienceSkill1Icon.jpeg')
-RETURNING id INTO test_work_experience_skill_1_icon_id;
+RETURNING id INTO test_work_experience_1_skill_1_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
-VALUES (test_work_experience_skill_1_id, test_work_experience_skill_1_icon_id);
+VALUES (test_work_experience_1_skill_1_id, test_work_experience_1_skill_1_icon_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 EDUCATIONS
