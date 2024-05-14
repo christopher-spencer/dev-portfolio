@@ -950,17 +950,17 @@ VALUES (test_credential_1_credential_website_id,
 --Creating test portfolio credential associated skills
 INSERT INTO skills (name)
 VALUES ('Credential Test Skill 1')
-RETURNING id INTO test_credential_skill_1_id;
+RETURNING id INTO test_credential_1_skill_1_id;
 
 INSERT INTO credential_skills (credential_id, skill_id)
-VALUES (test_credential_1_id, test_credential_skill_1_id);
+VALUES (test_credential_1_id, test_credential_1_skill_1_id);
 
 INSERT INTO skills (name)
 VALUES ('Credential Test Skill 2')
-RETURNING id INTO test_credential_skill_2_id;
+RETURNING id INTO test_credential_1_skill_2_id;
 
 INSERT INTO credential_skills (credential_id, skill_id)
-VALUES (test_credential_1_id, test_credential_skill_2_id);
+VALUES (test_credential_1_id, test_credential_1_skill_2_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 VOLUNTEER WORKS
