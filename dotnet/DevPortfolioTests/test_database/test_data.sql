@@ -75,7 +75,7 @@ DECLARE
     test_sideproject_dependency_library_1_website_image_id INT;
 
 --************************************************************************************
---PORTFOLIO 1 SIDEPROJECT 1 BACKGROUND WORK EXPERIENCES VARIABLES
+--PORTFOLIO 1 BACKGROUND WORK EXPERIENCES VARIABLES
 --************************************************************************************
 // FIXME  update Portfolio 1 Background Work Experiences Variables
     test_work_experience_1_id INT;
@@ -88,7 +88,7 @@ DECLARE
     test_work_experience_1_website_image_id INT;
 
 --************************************************************************************
---PORTFOLIO 1 SIDEPROJECT 1 EDUCATIONS VARIABLES
+--PORTFOLIO 1 EDUCATIONS VARIABLES
 --************************************************************************************
 
 
@@ -545,7 +545,7 @@ INSERT INTO website_images (website_id, image_id)
 VALUES (test_sideproject_dependency_library_1_website_id, test_sideproject_dependency_library_1_website_image_id);
 
 --************************************************************************************
---CREATE PORTFOLIO 1 SIDEPROJECT 1 BACKGROUND WORK EXPERIENCES
+--CREATE PORTFOLIO 1 BACKGROUND WORK EXPERIENCES
 --************************************************************************************
 // FIXME  update Portfolio 1 Sideproject 1 Background Work Experiences
 --Creating test portfolio background work experiences
@@ -669,7 +669,7 @@ INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_work_experience_skill_1_id, test_work_experience_skill_1_icon_id);
 
 --************************************************************************************
---CREATE PORTFOLIO 1 SIDEPROJECT 1 EDUCATIONS
+--CREATE PORTFOLIO 1 EDUCATIONS
 --************************************************************************************
 // TODO check Portfolio 1 Sideproject 1 Educations
 --Creating test portfolio educations obtained
