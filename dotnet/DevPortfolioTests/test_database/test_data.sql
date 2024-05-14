@@ -117,11 +117,12 @@ DECLARE
     test_credential_2_id INT;
     test_credential_1_organization_logo_id INT;
     test_credential_1_main_image_id INT;
-    test_credential_1_website_id INT;
-    test_credential_1_website_image_id INT;
+    test_credential_1_organization_website_id INT;
+    test_credential_1_organization_website_image_id INT;
     test_credential_1_credential_website_id INT;
     test_credential_1_credential_website_image_id INT;
     test_credential_1_skill_1_id INT;
+    test_credential_1_skill_2_id INT;
 
 --************************************************************************************
 --PORTFOLIO 1 VOLUNTEER WORKS VARIABLES
@@ -863,21 +864,21 @@ WHERE id = test_credential_1_id;
 INSERT INTO websites (name, url, type)
 VALUES ('Credential 1 Organization Website', 'https://www.credential1.com', 
     'main website')
-RETURNING id INTO test_credential_1_website_id;
+RETURNING id INTO test_credential_1_organization_website_id;
 
 INSERT INTO credential_websites (credential_id, website_id)
-VALUES (test_credential_1_id, test_credential_1_website_id);
+VALUES (test_credential_1_id, test_credential_1_organization_website_id);
 
-UPDATE credentials SET organization_website_id = test_credential_1_website_id
+UPDATE credentials SET organization_website_id = test_credential_1_organization_website_id
 WHERE id = test_credential_1_id;
 
 --Creating test portfolio credential organization website image 
 INSERT INTO images (name, url)
 VALUES ('Credential 1 Website Image', 'Credential1WebsiteImage.jpeg')
-RETURNING id INTO test_credential_1_website_image_id;
+RETURNING id INTO test_credential_1_organization_website_image_id;
 
 INSERT INTO website_images (website_id, image_id)
-VALUES (test_credential_1_website_id, test_credential_1_website_image_id);
+VALUES (test_credential_1_organization_website_id, test_credential_1_organization_website_image_id);
 
 --Creating test portfolio credential 'credential website'
 INSERT INTO websites (name, url, type)
@@ -907,6 +908,13 @@ RETURNING id INTO test_credential_skill_1_id;
 
 INSERT INTO credential_skills (credential_id, skill_id)
 VALUES (test_credential_1_id, test_credential_skill_1_id);
+
+INSERT INTO skills (name)
+VALUES ('Credential Test Skill 2')
+RETURNING id INTO test_credential_skill_2_id;
+
+INSERT INTO credential_skills (credential_id, skill_id)
+VALUES (test_credential_1_id, test_credential_skill_2_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 VOLUNTEER WORKS
