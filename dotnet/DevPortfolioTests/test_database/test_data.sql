@@ -97,6 +97,18 @@ DECLARE
 --PORTFOLIO 1 EDUCATIONS VARIABLES
 --************************************************************************************
 
+    test_education_1_id INT;
+    test_education_2_id INT;
+    test_institution_1_logo_id INT;
+    test_education_1_main_image_id INT;
+    test_education_1_additional_image_1_id INT;
+    test_education_1_additional_image_2_id INT;
+    test_education_1_website_id INT;
+    test_education_1_website_image_id INT;
+    test_honor_1_id INT;
+    test_honor_2_id INT;
+    test_honor_1_image_id INT;
+
 --************************************************************************************
 --PORTFOLIO 1 CREDENTIALS VARIABLES
 --************************************************************************************
