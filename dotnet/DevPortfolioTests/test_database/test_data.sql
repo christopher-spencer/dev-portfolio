@@ -128,6 +128,22 @@ DECLARE
 --PORTFOLIO 1 VOLUNTEER WORKS VARIABLES
 --************************************************************************************
 
+    test_volunteer_1_id INT;
+    test_volunteer_2_id INT;
+    test_volunteer_1_organization_logo_id INT;
+    test_volunteer_1_main_image_id INT;
+    test_volunteer_1_additional_image_1_id INT;
+    test_volunteer_1_additional_image_2_id INT;
+    test_volunteer_1_website_id INT;
+    test_volunteer_1_website_image_id INT;
+    test_volunteer_1_achievement_1_id INT;
+    test_volunteer_1_achievement_2_id INT;
+    test_volunteer_1_achievement_1_image_id INT;
+    test_volunteer_1_skill_1_id INT;
+    test_volunteer_1_skill_2_id INT;
+    test_volunteer_1_skill_1_icon_id INT;
+    test_volunteer_1_skill_2_icon_id INT;
+
 --************************************************************************************
 --PORTFOLIO 1 OPEN SOURCE CONTRIBUTIONS VARIABLES
 --************************************************************************************
