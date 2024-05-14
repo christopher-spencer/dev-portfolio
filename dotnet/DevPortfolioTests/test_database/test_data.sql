@@ -99,15 +99,15 @@ DECLARE
 
     test_education_1_id INT;
     test_education_2_id INT;
-    test_institution_1_logo_id INT;
+    test_education_1_institution_logo_id INT;
     test_education_1_main_image_id INT;
     test_education_1_additional_image_1_id INT;
     test_education_1_additional_image_2_id INT;
     test_education_1_website_id INT;
     test_education_1_website_image_id INT;
-    test_honor_1_id INT;
-    test_honor_2_id INT;
-    test_honor_1_image_id INT;
+    test_education_1_skill_honor_1_id INT;
+    test_education_1_skill_honor_2_id INT;
+    test_education_1_skill_honor_1_image_id INT;
 
 --************************************************************************************
 --PORTFOLIO 1 CREDENTIALS VARIABLES
@@ -705,7 +705,7 @@ VALUES (test_work_experience_1_skill_1_id, test_work_experience_1_skill_1_icon_i
 --************************************************************************************
 --CREATE PORTFOLIO 1 EDUCATIONS
 --************************************************************************************
-// TODO check Portfolio 1 Sideproject 1 Educations
+
 --Creating test portfolio educations obtained
 INSERT INTO educations (institution_name, location, description, field_of_study, major, 
     minor, degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date)
@@ -730,12 +730,12 @@ VALUES (test_portfolio_id, test_education_2_id);
 --Creating test portfolio education 1 institution logo image
 INSERT INTO images (name, url, type)
 VALUES ('Institution 1 Logo', 'Institution1Logo.jpeg', 'logo')
-RETURNING id INTO test_institution_1_logo_id;
+RETURNING id INTO test_education_1_institution_logo_id;
 
 INSERT INTO education_images (education_id, image_id)
-VALUES (test_education_1_id, test_institution_1_logo_id);
+VALUES (test_education_1_id, test_education_1_institution_logo_id);
 
-UPDATE educations SET institution_logo_id = test_institution_1_logo_id
+UPDATE educations SET institution_logo_id = test_education_1_institution_logo_id
 WHERE id = test_education_1_id;
 
 --Creating test portfolio education 1 main image
@@ -785,26 +785,26 @@ VALUES (test_education_1_website_id, test_education_1_website_image_id);
 --Creating test portfolio education 1 honors and awards (achievements)
 INSERT INTO achievements (description)
 VALUES ('Test Honor/Award 1')
-RETURNING id INTO test_honor_1_id;
+RETURNING id INTO test_education_1_skill_honor_1_id;
 
 INSERT INTO education_achievements (education_id, achievement_id)
-VALUES (test_education_1_id, test_honor_1_id);
+VALUES (test_education_1_id, test_education_1_skill_honor_1_id);
 
 INSERT INTO achievements (description)
 VALUES ('Test Honor/Award 2')
-RETURNING id INTO test_honor_2_id;
+RETURNING id INTO test_education_1_skill_honor_2_id;
 
 INSERT INTO education_achievements (education_id, achievement_id)
-VALUES (test_education_1_id, test_honor_2_id);
+VALUES (test_education_1_id, test_education_1_skill_honor_2_id);
 
 --Creating test portfolio education 1 honor/award achievement 1 image
 
 INSERT INTO images (name, url)
 VALUES ('Honor/Award 1 Image', 'HonorAward1Image.jpeg')
-RETURNING id INTO test_honor_1_image_id;
+RETURNING id INTO test_education_1_skill_honor_1_image_id;
 
 INSERT INTO achievement_images (achievement_id, image_id)
-VALUES (test_honor_1_id, test_honor_1_image_id);
+VALUES (test_education_1_skill_honor_1_id, test_education_1_skill_honor_1_image_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 CREDENTIALS
