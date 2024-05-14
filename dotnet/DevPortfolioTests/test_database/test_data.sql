@@ -62,17 +62,17 @@ DECLARE
 --PORTFOLIO 1 SIDEPROJECT 1 APIS AND SERVICES VARIABLES
 --************************************************************************************
     test_sideproject_1_api_service_1_id INT;
-    test_api_service_1_image_id INT;
-    test_api_service_1_website_id INT;
-    test_api_service_1_website_image_id INT;
+    test_sideproject_api_service_1_image_id INT;
+    test_sideproject_api_service_1_website_id INT;
+    test_sideproject_api_service_1_website_image_id INT;
 
 --************************************************************************************
 --PORTFOLIO 1 SIDEPROJECT 1 DEPENDENCIES AND LIBRARIES VARIABLES
 --************************************************************************************
-    test_dependency_library_1_id INT;
-    test_dependency_library_1_image_id INT;
-    test_dependency_library_1_website_id INT;
-    test_dependency_library_1_website_image_id INT;
+    test_sideproject_dependency_library_1_id INT;
+    test_sideproject_dependency_library_1_image_id INT;
+    test_sideproject_dependency_library_1_website_id INT;
+    test_sideproject_dependency_library_1_website_image_id INT;
 
 --************************************************************************************
 --PORTFOLIO 1 SIDEPROJECT 1 BACKGROUND WORK EXPERIENCES VARIABLES
@@ -487,26 +487,26 @@ VALUES (test_sideproject_1_id, test_sideproject_1_api_service_1_id);
 --Creating test portfolio sideproject 1 API and service logo
 INSERT INTO images (name, url)
 VALUES ('API/Service 1 Logo', 'API_Service1Logo.jpeg')
-RETURNING id INTO test_api_service_1_image_id;
+RETURNING id INTO test_sideproject_api_service_1_image_id;
 
 INSERT INTO api_service_images (apiservice_id, image_id)
-VALUES (test_sideproject_1_api_service_1_id, test_api_service_1_image_id);
+VALUES (test_sideproject_1_api_service_1_id, test_sideproject_api_service_1_image_id);
 
 --Creating test portfolio sideproject 1 API and service website
 INSERT INTO websites (name, url)
 VALUES ('API/Service 1 Website', 'https://www.api-service1.com')
-RETURNING id INTO test_api_service_1_website_id;
+RETURNING id INTO test_sideproject_api_service_1_website_id;
 
 INSERT INTO api_service_websites (apiservice_id, website_id)
-VALUES (test_sideproject_1_api_service_1_id, test_api_service_1_website_id);
+VALUES (test_sideproject_1_api_service_1_id, test_sideproject_api_service_1_website_id);
 
 --Creating test portfolio sideproject 1 API and service website image
 INSERT INTO images (name, url)
 VALUES ('API/Service 1 Website Image', 'API_Service1WebsiteImage.jpeg')
-RETURNING id INTO test_api_service_1_website_image_id;
+RETURNING id INTO test_sideproject_api_service_1_website_image_id;
 
 INSERT INTO website_images (website_id, image_id)
-VALUES (test_api_service_1_website_id, test_api_service_1_website_image_id);
+VALUES (test_sideproject_api_service_1_website_id, test_sideproject_api_service_1_website_image_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 SIDEPROJECT 1 DEPENDENCIES AND LIBRARIES
@@ -515,34 +515,34 @@ VALUES (test_api_service_1_website_id, test_api_service_1_website_image_id);
 --Creating test portfolio sideproject 1 dependencies and libraries used
 INSERT INTO dependencies_and_libraries (name, description)
 VALUES ('Test Dependency/Library 1', 'Test Dependency/Library Description 1')
-RETURNING id INTO test_dependency_library_1_id;
+RETURNING id INTO test_sideproject_dependency_library_1_id;
 
 INSERT INTO sideproject_dependencies_and_libraries (sideproject_id, dependencylibrary_id)
-VALUES (test_sideproject_1_id, test_dependency_library_1_id);
+VALUES (test_sideproject_1_id, test_sideproject_dependency_library_1_id);
 
 --Creating test portfolio sideproject 1 dependency/library logo
 INSERT INTO images (name, url)
 VALUES ('Dependency/Library 1 Logo', 'Dependency_Library1Logo.jpeg')
-RETURNING id INTO test_dependency_library_1_image_id;
+RETURNING id INTO test_sideproject_dependency_library_1_image_id;
 
 INSERT INTO dependency_library_images (dependencylibrary_id, image_id)
-VALUES (test_dependency_library_1_id, test_dependency_library_1_image_id);
+VALUES (test_sideproject_dependency_library_1_id, test_sideproject_dependency_library_1_image_id);
 
 --Creating test portfolio sideproject 1 dependency/library website
 INSERT INTO websites (name, url)
 VALUES ('Dependency/Library 1 Website', 'https://www.dependency-library1.com')
-RETURNING id INTO test_dependency_library_1_website_id;
+RETURNING id INTO test_sideproject_dependency_library_1_website_id;
 
 INSERT INTO dependency_library_websites (dependencylibrary_id, website_id)
-VALUES (test_dependency_library_1_id, test_dependency_library_1_website_id);
+VALUES (test_sideproject_dependency_library_1_id, test_sideproject_dependency_library_1_website_id);
 
 --Creating test portfolio sideproject 1 dependency/library website image
 INSERT INTO images (name, url)
 VALUES ('Dependency/Library 1 Website Image', 'Dependency_Library1WebsiteImage.jpeg')
-RETURNING id INTO test_dependency_library_1_website_image_id;
+RETURNING id INTO test_sideproject_dependency_library_1_website_image_id;
 
 INSERT INTO website_images (website_id, image_id)
-VALUES (test_dependency_library_1_website_id, test_dependency_library_1_website_image_id);
+VALUES (test_sideproject_dependency_library_1_website_id, test_sideproject_dependency_library_1_website_image_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 SIDEPROJECT 1 BACKGROUND WORK EXPERIENCES
