@@ -173,6 +173,9 @@ DECLARE
 --BLOG POST 1 VARIABLES
 --************************************************************************************
 
+    test_blog_post_1_id INT;
+    test_blog_post_2_id INT;
+    test_blog_post_1_main_image_id INT;
 
 BEGIN
 
