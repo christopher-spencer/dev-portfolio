@@ -205,7 +205,7 @@ VALUES ('Test Portfolio', 'Test Location', 'Test Professional Summary', 'email1@
 RETURNING id INTO test_portfolio_id;
 
 --Creating a test portfolio main image
-INSERT INTO images (name, url, type) VALUES ('Portfolio Main Image', "MainImage.jpeg", 'main image') 
+INSERT INTO images (name, url, type) VALUES ('Portfolio Main Image', 'MainImage.jpeg', 'main image') 
 RETURNING id INTO test_portfolio_main_image_id;
 
 INSERT INTO portfolio_images (portfolio_id, image_id) 
@@ -216,14 +216,14 @@ WHERE id = test_portfolio_id;
 
 --Creating test portfolio additional images 1 and 2
 INSERT INTO images (name, url, type) 
-VALUES ('Portfolio Additional Image 1', "AdditionalImage1.jpeg", 'additional image')
+VALUES ('Portfolio Additional Image 1', 'AdditionalImage1.jpeg', 'additional image')
 RETURNING id INTO test_portfolio_additional_image_1_id;
 
 INSERT INTO portfolio_images (portfolio_id, image_id)
 VALUES (test_portfolio_id, test_portfolio_additional_image_1_id);
 
 INSERT INTO images (name, url, type) 
-VALUES ('Portfolio Additional Image 2', "AdditionalImage2.jpeg", 'additional image')
+VALUES ('Portfolio Additional Image 2', 'AdditionalImage2.jpeg', 'additional image')
 RETURNING id INTO test_portfolio_additional_image_2_id;
 
 INSERT INTO portfolio_images (portfolio_id, image_id)
