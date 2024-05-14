@@ -91,6 +91,22 @@ DECLARE
 --PORTFOLIO 1 EDUCATIONS VARIABLES
 --************************************************************************************
 
+--************************************************************************************
+--PORTFOLIO 1 CREDENTIALS VARIABLES
+--************************************************************************************
+
+--************************************************************************************
+--PORTFOLIO 1 VOLUNTEER WORKS VARIABLES
+--************************************************************************************
+
+--************************************************************************************
+--PORTFOLIO 1 OPEN SOURCE CONTRIBUTIONS VARIABLES
+--************************************************************************************
+
+--************************************************************************************
+--BLOG POST 1 VARIABLES
+--************************************************************************************
+
 
 BEGIN
 
@@ -772,6 +788,10 @@ RETURNING id INTO test_honor_1_image_id;
 INSERT INTO achievement_images (achievement_id, image_id)
 VALUES (test_honor_1_id, test_honor_1_image_id);
 
+--************************************************************************************
+--CREATE PORTFOLIO 1 CREDENTIALS
+--************************************************************************************
+
 --Creating test portfolio credentials obtained
 INSERT INTO credentials (name, issuing_organization, description, issue_date, 
     expiration_date, credential_id_number)
@@ -859,6 +879,10 @@ RETURNING id INTO test_credential_skill_1_id;
 
 INSERT INTO credential_skills (credential_id, skill_id)
 VALUES (test_credential_1_id, test_credential_skill_1_id);
+
+--************************************************************************************
+--CREATE PORTFOLIO 1 VOLUNTEER WORKS
+--************************************************************************************
 
 --Creating test portfolio volunteer works   
 INSERT INTO volunteer_works (organization_name, location, organization_description, 
@@ -988,6 +1012,10 @@ RETURNING id INTO test_volunteer_1_skill_2_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
 VALUES (test_volunteer_1_skill_2_id, test_volunteer_1_skill_2_icon_id);
+
+--************************************************************************************
+--CREATE PORTFOLIO 1 OPEN SOURCE CONTRIBUTIONS
+--************************************************************************************
 
 --Creating test portfolio open source contributions
 INSERT INTO open_source_contributions (project_name, organization_name, start_date,
@@ -1153,6 +1181,10 @@ RETURNING id INTO test_open_source_1_review_comment_1_image_id;
 
 INSERT INTO achievement_images (achievement_id, image_id)
 VALUES (test_open_source_1_review_comment_1_id, test_open_source_1_review_comment_1_image_id);
+
+--************************************************************************************
+--CREATE BLOG POST 1
+--************************************************************************************
 
 --Creating test blog posts
 INSERT INTO blogposts (name, author, description, content, created_at, updated_at)
