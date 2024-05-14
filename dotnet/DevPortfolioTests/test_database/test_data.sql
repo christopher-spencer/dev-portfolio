@@ -148,24 +148,25 @@ DECLARE
 --PORTFOLIO 1 OPEN SOURCE CONTRIBUTIONS VARIABLES
 --************************************************************************************
 
-    test_open_source_1_id INT;
-    test_open_source_2_id INT;
-    test_open_source_1_organization_logo_id INT;
-    test_open_source_1_main_image_id INT;
-    test_open_source_1_additional_image_1_id INT;
-    test_open_source_1_additional_image_2_id INT;
-    test_open_source_1_website_id INT;
-    test_open_source_1_website_image_id INT;
-    test_open_source_1_github_id INT;
-    test_open_source_1_github_image_id INT;
-    test_open_source_1_pull_request_1_id INT;
-    test_open_source_1_pull_request_2_id INT;
-    test_open_source_1_pull_request_1_image_id INT;
-    test_open_source_1_tech_skill_1_id INT;
-    test_open_source_1_tech_skill_1_icon_id INT;
-    test_open_source_1_review_comment_1_id INT;
-    test_open_source_1_review_comment_2_id INT;
-    test_open_source_1_review_comment_1_image_id INT;
+    test_open_source_contribution_1_id INT;
+    test_open_source_contribution_2_id INT;
+    test_open_source_contribution_1_organization_logo_id INT;
+    test_open_source_contribution_1_main_image_id INT;
+    test_open_source_contribution_1_additional_image_1_id INT;
+    test_open_source_contribution_1_additional_image_2_id INT;
+    test_open_source_contribution_1_organization_website_id INT;
+    test_open_source_contribution_1_organization_website_image_id INT;
+    test_open_source_contribution_1_github_id INT;
+    test_open_source_contribution_1_github_image_id INT;
+    test_open_source_contribution_1_pull_request_link_1_id INT;
+    test_open_source_contribution_1_pull_request_link_2_id INT;
+    test_open_source_contribution_1_pull_request_link_1_image_id INT;
+    test_open_source_contribution_1_tech_skill_1_id INT;
+    test_open_source_contribution_1_tech_skill_2_id INT;
+    test_open_source_contribution_1_tech_skill_1_icon_id INT;
+    test_open_source_contribution_1_achievement_review_comment_1_id INT;
+    test_open_source_contribution_1_achievement_review_comment_2_id INT;
+    test_open_source_contribution_1_achievement_review_comment_1_image_id INT;
 
 
 --************************************************************************************
@@ -1094,165 +1095,172 @@ INSERT INTO open_source_contributions (project_name, organization_name, start_da
     end_date, project_description, contribution_details)
 VALUES ('Test Project 1', 'Test Organization 1', '2021-01-01', '2021-01-02', 
     'Test Project Description 1', 'Test Contribution Details 1')
-RETURNING id INTO test_open_source_1_id;
+RETURNING id INTO test_open_source_contribution_1_id;
 
 INSERT INTO portfolio_open_source_contributions (portfolio_id, contribution_id)
-VALUES (test_portfolio_id, test_open_source_1_id);
+VALUES (test_portfolio_id, test_open_source_contribution_1_id);
 
 INSERT INTO open_source_contributions (project_name, organization_name, start_date,
     project_description, contribution_details)
 VALUES ('Test Project 2', 'Test Organization 2', '2021-01-01',
     'Test Project Description 2', 'Test Contribution Details 2')
-RETURNING id INTO test_open_source_2_id;
+RETURNING id INTO test_open_source_contribution_2_id;
 
 INSERT INTO portfolio_open_source_contributions (portfolio_id, contribution_id)
-VALUES (test_portfolio_id, test_open_source_2_id);
+VALUES (test_portfolio_id, test_open_source_contribution_2_id);
 
 --Creating test portfolio open source contribution organization logo
 INSERT INTO images (name, url, type)
 VALUES ('Open Source 1 Organization Logo', 'OpenSource1OrganizationLogo.jpeg', 'logo')
-RETURNING id INTO test_open_source_1_organization_logo_id;
+RETURNING id INTO test_open_source_contribution_1_organization_logo_id;
 
 INSERT INTO open_source_contribution_images (contribution_id, image_id)
-VALUES (test_open_source_1_id, test_open_source_1_organization_logo_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_organization_logo_id);
 
 UPDATE open_source_contributions 
-SET organization_logo_id = test_open_source_1_organization_logo_id
-WHERE id = test_open_source_1_id;
+SET organization_logo_id = test_open_source_contribution_1_organization_logo_id
+WHERE id = test_open_source_contribution_1_id;
 
 --Creating test portfolio open source contribution main image
 INSERT INTO images (name, url, type)
 VALUES ('Open Source 1 Main Image', 'OpenSource1MainImage.jpeg', 'main image')
-RETURNING id INTO test_open_source_1_main_image_id;
+RETURNING id INTO test_open_source_contribution_1_main_image_id;
 
 INSERT INTO open_source_contribution_images (contribution_id, image_id)
-VALUES (test_open_source_1_id, test_open_source_1_main_image_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_main_image_id);
 
 UPDATE open_source_contributions
-SET main_image_id = test_open_source_1_main_image_id
-WHERE id = test_open_source_1_id;
+SET main_image_id = test_open_source_contribution_1_main_image_id
+WHERE id = test_open_source_contribution_1_id;
 
 --Creating test portfolio open source contribution additional images 1 and 2
 INSERT INTO images (name, url, type)
 VALUES ('Open Source 1 Additional Image 1', 'OpenSource1AdditionalImage1.jpeg', 
     'additional image')
-RETURNING id INTO test_open_source_1_additional_image_1_id;
+RETURNING id INTO test_open_source_contribution_1_additional_image_1_id;
 
 INSERT INTO open_source_contribution_images (contribution_id, image_id)
-VALUES (test_open_source_1_id, test_open_source_1_additional_image_1_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_additional_image_1_id);
 
 INSERT INTO images (name, url, type)
 VALUES ('Open Source 1 Additional Image 2', 'OpenSource1AdditionalImage2.jpeg', 
     'additional image')
-RETURNING id INTO test_open_source_1_additional_image_2_id;
+RETURNING id INTO test_open_source_contribution_1_additional_image_2_id;
 
 INSERT INTO open_source_contribution_images (contribution_id, image_id)
-VALUES (test_open_source_1_id, test_open_source_1_additional_image_2_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_additional_image_2_id);
 
 --Creating test portfolio open source contribution 1 organization website
 INSERT INTO websites (name, url, type)
 VALUES ('Open Source 1 Organization Website', 'https://www.open-source1.com', 
     'main website')
-RETURNING id INTO test_open_source_1_website_id;
+RETURNING id INTO test_open_source_contribution_1_organization_website_id;
 
 INSERT INTO open_source_contribution_websites (contribution_id, website_id)
-VALUES (test_open_source_1_id, test_open_source_1_website_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_organization_website_id);
 
 UPDATE open_source_contributions
-SET organization_website_id = test_open_source_1_website_id
-WHERE id = test_open_source_1_id;
+SET organization_website_id = test_open_source_contribution_1_organization_website_id
+WHERE id = test_open_source_contribution_1_id;
 
 --Creating test portfolio open source contribution 1 organization website image
 INSERT INTO images (name, url)
 VALUES ('Open Source 1 Website Image', 'OpenSource1WebsiteImage.jpeg')
-RETURNING id INTO test_open_source_1_website_image_id;
+RETURNING id INTO test_open_source_contribution_1_organization_website_image_id;
 
 INSERT INTO website_images (website_id, image_id)
-VALUES (test_open_source_1_website_id, test_open_source_1_website_image_id);
+VALUES (test_open_source_contribution_1_organization_website_id, test_open_source_contribution_1_organization_website_image_id);
 
 --Creating test portfolio open source contribution 1 github website
 INSERT INTO websites (name, url, type)
 VALUES ('Open Source 1 GitHub', 'https://www.github.com/open-source1', 'github')
-RETURNING id INTO test_open_source_1_github_id;
+RETURNING id INTO test_open_source_contribution_1_github_id;
 
 INSERT INTO open_source_contribution_websites (contribution_id, website_id)
-VALUES (test_open_source_1_id, test_open_source_1_github_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_github_id);
 
 UPDATE open_source_contributions
-SET organization_github_id = test_open_source_1_github_id
-WHERE id = test_open_source_1_id;
+SET organization_github_id = test_open_source_contribution_1_github_id
+WHERE id = test_open_source_contribution_1_id;
 
 --Creating test portfolio open source contribution 1 github website image
 INSERT INTO images (name, url)
 VALUES ('Open Source 1 GitHub Image', 'OpenSource1GitHubImage.jpeg')
-RETURNING id INTO test_open_source_1_github_image_id;
+RETURNING id INTO test_open_source_contribution_1_github_image_id;
 
 INSERT INTO website_images (website_id, image_id)
-VALUES (test_open_source_1_github_id, test_open_source_1_github_image_id);
+VALUES (test_open_source_contribution_1_github_id, test_open_source_contribution_1_github_image_id);
 
 --Creating test portfolio open source contribution 1 pull request links 1 and 2
 INSERT INTO websites(name, url, type)
 VALUES ('Open Source 1 Pull Request 1', 'https://www.github.com/open-source1/pullrequest1', 
     'pull request link')
-RETURNING id INTO test_open_source_1_pull_request_1_id;
+RETURNING id INTO test_open_source_contribution_1_pull_request_link_1_id;
 
 INSERT INTO open_source_contribution_websites (contribution_id, website_id)
-VALUES (test_open_source_1_id, test_open_source_1_pull_request_1_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_pull_request_link_1_id);
 
 INSERT INTO websites(name, url, type)
 VALUES ('Open Source 1 Pull Request 2', 'https://www.github.com/open-source1/pullrequest2', 
     'pull request link')
-RETURNING id INTO test_open_source_1_pull_request_2_id;
+RETURNING id INTO test_open_source_contribution_1_pull_request_link_2_id;
 
 INSERT INTO open_source_contribution_websites (contribution_id, website_id)
-VALUES (test_open_source_1_id, test_open_source_1_pull_request_2_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_pull_request_link_2_id);
 
 --Creating test portfolio open source contribution 1 pull request link 1 image
 INSERT INTO images (name, url)
 VALUES ('Open Source 1 Pull Request 1 Image', 'OpenSource1PullRequest1Image.jpeg')
-RETURNING id INTO test_open_source_1_pull_request_1_image_id;
+RETURNING id INTO test_open_source_contribution_1_pull_request_link_1_image_id;
 
 INSERT INTO website_images (website_id, image_id)
-VALUES (test_open_source_1_pull_request_1_id, test_open_source_1_pull_request_1_image_id);
+VALUES (test_open_source_contribution_1_pull_request_link_1_id, test_open_source_contribution_1_pull_request_link_1_image_id);
 
 --Creating test portfolio open source contribution 1 tech skills utilized
 INSERT INTO skills (name)
 VALUES ('Open Source 1 Tech Skill 1')
-RETURNING id INTO test_open_source_1_tech_skill_1_id;
+RETURNING id INTO test_open_source_contribution_1_tech_skill_1_id;
 
 INSERT INTO open_source_contribution_skills (contribution_id, skill_id)
-VALUES (test_open_source_1_id, test_open_source_1_tech_skill_1_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_tech_skill_1_id);
+
+INSERT INTO skills (name)
+VALUES ('Open Source 1 Tech Skill 2')
+RETURNING id INTO test_open_source_contribution_1_tech_skill_2_id;
+
+INSERT INTO open_source_contribution_skills (contribution_id, skill_id)
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_tech_skill_2_id);
 
 --Creating test portfolio open source contribution 1 tech skill 1 icon
 INSERT INTO images (name, url)
 VALUES ('Open Source 1 Tech Skill 1 Icon', 'OpenSource1TechSkill1Icon.jpeg')
-RETURNING id INTO test_open_source_1_tech_skill_1_icon_id;
+RETURNING id INTO test_open_source_contribution_1_tech_skill_1_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
-VALUES (test_open_source_1_tech_skill_1_id, test_open_source_1_tech_skill_1_icon_id);
+VALUES (test_open_source_contribution_1_tech_skill_1_id, test_open_source_contribution_1_tech_skill_1_icon_id);
 
 --Creating test portfolio open source contribution 1 review comments and feedback received (achievements)
 INSERT INTO achievements (description)
 VALUES ('Open Source 1 Review Comment 1')
-RETURNING id INTO test_open_source_1_review_comment_1_id;
+RETURNING id INTO test_open_source_contribution_1_achievement_review_comment_1_id;
 
 INSERT INTO open_source_contribution_achievements (contribution_id, achievement_id)
-VALUES (test_open_source_1_id, test_open_source_1_review_comment_1_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_achievement_review_comment_1_id);
 
 INSERT INTO achievements (description)
 VALUES ('Open Source 1 Review Comment 2')
-RETURNING id INTO test_open_source_1_review_comment_2_id;
+RETURNING id INTO test_open_source_contribution_1_achievement_review_comment_2_id;
 
 INSERT INTO open_source_contribution_achievements (contribution_id, achievement_id)
-VALUES (test_open_source_1_id, test_open_source_1_review_comment_2_id);
+VALUES (test_open_source_contribution_1_id, test_open_source_contribution_1_achievement_review_comment_2_id);
 
 --Creating test portfolio open source contribution 1 review comment/achievement 1 image
 INSERT INTO images (name, url)
 VALUES ('Open Source 1 Review Comment 1 Image', 'OpenSource1ReviewComment1Image.jpeg')
-RETURNING id INTO test_open_source_1_review_comment_1_image_id;
+RETURNING id INTO test_open_source_contribution_1_achievement_review_comment_1_image_id;
 
 INSERT INTO achievement_images (achievement_id, image_id)
-VALUES (test_open_source_1_review_comment_1_id, test_open_source_1_review_comment_1_image_id);
+VALUES (test_open_source_contribution_1_achievement_review_comment_1_id, test_open_source_contribution_1_achievement_review_comment_1_image_id);
 
 --************************************************************************************
 --CREATE BLOG POST 1
