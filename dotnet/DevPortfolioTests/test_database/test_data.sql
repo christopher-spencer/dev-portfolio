@@ -113,6 +113,16 @@ DECLARE
 --PORTFOLIO 1 CREDENTIALS VARIABLES
 --************************************************************************************
 
+    test_credential_1_id INT;
+    test_credential_2_id INT;
+    test_credential_1_organization_logo_id INT;
+    test_credential_1_main_image_id INT;
+    test_credential_1_website_id INT;
+    test_credential_1_website_image_id INT;
+    test_credential_1_credential_website_id INT;
+    test_credential_1_credential_website_image_id INT;
+    test_credential_1_skill_1_id INT;
+
 --************************************************************************************
 --PORTFOLIO 1 VOLUNTEER WORKS VARIABLES
 --************************************************************************************
