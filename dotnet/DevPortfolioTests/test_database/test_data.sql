@@ -128,21 +128,21 @@ DECLARE
 --PORTFOLIO 1 VOLUNTEER WORKS VARIABLES
 --************************************************************************************
 
-    test_volunteer_1_id INT;
-    test_volunteer_2_id INT;
-    test_volunteer_1_organization_logo_id INT;
-    test_volunteer_1_main_image_id INT;
-    test_volunteer_1_additional_image_1_id INT;
-    test_volunteer_1_additional_image_2_id INT;
-    test_volunteer_1_website_id INT;
-    test_volunteer_1_website_image_id INT;
-    test_volunteer_1_achievement_1_id INT;
-    test_volunteer_1_achievement_2_id INT;
-    test_volunteer_1_achievement_1_image_id INT;
-    test_volunteer_1_skill_1_id INT;
-    test_volunteer_1_skill_2_id INT;
-    test_volunteer_1_skill_1_icon_id INT;
-    test_volunteer_1_skill_2_icon_id INT;
+    test_volunteer_work_1_id INT;
+    test_volunteer_work_2_id INT;
+    test_volunteer_work_1_organization_logo_id INT;
+    test_volunteer_work_1_main_image_id INT;
+    test_volunteer_work_1_additional_image_1_id INT;
+    test_volunteer_work_1_additional_image_2_id INT;
+    test_volunteer_work_1_organization_website_id INT;
+    test_volunteer_work_1_organization_website_image_id INT;
+    test_volunteer_work_1_achievement_1_id INT;
+    test_volunteer_work_1_achievement_2_id INT;
+    test_volunteer_work_1_achievement_1_image_id INT;
+    test_volunteer_work_1_skill_1_id INT;
+    test_volunteer_work_1_skill_2_id INT;
+    test_volunteer_work_1_skill_1_icon_id INT;
+    test_volunteer_work_1_skill_2_icon_id INT;
 
 --************************************************************************************
 --PORTFOLIO 1 OPEN SOURCE CONTRIBUTIONS VARIABLES
@@ -941,129 +941,129 @@ INSERT INTO volunteer_works (organization_name, location, organization_descripti
     position_title, start_date, end_date)
 VALUES ('Test Organization 1', 'Test Location 1', 'Test Organization Description 1',
     'Test Position Title 1', '2021-01-01', '2021-01-02')
-RETURNING id INTO test_volunteer_1_id;
+RETURNING id INTO test_volunteer_work_1_id;
 
 INSERT INTO portfolio_volunteer_works (portfolio_id, volunteer_id)
-VALUES (test_portfolio_id, test_volunteer_1_id);
+VALUES (test_portfolio_id, test_volunteer_work_1_id);
 
 INSERT INTO volunteer_works (organization_name, location, organization_description, 
     position_title, start_date)
 VALUES ('Test Organization 2', 'Test Location 2', 'Test Organization Description 2',
     'Test Position Title 2', '2021-01-01')
-RETURNING id INTO test_volunteer_2_id;
+RETURNING id INTO test_volunteer_work_2_id;
 
 INSERT INTO portfolio_volunteer_works (portfolio_id, volunteer_id)
-VALUES (test_portfolio_id, test_volunteer_2_id);
+VALUES (test_portfolio_id, test_volunteer_work_2_id);
 
 --Creating test portfolio volunteer work organization logo
 INSERT INTO images (name, url, type)
 VALUES ('Volunteer Work 1 Organization Logo', 'VolunteerWork1OrganizationLogo.jpeg', 
     'logo')
-RETURNING id INTO test_volunteer_1_organization_logo_id;
+RETURNING id INTO test_volunteer_work_1_organization_logo_id;
 
 INSERT INTO volunteer_images (volunteer_id, image_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_organization_logo_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_organization_logo_id);
 
-UPDATE volunteer_works SET organization_logo_id = test_volunteer_1_organization_logo_id
-WHERE id = test_volunteer_1_id;
+UPDATE volunteer_works SET organization_logo_id = test_volunteer_work_1_organization_logo_id
+WHERE id = test_volunteer_work_1_id;
 
 --Creating test portfolio volunteer work main image
 INSERT INTO images (name, url, type)
 VALUES ('Volunteer Work 1 Main Image', 'VolunteerWork1MainImage.jpeg', 'main image')
-RETURNING id INTO test_volunteer_1_main_image_id;
+RETURNING id INTO test_volunteer_work_1_main_image_id;
 
 INSERT INTO volunteer_images (volunteer_id, image_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_main_image_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_main_image_id);
 
-UPDATE volunteer_works SET main_image_id = test_volunteer_1_main_image_id
-WHERE id = test_volunteer_1_id;
+UPDATE volunteer_works SET main_image_id = test_volunteer_work_1_main_image_id
+WHERE id = test_volunteer_work_1_id;
 
 --Creating test portfolio volunteer work additional images 1 and 2
 INSERT INTO images (name, url, type)
 VALUES ('Volunteer Work 1 Additional Image 1', 'VolunteerWork1AdditionalImage1.jpeg', 
     'additional image')
-RETURNING id INTO test_volunteer_1_additional_image_1_id;
+RETURNING id INTO test_volunteer_work_1_additional_image_1_id;
 
 INSERT INTO volunteer_images (volunteer_id, image_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_additional_image_1_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_additional_image_1_id);
 
 INSERT INTO images (name, url, type)
 VALUES ('Volunteer Work 1 Additional Image 2', 'VolunteerWork1AdditionalImage2.jpeg', 
     'additional image')
-RETURNING id INTO test_volunteer_1_additional_image_2_id;
+RETURNING id INTO test_volunteer_work_1_additional_image_2_id;
 
 INSERT INTO volunteer_images (volunteer_id, image_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_additional_image_2_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_additional_image_2_id);
 
 --Creating test portfolio volunteer work 1 website
 INSERT INTO websites (name, url)
 VALUES ('Volunteer Work 1 Organization Website', 'https://www.volunteer-work1.com')
-RETURNING id INTO test_volunteer_1_website_id;
+RETURNING id INTO test_volunteer_work_1_organization_website_id;
 
 INSERT INTO volunteer_websites (volunteer_id, website_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_website_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_organization_website_id);
 
 --Creating test portfolio volunteer work 1 website image
 INSERT INTO images (name, url)
 VALUES ('Volunteer Work 1 Website Image', 'VolunteerWork1WebsiteImage.jpeg')
-RETURNING id INTO test_volunteer_1_website_image_id;
+RETURNING id INTO test_volunteer_work_1_organization_website_image_id;
 
 INSERT INTO website_images (website_id, image_id)
-VALUES (test_volunteer_1_website_id, test_volunteer_1_website_image_id);
+VALUES (test_volunteer_work_1_organization_website_id, test_volunteer_work_1_organization_website_image_id);
 
 --Creating test portfolio volunteer work 1 responsibilities/achievements
 INSERT INTO achievements (description)
 VALUES ('Test Volunteer Work 1 Achievement 1')
-RETURNING id INTO test_volunteer_1_achievement_1_id;
+RETURNING id INTO test_volunteer_work_1_achievement_1_id;
 
 INSERT INTO volunteer_achievements (volunteer_id, achievement_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_achievement_1_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_achievement_1_id);
 
 INSERT INTO achievements (description)
 VALUES ('Test Volunteer Work 1 Achievement 2')
-RETURNING id INTO test_volunteer_1_achievement_2_id;
+RETURNING id INTO test_volunteer_work_1_achievement_2_id;
 
 INSERT INTO volunteer_achievements (volunteer_id, achievement_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_achievement_2_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_achievement_2_id);
 
 --Creating test portfolio volunteer work 1 achievement 1 image
 INSERT INTO images (name, url)
 VALUES ('Volunteer Work 1 Achievement 1 Image', 'VolunteerWork1Achievement1Image.jpeg')
-RETURNING id INTO test_volunteer_1_achievement_1_image_id;
+RETURNING id INTO test_volunteer_work_1_achievement_1_image_id;
 
 INSERT INTO achievement_images (achievement_id, image_id)
-VALUES (test_volunteer_1_achievement_1_id, test_volunteer_1_achievement_1_image_id);
+VALUES (test_volunteer_work_1_achievement_1_id, test_volunteer_work_1_achievement_1_image_id);
 
 --Creating test portfolio volunteer work 1 skills used and obtained
 INSERT INTO skills (name)
 VALUES ('Volunteer Work Test Skill 1')
-RETURNING id INTO test_volunteer_1_skill_1_id;
+RETURNING id INTO test_volunteer_work_1_skill_1_id;
 
 INSERT INTO volunteer_skills (volunteer_id, skill_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_skill_1_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_skill_1_id);
 
 INSERT INTO skills (name)
 VALUES ('Volunteer Work Test Skill 2')
-RETURNING id INTO test_volunteer_1_skill_2_id;
+RETURNING id INTO test_volunteer_work_1_skill_2_id;
 
 INSERT INTO volunteer_skills (volunteer_id, skill_id)
-VALUES (test_volunteer_1_id, test_volunteer_1_skill_2_id);
+VALUES (test_volunteer_work_1_id, test_volunteer_work_1_skill_2_id);
 
 --Creating test portfolio volunteer work 1 skill 1 icon
 INSERT INTO images (name, url)
 VALUES ('Volunteer Work Skill 1 Icon', 'VolunteerWorkSkill1Icon.jpeg')
-RETURNING id INTO test_volunteer_1_skill_1_icon_id;
+RETURNING id INTO test_volunteer_work_1_skill_1_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
-VALUES (test_volunteer_1_skill_1_id, test_volunteer_1_skill_1_icon_id);
+VALUES (test_volunteer_work_1_skill_1_id, test_volunteer_work_1_skill_1_icon_id);
 
 --Creating test portfolio volunteer work 1 skill 2 icon
 INSERT INTO images (name, url)
 VALUES ('Volunteer Work Skill 2 Icon', 'VolunteerWorkSkill2Icon.jpeg')
-RETURNING id INTO test_volunteer_1_skill_2_icon_id;
+RETURNING id INTO test_volunteer_work_1_skill_2_icon_id;
 
 INSERT INTO skill_images (skill_id, image_id)
-VALUES (test_volunteer_1_skill_2_id, test_volunteer_1_skill_2_icon_id);
+VALUES (test_volunteer_work_1_skill_2_id, test_volunteer_work_1_skill_2_icon_id);
 
 --************************************************************************************
 --CREATE PORTFOLIO 1 OPEN SOURCE CONTRIBUTIONS
