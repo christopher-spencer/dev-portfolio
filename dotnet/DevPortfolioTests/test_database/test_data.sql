@@ -77,7 +77,7 @@ DECLARE
 --************************************************************************************
 --PORTFOLIO 1 BACKGROUND WORK EXPERIENCES VARIABLES
 --************************************************************************************
-// FIXME  update Portfolio 1 Background Work Experiences Variables
+
     test_work_experience_1_id INT;
     test_work_experience_2_id INT;
     test_company_1_logo_id INT;
@@ -563,7 +563,7 @@ VALUES (test_sideproject_dependency_library_1_website_id, test_sideproject_depen
 --************************************************************************************
 --CREATE PORTFOLIO 1 BACKGROUND WORK EXPERIENCES
 --************************************************************************************
-// FIXME  update Portfolio 1 Sideproject 1 Background Work Experiences
+
 --Creating test portfolio background work experiences
 INSERT INTO work_experiences (position_title, company_name, location, description, 
     start_date, end_date)
