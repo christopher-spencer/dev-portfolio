@@ -61,7 +61,6 @@ DECLARE
 --************************************************************************************
 --PORTFOLIO 1 SIDEPROJECT 1 APIS AND SERVICES VARIABLES
 --************************************************************************************
-// FIXME  update Portfolio 1 Sideproject 1 APIs & Services Variables  
     test_sideproject_1_api_service_1_id INT;
     test_api_service_1_image_id INT;
     test_api_service_1_website_id INT;
@@ -476,7 +475,7 @@ VALUES (test_sideproject_1_contributor_1_portfolio_link_id,
 --************************************************************************************
 --CREATE PORTFOLIO 1 SIDEPROJECT 1 APIS AND SERVICES
 --************************************************************************************
-// FIXME  update Portfolio 1 Sideproject 1 APIs & Services
+
 --Creating test portfolio sideproject 1 APIs and services used
 INSERT INTO apis_and_services (name, description) 
 VALUES ('Test API/Service 1', 'Test API/Service Description 1')
