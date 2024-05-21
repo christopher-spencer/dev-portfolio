@@ -1,14 +1,3 @@
-// FIXME COMMIT
-// FIXME psql:test_data.sql:1306: ERROR:  null value in column "type" of relation "websites" violates not-null constraint
-// FIXME DETAIL:  Failing row contains (8, API/Service 1 Website, https://www.api-service1.com, null, null).
-// FIXME CONTEXT:  SQL statement "INSERT INTO websites (name, url)
-// FIXME VALUES ('API/Service 1 Website', 'https://www.api-service1.com')
-// FIXME RETURNING id"
-// FIXME PL/pgSQL function inline_code_block line 587 at SQL statement
-// FIXME CREATE ROLE"
-
-// TODO ****CheckPoint: review nullable issues with sql is first step to fix the issue
-
 DO $$
 DECLARE
 

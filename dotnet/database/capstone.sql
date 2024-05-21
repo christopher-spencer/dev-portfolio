@@ -1,4 +1,5 @@
 // TODO AUTOCONNECT DB UPDATES****
+// TODO remove Not Null constraint from type in websites table?
 
 BEGIN TRANSACTION;
 
