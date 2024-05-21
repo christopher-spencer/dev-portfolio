@@ -502,6 +502,9 @@ RETURNING id INTO test_sideproject_1_contributor_1_image_id;
 INSERT INTO contributor_images (contributor_id, image_id)
 VALUES (test_sideproject_1_contributor_1_id, test_sideproject_1_contributor_1_image_id);
 
+UPDATE contributors SET contributor_image_id = test_sideproject_1_contributor_1_image_id
+WHERE id = test_sideproject_1_contributor_1_id;
+
 --Creating test portfolio sideproject 1 contributor github
 INSERT INTO websites (name, url, type)
 VALUES ('Johnny Testman GitHub', 'https://www.github.com/johnny-testman', 'github')
