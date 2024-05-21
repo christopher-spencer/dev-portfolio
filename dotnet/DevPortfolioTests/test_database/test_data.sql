@@ -1069,14 +1069,14 @@ INSERT INTO skills (name)
 VALUES ('Volunteer Work Test Skill 1')
 RETURNING id INTO test_volunteer_work_1_skill_1_id;
 
-INSERT INTO volunteer_skills (volunteer_work_id, skill_id)
+INSERT INTO volunteer_work_skills (volunteer_work_id, skill_id)
 VALUES (test_volunteer_work_1_id, test_volunteer_work_1_skill_1_id);
 
 INSERT INTO skills (name)
 VALUES ('Volunteer Work Test Skill 2')
 RETURNING id INTO test_volunteer_work_1_skill_2_id;
 
-INSERT INTO volunteer_skills (volunteer_work_id, skill_id)
+INSERT INTO volunteer_work_skills (volunteer_work_id, skill_id)
 VALUES (test_volunteer_work_1_id, test_volunteer_work_1_skill_2_id);
 
 --Creating test portfolio volunteer work 1 skill 1 icon
