@@ -91,7 +91,7 @@ CREATE TABLE websites (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     url VARCHAR(2000) NOT NULL,
-    type VARCHAR(50) NOT NULL,
+    type VARCHAR(50),
     logo_id INTEGER,
     FOREIGN KEY (logo_id) REFERENCES images(id)
 );
@@ -325,10 +325,10 @@ CREATE TABLE open_source_contribution_achievements (
 );
 
 CREATE TABLE volunteer_work_achievements (
-    volunteer_id INTEGER,
+    volunteer_work_id INTEGER,
     achievement_id INTEGER,
-    PRIMARY KEY (volunteer_id, achievement_id),
-    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id),
+    PRIMARY KEY (volunteer_work_id, achievement_id),
+    FOREIGN KEY (volunteer_work_id) REFERENCES volunteer_works(id),
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
 
@@ -670,10 +670,10 @@ CREATE TABLE portfolio_open_source_contributions (
 
 CREATE TABLE portfolio_volunteer_works (
     portfolio_id INTEGER,
-    volunteer_id INTEGER,
-    PRIMARY KEY (portfolio_id, volunteer_id),
+    volunteer_work_id INTEGER,
+    PRIMARY KEY (portfolio_id, volunteer_work_id),
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
-    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id)
+    FOREIGN KEY (volunteer_work_id) REFERENCES volunteer_works(id)
 );
 
 

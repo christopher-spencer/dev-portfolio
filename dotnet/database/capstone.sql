@@ -326,7 +326,7 @@ CREATE TABLE open_source_contribution_achievements (
     FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id),
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
-
+// FIXME volunteer_work_id
 CREATE TABLE volunteer_work_achievements (
     volunteer_id INTEGER,
     achievement_id INTEGER,
@@ -670,7 +670,7 @@ CREATE TABLE portfolio_open_source_contributions (
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
     FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id)
 );
-
+// FIXME volunteer_work_id
 CREATE TABLE portfolio_volunteer_works (
     portfolio_id INTEGER,
     volunteer_id INTEGER,
