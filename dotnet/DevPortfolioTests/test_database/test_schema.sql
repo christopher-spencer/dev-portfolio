@@ -565,10 +565,10 @@ CREATE TABLE open_source_contribution_skills (
 );
 
 CREATE TABLE volunteer_work_skills (
-    volunteer_id INTEGER,
+    volunteer_work_id INTEGER,
     skill_id INTEGER,
-    PRIMARY KEY (volunteer_id, skill_id),
-    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id),
+    PRIMARY KEY (volunteer_work_id, skill_id),
+    FOREIGN KEY (volunteer_work_id) REFERENCES volunteer_works(id),
     FOREIGN KEY (skill_id) REFERENCES skills(id)
 );
 

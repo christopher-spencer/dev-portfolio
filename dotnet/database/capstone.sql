@@ -566,7 +566,7 @@ CREATE TABLE open_source_contribution_skills (
     FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id),
     FOREIGN KEY (skill_id) REFERENCES skills(id)
 );
-
+// FIXME volunteer_work_id
 CREATE TABLE volunteer_work_skills (
     volunteer_id INTEGER,
     skill_id INTEGER,
