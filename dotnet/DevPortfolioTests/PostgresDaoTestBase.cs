@@ -32,7 +32,7 @@ namespace Capstone.UnitTests.DAO
                     **********************************************************************************************
                 */
 
-                // Read user-related SQL queries from the test_users.sql file
+                // //Read user-related SQL queries from the test_users.sql file
                 // string userSqlFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"../../test_database/test_users.sql");
                 // string userSqlQueries = File.ReadAllText(userSqlFile);
 
