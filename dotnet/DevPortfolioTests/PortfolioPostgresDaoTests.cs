@@ -69,6 +69,28 @@ namespace Capstone.UnitTests.DAO
             }
         }
 
+        // [TestMethod]
+        // public void GetPortfolios_Returns_Empty_List_If_No_Portfolios()
+        // {
+        //     // Arrange
+        //     using (var conn = new Npgsql.NpgsqlConnection(TestConnectionString))
+        //     {
+        //         conn.Open();
+
+        //         using (var cmd = new Npgsql.NpgsqlCommand("DELETE FROM portfolios", conn))
+        //         {
+        //             cmd.ExecuteNonQuery();
+        //         }
+        //     }
+
+        //     // Act
+        //     List<Portfolio> portfolios = dao.GetPortfolios();
+
+        //     // Assert
+        //     Assert.IsNotNull(portfolios);
+        //     Assert.AreEqual(0, portfolios.Count);
+        // }
+
         [TestMethod]
         public void GetPortfolioById_Returns_Correct_Portfolio()
         {
@@ -96,7 +118,35 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(portfolio);
         }
 
+        [TestMethod]
+        public void AddPortfolio_Returns_Portfolio_With_Id()
+        {
+            // Arrange
+            Portfolio portfolio = new Portfolio
+            {
+                Name = "Test Portfolio",
+                Location = "Test Location",
+                ProfessionalSummary = "Test Professional Summary",
+                Email = "Test Email"
+            };
 
+            // Act
+            Portfolio addedPortfolio = dao.CreatePortfolio(portfolio);
+
+            // Assert
+            Assert.IsNotNull(addedPortfolio);
+            Assert.IsNotNull(addedPortfolio.Id);
+            Assert.AreEqual(portfolio.Name, addedPortfolio.Name);
+            Assert.AreEqual(portfolio.Location, addedPortfolio.Location);
+            Assert.AreEqual(portfolio.ProfessionalSummary, addedPortfolio.ProfessionalSummary);
+            Assert.AreEqual(portfolio.Email, addedPortfolio.Email);
+
+            // Additional assertions for properties
+            Assert.IsNotNull(addedPortfolio.Name);
+            Assert.IsNotNull(addedPortfolio.Location);
+            Assert.IsNotNull(addedPortfolio.ProfessionalSummary);
+            Assert.IsNotNull(addedPortfolio.Email);
+        }
 
     }
 }
