@@ -8,7 +8,7 @@ namespace Capstone.UnitTests.DAO
         protected string TestConnectionString = @"Host=localhost;Port=5432;Database=test_dev_portfolio;Username=test_dev_portfolio_appuser;Password=test_password";
 
         private TransactionScope transaction;
-
+//FIXME getting a transaction issue after adding additional tests to PortfolioPostgresDaoTests
         [TestInitialize]
         public void Initialize()
         {
