@@ -89,6 +89,8 @@ namespace Capstone
 
             IPortfolioDao portfolioDao = new PortfolioPostgresDao(connectionString, sideProjectDao, websiteDao, imageDao, 
                 skillDao, workExperienceDao, educationDao, credentialDao, volunteerWorkDao, openSourceContributionDao, hobbyDao);
+// NOTE added this IBlogPostDao, possible missing fix
+            IBlogPostDao blogPostDao = new BlogPostPostgresDao(connectionString, imageDao);
 
             // Register services with DI container
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
