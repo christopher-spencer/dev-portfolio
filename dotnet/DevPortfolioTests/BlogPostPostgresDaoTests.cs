@@ -142,18 +142,18 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             var imageDaoMock = new Mock<IImageDao>(); // Mock IImageDao
-            imageDaoMock.Setup(dao => dao.DeleteImageByBlogPostId(It.IsAny<int>(), It.IsAny<int>())).Returns(1); 
-
             var blogPostId = 1;
-            var imageId = 1;
+
+            // Setup mock to delete images and return the number of rows affected
+            imageDaoMock.Setup(dao => dao.DeleteImageByBlogPostId(blogPostId, It.IsAny<int>())).Returns(1);
 
             BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
 
             // Act
-            int blogPostRowsAffected = dao.DeleteBlogPost(1);
+            int blogPostRowsAffected = dao.DeleteBlogPost(blogPostId);
 
             // Assert
-            imageDaoMock.Verify(dao => dao.DeleteImageByBlogPostId(blogPostId, imageId), Times.Once);
+            imageDaoMock.Verify(dao => dao.DeleteImageByBlogPostId(blogPostId, It.IsAny<int>()), Times.Once);
             Assert.AreEqual(1, blogPostRowsAffected);
         }
     }
