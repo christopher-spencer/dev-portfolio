@@ -12,30 +12,44 @@ namespace Capstone.UnitTests.DAO
     public class PortfolioPostgresDaoTests : PostgresDaoTestBase
     {
 
-        // [TestMethod]
-        // public void GetPortfolios_Returns_All_Portfolios()
-        // {
-        //     // Arrange
-        //     var imageDaoMock = new Mock<IImageDao>();
-        //     PortfolioPostgresDao dao = new PortfolioPostgresDao(TestConnectionString, imageDaoMock.Object);
+        [TestMethod]
+        public void GetPortfolios_Returns_All_Portfolios()
+        {
+            // Arrange
+            var sideProjectDaoMock = new Mock<ISideProjectDao>();
+            var websiteDaoMock = new Mock<IWebsiteDao>();
+            var imageDaoMock = new Mock<IImageDao>();
+            var skillDaoMock = new Mock<ISkillDao>();
+            var workExperienceDaoMock = new Mock<IWorkExperienceDao>();
+            var educationDaoMock = new Mock<IEducationDao>();
+            var credentialDaoMock = new Mock<ICredentialDao>();
+            var volunteerWorkDaoMock = new Mock<IVolunteerWorkDao>();
+            var openSourceContributionDaoMock = new Mock<IOpenSourceContributionDao>();
+            var hobbyDaoMock = new Mock<IHobbyDao>();
 
-        //     // Act
-        //     List<Portfolio> portfolios = dao.GetPortfolios();
 
-        //     // Assert
-        //     Assert.IsNotNull(portfolios);
-        //     Assert.IsTrue(portfolios.Count > 0);
+            PortfolioPostgresDao dao = new PortfolioPostgresDao(TestConnectionString, sideProjectDaoMock.Object, 
+            websiteDaoMock.Object, imageDaoMock.Object, skillDaoMock.Object, workExperienceDaoMock.Object, 
+            educationDaoMock.Object, credentialDaoMock.Object, volunteerWorkDaoMock.Object, 
+            openSourceContributionDaoMock.Object, hobbyDaoMock.Object);
 
-        //     // Additional assertions for properties
-        //     foreach (var portfolio in portfolios)
-        //     {
-        //         Assert.IsNotNull(portfolio.Id);
-        //         Assert.IsNotNull(portfolio.Name);
-        //         Assert.IsNotNull(portfolio.Location);
-        //         Assert.IsNotNull(portfolio.ProfessionalSummary);
-        //         Assert.IsNotNull(portfolio.Email);
-        //     }
-        // }
+            // Act
+            List<Portfolio> portfolios = dao.GetPortfolios();
+
+            // Assert
+            Assert.IsNotNull(portfolios);
+            Assert.IsTrue(portfolios.Count > 0);
+
+            // Additional assertions for properties
+            foreach (var portfolio in portfolios)
+            {
+                Assert.IsNotNull(portfolio.Id);
+                Assert.IsNotNull(portfolio.Name);
+                Assert.IsNotNull(portfolio.Location);
+                Assert.IsNotNull(portfolio.ProfessionalSummary);
+                Assert.IsNotNull(portfolio.Email);
+            }
+        }
 
     }
 }
