@@ -10,12 +10,18 @@ namespace Capstone.UnitTests.DAO
 {
     [TestClass]
     public class PortfolioPostgresDaoTests : PostgresDaoTestBase
-    {
+    {   
+        private PortfolioPostgresDao dao;
 
-        [TestMethod]
-        public void GetPortfolios_Returns_All_Portfolios()
+        [TestInitialize]
+        public void TestInitialize()
         {
-            // Arrange
+            base.Initialize();
+            dao = CreateDaoWithMocks();
+        }
+
+        private PortfolioPostgresDao CreateDaoWithMocks()
+        {
             var sideProjectDaoMock = new Mock<ISideProjectDao>();
             var websiteDaoMock = new Mock<IWebsiteDao>();
             var imageDaoMock = new Mock<IImageDao>();
@@ -27,11 +33,23 @@ namespace Capstone.UnitTests.DAO
             var openSourceContributionDaoMock = new Mock<IOpenSourceContributionDao>();
             var hobbyDaoMock = new Mock<IHobbyDao>();
 
+            return new PortfolioPostgresDao(
+                TestConnectionString,
+                sideProjectDaoMock.Object,
+                websiteDaoMock.Object,
+                imageDaoMock.Object,
+                skillDaoMock.Object,
+                workExperienceDaoMock.Object,
+                educationDaoMock.Object,
+                credentialDaoMock.Object,
+                volunteerWorkDaoMock.Object,
+                openSourceContributionDaoMock.Object,
+                hobbyDaoMock.Object);
+        }
 
-            PortfolioPostgresDao dao = new PortfolioPostgresDao(TestConnectionString, sideProjectDaoMock.Object, 
-            websiteDaoMock.Object, imageDaoMock.Object, skillDaoMock.Object, workExperienceDaoMock.Object, 
-            educationDaoMock.Object, credentialDaoMock.Object, volunteerWorkDaoMock.Object, 
-            openSourceContributionDaoMock.Object, hobbyDaoMock.Object);
+        [TestMethod]
+        public void GetPortfolios_Returns_All_Portfolios()
+        {
 
             // Act
             List<Portfolio> portfolios = dao.GetPortfolios();
@@ -54,23 +72,6 @@ namespace Capstone.UnitTests.DAO
         [TestMethod]
         public void GetPortfolioById_Returns_Correct_Portfolio()
         {
-            // Arrange
-            var sideProjectDaoMock = new Mock<ISideProjectDao>();
-            var websiteDaoMock = new Mock<IWebsiteDao>();
-            var imageDaoMock = new Mock<IImageDao>();
-            var skillDaoMock = new Mock<ISkillDao>();
-            var workExperienceDaoMock = new Mock<IWorkExperienceDao>();
-            var educationDaoMock = new Mock<IEducationDao>();
-            var credentialDaoMock = new Mock<ICredentialDao>();
-            var volunteerWorkDaoMock = new Mock<IVolunteerWorkDao>();
-            var openSourceContributionDaoMock = new Mock<IOpenSourceContributionDao>();
-            var hobbyDaoMock = new Mock<IHobbyDao>();
-
-            PortfolioPostgresDao dao = new PortfolioPostgresDao(TestConnectionString, sideProjectDaoMock.Object, 
-            websiteDaoMock.Object, imageDaoMock.Object, skillDaoMock.Object, workExperienceDaoMock.Object, 
-            educationDaoMock.Object, credentialDaoMock.Object, volunteerWorkDaoMock.Object, 
-            openSourceContributionDaoMock.Object, hobbyDaoMock.Object);
-
             // Act
             Portfolio portfolio = dao.GetPortfolio(1);
 
@@ -85,7 +86,17 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNotNull(portfolio.Email);
         }
 
-        
+        [TestMethod]
+        public void GetPortfolioById_Returns_Null_If_Portfolio_Does_Not_Exist()
+        {
+            // Act
+            Portfolio portfolio = dao.GetPortfolio(999);
+
+            // Assert
+            Assert.IsNull(portfolio);
+        }
+
+
 
     }
 }
