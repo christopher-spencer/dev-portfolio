@@ -10,6 +10,8 @@ namespace Capstone.UnitTests.DAO
         private TransactionScope transaction;
 
         //FIXME getting a transaction issue after adding additional tests to PortfolioPostgresDaoTests
+
+        //NOTE possible issue with BlogPosts, Portfolio and User tests all running concurrently instead of one at a time?
         [TestInitialize]
         public void Initialize()
         {
