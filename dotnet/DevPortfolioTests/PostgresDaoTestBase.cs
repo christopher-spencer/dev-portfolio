@@ -22,7 +22,7 @@ namespace Capstone.UnitTests.DAO
                 var transactionOptions = new TransactionOptions
                 {
                     IsolationLevel = IsolationLevel.ReadCommitted,
-                    Timeout = TimeSpan.FromMinutes(2) // Adjust as necessary
+                    Timeout = TimeSpan.FromMinutes(2) // Used to adjust timing for transaction timeout
                 };
 
                 transaction = new TransactionScope(TransactionScopeOption.RequiresNew, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
@@ -35,7 +35,6 @@ namespace Capstone.UnitTests.DAO
             }
             catch (Exception ex)
             {
-                // Log or handle the exception as needed
                 Console.WriteLine($"Exception during Initialize: {ex}");
                 throw;
             }
@@ -45,8 +44,6 @@ namespace Capstone.UnitTests.DAO
         {
             try
             {
-                //string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test_database", "test_create.sh");
-
                 // Get the path to the directory containing the currently executing assembly
                 string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 // Combine it with the relative path to the script using Unix-style paths
@@ -84,7 +81,6 @@ namespace Capstone.UnitTests.DAO
             }
             catch (Exception ex)
             {
-                // Log or handle the exception as needed
                 Console.WriteLine($"Exception during RunDatabaseSetupScript: {ex}");
                 throw;
             }
@@ -103,7 +99,6 @@ namespace Capstone.UnitTests.DAO
             }
             catch (Exception ex)
             {
-                // Log or handle the exception as needed
                 Console.WriteLine($"Exception during Cleanup: {ex}");
             }
         }
