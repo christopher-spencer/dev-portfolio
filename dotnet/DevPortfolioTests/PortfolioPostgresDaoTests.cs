@@ -207,5 +207,27 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(updatedPortfolio);
         }
 
+        [TestMethod]
+        public void DeletePortfolio_Returns_True_If_Portfolio_Deleted()
+        {
+            // Arrange
+            Portfolio portfolio = new Portfolio
+            {
+                Name = "Test Portfolio",
+                Location = "Test Location",
+                ProfessionalSummary = "Test Professional Summary",
+                Email = "Test Email"
+            };
+
+            Portfolio addedPortfolio = dao.CreatePortfolio(portfolio);
+
+            // Act
+            int deleteResult = dao.DeletePortfolio(addedPortfolio.Id);
+            bool isDeleted = deleteResult == 1;
+
+            // Assert
+            Assert.IsTrue(isDeleted);
+        }
+
     }
 }
