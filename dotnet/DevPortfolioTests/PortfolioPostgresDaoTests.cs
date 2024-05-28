@@ -156,5 +156,36 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNotNull(addedPortfolio.Email);
         }
 
+        [TestMethod]
+        public void UpdatePortfolio_Returns_Updated_Portfolio()
+        {
+            // Arrange
+            Portfolio portfolio = new Portfolio
+            {
+                Id = 1,
+                Name = "Updated Portfolio",
+                Location = "Updated Location",
+                ProfessionalSummary = "Updated Professional Summary",
+                Email = "Updated Email"
+            };
+
+            // Act
+            Portfolio updatedPortfolio = dao.UpdatePortfolio(portfolio, portfolio.Id);
+
+            // Assert
+            Assert.IsNotNull(updatedPortfolio);
+            Assert.AreEqual(portfolio.Id, updatedPortfolio.Id);
+            Assert.AreEqual(portfolio.Name, updatedPortfolio.Name);
+            Assert.AreEqual(portfolio.Location, updatedPortfolio.Location);
+            Assert.AreEqual(portfolio.ProfessionalSummary, updatedPortfolio.ProfessionalSummary);
+            Assert.AreEqual(portfolio.Email, updatedPortfolio.Email);
+
+            // Additional assertions for properties
+            Assert.IsNotNull(updatedPortfolio.Name);
+            Assert.IsNotNull(updatedPortfolio.Location);
+            Assert.IsNotNull(updatedPortfolio.ProfessionalSummary);
+            Assert.IsNotNull(updatedPortfolio.Email);
+        }
+
     }
 }
