@@ -187,5 +187,25 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNotNull(updatedPortfolio.Email);
         }
 
+        [TestMethod]
+        public void UpdatePortfolio_Returns_Null_If_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            Portfolio portfolio = new Portfolio
+            {
+                Id = 999,
+                Name = "Updated Portfolio",
+                Location = "Updated Location",
+                ProfessionalSummary = "Updated Professional Summary",
+                Email = "Updated Email"
+            };
+
+            // Act
+            Portfolio updatedPortfolio = dao.UpdatePortfolio(portfolio, portfolio.Id);
+
+            // Assert
+            Assert.IsNull(updatedPortfolio);
+        }
+
     }
 }
