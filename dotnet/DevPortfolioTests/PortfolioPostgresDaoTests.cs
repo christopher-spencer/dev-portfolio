@@ -11,7 +11,7 @@ namespace Capstone.UnitTests.DAO
     [TestClass]
     public class PortfolioPostgresDaoTests : PostgresDaoTestBase
     {
-        private PortfolioPostgresDao dao;
+        private PortfolioPostgresDao dao = null!;
 
         [TestInitialize]
         public void TestInitialize()

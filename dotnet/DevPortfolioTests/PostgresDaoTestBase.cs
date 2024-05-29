@@ -7,7 +7,9 @@ namespace Capstone.UnitTests.DAO
     public abstract class PostgresDaoTestBase
     {
         protected string TestConnectionString = @"Host=localhost;Port=5432;Database=test_dev_portfolio;Username=test_dev_portfolio_appuser;Password=test_password";
-        private TransactionScope transaction;
+        //NOTE initialized as null! here and for dao in PortfolioPostgresDaoTests
+        protected NpgsqlTransaction transaction = null!;
+        protected NpgsqlConnection connection = null!;
 
         //FIXME getting a transaction issue after adding additional tests to PortfolioPostgresDaoTests
 
@@ -19,19 +21,9 @@ namespace Capstone.UnitTests.DAO
 
             try
             {
-                var transactionOptions = new TransactionOptions
-                {
-                    IsolationLevel = IsolationLevel.ReadCommitted,
-                    Timeout = TimeSpan.FromMinutes(2) // Used to adjust timing for transaction timeout
-                };
-
-                transaction = new TransactionScope(TransactionScopeOption.RequiresNew, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-
-
-                using (NpgsqlConnection conn = new NpgsqlConnection(TestConnectionString))
-                {
-                    conn.Open();
-                }
+                connection = new NpgsqlConnection(TestConnectionString);
+                connection.Open();
+                transaction = connection.BeginTransaction();
             }
             catch (Exception ex)
             {
@@ -45,7 +37,8 @@ namespace Capstone.UnitTests.DAO
             try
             {
                 // Get the path to the directory containing the currently executing assembly
-                string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                //string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? string.Empty;
                 // Combine it with the relative path to the script using Unix-style paths
                 string scriptPath = Path.GetFullPath(Path.Combine(assemblyPath, @"../../../test_database/test_create.sh"));
 
@@ -93,8 +86,14 @@ namespace Capstone.UnitTests.DAO
             {
                 if (transaction != null)
                 {
-                    transaction.Complete();
+                    transaction.Rollback();
                     transaction.Dispose();
+                }
+
+                if (connection != null)
+                {
+                    connection.Close();
+                    connection.Dispose();
                 }
             }
             catch (Exception ex)
