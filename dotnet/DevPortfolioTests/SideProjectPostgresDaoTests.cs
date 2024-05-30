@@ -56,9 +56,32 @@ namespace Capstone.UnitTests.DAO
                 skillDaoMock.Object,
                 contributorDaoMock.Object,
                 apiServiceDaoMock.Object,
-                websiteDaoMock.Object,
-                dependencyLibraryDaoMock.Object);
+                dependencyLibraryDaoMock.Object,
+                websiteDaoMock.Object);
         }
+
+        [TestMethod]
+        public void GetSideProjects_ShouldReturnAllSideProjects()
+        {
+            //Act
+            List<SideProject> sideProjects = dao.GetSideProjects();
+
+            //Assert
+            Assert.AreEqual(2, sideProjects.Count);
+            Assert.IsTrue(sideProjects.Count > 0);
+
+            // Additional assertions for properties
+            foreach (var sideproject in sideProjects)
+            {
+                Assert.IsNotNull(sideproject.Id);
+                Assert.IsNotNull(sideproject.Name);
+                Assert.IsNotNull(sideproject.Description);
+                Assert.IsNotNull(sideproject.StartDate);
+                Assert.IsNotNull(sideproject.FinishDate);
+            }
+        }
+
+
     
     }
 }

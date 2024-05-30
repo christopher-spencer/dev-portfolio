@@ -134,7 +134,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void AddPortfolio_Returns_Portfolio_With_Id()
+        public void CreatePortfolio_Returns_Portfolio_With_Id()
         {
             // Arrange
             Portfolio portfolio = new Portfolio
@@ -146,21 +146,21 @@ namespace Capstone.UnitTests.DAO
             };
 
             // Act
-            Portfolio addedPortfolio = dao.CreatePortfolio(portfolio);
+            Portfolio createdPortfolio = dao.CreatePortfolio(portfolio);
 
             // Assert
-            Assert.IsNotNull(addedPortfolio);
-            Assert.IsNotNull(addedPortfolio.Id);
-            Assert.AreEqual(portfolio.Name, addedPortfolio.Name);
-            Assert.AreEqual(portfolio.Location, addedPortfolio.Location);
-            Assert.AreEqual(portfolio.ProfessionalSummary, addedPortfolio.ProfessionalSummary);
-            Assert.AreEqual(portfolio.Email, addedPortfolio.Email);
+            Assert.IsNotNull(createdPortfolio);
+            Assert.IsNotNull(createdPortfolio.Id);
+            Assert.AreEqual(portfolio.Name, createdPortfolio.Name);
+            Assert.AreEqual(portfolio.Location, createdPortfolio.Location);
+            Assert.AreEqual(portfolio.ProfessionalSummary, createdPortfolio.ProfessionalSummary);
+            Assert.AreEqual(portfolio.Email, createdPortfolio.Email);
 
             // Additional assertions for properties
-            Assert.IsNotNull(addedPortfolio.Name);
-            Assert.IsNotNull(addedPortfolio.Location);
-            Assert.IsNotNull(addedPortfolio.ProfessionalSummary);
-            Assert.IsNotNull(addedPortfolio.Email);
+            Assert.IsNotNull(createdPortfolio.Name);
+            Assert.IsNotNull(createdPortfolio.Location);
+            Assert.IsNotNull(createdPortfolio.ProfessionalSummary);
+            Assert.IsNotNull(createdPortfolio.Email);
         }
 
         [TestMethod]
