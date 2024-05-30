@@ -401,7 +401,8 @@ namespace Capstone.DAO
 
         private int DeleteHobbiesByPortfolioId(int portfolioId)
         {
-            List<Hobby> hobbies = _hobbyDao.GetHobbiesByPortfolioId(portfolioId);
+            //NOTE Added ?? new List<Hobby>() to prevent null reference exception
+            List<Hobby> hobbies = _hobbyDao.GetHobbiesByPortfolioId(portfolioId) ?? new List<Hobby>();
 
             int hobbiesDeletedCount = 0;
 
@@ -425,7 +426,7 @@ namespace Capstone.DAO
 
         private int DeleteTechSkillsByPortfolioId(int portfolioId)
         {
-            List<Skill> skills = _skillDao.GetSkillsByPortfolioId(portfolioId);
+            List<Skill> skills = _skillDao.GetSkillsByPortfolioId(portfolioId) ?? new List<Skill>();
 
             int skillsDeletedCount = 0;
 
@@ -449,7 +450,7 @@ namespace Capstone.DAO
 
         private int DeleteSideProjectsByPortfolioId(int portfolioId)
         {
-            List<SideProject> sideProjects = _sideProjectDao.GetSideProjectsByPortfolioId(portfolioId);
+            List<SideProject> sideProjects = _sideProjectDao.GetSideProjectsByPortfolioId(portfolioId) ?? new List<SideProject>();
 
             int sideProjectsDeletedCount = 0;
 
@@ -473,7 +474,7 @@ namespace Capstone.DAO
 
         private int DeleteWorkExperiencesByPortfolioId(int portfolioId)
         {
-            List<WorkExperience> workExperiences = _workExperienceDao.GetWorkExperiencesByPortfolioId(portfolioId);
+            List<WorkExperience> workExperiences = _workExperienceDao.GetWorkExperiencesByPortfolioId(portfolioId) ?? new List<WorkExperience>();
 
             int workExperiencesDeletedCount = 0;
 
@@ -497,7 +498,7 @@ namespace Capstone.DAO
 
         private int DeleteEducationsByPortfolioId(int portfolioId)
         {
-            List<Education> educations = _educationDao.GetEducationsByPortfolioId(portfolioId);
+            List<Education> educations = _educationDao.GetEducationsByPortfolioId(portfolioId) ?? new List<Education>();
 
             int educationsDeletedCount = 0;
 
@@ -521,7 +522,7 @@ namespace Capstone.DAO
 
         private int DeleteCredentialsByPortfolioId(int portfolioId)
         {
-            List<Credential> credentials = _credentialDao.GetCredentialsByPortfolioId(portfolioId);
+            List<Credential> credentials = _credentialDao.GetCredentialsByPortfolioId(portfolioId) ?? new List<Credential>();
 
             int credentialsDeletedCount = 0;
 
@@ -545,7 +546,7 @@ namespace Capstone.DAO
 
         private int DeleteVolunteerWorksByPortfolioId(int portfolioId)
         {
-            List<VolunteerWork> volunteerWorks = _volunteerWorkDao.GetVolunteerWorksByPortfolioId(portfolioId);
+            List<VolunteerWork> volunteerWorks = _volunteerWorkDao.GetVolunteerWorksByPortfolioId(portfolioId) ?? new List<VolunteerWork>();
 
             int volunteerWorksDeletedCount = 0;
 
@@ -569,7 +570,7 @@ namespace Capstone.DAO
 
         private int DeleteOpenSourceContributionsByPortfolioId(int portfolioId)
         {
-            List<OpenSourceContribution> openSourceContributions = _openSourceContributionDao.GetOpenSourceContributionsByPortfolioId(portfolioId);
+            List<OpenSourceContribution> openSourceContributions = _openSourceContributionDao.GetOpenSourceContributionsByPortfolioId(portfolioId) ?? new List<OpenSourceContribution>();
 
             int openSourceContributionsDeletedCount = 0;
 
@@ -593,7 +594,7 @@ namespace Capstone.DAO
 
         private int DeleteAdditionalImagesByPortfolioId(int portfolioId)
         {
-            List<Image> additionalImages = _imageDao.GetAdditionalImagesByPortfolioId(portfolioId);
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByPortfolioId(portfolioId) ?? new List<Image>();
 
             int additionalImagesDeletedCount = 0;
 

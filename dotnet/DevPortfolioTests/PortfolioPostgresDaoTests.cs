@@ -12,6 +12,16 @@ namespace Capstone.UnitTests.DAO
     public class PortfolioPostgresDaoTests : PostgresDaoTestBase
     {
         private PortfolioPostgresDao dao = null!;
+        private Mock<ISideProjectDao> sideProjectDaoMock = null!;
+        private Mock<IWebsiteDao> websiteDaoMock = null!;
+        private Mock<IImageDao> imageDaoMock = null!;
+        private Mock<ISkillDao> skillDaoMock = null!;
+        private Mock<IWorkExperienceDao> workExperienceDaoMock = null!;
+        private Mock<IEducationDao> educationDaoMock = null!;
+        private Mock<ICredentialDao> credentialDaoMock = null!;
+        private Mock<IVolunteerWorkDao> volunteerWorkDaoMock = null!;
+        private Mock<IOpenSourceContributionDao> openSourceContributionDaoMock = null!;
+        private Mock<IHobbyDao> hobbyDaoMock = null!;
 
         [TestInitialize]
         public void TestInitialize()
@@ -19,6 +29,7 @@ namespace Capstone.UnitTests.DAO
             try
             {
                 base.Initialize();
+                InitializeMocks();
                 dao = CreateDaoWithMocks();
             }
             catch (Exception ex)
@@ -28,19 +39,22 @@ namespace Capstone.UnitTests.DAO
             }
         }
 
+        private void InitializeMocks()
+        {
+            sideProjectDaoMock = new Mock<ISideProjectDao>();
+            websiteDaoMock = new Mock<IWebsiteDao>();
+            imageDaoMock = new Mock<IImageDao>();
+            skillDaoMock = new Mock<ISkillDao>();
+            workExperienceDaoMock = new Mock<IWorkExperienceDao>();
+            educationDaoMock = new Mock<IEducationDao>();
+            credentialDaoMock = new Mock<ICredentialDao>();
+            volunteerWorkDaoMock = new Mock<IVolunteerWorkDao>();
+            openSourceContributionDaoMock = new Mock<IOpenSourceContributionDao>();
+            hobbyDaoMock = new Mock<IHobbyDao>();
+        }
+
         private PortfolioPostgresDao CreateDaoWithMocks()
         {
-            var sideProjectDaoMock = new Mock<ISideProjectDao>();
-            var websiteDaoMock = new Mock<IWebsiteDao>();
-            var imageDaoMock = new Mock<IImageDao>();
-            var skillDaoMock = new Mock<ISkillDao>();
-            var workExperienceDaoMock = new Mock<IWorkExperienceDao>();
-            var educationDaoMock = new Mock<IEducationDao>();
-            var credentialDaoMock = new Mock<ICredentialDao>();
-            var volunteerWorkDaoMock = new Mock<IVolunteerWorkDao>();
-            var openSourceContributionDaoMock = new Mock<IOpenSourceContributionDao>();
-            var hobbyDaoMock = new Mock<IHobbyDao>();
-
             return new PortfolioPostgresDao(
                 TestConnectionString,
                 sideProjectDaoMock.Object,
@@ -54,6 +68,33 @@ namespace Capstone.UnitTests.DAO
                 openSourceContributionDaoMock.Object,
                 hobbyDaoMock.Object);
         }
+
+        // private PortfolioPostgresDao CreateDaoWithMocks()
+        // {
+        //     var sideProjectDaoMock = new Mock<ISideProjectDao>();
+        //     var websiteDaoMock = new Mock<IWebsiteDao>();
+        //     var imageDaoMock = new Mock<IImageDao>();
+        //     var skillDaoMock = new Mock<ISkillDao>();
+        //     var workExperienceDaoMock = new Mock<IWorkExperienceDao>();
+        //     var educationDaoMock = new Mock<IEducationDao>();
+        //     var credentialDaoMock = new Mock<ICredentialDao>();
+        //     var volunteerWorkDaoMock = new Mock<IVolunteerWorkDao>();
+        //     var openSourceContributionDaoMock = new Mock<IOpenSourceContributionDao>();
+        //     var hobbyDaoMock = new Mock<IHobbyDao>();
+
+        //     return new PortfolioPostgresDao(
+        //         TestConnectionString,
+        //         sideProjectDaoMock.Object,
+        //         websiteDaoMock.Object,
+        //         imageDaoMock.Object,
+        //         skillDaoMock.Object,
+        //         workExperienceDaoMock.Object,
+        //         educationDaoMock.Object,
+        //         credentialDaoMock.Object,
+        //         volunteerWorkDaoMock.Object,
+        //         openSourceContributionDaoMock.Object,
+        //         hobbyDaoMock.Object);
+        // }
 
         [TestMethod]
         public void GetPortfolios_Returns_All_Portfolios()
