@@ -114,7 +114,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetSideproject_Returns_Null_When_Sideproject_Not_Found()
+        public void GetSideproject_Returns_Null_When_Sideproject_Does_Not_Exist()
         {
             // Act
             SideProject sideProject = dao.GetSideProject(3);
@@ -123,7 +123,49 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(sideProject);
         }
 
+        [TestMethod]
+        public void CreateSideProjectByPortfolioId_Returns_Correct_Sideproject()
+        {
+            // Arrange
+            SideProject sideProject = new SideProject
+            {
+                Name = "Test SideProject",
+                Description = "Test Description",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            };
 
+            // Act
+            SideProject createdSideProject = dao.CreateSideProjectByPortfolioId(1, sideProject);
+
+            // Assert
+            Assert.IsNotNull(createdSideProject);
+            Assert.AreEqual(sideProject.Name, createdSideProject.Name);
+            Assert.AreEqual(sideProject.Description, createdSideProject.Description);
+            Assert.AreEqual(sideProject.StartDate, createdSideProject.StartDate);
+            Assert.AreEqual(sideProject.FinishDate, createdSideProject.FinishDate);
+        }
+
+        [TestMethod]
+        public void CreateSideProjectByPortfolioId_Returns_Null_When_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+
+            SideProject sideProject = new SideProject
+            {
+                Name = "Test SideProject",
+                Description = "Test Description",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            };
+
+                // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.CreateSideProjectByPortfolioId(nonExistentPortfolioId, sideProject), 
+                "PortfolioId must be greater than zero.");
+
+        }
     
     }
 }
