@@ -69,33 +69,6 @@ namespace Capstone.UnitTests.DAO
                 hobbyDaoMock.Object);
         }
 
-        // private PortfolioPostgresDao CreateDaoWithMocks()
-        // {
-        //     var sideProjectDaoMock = new Mock<ISideProjectDao>();
-        //     var websiteDaoMock = new Mock<IWebsiteDao>();
-        //     var imageDaoMock = new Mock<IImageDao>();
-        //     var skillDaoMock = new Mock<ISkillDao>();
-        //     var workExperienceDaoMock = new Mock<IWorkExperienceDao>();
-        //     var educationDaoMock = new Mock<IEducationDao>();
-        //     var credentialDaoMock = new Mock<ICredentialDao>();
-        //     var volunteerWorkDaoMock = new Mock<IVolunteerWorkDao>();
-        //     var openSourceContributionDaoMock = new Mock<IOpenSourceContributionDao>();
-        //     var hobbyDaoMock = new Mock<IHobbyDao>();
-
-        //     return new PortfolioPostgresDao(
-        //         TestConnectionString,
-        //         sideProjectDaoMock.Object,
-        //         websiteDaoMock.Object,
-        //         imageDaoMock.Object,
-        //         skillDaoMock.Object,
-        //         workExperienceDaoMock.Object,
-        //         educationDaoMock.Object,
-        //         credentialDaoMock.Object,
-        //         volunteerWorkDaoMock.Object,
-        //         openSourceContributionDaoMock.Object,
-        //         hobbyDaoMock.Object);
-        // }
-
         [TestMethod]
         public void GetPortfolios_Returns_All_Portfolios()
         {
@@ -118,27 +91,20 @@ namespace Capstone.UnitTests.DAO
             }
         }
 
-        // [TestMethod]
-        // public void GetPortfolios_Returns_Empty_List_If_No_Portfolios()
-        // {
-        //     // Arrange
-        //     using (var conn = new Npgsql.NpgsqlConnection(TestConnectionString))
-        //     {
-        //         conn.Open();
+        [TestMethod]
+        public void GetPortfolios_Returns_Empty_List_If_No_Portfolios()
+        {
+            // Arrange
+            int deleteResult = dao.DeletePortfolio(1);
+            bool isDeleted = deleteResult == 1;
 
-        //         using (var cmd = new Npgsql.NpgsqlCommand("DELETE FROM portfolios", conn))
-        //         {
-        //             cmd.ExecuteNonQuery();
-        //         }
-        //     }
+            // Act
+            List<Portfolio> portfolios = dao.GetPortfolios();
 
-        //     // Act
-        //     List<Portfolio> portfolios = dao.GetPortfolios();
-
-        //     // Assert
-        //     Assert.IsNotNull(portfolios);
-        //     Assert.AreEqual(0, portfolios.Count);
-        // }
+            // Assert
+            Assert.IsNotNull(portfolios);
+            Assert.IsTrue(portfolios.Count == 0);
+        }
 
         [TestMethod]
         public void GetPortfolioById_Returns_Correct_Portfolio()
