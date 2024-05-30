@@ -166,6 +166,33 @@ namespace Capstone.UnitTests.DAO
                 "PortfolioId must be greater than zero.");
 
         }
+
+        [TestMethod]
+        public void UpdateSideProjectByPortfolioId_Returns_Updated_SideProject()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            SideProject sideProject = new SideProject
+            {
+                Id = 2,
+                Name = "Test SideProject Updated Name Test 777",
+                Description = "Test Description Test",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            };
+
+            // Act
+            SideProject updatedSideProject = dao.UpdateSideProjectByPortfolioId(portfolioId, sideProject.Id, sideProject);
+
+            // Assert
+            Assert.IsNotNull(updatedSideProject);
+            Assert.AreEqual(sideProject.Id, updatedSideProject.Id);
+            Assert.AreEqual(sideProject.Name, updatedSideProject.Name);
+            Assert.AreEqual(sideProject.Description, updatedSideProject.Description);
+            Assert.AreEqual(sideProject.StartDate, updatedSideProject.StartDate);
+            Assert.AreEqual(sideProject.FinishDate, updatedSideProject.FinishDate);
+        }
     
     }
 }
