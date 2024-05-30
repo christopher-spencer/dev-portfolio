@@ -61,7 +61,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetSideProjects_ShouldReturnAllSideProjects()
+        public void GetSideProjects_Should_Return_All_SideProjects()
         {
             //Act
             List<SideProject> sideProjects = dao.GetSideProjects();
@@ -79,6 +79,23 @@ namespace Capstone.UnitTests.DAO
                 Assert.IsNotNull(sideproject.StartDate);
                 Assert.IsNotNull(sideproject.FinishDate);
             }
+        }
+
+        [TestMethod]
+        public void GetSideProject_Should_Return_Correct_Sideproject()
+        {
+            // Act
+            SideProject sideProject = dao.GetSideProject(1);
+
+            // Assert
+            Assert.IsNotNull(sideProject);
+            Assert.AreEqual(1, sideProject.Id);
+
+            // Additional assertions for properties
+            Assert.IsNotNull(sideProject.Name);
+            Assert.IsNotNull(sideProject.Description);
+            Assert.IsNotNull(sideProject.StartDate);
+            Assert.IsNotNull(sideProject.FinishDate);
         }
 
 
