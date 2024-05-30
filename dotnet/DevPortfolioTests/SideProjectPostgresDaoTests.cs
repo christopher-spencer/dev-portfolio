@@ -113,6 +113,16 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNotNull(sideProject.FinishDate);
         }
 
+        [TestMethod]
+        public void GetSideproject_Returns_Null_When_Sideproject_Not_Found()
+        {
+            // Act
+            SideProject sideProject = dao.GetSideProject(3);
+
+            // Assert
+            Assert.IsNull(sideProject);
+        }
+
 
     
     }
