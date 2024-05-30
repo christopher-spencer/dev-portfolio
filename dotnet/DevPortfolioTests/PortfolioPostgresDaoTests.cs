@@ -270,5 +270,16 @@ namespace Capstone.UnitTests.DAO
             Assert.IsTrue(isDeleted);
         }
 
+        [TestMethod]
+        public void DeletePortfolio_Returns_False_If_Portfolio_Does_Not_Exist()
+        {
+            // Act
+            int deleteResult = dao.DeletePortfolio(999);
+            bool isDeleted = deleteResult == 1;
+
+            // Assert
+            Assert.IsFalse(isDeleted);
+        }
+
     }
 }
