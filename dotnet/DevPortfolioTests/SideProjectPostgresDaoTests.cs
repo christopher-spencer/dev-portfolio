@@ -61,7 +61,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetSideProjects_Should_Return_All_SideProjects()
+        public void GetSideProject_Returns_All_SideProjects()
         {
             //Act
             List<SideProject> sideProjects = dao.GetSideProjects();
@@ -82,7 +82,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetSideProjects_Should_Return_Empty_List_When_No_SideProjects()
+        public void GetSideProjects_Returns_Empty_List_When_No_SideProjects()
         {
             // Arrange
             int deleteResult = dao.DeleteSideProjectByPortfolioId(1,1);
@@ -97,7 +97,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetSideProject_Should_Return_Correct_Sideproject()
+        public void GetSideProject_Returns_Correct_Sideproject()
         {
             // Act
             SideProject sideProject = dao.GetSideProject(1);
