@@ -82,6 +82,21 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
+        public void GetSideProjects_Should_Return_Empty_List_When_No_SideProjects()
+        {
+            // Arrange
+            int deleteResult = dao.DeleteSideProjectByPortfolioId(1,1);
+            bool isDeleted = deleteResult == 1;
+
+            // Act
+            List<SideProject> sideProjects = dao.GetSideProjects();
+
+            // Assert
+            Assert.IsNotNull(sideProjects);
+            Assert.IsTrue(sideProjects.Count == 0);
+        }
+
+        [TestMethod]
         public void GetSideProject_Should_Return_Correct_Sideproject()
         {
             // Act
