@@ -228,20 +228,35 @@ namespace Capstone.DAO
 
                             if (mainImageId.HasValue)
                             {
-                                Console.WriteLine($"Deleting main image with ID: {mainImageId.Value}");
-                                _imageDao.DeleteImageByPortfolioId(portfolioId, mainImageId.Value);
+                                Image mainImage = _imageDao.GetMainImageByPortfolioId(portfolioId);
+
+                                if (mainImage != null)
+                                {
+                                    Console.WriteLine($"Deleting main image with ID: {mainImageId.Value}");
+                                    _imageDao.DeleteImageByPortfolioId(portfolioId, mainImageId.Value);
+                                }
                             }
 
                             if (gitHubId.HasValue)
                             {
-                                Console.WriteLine($"Deleting GitHub website with ID: {gitHubId.Value}");
-                                _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, gitHubId.Value);
+                                Website github = _websiteDao.GetWebsiteByPortfolioId(portfolioId, gitHubId.Value);
+
+                                if (github != null)
+                                {
+                                    Console.WriteLine($"Deleting GitHub website with ID: {gitHubId.Value}");
+                                    _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, gitHubId.Value);
+                                }
                             }
 
                             if (linkedInId.HasValue)
                             {
+                                Website linkedIn = _websiteDao.GetWebsiteByPortfolioId(portfolioId, linkedInId.Value);
+
+                                if (linkedIn != null)
+                                {
                                 Console.WriteLine($"Deleting LinkedIn website with ID: {linkedInId.Value}");
                                 _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, linkedInId.Value);
+                                }
                             }
 
                             Console.WriteLine("Deleting additional images");
