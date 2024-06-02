@@ -90,7 +90,7 @@ namespace Capstone.UnitTests.DAO
             dao.DeletePortfolio(1);
 
             // Act
-            var portfolios = dao.GetPortfolios();
+            List<Portfolio> portfolios = dao.GetPortfolios();
 
             // Assert
             Assert.IsNotNull(portfolios);
