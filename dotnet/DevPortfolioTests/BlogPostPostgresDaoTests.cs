@@ -12,7 +12,8 @@ namespace Capstone.UnitTests.DAO
     public class BlogPostsPostgresDaoTests : PostgresDaoTestBase
     {
 
-        //FIXME FIX TESTS*****
+        //FIXME Add TEST INTIALIZE
+        
         //FIXME MainImage needs fixed for BlogPosts
         [TestMethod]
         public void GetBlogPosts_Returns_All_Blog_Posts()
@@ -77,7 +78,7 @@ namespace Capstone.UnitTests.DAO
             BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
             BlogPost newBlogPost = new BlogPost
             {
-                Name = "New Blog Post",
+                Name = "John Doe's Blog Post",
                 Author = "John Doe",
                 Description = "Description of the new blog post",
                 Content = "Content of the new blog post",

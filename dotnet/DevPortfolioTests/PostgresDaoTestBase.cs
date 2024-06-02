@@ -19,7 +19,7 @@ namespace Capstone.UnitTests.DAO
         {
             try
             {
-                RunDatabaseSetupScript();
+                //RunDatabaseSetupScript();
 
                 connection = new NpgsqlConnection(TestConnectionString);
                 connection.Open();
@@ -32,52 +32,52 @@ namespace Capstone.UnitTests.DAO
             }
         }
 
-        private void RunDatabaseSetupScript()
-        {
-            try
-            {
-                // Get the path to the directory containing the currently executing assembly
-                //string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-                // Combine it with the relative path to the script using Unix-style paths
-                string scriptPath = Path.GetFullPath(Path.Combine(assemblyPath, @"../../../test_database/test_create.sh"));
+        // private void RunDatabaseSetupScript()
+        // {
+        //     try
+        //     {
+        //         // Get the path to the directory containing the currently executing assembly
+        //         //string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        //         string assemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+        //         // Combine it with the relative path to the script using Unix-style paths
+        //         string scriptPath = Path.GetFullPath(Path.Combine(assemblyPath, @"../../../test_database/test_create.sh"));
 
-                // Normalize the path (this handles cases like ".." and ensures the path is correct)
-                scriptPath = Path.GetFullPath(scriptPath);
+        //         // Normalize the path (this handles cases like ".." and ensures the path is correct)
+        //         scriptPath = Path.GetFullPath(scriptPath);
 
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    FileName = "/bin/bash",
-                    Arguments = scriptPath,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+        //         ProcessStartInfo startInfo = new ProcessStartInfo
+        //         {
+        //             FileName = "/bin/bash",
+        //             Arguments = scriptPath,
+        //             RedirectStandardOutput = true,
+        //             RedirectStandardError = true,
+        //             UseShellExecute = false,
+        //             CreateNoWindow = true
+        //         };
 
-                using (Process process = new Process())
-                {
-                    process.StartInfo = startInfo;
-                    process.Start();
+        //         using (Process process = new Process())
+        //         {
+        //             process.StartInfo = startInfo;
+        //             process.Start();
 
-                    string output = process.StandardOutput.ReadToEnd();
-                    string error = process.StandardError.ReadToEnd();
-                    process.WaitForExit();
+        //             string output = process.StandardOutput.ReadToEnd();
+        //             string error = process.StandardError.ReadToEnd();
+        //             process.WaitForExit();
 
-                    if (process.ExitCode != 0)
-                    {
-                        throw new Exception($"Script exited with code {process.ExitCode}: {error}");
-                    }
+        //             if (process.ExitCode != 0)
+        //             {
+        //                 throw new Exception($"Script exited with code {process.ExitCode}: {error}");
+        //             }
 
-                    Console.WriteLine(output);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception during RunDatabaseSetupScript: {ex}");
-                throw;
-            }
-        }
+        //             Console.WriteLine(output);
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         Console.WriteLine($"Exception during RunDatabaseSetupScript: {ex}");
+        //         throw;
+        //     }
+        // }
 
         [TestCleanup]
         public void Cleanup()
