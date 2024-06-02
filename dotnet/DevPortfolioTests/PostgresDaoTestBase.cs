@@ -1,7 +1,5 @@
 using System.Diagnostics;
 using Npgsql;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 
 namespace Capstone.UnitTests.DAO
 {
