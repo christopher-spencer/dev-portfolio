@@ -225,7 +225,7 @@ namespace Capstone.DAO
                             int? mainImageId = GetMainImageIdByPortfolioId(portfolioId);
                             int? gitHubId = GetGitHubIdByPortfolioId(portfolioId);
                             int? linkedInId = GetLinkedInIdByPortfolioId(portfolioId);
-
+// NOTE added null checkers for mainImage, github, and linkedin ******
                             if (mainImageId.HasValue)
                             {
                                 Image mainImage = _imageDao.GetMainImageByPortfolioId(portfolioId);
