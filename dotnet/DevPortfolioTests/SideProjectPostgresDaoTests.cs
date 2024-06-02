@@ -23,17 +23,9 @@ namespace Capstone.UnitTests.DAO
         [TestInitialize]
         public void TestInitialize()
         {
-            try
-            {
-                base.Initialize();
-                InitializeMocks();
-                dao = CreateDaoWithMocks();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception during TestInitialize: {ex}");
-                throw;
-            }
+            base.Initialize();
+            InitializeMocks();
+            dao = CreateDaoWithMocks();
         }
 
         private void InitializeMocks()
