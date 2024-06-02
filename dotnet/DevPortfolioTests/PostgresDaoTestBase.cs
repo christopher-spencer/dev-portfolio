@@ -1,12 +1,16 @@
 using System.Diagnostics;
-using System.Transactions;
 using Npgsql;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace Capstone.UnitTests.DAO
 {
     public abstract class PostgresDaoTestBase
     {
         protected string TestConnectionString = @"Host=localhost;Port=5432;Database=test_dev_portfolio;Username=test_dev_portfolio_appuser;Password=test_password";
+        private static bool _databaseInitialized = false;
+        private static readonly object _lock = new object();
+        
         //NOTE initialized as null! here and for dao in PortfolioPostgresDaoTests
         protected NpgsqlTransaction transaction = null!;
         protected NpgsqlConnection connection = null!;
@@ -14,12 +18,25 @@ namespace Capstone.UnitTests.DAO
         //FIXME getting a transaction issue after adding additional tests to PortfolioPostgresDaoTests
 
         //NOTE possible issue with BlogPosts, Portfolio and User tests all running concurrently instead of one at a time?
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            lock (_lock)
+            {
+                if (!_databaseInitialized)
+                {
+                    RunDatabaseSetupScript();
+                    _databaseInitialized = true;
+                }
+            }
+        }
+        
         [TestInitialize]
         public void Initialize()
         {
             try
             {
-                RunDatabaseSetupScript();
+                //RunDatabaseSetupScript();
 
                 connection = new NpgsqlConnection(TestConnectionString);
                 connection.Open();
@@ -32,7 +49,7 @@ namespace Capstone.UnitTests.DAO
             }
         }
 
-        private void RunDatabaseSetupScript()
+        private static void RunDatabaseSetupScript()
         {
             try
             {
