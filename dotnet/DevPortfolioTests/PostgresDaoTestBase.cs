@@ -17,10 +17,10 @@ namespace Capstone.UnitTests.DAO
         [TestInitialize]
         public void Initialize()
         {
-            RunDatabaseSetupScript();
-
             try
             {
+                RunDatabaseSetupScript();
+
                 connection = new NpgsqlConnection(TestConnectionString);
                 connection.Open();
                 transaction = connection.BeginTransaction();
@@ -84,17 +84,10 @@ namespace Capstone.UnitTests.DAO
         {
             try
             {
-                if (transaction != null)
-                {
-                    transaction.Rollback();
-                    transaction.Dispose();
-                }
-
-                if (connection != null)
-                {
-                    connection.Close();
-                    connection.Dispose();
-                }
+                    transaction?.Rollback();
+                    transaction?.Dispose();
+                    connection?.Close();
+                    connection?.Dispose();
             }
             catch (Exception ex)
             {

@@ -26,17 +26,9 @@ namespace Capstone.UnitTests.DAO
         [TestInitialize]
         public void TestInitialize()
         {
-            try
-            {
-                base.Initialize();
-                InitializeMocks();
-                dao = CreateDaoWithMocks();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception during TestInitialize: {ex}");
-                throw;
-            }
+            base.Initialize();
+            InitializeMocks();
+            dao = CreateDaoWithMocks();
         }
 
         private void InitializeMocks()
@@ -95,15 +87,14 @@ namespace Capstone.UnitTests.DAO
         public void GetPortfolios_Returns_Empty_List_If_No_Portfolios()
         {
             // Arrange
-            int deleteResult = dao.DeletePortfolio(1);
-            bool isDeleted = deleteResult == 1;
+            dao.DeletePortfolio(1);
 
             // Act
-            List<Portfolio> portfolios = dao.GetPortfolios();
+            var portfolios = dao.GetPortfolios();
 
             // Assert
             Assert.IsNotNull(portfolios);
-            Assert.IsTrue(portfolios.Count == 0);
+            Assert.AreEqual(0, portfolios.Count);
         }
 
         [TestMethod]
