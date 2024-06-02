@@ -11,17 +11,23 @@ namespace Capstone.UnitTests.DAO
     [TestClass]
     public class BlogPostsPostgresDaoTests : PostgresDaoTestBase
     {
+        private BlogPostPostgresDao dao = null!;
+        private Mock<IImageDao> imageDaoMock = null!;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            base.Initialize();
+            imageDaoMock = new Mock<IImageDao>();
+            dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
+        }
 
         //FIXME Add TEST INTIALIZE
-        
+
         //FIXME MainImage needs fixed for BlogPosts
         [TestMethod]
         public void GetBlogPosts_Returns_All_Blog_Posts()
         {
-            // Arrange
-            var imageDaoMock = new Mock<IImageDao>();
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
-
             // Act
             List<BlogPost> blogPosts = dao.GetBlogPosts();
 
@@ -47,10 +53,6 @@ namespace Capstone.UnitTests.DAO
         [TestMethod]
         public void GetBlogPostById_Returns_Correct_Blog_Post()
         {
-            // Arrange
-            var imageDaoMock = new Mock<IImageDao>(); 
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
-
             // Act
             BlogPost blogPost = dao.GetBlogPost(1);
 
@@ -74,8 +76,6 @@ namespace Capstone.UnitTests.DAO
         public void AddBlogPost_Inserts_New_Blog_Post()
         {
             // Arrange
-            var imageDaoMock = new Mock<IImageDao>(); // Mock IImageDao
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
             BlogPost newBlogPost = new BlogPost
             {
                 Name = "John Doe's Blog Post",
@@ -106,9 +106,6 @@ namespace Capstone.UnitTests.DAO
         public void UpdateBlogPost_Updates_Existing_Blog_Post()
         {
             // Arrange
-            var imageDaoMock = new Mock<IImageDao>(); // Mock IImageDao
-            BlogPostPostgresDao dao = new BlogPostPostgresDao(TestConnectionString, imageDaoMock.Object);
- 
             BlogPost updatedBlogPost = new BlogPost
             {
                 Id = 1, 
