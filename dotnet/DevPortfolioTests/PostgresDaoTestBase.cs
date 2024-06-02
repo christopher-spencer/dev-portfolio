@@ -15,9 +15,6 @@ namespace Capstone.UnitTests.DAO
         protected NpgsqlTransaction transaction = null!;
         protected NpgsqlConnection connection = null!;
 
-        //FIXME getting a transaction issue after adding additional tests to PortfolioPostgresDaoTests
-
-        //NOTE possible issue with BlogPosts, Portfolio and User tests all running concurrently instead of one at a time?
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
