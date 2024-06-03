@@ -10,8 +10,8 @@ namespace Capstone.UnitTests.DAO
         private static readonly object _lock = new object();
         
         //NOTE initialized as null! here and for dao in PortfolioPostgresDaoTests
-        protected NpgsqlTransaction transaction = null!;
-        protected NpgsqlConnection connection = null!;
+        protected NpgsqlTransaction? transaction = null!;
+        protected NpgsqlConnection? connection = null!;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
@@ -36,6 +36,7 @@ namespace Capstone.UnitTests.DAO
                 connection = new NpgsqlConnection(TestConnectionString);
                 connection.Open();
                 transaction = connection.BeginTransaction();
+                Console.WriteLine("Transaction started.");
             }
             catch (Exception ex)
             {
@@ -55,7 +56,7 @@ namespace Capstone.UnitTests.DAO
                 string scriptPath = Path.GetFullPath(Path.Combine(assemblyPath, @"../../../test_database/test_create.sh"));
 
                 // Normalize the path (this handles cases like ".." and ensures the path is correct)
-                scriptPath = Path.GetFullPath(scriptPath);
+                //scriptPath = Path.GetFullPath(scriptPath);
 
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
@@ -96,10 +97,21 @@ namespace Capstone.UnitTests.DAO
         {
             try
             {
-                    transaction?.Rollback();
-                    transaction?.Dispose();
-                    connection?.Close();
-                    connection?.Dispose();
+                if (transaction != null)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine("Transaction rolled back.");
+                    transaction.Dispose();
+                    transaction = null;
+                }
+                if (connection != null)
+                {
+                    connection.Close();
+                    connection.Dispose();
+                    connection = null;
+                }
+
+                //RunDatabaseSetupScript();
             }
             catch (Exception ex)
             {
