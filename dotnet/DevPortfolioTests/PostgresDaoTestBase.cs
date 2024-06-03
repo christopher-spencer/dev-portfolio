@@ -31,7 +31,7 @@ namespace Capstone.UnitTests.DAO
         {
             try
             {
-                //RunDatabaseSetupScript();
+                RunDatabaseSetupScript();
 
                 connection = new NpgsqlConnection(TestConnectionString);
                 connection.Open();

@@ -127,6 +127,7 @@ namespace Capstone.UnitTests.DAO
             // Arrange
             Portfolio portfolio = new Portfolio
             {
+                Id = 2,
                 Name = "Test Portfolio",
                 Location = "Test Location",
                 ProfessionalSummary = "Test Professional Summary",
@@ -157,7 +158,7 @@ namespace Capstone.UnitTests.DAO
             // Arrange
             Portfolio portfolio = new Portfolio
             {
-                Id = 1,
+                Id = 2,
                 Name = "Updated Portfolio",
                 Location = "Updated Location",
                 ProfessionalSummary = "Updated Professional Summary",
@@ -165,7 +166,8 @@ namespace Capstone.UnitTests.DAO
             };
 
             // Act
-            Portfolio updatedPortfolio = dao.UpdatePortfolio(portfolio, portfolio.Id);
+            Portfolio createdPortfolio = dao.CreatePortfolio(portfolio);
+            Portfolio updatedPortfolio = dao.UpdatePortfolio(createdPortfolio, createdPortfolio.Id);
 
             // Assert
             Assert.IsNotNull(updatedPortfolio);
@@ -235,6 +237,12 @@ namespace Capstone.UnitTests.DAO
             Assert.IsFalse(isDeleted);
         }
 
-        
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            base.Cleanup(); 
+        }
+
+
     }
 }

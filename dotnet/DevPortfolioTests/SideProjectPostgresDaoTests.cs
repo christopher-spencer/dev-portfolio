@@ -74,7 +74,7 @@ namespace Capstone.UnitTests.DAO
         public void GetSideProjects_Returns_Empty_List_When_No_SideProjects()
         {
             // Arrange
-            int deleteResult = dao.DeleteSideProjectByPortfolioId(1,1);
+            int deleteResult = dao.DeleteSideProjectByPortfolioId(1, 1);
             bool isDeleted = deleteResult == 1;
 
             // Act
@@ -149,9 +149,9 @@ namespace Capstone.UnitTests.DAO
                 FinishDate = DateTime.Now
             };
 
-                // Act & Assert
-            Assert.ThrowsException<ArgumentException>(() => 
-                dao.CreateSideProjectByPortfolioId(nonExistentPortfolioId, sideProject), 
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.CreateSideProjectByPortfolioId(nonExistentPortfolioId, sideProject),
                 "PortfolioId must be greater than zero.");
 
         }
@@ -182,6 +182,12 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(sideProject.StartDate, updatedSideProject.StartDate);
             Assert.AreEqual(sideProject.FinishDate, updatedSideProject.FinishDate);
         }
-    
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            base.Cleanup(); 
+        }
+
     }
 }
