@@ -20,7 +20,7 @@ namespace Capstone.DAO
         private readonly IVolunteerWorkDao _volunteerWorkDao;
         private readonly IOpenSourceContributionDao _openSourceContributionDao;
         private readonly IHobbyDao _hobbyDao;
-
+        private string testConnectionString;
 
         public PortfolioPostgresDao(string dbConnectionString, ISideProjectDao sideProjectDao,
             IWebsiteDao websiteDao, IImageDao imageDao, ISkillDao skillDao,
