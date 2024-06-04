@@ -17,8 +17,6 @@ namespace Capstone.UnitTests.DAO
         private Mock<IWebsiteDao> websiteDaoMock = null!;
         private Mock<IDependencyLibraryDao> dependencyLibraryDaoMock = null!;
 
-        private Mock<IPortfolioDao> portfolioDaoMock = null!;
-
         [TestInitialize]
         public void TestInitialize()
         {
@@ -36,8 +34,6 @@ namespace Capstone.UnitTests.DAO
             apiServiceDaoMock = new Mock<IApiServiceDao>();
             websiteDaoMock = new Mock<IWebsiteDao>();
             dependencyLibraryDaoMock = new Mock<IDependencyLibraryDao>();
-
-            portfolioDaoMock = new Mock<IPortfolioDao>();
         }
 
         private SideProjectPostgresDao CreateDaoWithMocks()
@@ -57,20 +53,9 @@ namespace Capstone.UnitTests.DAO
         public void GetSideProject_Returns_All_SideProjects()
         {
             // Act: Create portfolio
-            Portfolio createdPortfolio = portfolioDaoMock.Object.CreatePortfolio(new Portfolio
-            {
-                Name = "Test Portfolio 1",
-                Location = "Test Location 1",
-                ProfessionalSummary = "Test Professional Summary 1",
-                Email = "Test Email 1"
-            });
-
-            // Assert: Verify portfolio creation
-            Assert.IsNotNull(createdPortfolio);
-            Assert.IsNotNull(createdPortfolio.Id);
-
-            // Act: Create side project associated with the created portfolio
-            dao.CreateSideProjectByPortfolioId(createdPortfolio.Id, new SideProject
+            int portfolioId = 666;
+            
+            dao.CreateSideProjectByPortfolioId(portfolioId, new SideProject
             {
                 Name = "Test SideProject 1",
                 Description = "Test Description 1",
