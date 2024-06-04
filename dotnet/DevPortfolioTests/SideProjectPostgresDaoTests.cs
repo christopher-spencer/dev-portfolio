@@ -52,31 +52,29 @@ namespace Capstone.UnitTests.DAO
         [TestMethod]
         public void GetSideProject_Returns_All_SideProjects()
         {
-            // Act: Create portfolio
-            int portfolioId = 666;
-            
-            dao.CreateSideProjectByPortfolioId(portfolioId, new SideProject
+            //Act
+            dao.CreateSideProjectByPortfolioId(1, new SideProject
             {
                 Name = "Test SideProject 1",
                 Description = "Test Description 1",
                 StartDate = DateTime.Now,
                 FinishDate = DateTime.Now
             });
-
-            // Act: Retrieve side projects
+            
             List<SideProject> sideProjects = dao.GetSideProjects();
 
-            // Assert: Verify side project retrieval
-            Assert.AreEqual(1, sideProjects.Count);
+            //Assert
+            Assert.AreEqual(2, sideProjects.Count);
+            Assert.IsTrue(sideProjects.Count > 0);
 
             // Additional assertions for properties
-            foreach (var sideProject in sideProjects)
+            foreach (var sideproject in sideProjects)
             {
-                Assert.IsNotNull(sideProject.Id);
-                Assert.IsNotNull(sideProject.Name);
-                Assert.IsNotNull(sideProject.Description);
-                Assert.IsNotNull(sideProject.StartDate);
-                Assert.IsNotNull(sideProject.FinishDate);
+                Assert.IsNotNull(sideproject.Id);
+                Assert.IsNotNull(sideproject.Name);
+                Assert.IsNotNull(sideproject.Description);
+                Assert.IsNotNull(sideproject.StartDate);
+                Assert.IsNotNull(sideproject.FinishDate);
             }
         }
 
@@ -196,7 +194,7 @@ namespace Capstone.UnitTests.DAO
         [TestCleanup]
         public void TestCleanup()
         {
-            base.Cleanup();
+            base.Cleanup(); 
         }
 
     }
