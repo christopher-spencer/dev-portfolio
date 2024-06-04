@@ -17,6 +17,8 @@ namespace Capstone.UnitTests.DAO
         private Mock<IWebsiteDao> websiteDaoMock = null!;
         private Mock<IDependencyLibraryDao> dependencyLibraryDaoMock = null!;
 
+        private Mock<IPortfolioDao> portfolioDaoMock = null!;
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -34,6 +36,8 @@ namespace Capstone.UnitTests.DAO
             apiServiceDaoMock = new Mock<IApiServiceDao>();
             websiteDaoMock = new Mock<IWebsiteDao>();
             dependencyLibraryDaoMock = new Mock<IDependencyLibraryDao>();
+
+            portfolioDaoMock = new Mock<IPortfolioDao>();
         }
 
         private SideProjectPostgresDao CreateDaoWithMocks()
@@ -52,21 +56,42 @@ namespace Capstone.UnitTests.DAO
         [TestMethod]
         public void GetSideProject_Returns_All_SideProjects()
         {
-            //Act
+            // Act: Create portfolio
+            Portfolio createdPortfolio = portfolioDaoMock.Object.CreatePortfolio(new Portfolio
+            {
+                Name = "Test Portfolio 1",
+                Location = "Test Location 1",
+                ProfessionalSummary = "Test Professional Summary 1",
+                Email = "Test Email 1"
+            });
+
+            // Assert: Verify portfolio creation
+            Assert.IsNotNull(createdPortfolio);
+            Assert.IsNotNull(createdPortfolio.Id);
+
+            // Act: Create side project associated with the created portfolio
+            dao.CreateSideProjectByPortfolioId(createdPortfolio.Id, new SideProject
+            {
+                Name = "Test SideProject 1",
+                Description = "Test Description 1",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            });
+
+            // Act: Retrieve side projects
             List<SideProject> sideProjects = dao.GetSideProjects();
 
-            //Assert
-            Assert.AreEqual(2, sideProjects.Count);
-            Assert.IsTrue(sideProjects.Count > 0);
+            // Assert: Verify side project retrieval
+            Assert.AreEqual(1, sideProjects.Count);
 
             // Additional assertions for properties
-            foreach (var sideproject in sideProjects)
+            foreach (var sideProject in sideProjects)
             {
-                Assert.IsNotNull(sideproject.Id);
-                Assert.IsNotNull(sideproject.Name);
-                Assert.IsNotNull(sideproject.Description);
-                Assert.IsNotNull(sideproject.StartDate);
-                Assert.IsNotNull(sideproject.FinishDate);
+                Assert.IsNotNull(sideProject.Id);
+                Assert.IsNotNull(sideProject.Name);
+                Assert.IsNotNull(sideProject.Description);
+                Assert.IsNotNull(sideProject.StartDate);
+                Assert.IsNotNull(sideProject.FinishDate);
             }
         }
 
@@ -186,7 +211,7 @@ namespace Capstone.UnitTests.DAO
         [TestCleanup]
         public void TestCleanup()
         {
-            base.Cleanup(); 
+            base.Cleanup();
         }
 
     }

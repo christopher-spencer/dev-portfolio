@@ -63,6 +63,14 @@ namespace Capstone.UnitTests.DAO
         {
 
             // Act
+            dao.CreatePortfolio(new Portfolio
+            {
+                Name = "Test Portfolio",
+                Location = "Test Location",
+                ProfessionalSummary = "Test Professional Summary",
+                Email = "Test Email"
+            });
+
             List<Portfolio> portfolios = dao.GetPortfolios();
 
             // Assert
@@ -105,6 +113,15 @@ namespace Capstone.UnitTests.DAO
         public void GetPortfolioById_Returns_Correct_Portfolio()
         {
             // Act
+            dao.CreatePortfolio(new Portfolio
+            {
+                Id = 1,
+                Name = "Test Portfolio",
+                Location = "Test Location",
+                ProfessionalSummary = "Test Professional Summary",
+                Email = "Test Email"
+            });
+            
             Portfolio portfolio = dao.GetPortfolio(1);
 
             // Assert

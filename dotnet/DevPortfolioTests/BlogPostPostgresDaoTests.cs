@@ -26,6 +26,16 @@ namespace Capstone.UnitTests.DAO
         public void GetBlogPosts_Returns_All_Blog_Posts()
         {
             // Act
+            dao.CreateBlogPost(new BlogPost
+            {
+                Name = "John Doe's Blog Post",
+                Author = "John Doe",
+                Description = "Description of the new blog post",
+                Content = "Content of the new blog post",
+                // CreatedAt = DateTime.Now,
+                // UpdatedAt = DateTime.Now
+            });
+
             List<BlogPost> blogPosts = dao.GetBlogPosts();
 
             // Assert
@@ -51,6 +61,16 @@ namespace Capstone.UnitTests.DAO
         public void GetBlogPostById_Returns_Correct_Blog_Post()
         {
             // Act
+            dao.CreateBlogPost(new BlogPost
+            {
+                Name = "John Doe's Blog Post",
+                Author = "John Doe",
+                Description = "Description of the new blog post",
+                Content = "Content of the new blog post",
+                // CreatedAt = DateTime.Now,
+                // UpdatedAt = DateTime.Now
+            });
+
             BlogPost blogPost = dao.GetBlogPost(1);
 
             // Assert
@@ -103,6 +123,16 @@ namespace Capstone.UnitTests.DAO
         public void UpdateBlogPost_Updates_Existing_Blog_Post()
         {
             // Arrange
+            BlogPost blogPost = dao.CreateBlogPost(new BlogPost
+            {
+                Name = "John Doe's Blog Post",
+                Author = "John Doe",
+                Description = "Description of the new blog post",
+                Content = "Content of the new blog post",
+                // CreatedAt = DateTime.Now,
+                // UpdatedAt = DateTime.Now
+            });
+
             BlogPost updatedBlogPost = new BlogPost
             {
                 Id = 1, 
@@ -117,11 +147,11 @@ namespace Capstone.UnitTests.DAO
             };
 
             // Act
-            BlogPost result = dao.UpdateBlogPost(updatedBlogPost, updatedBlogPost.Id);
+            BlogPost result = dao.UpdateBlogPost(updatedBlogPost, blogPost.Id);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(updatedBlogPost.Id, result.Id);
+            Assert.AreEqual(blogPost.Id, result.Id);
             Assert.AreEqual(updatedBlogPost.Name, result.Name);
             Assert.AreEqual(updatedBlogPost.Author, result.Author);
             Assert.AreEqual(updatedBlogPost.Description, result.Description);
