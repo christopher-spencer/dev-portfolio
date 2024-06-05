@@ -536,7 +536,7 @@ namespace Capstone.DAO
 
         private int DeleteGoalsAndObjectivesBySideProjectId(int sideProjectId)
         {
-            List<Goal> goals = _goalDao.GetGoalsBySideProjectId(sideProjectId);
+            List<Goal> goals = _goalDao.GetGoalsBySideProjectId(sideProjectId) ?? new List<Goal>();
 
             int goalsDeletedCount = 0;
 
@@ -560,7 +560,7 @@ namespace Capstone.DAO
 
         private int DeleteAdditionalImagesBySideProjectId(int sideProjectId)
         {
-            List<Image> additionalImages = _imageDao.GetAdditionalImagesBySideProjectId(sideProjectId);
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesBySideProjectId(sideProjectId) ?? new List<Image>();
 
             int imagesDeletedCount = 0;
 
@@ -584,7 +584,7 @@ namespace Capstone.DAO
 
         private int DeleteToolsUsedBySideProjectId(int sideProjectId)
         {
-            List<Skill> toolsUsed = _skillDao.GetSkillsBySideProjectId(sideProjectId);
+            List<Skill> toolsUsed = _skillDao.GetSkillsBySideProjectId(sideProjectId) ?? new List<Skill>();
 
             int toolsDeletedCount = 0;
 
@@ -607,7 +607,7 @@ namespace Capstone.DAO
 
         private int DeleteContributorsBySideProjectId(int sideProjectId)
         {
-            List<Contributor> contributors = _contributorDao.GetContributorsBySideProjectId(sideProjectId);
+            List<Contributor> contributors = _contributorDao.GetContributorsBySideProjectId(sideProjectId) ?? new List<Contributor>();
 
             int contributorsDeletedCount = 0;
 
@@ -631,7 +631,7 @@ namespace Capstone.DAO
 
         private int DeleteExternalApisAndServicesUsedBySideProjectId(int sideProjectId)
         {
-            List<ApiService> externalApisAndServices = _apiServiceDao.GetAPIsAndServicesBySideProjectId(sideProjectId);
+            List<ApiService> externalApisAndServices = _apiServiceDao.GetAPIsAndServicesBySideProjectId(sideProjectId) ?? new List<ApiService>();
 
             int apisAndServicesDeleteCount = 0;
 
@@ -655,7 +655,7 @@ namespace Capstone.DAO
 
         private int DeleteDependenciesAndLibrariesUsedBySideProjectId(int sideProjectId)
         {
-            List<DependencyLibrary> dependenciesAndLibraries = _dependencyLibraryDao.GetDependenciesAndLibrariesBySideProjectId(sideProjectId);
+            List<DependencyLibrary> dependenciesAndLibraries = _dependencyLibraryDao.GetDependenciesAndLibrariesBySideProjectId(sideProjectId) ?? new List<DependencyLibrary>();
 
             int dependenciesAndLibrariesDeleteCount = 0;
 
