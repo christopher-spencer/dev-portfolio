@@ -200,6 +200,28 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(sideProject.FinishDate, updatedSideProject.FinishDate);
         }
 
+        [TestMethod]
+        public void UpdateSideProjectByPortfolioId_Returns_Null_When_SideProject_Does_Not_Exist()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int nonExistentSideProjectId = -1;
+
+            SideProject sideProject = new SideProject
+            {
+                Id = nonExistentSideProjectId,
+                Name = "Test SideProject Updated Name Test 777",
+                Description = "Test Description Test",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            };
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.UpdateSideProjectByPortfolioId(portfolioId, nonExistentSideProjectId, sideProject),
+                "SideProjectId must be greater than zero.");
+        }
+
         [TestCleanup]
         public void TestCleanup()
         {
