@@ -85,6 +85,22 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
+        public void GetWorkExperiences_Returns_Empty_List_When_No_Work_Experiences()
+        {
+            // Arrange
+            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
+            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
+            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
+            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+
+            // Act
+            List<WorkExperience> workExperiences = dao.GetWorkExperiences();
+
+            // Assert
+            Assert.AreEqual(0, workExperiences.Count);
+        }
+
+        [TestMethod]
         public void GetWorkExperienceByPortfolioId_Returns_The_Correct_Work_Experience()
         {
             // Arrange
