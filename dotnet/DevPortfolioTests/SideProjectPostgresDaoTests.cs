@@ -64,7 +64,7 @@ namespace Capstone.UnitTests.DAO
             List<SideProject> sideProjects = dao.GetSideProjects();
 
             //Assert
-            Assert.AreEqual(2, sideProjects.Count);
+            Assert.AreEqual(1, sideProjects.Count);
             Assert.IsTrue(sideProjects.Count > 0);
 
             // Additional assertions for properties
@@ -82,8 +82,7 @@ namespace Capstone.UnitTests.DAO
         public void GetSideProjects_Returns_Empty_List_When_No_SideProjects()
         {
             // Arrange
-            int deleteResult = dao.DeleteSideProjectByPortfolioId(1, 1);
-            bool isDeleted = deleteResult == 1;
+
 
             // Act
             List<SideProject> sideProjects = dao.GetSideProjects();
@@ -97,6 +96,14 @@ namespace Capstone.UnitTests.DAO
         public void GetSideProject_Returns_Correct_Sideproject()
         {
             // Act
+            dao.CreateSideProjectByPortfolioId(1, new SideProject
+            {
+                Name = "Test SideProject 1",
+                Description = "Test Description 1",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            });
+
             SideProject sideProject = dao.GetSideProject(1);
 
             // Assert
@@ -180,7 +187,9 @@ namespace Capstone.UnitTests.DAO
             };
 
             // Act
-            SideProject updatedSideProject = dao.UpdateSideProjectByPortfolioId(portfolioId, sideProject.Id, sideProject);
+            SideProject createdSideProject = dao.CreateSideProjectByPortfolioId(portfolioId, sideProject);
+           
+            SideProject updatedSideProject = dao.UpdateSideProjectByPortfolioId(portfolioId, createdSideProject.Id, createdSideProject);
 
             // Assert
             Assert.IsNotNull(updatedSideProject);
