@@ -201,7 +201,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void UpdateSideProjectByPortfolioId_Returns_Null_When_SideProject_Does_Not_Exist()
+        public void UpdateSideProjectByPortfolioId_Throws_Argument_Exception_When_SideProject_Does_Not_Exist()
         {
             // Arrange
             int portfolioId = 1;
@@ -223,7 +223,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void UpdateSideProjectByPortfolioId_Returns_Null_When_Portfolio_Does_Not_Exist()
+        public void UpdateSideProjectByPortfolioId_Throws_Argument_Exception_When_Portfolio_Does_Not_Exist()
         {
             // Arrange
             int nonExistentPortfolioId = -1;
@@ -293,6 +293,19 @@ namespace Capstone.UnitTests.DAO
 
             // Assert
             Assert.AreEqual(expectedRowsAffected, rowsAffected);
+        }
+
+        [TestMethod]
+        public void DeleteSideProject_Throws_Argument_Exception_When_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+            int sideProjectId = 1;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.DeleteSideProjectByPortfolioId(nonExistentPortfolioId, sideProjectId),
+                "PortfolioId must be greater than zero.");
         }
 
         [TestCleanup]
