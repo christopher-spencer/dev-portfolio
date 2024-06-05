@@ -256,29 +256,15 @@ namespace Capstone.DAO
                                 }
                             }
 
-                            Console.WriteLine("Deleting additional images");
                             DeleteAdditionalImagesByPortfolioId(portfolioId);
-                            Console.WriteLine("Deleting hobbies");
                             DeleteHobbiesByPortfolioId(portfolioId);
-                            Console.WriteLine("Deleting tech skills");
                             DeleteTechSkillsByPortfolioId(portfolioId);
-                            Console.WriteLine("Deleting work experiences");
                             DeleteWorkExperiencesByPortfolioId(portfolioId);
-                            Console.WriteLine("Deleting educations");
                             DeleteEducationsByPortfolioId(portfolioId);
-                            Console.WriteLine("Deleting credentials");
                             DeleteCredentialsByPortfolioId(portfolioId);
-                            Console.WriteLine("Deleting volunteer works");
                             DeleteVolunteerWorksByPortfolioId(portfolioId);
-                            Console.WriteLine("Deleting open source contributions");
                             DeleteOpenSourceContributionsByPortfolioId(portfolioId);
-                            Console.WriteLine("Deleting side projects");
                             DeleteSideProjectsByPortfolioId(portfolioId);
-
-
-                            // Log before attempting to delete portfolio
-                            Console.WriteLine("Attempting to delete portfolio with ID: " + portfolioId);
-
 
                             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, connection))
                             {
@@ -286,9 +272,6 @@ namespace Capstone.DAO
                                 cmd.Transaction = transaction;
 
                                 rowsAffected = cmd.ExecuteNonQuery();
-
-                                // Log after delete command
-                                Console.WriteLine($"Portfolio delete command executed. Rows affected: {rowsAffected}");
                             }
 
                             transaction.Commit();
