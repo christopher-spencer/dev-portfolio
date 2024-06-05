@@ -62,7 +62,7 @@ namespace Capstone.UnitTests.DAO
                 StartDate = new DateTime(2021, 1, 1),
                 EndDate = new DateTime(2022, 1, 1)
             });
-
+// FIXME add to other tests as needed
             imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
             skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
             websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
