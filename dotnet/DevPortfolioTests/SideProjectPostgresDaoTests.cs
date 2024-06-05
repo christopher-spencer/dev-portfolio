@@ -93,7 +93,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetSideProject_Returns_Correct_Sideproject()
+        public void GetSideProjectByPortfolioId_Returns_Correct_Sideproject()
         {
             // Act
             dao.CreateSideProjectByPortfolioId(1, new SideProject
