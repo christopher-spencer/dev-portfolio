@@ -415,7 +415,7 @@ namespace Capstone.DAO
 
         private int DeleteHobbiesByPortfolioId(int portfolioId)
         {
-            //NOTE Added ?? new List<Hobby>() to prevent null reference exception
+//FIXME Added ?? new List<Hobby>() to prevent null reference exception (DO ELSEWHERE W/ HELPER METHODS)
             List<Hobby> hobbies = _hobbyDao.GetHobbiesByPortfolioId(portfolioId) ?? new List<Hobby>();
 
             int hobbiesDeletedCount = 0;
