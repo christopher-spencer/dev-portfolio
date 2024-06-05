@@ -353,17 +353,32 @@ namespace Capstone.DAO
 
                             if (companyLogoId.HasValue)
                             {
-                                _imageDao.DeleteImageByWorkExperienceId(experienceId, companyLogoId.Value);
+                                Image companyLogo = _imageDao.GetImageByWorkExperienceId(experienceId, companyLogoId.Value);
+
+                                if (companyLogo != null)
+                                {
+                                    _imageDao.DeleteImageByWorkExperienceId(experienceId, companyLogoId.Value);
+                                }
                             }
 
                             if (companyWebsiteId.HasValue)
                             {
-                                _websiteDao.DeleteWebsiteByWorkExperienceId(experienceId, companyWebsiteId.Value);
+                                Website companyWebsite = _websiteDao.GetWebsiteByWorkExperienceId(experienceId);
+
+                                if (companyWebsite != null)
+                                {
+                                    _websiteDao.DeleteWebsiteByWorkExperienceId(experienceId, companyWebsiteId.Value);
+                                }
                             }
 
                             if (mainImageId.HasValue)
                             {
-                                _imageDao.DeleteImageByWorkExperienceId(experienceId, mainImageId.Value);
+                                Image mainImage = _imageDao.GetImageByWorkExperienceId(experienceId, mainImageId.Value);
+
+                                if (mainImage != null)
+                                {
+                                    _imageDao.DeleteImageByWorkExperienceId(experienceId, mainImageId.Value);
+                                }
                             }
 
                             DeleteResponsibilitiesAndAchievementsByWorkExperienceId(experienceId);
@@ -541,7 +556,7 @@ namespace Capstone.DAO
 
         private int DeleteResponsibilitiesAndAchievementsByWorkExperienceId(int experienceId)
         {
-            List<Achievement> achievements = _achievementDao.GetAchievementsByWorkExperienceId(experienceId);
+            List<Achievement> achievements = _achievementDao.GetAchievementsByWorkExperienceId(experienceId) ?? new List<Achievement>();
 
             int achievementsDeletedCount = 0;
 
@@ -566,7 +581,7 @@ namespace Capstone.DAO
 
         private int DeleteSkillsUsedOrObtainedByWorkExperienceId(int experienceId)
         {
-            List<Skill> skills = _skillDao.GetSkillsByWorkExperienceId(experienceId);
+            List<Skill> skills = _skillDao.GetSkillsByWorkExperienceId(experienceId) ?? new List<Skill>();
 
             int skillsDeletedCount = 0;
 
@@ -591,7 +606,7 @@ namespace Capstone.DAO
 
         private int DeleteAdditionalImagesByWorkExperienceId(int experienceId)
         {
-            List<Image> additionalImages = _imageDao.GetAdditionalImagesByWorkExperienceId(experienceId);
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByWorkExperienceId(experienceId) ?? new List<Image>();
 
             int imagesDeletedCount = 0;
 
