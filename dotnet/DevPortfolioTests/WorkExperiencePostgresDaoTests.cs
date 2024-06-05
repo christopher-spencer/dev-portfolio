@@ -85,7 +85,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetWorkExperienceById_Returns_WorkExperience()
+        public void GetWorkExperienceByPortfolioId_Returns_The_Correct_Work_Experience()
         {
             // Arrange
             WorkExperience createdWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, new WorkExperience
