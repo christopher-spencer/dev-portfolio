@@ -245,6 +245,32 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
+        public void DeleteSideProject_Successfully_Deletes_A_SideProject()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int sideProjectId = 1;
+
+            SideProject sideProject = new SideProject
+            {
+                Id = sideProjectId,
+                Name = "Test SideProject",
+                Description = "Test Description Test",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            };
+
+            // Act
+            SideProject createdSideProject = dao.CreateSideProjectByPortfolioId(portfolioId, sideProject);
+            dao.DeleteSideProjectByPortfolioId(portfolioId, createdSideProject.Id);
+
+            SideProject? deletedSideProject = dao.GetSideProject(createdSideProject.Id);
+
+            // Assert
+            Assert.IsNull(deletedSideProject);
+        }
+
+        [TestMethod]
         public void DeleteSideProject_Returns_Correct_Number_Of_Rows_Affected()
         {
             // Arrange
