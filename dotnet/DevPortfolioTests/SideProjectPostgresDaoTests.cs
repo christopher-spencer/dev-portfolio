@@ -60,7 +60,7 @@ namespace Capstone.UnitTests.DAO
                 StartDate = DateTime.Now,
                 FinishDate = DateTime.Now
             });
-            
+
             List<SideProject> sideProjects = dao.GetSideProjects();
 
             //Assert
@@ -188,7 +188,7 @@ namespace Capstone.UnitTests.DAO
 
             // Act
             SideProject createdSideProject = dao.CreateSideProjectByPortfolioId(portfolioId, sideProject);
-           
+
             SideProject updatedSideProject = dao.UpdateSideProjectByPortfolioId(portfolioId, createdSideProject.Id, createdSideProject);
 
             // Assert
@@ -244,10 +244,35 @@ namespace Capstone.UnitTests.DAO
                 "PortfolioId must be greater than zero.");
         }
 
+        [TestMethod]
+        public void DeleteSideProject_Returns_Correct_Number_Of_Rows_Affected()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int sideProjectId = 1;
+            int expectedRowsAffected = 1;
+
+            SideProject sideProject = new SideProject
+            {
+                Id = sideProjectId,
+                Name = "Test SideProject",
+                Description = "Test Description Test",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            };
+
+            // Act
+            SideProject createdSideProject = dao.CreateSideProjectByPortfolioId(portfolioId, sideProject);
+            int rowsAffected = dao.DeleteSideProjectByPortfolioId(portfolioId, createdSideProject.Id);
+
+            // Assert
+            Assert.AreEqual(expectedRowsAffected, rowsAffected);
+        }
+
         [TestCleanup]
         public void TestCleanup()
         {
-            base.Cleanup(); 
+            base.Cleanup();
         }
 
     }

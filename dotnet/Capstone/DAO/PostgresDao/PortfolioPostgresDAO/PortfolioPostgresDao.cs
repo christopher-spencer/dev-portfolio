@@ -225,14 +225,13 @@ namespace Capstone.DAO
                             int? mainImageId = GetMainImageIdByPortfolioId(portfolioId);
                             int? gitHubId = GetGitHubIdByPortfolioId(portfolioId);
                             int? linkedInId = GetLinkedInIdByPortfolioId(portfolioId);
-// NOTE added null checkers for mainImage, github, and linkedin ******
+// FIXME added null checkers for mainImage, github, and linkedin (DO ELSEWHERE)******
                             if (mainImageId.HasValue)
                             {
                                 Image mainImage = _imageDao.GetMainImageByPortfolioId(portfolioId);
 
                                 if (mainImage != null)
                                 {
-                                    Console.WriteLine($"Deleting main image with ID: {mainImageId.Value}");
                                     _imageDao.DeleteImageByPortfolioId(portfolioId, mainImageId.Value);
                                 }
                             }
@@ -243,7 +242,6 @@ namespace Capstone.DAO
 
                                 if (github != null)
                                 {
-                                    Console.WriteLine($"Deleting GitHub website with ID: {gitHubId.Value}");
                                     _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, gitHubId.Value);
                                 }
                             }
@@ -254,7 +252,6 @@ namespace Capstone.DAO
 
                                 if (linkedIn != null)
                                 {
-                                Console.WriteLine($"Deleting LinkedIn website with ID: {linkedInId.Value}");
                                 _websiteDao.DeleteWebsiteByPortfolioId(portfolioId, linkedInId.Value);
                                 }
                             }

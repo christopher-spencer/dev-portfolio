@@ -362,17 +362,32 @@ namespace Capstone.DAO
 
                             if (mainImageId.HasValue)
                             {
-                                _imageDao.DeleteImageBySideProjectId(sideProjectId, mainImageId.Value);
+                                Image mainImage = _imageDao.GetMainImageBySideProjectId(sideProjectId);
+
+                                if (mainImage != null)
+                                {
+                                    _imageDao.DeleteImageBySideProjectId(sideProjectId, mainImageId.Value);
+                                }
                             }
 
                             if (websiteId.HasValue)
                             {
-                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId.Value);
+                                Website mainWebsite = _websiteDao.GetWebsiteBySideProjectId(sideProjectId, websiteId.Value);
+
+                                if (mainWebsite != null)
+                                {
+                                    _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, websiteId.Value);
+                                }
                             }
 
                             if (gitHubId.HasValue)
                             {
-                                _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, gitHubId.Value);
+                                Website gitHubWebsite = _websiteDao.GetWebsiteBySideProjectId(sideProjectId, gitHubId.Value);
+
+                                if (gitHubWebsite != null)
+                                {
+                                    _websiteDao.DeleteWebsiteBySideProjectId(sideProjectId, gitHubId.Value);
+                                }
                             }
 
                             DeleteGoalsAndObjectivesBySideProjectId(sideProjectId);
