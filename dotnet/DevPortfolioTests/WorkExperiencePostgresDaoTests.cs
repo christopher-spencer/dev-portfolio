@@ -41,7 +41,7 @@ namespace Capstone.UnitTests.DAO
         }
 
 // FIXME refactor all tests to cut back on repetitive code and use as a model for other test classes
-        private WorkExperience CreateAworkExperienceOriginalObjectect1()
+        private WorkExperience CreateAWorkExperienceTestObject1()
         {
             return new WorkExperience
             {
@@ -54,7 +54,7 @@ namespace Capstone.UnitTests.DAO
             };
         }
 
-        private WorkExperience CreateAworkExperienceOriginalObjectect2()
+        private WorkExperience CreateAWorkExperienceTestObject2()
         {
             return new WorkExperience
             {
@@ -79,8 +79,8 @@ namespace Capstone.UnitTests.DAO
         public void GetWorkExperiences_Returns_All_Work_Experiences()
         {
             // Arrange
-            WorkExperience testWorkExperience1 = CreateAworkExperienceOriginalObjectect1();
-            WorkExperience testWorkExperience2 = CreateAworkExperienceOriginalObjectect2();
+            WorkExperience testWorkExperience1 = CreateAWorkExperienceTestObject1();
+            WorkExperience testWorkExperience2 = CreateAWorkExperienceTestObject2();
 
             dao.CreateWorkExperienceByPortfolioId(1, testWorkExperience1);
             dao.CreateWorkExperienceByPortfolioId(1, testWorkExperience2);
@@ -117,7 +117,7 @@ namespace Capstone.UnitTests.DAO
         public void GetWorkExperienceByPortfolioId_Returns_The_Correct_Work_Experience()
         {
             // Arrange
-            WorkExperience workExperienceOriginalObject = CreateAworkExperienceOriginalObjectect1();
+            WorkExperience workExperienceOriginalObject = CreateAWorkExperienceTestObject1();
             WorkExperience createdOriginalWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceOriginalObject);
             SetUpWorkExperienceNestedDaoMockObjects();
 
@@ -150,7 +150,7 @@ namespace Capstone.UnitTests.DAO
         public void CreateWorkExperienceByPortfolioId_Creates_Work_Experience()
         {
             // Arrange
-            WorkExperience workExperience = CreateAworkExperienceOriginalObjectect1();
+            WorkExperience workExperience = CreateAWorkExperienceTestObject1();
 
             SetUpWorkExperienceNestedDaoMockObjects();
 
@@ -171,7 +171,7 @@ namespace Capstone.UnitTests.DAO
             // Arrange
             int nonExistentPortfolioId = -1;
 
-            WorkExperience workExperience = CreateAworkExperienceOriginalObjectect1();
+            WorkExperience workExperience = CreateAWorkExperienceTestObject1();
             SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act & Assert
@@ -186,8 +186,8 @@ namespace Capstone.UnitTests.DAO
             // Arrange
             int portfolioId = 1;
 
-            WorkExperience workExperienceOriginalObject = CreateAworkExperienceOriginalObjectect1();
-            WorkExperience workExperienceUpdateObject = CreateAworkExperienceOriginalObjectect2();
+            WorkExperience workExperienceOriginalObject = CreateAWorkExperienceTestObject1();
+            WorkExperience workExperienceUpdateObject = CreateAWorkExperienceTestObject2();
 
             WorkExperience createdOriginalWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceOriginalObject);
 
@@ -212,7 +212,7 @@ namespace Capstone.UnitTests.DAO
             // Arrange
             int nonExistentPortfolioId = -1;
 
-            WorkExperience workExperience = CreateAworkExperienceOriginalObjectect1();
+            WorkExperience workExperience = CreateAWorkExperienceTestObject1();
 
             SetUpWorkExperienceNestedDaoMockObjects();
 
@@ -226,7 +226,7 @@ namespace Capstone.UnitTests.DAO
         public void UpdateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Work_Experience_Does_Not_Exist()
         {
             // Arrange
-            WorkExperience workExperience = CreateAworkExperienceOriginalObjectect1();
+            WorkExperience workExperience = CreateAWorkExperienceTestObject1();
 
             SetUpWorkExperienceNestedDaoMockObjects();
 
@@ -242,7 +242,7 @@ namespace Capstone.UnitTests.DAO
             // Arrange
             int portfolioId = 1;
 
-            WorkExperience workExperienceTestObject = CreateAworkExperienceOriginalObjectect1();
+            WorkExperience workExperienceTestObject = CreateAWorkExperienceTestObject1();
             WorkExperience createdOriginalWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceTestObject);
 
             int workExperienceId = createdOriginalWorkExperience.Id;
@@ -264,8 +264,8 @@ namespace Capstone.UnitTests.DAO
             int portfolioId = 1;
             int expectedRowsAffected = 1;
 
-            WorkExperience workExperienceTestObject = CreateAworkExperienceOriginalObjectect1();
-            WorkExperience workExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceTestObject);
+            WorkExperience workExperienceTestObject = CreateAWorkExperienceTestObject1();
+            WorkExperience workExperience = dao.CreateWorkExperienceByPortfolioId(portfolioId, workExperienceTestObject);
 
             SetUpWorkExperienceNestedDaoMockObjects();
 
@@ -274,6 +274,22 @@ namespace Capstone.UnitTests.DAO
 
             // Assert
             Assert.AreEqual(expectedRowsAffected, rowsAffected);
+        }
+
+        [TestMethod]
+        public void DeleteWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+
+            WorkExperience workExperience = CreateAWorkExperienceTestObject1();
+
+            SetUpWorkExperienceNestedDaoMockObjects();
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.DeleteWorkExperienceByPortfolioId(nonExistentPortfolioId, 1),
+                "PortfolioId must be greater than zero.");
         }
 
 
