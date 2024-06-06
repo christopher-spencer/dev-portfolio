@@ -182,6 +182,8 @@ namespace Capstone.UnitTests.DAO
         public void CreateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Portfolio_Doesnt_Exist()
         {
             // Arrange
+            int nonExistentPortfolioId = -1;
+
             WorkExperience workExperience = new WorkExperience
             {
                 PositionTitle = "Software Engineer",
@@ -197,18 +199,10 @@ namespace Capstone.UnitTests.DAO
             websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
             achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
 
-            // Act
-            try
-            {
-                dao.CreateWorkExperienceByPortfolioId(1, workExperience);
-                Assert.Fail("Expected an exception to be thrown");
-            }
-            catch (ArgumentException)
-            {
-                // Assert
-                Assert.IsTrue(true);
-            }
-            
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.CreateWorkExperienceByPortfolioId(nonExistentPortfolioId, workExperience),
+                "PortfolioId must be greater than zero.");
         }
 
         [TestMethod]
