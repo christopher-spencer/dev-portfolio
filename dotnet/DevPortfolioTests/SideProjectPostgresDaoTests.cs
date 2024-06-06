@@ -49,6 +49,62 @@ namespace Capstone.UnitTests.DAO
                 websiteDaoMock.Object);
         }
 
+        private SideProject CreateASideProjectTestObject1()
+        {
+            return new SideProject
+            {
+                Name = "Test SideProject 1",
+                Description = "Test Description 1",
+                VideoWalkthroughUrl = "https://www.youtube.com/watch?v=123456",
+                ProjectStatus = "Ongoing",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            };
+        }
+
+        private SideProject CreateASideProjectTestObject2()
+        {
+            return new SideProject
+            {
+                Name = "Test SideProject 2",
+                Description = "Test Description 2",
+                VideoWalkthroughUrl = "https://www.youtube.com/watch?v=123456",
+                ProjectStatus = "Ongoing",
+                StartDate = DateTime.Now,
+                FinishDate = DateTime.Now
+            };
+        }
+//FIXME look into this and which ones exactly are necessary for propper testing
+        private void SetUpSideProjectNestedDaoMockObjects()
+        {
+            goalDaoMock.Setup(d => d.GetGoalsBySideProjectId(It.IsAny<int>()))
+                .Returns(new List<Goal>());
+
+            imageDaoMock.Setup(d => d.GetMainImageBySideProjectId(It.IsAny<int>()))
+                .Returns(new Image());
+
+            imageDaoMock.Setup(d => d.GetAllImagesBySideProjectId(It.IsAny<int>()))
+                .Returns(new List<Image>());
+            
+            imageDaoMock.Setup(d => d.GetAdditionalImagesBySideProjectId(It.IsAny<int>()))
+                .Returns(new List<Image>());
+
+            skillDaoMock.Setup(d => d.GetSkillsBySideProjectId(It.IsAny<int>()))
+                .Returns(new List<Skill>());
+
+            contributorDaoMock.Setup(d => d.GetContributorsBySideProjectId(It.IsAny<int>()))
+                .Returns(new List<Contributor>());
+
+            apiServiceDaoMock.Setup(d => d.GetAPIsAndServicesBySideProjectId(It.IsAny<int>()))
+                .Returns(new List<ApiService>());
+
+            websiteDaoMock.Setup(d => d.GetWebsiteBySideProjectId(It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(new Website());
+
+            dependencyLibraryDaoMock.Setup(d => d.GetDependenciesAndLibrariesBySideProjectId(It.IsAny<int>()))
+                .Returns(new List<DependencyLibrary>());
+        }
+
         [TestMethod]
         public void GetSideProject_Returns_All_SideProjects()
         {
