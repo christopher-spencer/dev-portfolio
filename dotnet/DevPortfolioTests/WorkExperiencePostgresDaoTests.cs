@@ -132,6 +132,22 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual("Worked on the Windows team", workExperience.Description);
         }
 
+        [TestMethod]
+        public void GetWorkExperienceByPortfolioId_Returns_Null_When_Work_Experience_Not_Found()
+        {
+            // Arrange
+            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
+            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
+            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
+            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+
+            // Act
+            WorkExperience? workExperience = dao.GetWorkExperienceByPortfolioId(1, 1);
+
+            // Assert
+            Assert.IsNull(workExperience);
+        }
+
 
     }
 }
