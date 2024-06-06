@@ -40,7 +40,8 @@ namespace Capstone.UnitTests.DAO
                 achievementDaoMock.Object);
         }
 
-        private WorkExperience CreateATestWorkExperienceOne()
+// FIXME refactor all tests to cut back on repetitive code and use as a model for other test classes
+        private WorkExperience CreateAWorkExperienceTestObject1()
         {
             return new WorkExperience
             {
@@ -53,7 +54,7 @@ namespace Capstone.UnitTests.DAO
             };
         }
 
-        private WorkExperience CreateATestWorkExperienceTwo()
+        private WorkExperience CreateAWorkExperienceTestObject2()
         {
             return new WorkExperience
             {
@@ -75,15 +76,14 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetWorkExperiences_Returns_All_WorkExperiences()
+        public void GetWorkExperiences_Returns_All_Work_Experiences()
         {
             // Arrange
-            WorkExperience testWorkExperience1 = CreateATestWorkExperienceOne();
-            WorkExperience testWorkExperience2 = CreateATestWorkExperienceTwo();
+            WorkExperience testWorkExperience1 = CreateAWorkExperienceTestObject1();
+            WorkExperience testWorkExperience2 = CreateAWorkExperienceTestObject2();
 
             dao.CreateWorkExperienceByPortfolioId(1, testWorkExperience1);
             dao.CreateWorkExperienceByPortfolioId(1, testWorkExperience2);
-// FIXME refactor all tests to cut back on repetitive code and use as a model for other test classes
             SetUpWorkExperienceNestedDaoMockObjects();
 
             List<WorkExperience> workExperiences = dao.GetWorkExperiences();
@@ -106,12 +106,6 @@ namespace Capstone.UnitTests.DAO
         [TestMethod]
         public void GetWorkExperiences_Returns_Empty_List_When_No_Work_Experiences()
         {
-            // Arrange
-            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
-            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
-            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
-            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
-
             // Act
             List<WorkExperience> workExperiences = dao.GetWorkExperiences();
 
@@ -123,45 +117,30 @@ namespace Capstone.UnitTests.DAO
         public void GetWorkExperienceByPortfolioId_Returns_The_Correct_Work_Experience()
         {
             // Arrange
-            WorkExperience createdWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, new WorkExperience
-            {
-                PositionTitle = "Software Engineer",
-                CompanyName = "Microsoft",
-                Location = "Redmond, WA",
-                Description = "Worked on the Windows team",
-                StartDate = new DateTime(2020, 1, 1),
-                EndDate = new DateTime(2021, 1, 1)
-            });
-
-            int workExperienceId = createdWorkExperience.Id;
-
-            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
-            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
-            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
-            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+            WorkExperience workExperienceTestObj = CreateAWorkExperienceTestObject1();
+            WorkExperience createdWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceTestObj);
+            SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act
-            WorkExperience workExperience = dao.GetWorkExperienceByPortfolioId(1, workExperienceId);
+            WorkExperience workExperience = dao.GetWorkExperienceByPortfolioId(1, createdWorkExperience.Id);
 
             // Assert
-            Assert.AreEqual("Software Engineer", workExperience.PositionTitle);
-            Assert.AreEqual("Microsoft", workExperience.CompanyName);
-            Assert.AreEqual(new DateTime(2020, 1, 1), workExperience.StartDate);
-            Assert.AreEqual(new DateTime(2021, 1, 1), workExperience.EndDate);
-            Assert.AreEqual("Worked on the Windows team", workExperience.Description);
+            Assert.AreEqual(createdWorkExperience.PositionTitle, workExperience.PositionTitle);
+            Assert.AreEqual(createdWorkExperience.CompanyName, workExperience.CompanyName);
+            Assert.AreEqual(createdWorkExperience.StartDate, workExperience.StartDate);
+            Assert.AreEqual(createdWorkExperience.EndDate, workExperience.EndDate);
+            Assert.AreEqual(createdWorkExperience.Description, workExperience.Description);
         }
 
         [TestMethod]
         public void GetWorkExperienceByPortfolioId_Returns_Null_When_Work_Experience_Not_Found()
         {
             // Arrange
-            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
-            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
-            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
-            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+            int portfolioId = 1;
+            int workExperienceId = 1;
 
             // Act
-            WorkExperience? workExperience = dao.GetWorkExperienceByPortfolioId(1, 1);
+            WorkExperience? workExperience = dao.GetWorkExperienceByPortfolioId(portfolioId, workExperienceId);
 
             // Assert
             Assert.IsNull(workExperience);
@@ -171,30 +150,19 @@ namespace Capstone.UnitTests.DAO
         public void CreateWorkExperienceByPortfolioId_Creates_Work_Experience()
         {
             // Arrange
-            WorkExperience workExperience = new WorkExperience
-            {
-                PositionTitle = "Software Engineer",
-                CompanyName = "Microsoft",
-                Location = "Redmond, WA",
-                Description = "Worked on the Windows team",
-                StartDate = new DateTime(2020, 1, 1),
-                EndDate = new DateTime(2021, 1, 1)
-            };
+            WorkExperience workExperience = CreateAWorkExperienceTestObject1();
 
-            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
-            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
-            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
-            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+            SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act
             WorkExperience createdWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperience);
 
             // Assert
-            Assert.AreEqual("Software Engineer", createdWorkExperience.PositionTitle);
-            Assert.AreEqual("Microsoft", createdWorkExperience.CompanyName);
-            Assert.AreEqual(new DateTime(2020, 1, 1), createdWorkExperience.StartDate);
-            Assert.AreEqual(new DateTime(2021, 1, 1), createdWorkExperience.EndDate);
-            Assert.AreEqual("Worked on the Windows team", createdWorkExperience.Description);
+            Assert.AreEqual(workExperience.PositionTitle, createdWorkExperience.PositionTitle);
+            Assert.AreEqual(workExperience.CompanyName, createdWorkExperience.CompanyName);
+            Assert.AreEqual(workExperience.StartDate, createdWorkExperience.StartDate);
+            Assert.AreEqual(workExperience.EndDate, createdWorkExperience.EndDate);
+            Assert.AreEqual(workExperience.Description, createdWorkExperience.Description);
         }
 
         [TestMethod]
