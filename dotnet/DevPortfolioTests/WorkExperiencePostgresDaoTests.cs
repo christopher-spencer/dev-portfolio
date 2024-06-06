@@ -178,6 +178,83 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual("Worked on the Windows team", createdWorkExperience.Description);
         }
 
+        [TestMethod]
+        public void CreateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Portfolio_Doesnt_Exist()
+        {
+            // Arrange
+            WorkExperience workExperience = new WorkExperience
+            {
+                PositionTitle = "Software Engineer",
+                CompanyName = "Microsoft",
+                Location = "Redmond, WA",
+                Description = "Worked on the Windows team",
+                StartDate = new DateTime(2020, 1, 1),
+                EndDate = new DateTime(2021, 1, 1)
+            };
+
+            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
+            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
+            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
+            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+
+            // Act
+            try
+            {
+                dao.CreateWorkExperienceByPortfolioId(1, workExperience);
+                Assert.Fail("Expected an exception to be thrown");
+            }
+            catch (ArgumentException)
+            {
+                // Assert
+                Assert.IsTrue(true);
+            }
+            
+        }
+
+        [TestMethod]
+        public void UpdateWorkExperienceByPortfolioId_Updates_Work_Experience()
+        {
+            // Arrange
+            WorkExperience createdWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, new WorkExperience
+            {
+                PositionTitle = "Software Engineer",
+                CompanyName = "Microsoft",
+                Location = "Redmond, WA",
+                Description = "Worked on the Windows team",
+                StartDate = new DateTime(2020, 1, 1),
+                EndDate = new DateTime(2021, 1, 1)
+            });
+
+            int workExperienceId = createdWorkExperience.Id;
+
+            WorkExperience updatedWorkExperience = new WorkExperience
+            {
+                Id = workExperienceId,
+                PositionTitle = "Software Engineer",
+                CompanyName = "Google",
+                Location = "Mountain View, CA",
+                Description = "Worked on the Android team",
+                StartDate = new DateTime(2021, 1, 1),
+                EndDate = new DateTime(2022, 1, 1)
+            };
+
+            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
+            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
+            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
+            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+
+            // Act
+            dao.UpdateWorkExperienceByPortfolioId(1, updatedWorkExperience.Id, updatedWorkExperience);
+
+            // Assert
+            WorkExperience workExperience = dao.GetWorkExperienceByPortfolioId(1, workExperienceId);
+            Assert.AreEqual("Software Engineer", workExperience.PositionTitle);
+            Assert.AreEqual("Google", workExperience.CompanyName);
+            Assert.AreEqual(new DateTime(2021, 1, 1), workExperience.StartDate);
+            Assert.AreEqual(new DateTime(2022, 1, 1), workExperience.EndDate);
+            Assert.AreEqual("Worked on the Android team", workExperience.Description);
+        }
+
         
 
 

@@ -151,7 +151,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void CreateSideProjectByPortfolioId_Returns_Null_When_Portfolio_Does_Not_Exist()
+        public void CreateSideProjectByPortfolioId_Throws_Argument_Exception_When_Portfolio_Does_Not_Exist()
         {
             // Arrange
             int nonExistentPortfolioId = -1;
