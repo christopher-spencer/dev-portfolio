@@ -40,11 +40,9 @@ namespace Capstone.UnitTests.DAO
                 achievementDaoMock.Object);
         }
 
-        [TestMethod]
-        public void GetWorkExperiences_Returns_All_WorkExperiences()
+        private WorkExperience CreateATestWorkExperienceOne()
         {
-            // Arrange
-            dao.CreateWorkExperienceByPortfolioId(1, new WorkExperience
+            return new WorkExperience
             {
                 PositionTitle = "Software Engineer",
                 CompanyName = "Microsoft",
@@ -52,8 +50,12 @@ namespace Capstone.UnitTests.DAO
                 Description = "Worked on the Windows team",
                 StartDate = new DateTime(2020, 1, 1),
                 EndDate = new DateTime(2021, 1, 1)
-            });
-            dao.CreateWorkExperienceByPortfolioId(1, new WorkExperience
+            };
+        }
+
+        private WorkExperience CreateATestWorkExperienceTwo()
+        {
+            return new WorkExperience
             {
                 PositionTitle = "Software Engineer",
                 CompanyName = "Google",
@@ -61,27 +63,44 @@ namespace Capstone.UnitTests.DAO
                 Description = "Worked on the Android team",
                 StartDate = new DateTime(2021, 1, 1),
                 EndDate = new DateTime(2022, 1, 1)
-            });
-// FIXME refactor all tests to cut back on repetitive code and use as a model for other test classes
+            };
+        }
+
+        private void SetUpWorkExperienceNestedDaoMockObjects()
+        {
             imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
             skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
             websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
             achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+        }
+
+        [TestMethod]
+        public void GetWorkExperiences_Returns_All_WorkExperiences()
+        {
+            // Arrange
+            WorkExperience testWorkExperience1 = CreateATestWorkExperienceOne();
+            WorkExperience testWorkExperience2 = CreateATestWorkExperienceTwo();
+
+            dao.CreateWorkExperienceByPortfolioId(1, testWorkExperience1);
+            dao.CreateWorkExperienceByPortfolioId(1, testWorkExperience2);
+// FIXME refactor all tests to cut back on repetitive code and use as a model for other test classes
+            SetUpWorkExperienceNestedDaoMockObjects();
 
             List<WorkExperience> workExperiences = dao.GetWorkExperiences();
 
             // Assert
             Assert.AreEqual(2, workExperiences.Count);
-            Assert.AreEqual("Software Engineer", workExperiences[0].PositionTitle);
-            Assert.AreEqual("Microsoft", workExperiences[0].CompanyName);
-            Assert.AreEqual(new DateTime(2020, 1, 1), workExperiences[0].StartDate);
-            Assert.AreEqual(new DateTime(2021, 1, 1), workExperiences[0].EndDate);
-            Assert.AreEqual("Worked on the Windows team", workExperiences[0].Description);
-            Assert.AreEqual("Software Engineer", workExperiences[1].PositionTitle);
-            Assert.AreEqual("Google", workExperiences[1].CompanyName);
-            Assert.AreEqual(new DateTime(2021, 1, 1), workExperiences[1].StartDate);
-            Assert.AreEqual(new DateTime(2022, 1, 1), workExperiences[1].EndDate);
-            Assert.AreEqual("Worked on the Android team", workExperiences[1].Description);
+            Assert.AreEqual(testWorkExperience1.PositionTitle, workExperiences[0].PositionTitle);
+            Assert.AreEqual(testWorkExperience1.CompanyName, workExperiences[0].CompanyName);
+            Assert.AreEqual(testWorkExperience1.StartDate, workExperiences[0].StartDate);
+            Assert.AreEqual(testWorkExperience1.EndDate, workExperiences[0].EndDate);
+            Assert.AreEqual(testWorkExperience1.Description, workExperiences[0].Description);
+
+            Assert.AreEqual(testWorkExperience2.PositionTitle, workExperiences[1].PositionTitle);
+            Assert.AreEqual(testWorkExperience2.CompanyName, workExperiences[1].CompanyName);
+            Assert.AreEqual(testWorkExperience2.StartDate, workExperiences[1].StartDate);
+            Assert.AreEqual(testWorkExperience2.EndDate, workExperiences[1].EndDate);
+            Assert.AreEqual(testWorkExperience2.Description, workExperiences[1].Description);
         }
 
         [TestMethod]
