@@ -276,6 +276,32 @@ namespace Capstone.UnitTests.DAO
                 "PortfolioId must be greater than zero.");
         }
 
+        [TestMethod]
+        public void UpdateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Work_Experience_Doesnt_Exist()
+        {
+            // Arrange
+            WorkExperience workExperience = new WorkExperience
+            {
+                Id = -1,
+                PositionTitle = "Software Engineer",
+                CompanyName = "Microsoft",
+                Location = "Redmond, WA",
+                Description = "Worked on the Windows team",
+                StartDate = new DateTime(2020, 1, 1),
+                EndDate = new DateTime(2021, 1, 1)
+            };
+
+            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
+            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
+            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
+            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.UpdateWorkExperienceByPortfolioId(1, workExperience.Id, workExperience),
+                "WorkExperienceId must be greater than zero.");
+        }
+
         
 
 
