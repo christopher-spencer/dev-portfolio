@@ -257,7 +257,24 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(workExperience);
         }
 
-        
+        [TestMethod]
+        public void DeleteWorkExperienceByPortfolioId_Returns_Correct_Number_Of_Rows_Affected()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int expectedRowsAffected = 1;
+
+            WorkExperience workExperienceTestObject = CreateAworkExperienceOriginalObjectect1();
+            WorkExperience workExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceTestObject);
+
+            SetUpWorkExperienceNestedDaoMockObjects();
+
+            // Act
+            int rowsAffected = dao.DeleteWorkExperienceByPortfolioId(portfolioId, workExperience.Id);
+
+            // Assert
+            Assert.AreEqual(expectedRowsAffected, rowsAffected);
+        }
 
 
 
