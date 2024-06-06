@@ -166,7 +166,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void CreateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Portfolio_Doesnt_Exist()
+        public void CreateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Portfolio_Does_Not_Exist()
         {
             // Arrange
             int nonExistentPortfolioId = -1;
@@ -198,7 +198,7 @@ namespace Capstone.UnitTests.DAO
 
             // Assert
             WorkExperience workExperience = dao.GetWorkExperienceByPortfolioId(portfolioId, createdOriginalWorkExperience.Id);
-            
+
             Assert.AreEqual(updatedWorkExperience.PositionTitle, workExperience.PositionTitle);
             Assert.AreEqual(updatedWorkExperience.CompanyName, workExperience.CompanyName);
             Assert.AreEqual(updatedWorkExperience.StartDate, workExperience.StartDate);
@@ -207,25 +207,14 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void UpdateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Portfolio_Doesnt_Exist()
+        public void UpdateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Portfolio_Does_Not_Exist()
         {
             // Arrange
             int nonExistentPortfolioId = -1;
 
-            WorkExperience workExperience = new WorkExperience
-            {
-                PositionTitle = "Software Engineer",
-                CompanyName = "Microsoft",
-                Location = "Redmond, WA",
-                Description = "Worked on the Windows team",
-                StartDate = new DateTime(2020, 1, 1),
-                EndDate = new DateTime(2021, 1, 1)
-            };
+            WorkExperience workExperience = CreateAworkExperienceOriginalObjectect1();
 
-            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
-            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
-            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
-            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+            SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(() =>
@@ -234,24 +223,12 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void UpdateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Work_Experience_Doesnt_Exist()
+        public void UpdateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Work_Experience_Does_Not_Exist()
         {
             // Arrange
-            WorkExperience workExperience = new WorkExperience
-            {
-                Id = -1,
-                PositionTitle = "Software Engineer",
-                CompanyName = "Microsoft",
-                Location = "Redmond, WA",
-                Description = "Worked on the Windows team",
-                StartDate = new DateTime(2020, 1, 1),
-                EndDate = new DateTime(2021, 1, 1)
-            };
+            WorkExperience workExperience = CreateAworkExperienceOriginalObjectect1();
 
-            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
-            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
-            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
-            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+            SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(() =>
@@ -263,28 +240,20 @@ namespace Capstone.UnitTests.DAO
         public void DeleteWorkExperienceByPortfolioId_Deletes_Work_Experience()
         {
             // Arrange
-            WorkExperience createdOriginalWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, new WorkExperience
-            {
-                PositionTitle = "Software Engineer",
-                CompanyName = "Microsoft",
-                Location = "Redmond, WA",
-                Description = "Worked on the Windows team",
-                StartDate = new DateTime(2020, 1, 1),
-                EndDate = new DateTime(2021, 1, 1)
-            });
+            int portfolioId = 1;
+
+            WorkExperience workExperienceTestObject = CreateAworkExperienceOriginalObjectect1();
+            WorkExperience createdOriginalWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceTestObject);
 
             int workExperienceId = createdOriginalWorkExperience.Id;
 
-            imageDaoMock.Setup(m => m.GetImageByWorkExperienceId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
-            skillDaoMock.Setup(m => m.GetSkillsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Skill>());
-            websiteDaoMock.Setup(m => m.GetWebsiteByWorkExperienceId(It.IsAny<int>())).Returns(new Website());
-            achievementDaoMock.Setup(m => m.GetAchievementsByWorkExperienceId(It.IsAny<int>())).Returns(new List<Achievement>());
+            SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act
-            dao.DeleteWorkExperienceByPortfolioId(1, workExperienceId);
+            dao.DeleteWorkExperienceByPortfolioId(portfolioId, workExperienceId);
 
             // Assert
-            WorkExperience? workExperience = dao.GetWorkExperienceByPortfolioId(1, workExperienceId);
+            WorkExperience? workExperience = dao.GetWorkExperienceByPortfolioId(portfolioId, workExperienceId);
             Assert.IsNull(workExperience);
         }
 
