@@ -109,13 +109,12 @@ namespace Capstone.UnitTests.DAO
         public void GetSideProject_Returns_All_SideProjects()
         {
             //Act
-            dao.CreateSideProjectByPortfolioId(1, new SideProject
-            {
-                Name = "Test SideProject 1",
-                Description = "Test Description 1",
-                StartDate = DateTime.Now,
-                FinishDate = DateTime.Now
-            });
+            int portfolioId = 1;
+
+            SideProject sideProjectTestObject = CreateASideProjectTestObject1();
+            SetUpSideProjectNestedDaoMockObjects();
+
+            dao.CreateSideProjectByPortfolioId(portfolioId, sideProjectTestObject);
 
             List<SideProject> sideProjects = dao.GetSideProjects();
 
@@ -129,8 +128,12 @@ namespace Capstone.UnitTests.DAO
                 Assert.IsNotNull(sideproject.Id);
                 Assert.IsNotNull(sideproject.Name);
                 Assert.IsNotNull(sideproject.Description);
+                Assert.IsNotNull(sideproject.VideoWalkthroughUrl);
+                Assert.IsNotNull(sideproject.ProjectStatus);
                 Assert.IsNotNull(sideproject.StartDate);
                 Assert.IsNotNull(sideproject.FinishDate);
+//FIXME need to be asserting for these nested objects like so after SetUpSideProjectNestedDaoMockObjects() is called
+                Assert.IsNotNull(sideproject.GoalsAndObjectives);
             }
         }
 
