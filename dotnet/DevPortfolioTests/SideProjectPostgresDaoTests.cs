@@ -134,6 +134,14 @@ namespace Capstone.UnitTests.DAO
                 Assert.IsNotNull(sideproject.FinishDate);
 //FIXME need to be asserting for these nested objects like so after SetUpSideProjectNestedDaoMockObjects() is called
                 Assert.IsNotNull(sideproject.GoalsAndObjectives);
+                Assert.IsNotNull(sideproject.MainImage);
+                Assert.IsNotNull(sideproject.AdditionalImages);
+                Assert.IsNotNull(sideproject.ToolsUsed);
+                Assert.IsNotNull(sideproject.Contributors);
+                Assert.IsNotNull(sideproject.ExternalAPIsAndServicesUsed);
+                Assert.IsNotNull(sideproject.DependenciesOrLibrariesUsed);
+                Assert.IsNotNull(sideproject.Website);
+                Assert.IsNotNull(sideproject.GitHubRepoLink);
             }
         }
 
