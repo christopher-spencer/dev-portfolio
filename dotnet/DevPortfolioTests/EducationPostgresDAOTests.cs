@@ -157,5 +157,18 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(createdEducation.GraduationDate, education.GraduationDate);
         }
 
+        public void GetEducationByPortfolioId_Returns_Null_When_Education_Not_Found()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int educationId = 1;
+
+            // Act
+            Education? education = dao.GetEducationByPortfolioId(portfolioId, educationId);
+
+            // Assert
+            Assert.IsNull(education);
+        }
+
     }
 }
