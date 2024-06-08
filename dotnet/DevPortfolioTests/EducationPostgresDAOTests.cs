@@ -170,5 +170,30 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(education);
         }
 
+        public void CreateEducationByPortfolioId_Creates_An_Education()
+        {
+            // Arrange
+            int portfolioId = 1;
+            Education education = CreateAnEducationTestObject1();
+            SetUpEducationNestedDaoMockObjects();
+
+            // Act
+            Education createdEducation = dao.CreateEducationByPortfolioId(portfolioId, education);
+
+            // Assert
+            Assert.IsNotNull(createdEducation);
+            Assert.AreEqual(education.InstitutionName, createdEducation.InstitutionName);
+            Assert.AreEqual(education.Location, createdEducation.Location);
+            Assert.AreEqual(education.Description, createdEducation.Description);
+            Assert.AreEqual(education.FieldOfStudy, createdEducation.FieldOfStudy);
+            Assert.AreEqual(education.Major, createdEducation.Major);
+            Assert.AreEqual(education.Minor, createdEducation.Minor);
+            Assert.AreEqual(education.DegreeObtained, createdEducation.DegreeObtained);
+            Assert.AreEqual(education.GPAOverall, createdEducation.GPAOverall);
+            Assert.AreEqual(education.GPAInMajor, createdEducation.GPAInMajor);
+            Assert.AreEqual(education.StartDate, createdEducation.StartDate);
+            Assert.AreEqual(education.GraduationDate, createdEducation.GraduationDate);
+        }
+
     }
 }
