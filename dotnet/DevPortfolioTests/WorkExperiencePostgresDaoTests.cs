@@ -119,12 +119,13 @@ namespace Capstone.UnitTests.DAO
         public void GetWorkExperienceByPortfolioId_Returns_The_Correct_Work_Experience()
         {
             // Arrange
+            int portfolioId = 1;
             WorkExperience workExperienceOriginalObject = CreateAWorkExperienceTestObject1();
             WorkExperience createdOriginalWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceOriginalObject);
             SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act
-            WorkExperience workExperience = dao.GetWorkExperienceByPortfolioId(1, createdOriginalWorkExperience.Id);
+            WorkExperience workExperience = dao.GetWorkExperienceByPortfolioId(portfolioId, createdOriginalWorkExperience.Id);
 
             // Assert
             Assert.AreEqual(createdOriginalWorkExperience.PositionTitle, workExperience.PositionTitle);
