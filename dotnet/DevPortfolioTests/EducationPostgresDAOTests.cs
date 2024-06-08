@@ -82,5 +82,47 @@ namespace Capstone.UnitTests.DAO
             achievementDaoMock.Setup(m => m.GetAchievementsByEducationId(It.IsAny<int>())).Returns(new List<Achievement>());
         }
 
+        [TestMethod]
+        public void GetEducations_Returns_All_Educations()
+        {
+            // Arrange
+            int portfolioId = 1;
+            Education testEducation1 = CreateAnEducationTestObject1();
+            Education testEducation2 = CreateAnEducationTestObject2();
+            
+            dao.CreateEducationByPortfolioId(portfolioId, testEducation1);
+            dao.CreateEducationByPortfolioId(portfolioId, testEducation2);
+            SetUpEducationNestedDaoMockObjects();
+
+            List<Education> educations = dao.GetEducations();
+
+            //Assert
+            Assert.AreEqual(2, educations.Count);
+            Assert.AreEqual(testEducation1.InstitutionName, educations[0].InstitutionName);
+            Assert.AreEqual(testEducation1.Location, educations[0].Location);
+            Assert.AreEqual(testEducation1.Description, educations[0].Description);
+            Assert.AreEqual(testEducation1.FieldOfStudy, educations[0].FieldOfStudy);
+            Assert.AreEqual(testEducation1.Major, educations[0].Major);
+            Assert.AreEqual(testEducation1.Minor, educations[0].Minor);
+            Assert.AreEqual(testEducation1.DegreeObtained, educations[0].DegreeObtained);
+            Assert.AreEqual(testEducation1.GPAOverall, educations[0].GPAOverall);
+            Assert.AreEqual(testEducation1.GPAInMajor, educations[0].GPAInMajor);
+            Assert.AreEqual(testEducation1.StartDate, educations[0].StartDate);
+            Assert.AreEqual(testEducation1.GraduationDate, educations[0].GraduationDate);
+
+            Assert.AreEqual(testEducation2.InstitutionName, educations[1].InstitutionName);
+            Assert.AreEqual(testEducation2.Location, educations[1].Location);
+            Assert.AreEqual(testEducation2.Description, educations[1].Description);
+            Assert.AreEqual(testEducation2.FieldOfStudy, educations[1].FieldOfStudy);
+            Assert.AreEqual(testEducation2.Major, educations[1].Major);
+            Assert.AreEqual(testEducation2.Minor, educations[1].Minor);
+            Assert.AreEqual(testEducation2.DegreeObtained, educations[1].DegreeObtained);
+            Assert.AreEqual(testEducation2.GPAOverall, educations[1].GPAOverall);
+            Assert.AreEqual(testEducation2.GPAInMajor, educations[1].GPAInMajor);
+            Assert.AreEqual(testEducation2.StartDate, educations[1].StartDate);
+            Assert.AreEqual(testEducation2.GraduationDate, educations[1].GraduationDate);
+
+        }
+
     }
 }

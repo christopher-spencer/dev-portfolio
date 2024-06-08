@@ -80,11 +80,12 @@ namespace Capstone.UnitTests.DAO
         public void GetWorkExperiences_Returns_All_Work_Experiences()
         {
             // Arrange
+            int portfolioId = 1;
             WorkExperience testWorkExperience1 = CreateAWorkExperienceTestObject1();
             WorkExperience testWorkExperience2 = CreateAWorkExperienceTestObject2();
 
-            dao.CreateWorkExperienceByPortfolioId(1, testWorkExperience1);
-            dao.CreateWorkExperienceByPortfolioId(1, testWorkExperience2);
+            dao.CreateWorkExperienceByPortfolioId(portfolioId, testWorkExperience1);
+            dao.CreateWorkExperienceByPortfolioId(portfolioId, testWorkExperience2);
             SetUpWorkExperienceNestedDaoMockObjects();
 
             List<WorkExperience> workExperiences = dao.GetWorkExperiences();
