@@ -37,7 +37,8 @@ namespace Capstone.UnitTests.DAO
                 imageDaoMock.Object,
                 skillDaoMock.Object,
                 websiteDaoMock.Object,
-                achievementDaoMock.Object);
+                achievementDaoMock.Object
+            );
         }
 
 // FIXME refactor all tests to cut back on repetitive code and use as a model for other test classes
