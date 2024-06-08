@@ -121,7 +121,15 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(testEducation2.GPAInMajor, educations[1].GPAInMajor);
             Assert.AreEqual(testEducation2.StartDate, educations[1].StartDate);
             Assert.AreEqual(testEducation2.GraduationDate, educations[1].GraduationDate);
+        }
 
+        public void GetEducations_Returns_Empty_List_When_No_Educations()
+        {
+            // Arrange
+            List<Education> educations = dao.GetEducations();
+
+            //Assert
+            Assert.AreEqual(0, educations.Count);
         }
 
     }
