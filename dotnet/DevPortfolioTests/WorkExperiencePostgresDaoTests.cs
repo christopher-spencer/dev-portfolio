@@ -193,7 +193,7 @@ namespace Capstone.UnitTests.DAO
             WorkExperience workExperienceOriginalObject = CreateAWorkExperienceTestObject1();
             WorkExperience workExperienceUpdateObject = CreateAWorkExperienceTestObject2();
 
-            WorkExperience createdOriginalWorkExperience = dao.CreateWorkExperienceByPortfolioId(1, workExperienceOriginalObject);
+            WorkExperience createdOriginalWorkExperience = dao.CreateWorkExperienceByPortfolioId(portfolioId, workExperienceOriginalObject);
 
             SetUpWorkExperienceNestedDaoMockObjects();
 

@@ -215,5 +215,37 @@ namespace Capstone.UnitTests.DAO
             );
         }
 
+        [TestMethod]
+        public void UpdateEducationByPortfolioId_Updates_An_Education()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            Education educationOriginalObject = CreateAnEducationTestObject1();
+            Education educationUpdatedObject = CreateAnEducationTestObject2();
+
+            Education createdOriginalEducation = dao.CreateEducationByPortfolioId(portfolioId, educationOriginalObject);
+
+            SetUpEducationNestedDaoMockObjects();
+
+            // Act
+            Education updatedEducation = dao.UpdateEducationByPortfolioId(portfolioId, educationOriginalObject.Id, educationUpdatedObject);
+
+            // Assert
+            Education education = dao.GetEducationByPortfolioId(portfolioId, createdOriginalEducation.Id);
+
+            Assert.AreEqual(updatedEducation.InstitutionName, education.InstitutionName);
+            Assert.AreEqual(updatedEducation.Location, education.Location);
+            Assert.AreEqual(updatedEducation.Description, education.Description);
+            Assert.AreEqual(updatedEducation.FieldOfStudy, education.FieldOfStudy);
+            Assert.AreEqual(updatedEducation.Major, education.Major);
+            Assert.AreEqual(updatedEducation.Minor, education.Minor);
+            Assert.AreEqual(updatedEducation.DegreeObtained, education.DegreeObtained);
+            Assert.AreEqual(updatedEducation.GPAOverall, education.GPAOverall);
+            Assert.AreEqual(updatedEducation.GPAInMajor, education.GPAInMajor);
+            Assert.AreEqual(updatedEducation.StartDate, education.StartDate);
+            Assert.AreEqual(updatedEducation.GraduationDate, education.GraduationDate);
+        }
+
     }
 }
