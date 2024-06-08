@@ -123,6 +123,7 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(testEducation2.GraduationDate, educations[1].GraduationDate);
         }
 
+        [TestMethod]
         public void GetEducations_Returns_Empty_List_When_No_Educations()
         {
             // Arrange
@@ -132,6 +133,7 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(0, educations.Count);
         }
 
+        [TestMethod]
         public void GetEducationByPortfolioId_Returns_Correct_Education()
         {
             // Arrange
@@ -157,6 +159,7 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(createdEducation.GraduationDate, education.GraduationDate);
         }
 
+         [TestMethod]
         public void GetEducationByPortfolioId_Returns_Null_When_Education_Not_Found()
         {
             // Arrange
@@ -170,6 +173,7 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(education);
         }
 
+        [TestMethod]        
         public void CreateEducationByPortfolioId_Creates_An_Education()
         {
             // Arrange
@@ -193,6 +197,22 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(education.GPAInMajor, createdEducation.GPAInMajor);
             Assert.AreEqual(education.StartDate, createdEducation.StartDate);
             Assert.AreEqual(education.GraduationDate, createdEducation.GraduationDate);
+        }
+
+        [TestMethod]
+        public void CreateEducationByPortfolioId_Throws_Argument_Exception_When_A_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+
+            Education education = CreateAnEducationTestObject1();
+            SetUpEducationNestedDaoMockObjects();
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.CreateEducationByPortfolioId(nonExistentPortfolioId, education),
+                "PortfolioId must be greater than zero."
+            );
         }
 
     }

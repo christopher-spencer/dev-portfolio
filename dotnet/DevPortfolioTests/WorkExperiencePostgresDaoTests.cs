@@ -180,7 +180,8 @@ namespace Capstone.UnitTests.DAO
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(() => 
                 dao.CreateWorkExperienceByPortfolioId(nonExistentPortfolioId, workExperience),
-                "PortfolioId must be greater than zero.");
+                "PortfolioId must be greater than zero."
+            );
         }
 
         [TestMethod]
