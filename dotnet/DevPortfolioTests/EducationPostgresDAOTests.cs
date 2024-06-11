@@ -247,5 +247,21 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(updatedEducation.GraduationDate, education.GraduationDate);
         }
 
+        [TestMethod]
+        public void UpdateEducationByPortfolioId_Throws_Argument_Exception_When_A_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+            
+            Education education = CreateAnEducationTestObject1();
+            SetUpEducationNestedDaoMockObjects();
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.UpdateEducationByPortfolioId(nonExistentPortfolioId, education.Id, education),
+                "PortfolioId must be greater than zero."
+            );
+        }
+
     }
 }

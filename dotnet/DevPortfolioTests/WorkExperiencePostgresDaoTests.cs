@@ -217,7 +217,6 @@ namespace Capstone.UnitTests.DAO
             int nonExistentPortfolioId = -1;
 
             WorkExperience workExperience = CreateAWorkExperienceTestObject1();
-
             SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act & Assert
