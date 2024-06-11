@@ -80,8 +80,11 @@ namespace Capstone.UnitTests.DAO
             goalDaoMock.Setup(d => d.GetGoalsBySideProjectId(It.IsAny<int>()))
                 .Returns(new List<Goal>());
 
-            imageDaoMock.Setup(d => d.GetMainImageBySideProjectId(It.IsAny<int>()))
+            imageDaoMock.Setup(d => d.GetImageBySideProjectId(It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(new Image());
+
+             imageDaoMock.Setup(d => d.GetMainImageBySideProjectId(It.IsAny<int>()))
+                 .Returns(new Image());
 
             imageDaoMock.Setup(d => d.GetAllImagesBySideProjectId(It.IsAny<int>()))
                 .Returns(new List<Image>());
@@ -106,7 +109,7 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
-        public void GetSideProject_Returns_All_SideProjects()
+        public void GetSideProjects_Returns_All_SideProjects()
         {
             //Act
             int portfolioId = 1;
