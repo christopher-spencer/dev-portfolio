@@ -285,7 +285,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             int portfolioId = 1;
-            
+
             Education education = CreateAnEducationTestObject1();
             Education createdEducation = dao.CreateEducationByPortfolioId(portfolioId, education);
             SetUpEducationNestedDaoMockObjects();
@@ -296,6 +296,23 @@ namespace Capstone.UnitTests.DAO
             // Assert
             Education? deletedEducation = dao.GetEducationByPortfolioId(portfolioId, createdEducation.Id);
             Assert.IsNull(deletedEducation);
+        }
+
+        [TestMethod]
+        public void DeleteEducationByPortfolioId_Returns_Correct_Number_Of_Rows_Affected()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            Education education = CreateAnEducationTestObject1();
+            Education createdEducation = dao.CreateEducationByPortfolioId(portfolioId, education);
+            SetUpEducationNestedDaoMockObjects();
+
+            // Act
+            int rowsAffected = dao.DeleteEducationByPortfolioId(portfolioId, createdEducation.Id);
+
+            // Assert
+            Assert.AreEqual(1, rowsAffected);
         }
 
     }
