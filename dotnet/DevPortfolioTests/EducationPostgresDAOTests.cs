@@ -280,5 +280,23 @@ namespace Capstone.UnitTests.DAO
             );
         }
 
+        [TestMethod]
+        public void DeleteEducationByPortfolioId_Deletes_An_Education()
+        {
+            // Arrange
+            int portfolioId = 1;
+            
+            Education education = CreateAnEducationTestObject1();
+            Education createdEducation = dao.CreateEducationByPortfolioId(portfolioId, education);
+            SetUpEducationNestedDaoMockObjects();
+
+            // Act
+            dao.DeleteEducationByPortfolioId(portfolioId, createdEducation.Id);
+
+            // Assert
+            Education? deletedEducation = dao.GetEducationByPortfolioId(portfolioId, createdEducation.Id);
+            Assert.IsNull(deletedEducation);
+        }
+
     }
 }
