@@ -221,7 +221,7 @@ namespace Capstone.UnitTests.DAO
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(() =>
-                dao.UpdateWorkExperienceByPortfolioId(nonExistentPortfolioId, 1, workExperience),
+                dao.UpdateWorkExperienceByPortfolioId(nonExistentPortfolioId, workExperience.Id, workExperience),
                 "PortfolioId must be greater than zero.");
         }
 
@@ -229,13 +229,14 @@ namespace Capstone.UnitTests.DAO
         public void UpdateWorkExperienceByPortfolioId_Throws_Argument_Exception_When_Work_Experience_Does_Not_Exist()
         {
             // Arrange
+            int portfolioId = 1;
             WorkExperience workExperience = CreateAWorkExperienceTestObject1();
 
             SetUpWorkExperienceNestedDaoMockObjects();
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(() =>
-                dao.UpdateWorkExperienceByPortfolioId(1, workExperience.Id, workExperience),
+                dao.UpdateWorkExperienceByPortfolioId(portfolioId, workExperience.Id, workExperience),
                 "WorkExperienceId must be greater than zero.");
         }
 

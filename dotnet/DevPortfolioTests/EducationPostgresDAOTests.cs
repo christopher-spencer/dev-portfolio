@@ -252,7 +252,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             int nonExistentPortfolioId = -1;
-            
+
             Education education = CreateAnEducationTestObject1();
             SetUpEducationNestedDaoMockObjects();
 
@@ -260,6 +260,23 @@ namespace Capstone.UnitTests.DAO
             Assert.ThrowsException<ArgumentException>(() =>
                 dao.UpdateEducationByPortfolioId(nonExistentPortfolioId, education.Id, education),
                 "PortfolioId must be greater than zero."
+            );
+        }
+
+        [TestMethod]
+        public void UpdateEducationByPortfolioId_Throws_Argument_Exception_When_An_Education_Does_Not_Exist()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int nonExistentEducationId = -1;
+
+            Education education = CreateAnEducationTestObject1();
+            SetUpEducationNestedDaoMockObjects();
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.UpdateEducationByPortfolioId(portfolioId, nonExistentEducationId, education),
+                "EducationId must be greater than zero."
             );
         }
 
