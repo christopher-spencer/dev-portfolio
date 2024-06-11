@@ -285,6 +285,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             int nonExistentPortfolioId = -1;
+            int workExperienceId = 1;
 
             WorkExperience workExperience = CreateAWorkExperienceTestObject1();
 
@@ -292,7 +293,7 @@ namespace Capstone.UnitTests.DAO
 
             // Act & Assert
             Assert.ThrowsException<ArgumentException>(() =>
-                dao.DeleteWorkExperienceByPortfolioId(nonExistentPortfolioId, 1),
+                dao.DeleteWorkExperienceByPortfolioId(nonExistentPortfolioId, workExperienceId),
                 "PortfolioId must be greater than zero.");
         }
 

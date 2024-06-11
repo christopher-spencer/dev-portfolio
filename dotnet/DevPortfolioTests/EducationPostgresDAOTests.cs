@@ -315,5 +315,19 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(1, rowsAffected);
         }
 
+        [TestMethod]
+        public void DeleteEducationByPortfolioId_Throws_Argument_Exception_When_A_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+            int educationId = 1;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+                dao.DeleteEducationByPortfolioId(nonExistentPortfolioId, educationId),
+                "PortfolioId must be greater than zero."
+            );
+        }
+
     }
 }
