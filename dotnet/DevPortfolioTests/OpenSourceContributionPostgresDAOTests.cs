@@ -66,5 +66,14 @@ namespace Capstone.UnitTests.DAO
                 ContributionDetails = "Test Contribution Details 2",
             };
         }
+
+        private void SetUpOpenSourceContributionNestedDaoMockObjects()
+        {
+            mockImageDao.Setup(d => d.GetImageByOpenSourceContributionId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
+            mockImageDao.Setup(d => d.GetAdditionalImagesByOpenSourceContributionId(It.IsAny<int>())).Returns(new List<Image>());
+            mockWebsiteDao.Setup(d => d.GetWebsiteByOpenSourceContributionId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Website());
+            mockSkillDao.Setup(d => d.GetSkillsByOpenSourceContributionId(It.IsAny<int>())).Returns(new List<Skill>());
+            mockAchievementDao.Setup(d => d.GetAchievementsByOpenSourceContributionId(It.IsAny<int>(), It.IsAny<int>())).Returns(new List<Achievement>());
+        }
     }
 }
