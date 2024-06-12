@@ -148,6 +148,27 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(credential);
         }
 
+        [TestMethod]
+        public void CreateCredentialByPortfolioId_Creates_Credential()
+        {
+            // Arrange
+            int portfolioId = 1;
+            Credential credential = CreateACredentialTestObject1();
+            SetUpCredentialNestedDaoMockObjects();
+
+            // Act
+            Credential createdCredential = dao.CreateCredentialByPortfolioId(portfolioId, credential);
+
+            // Assert
+            Assert.IsNotNull(createdCredential);
+            Assert.AreEqual(credential.Name, createdCredential.Name);
+            Assert.AreEqual(credential.IssuingOrganization, createdCredential.IssuingOrganization);
+            Assert.AreEqual(credential.Description, createdCredential.Description);
+            Assert.AreEqual(credential.IssueDate, createdCredential.IssueDate);
+            Assert.AreEqual(credential.ExpirationDate, createdCredential.ExpirationDate);
+            Assert.AreEqual(credential.CredentialIdNumber, createdCredential.CredentialIdNumber);
+        }
+
 
     }
 }
