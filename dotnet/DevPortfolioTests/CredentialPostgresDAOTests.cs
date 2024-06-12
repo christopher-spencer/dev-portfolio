@@ -211,6 +211,22 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(updatedCredential.CredentialIdNumber, updatedCredentialResult.CredentialIdNumber);
         }
 
+        [TestMethod]
+        public void UpdateCredentialByPortfolioId_Throws_Argument_Exception_When_A_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+
+            Credential credential = CreateACredentialTestObject1();
+            SetUpCredentialNestedDaoMockObjects();
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.UpdateCredentialByPortfolioId(nonExistentPortfolioId, credential.Id, credential),
+                "PortfolioId must be greater than zero."
+            );
+        }
+
 
     }
 }
