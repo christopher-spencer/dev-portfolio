@@ -103,6 +103,37 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(testCredential2.CredentialIdNumber, credentials[1].CredentialIdNumber);
         }
 
+        [TestMethod]
+        public void GetCredentials_Returns_Empty_List_When_No_Credentials_Exist()
+        {
+            // Act
+            List<Credential> credentials = dao.GetCredentials();
+
+            // Assert
+            Assert.AreEqual(0, credentials.Count);
+        }
+
+        [TestMethod]
+        public void GetCredentialByPortfolioId_Returns_Correct_Credential()
+        {
+            // Arrange
+            int portfolioId = 1;
+            Credential testCredential1 = CreateACredentialTestObject1();
+            Credential createdCredential = dao.CreateCredentialByPortfolioId(portfolioId, testCredential1);
+            SetUpCredentialNestedDaoMockObjects();
+
+            // Act
+            Credential credential = dao.GetCredentialByPortfolioId(portfolioId, createdCredential.Id);
+
+            // Assert
+            Assert.AreEqual(createdCredential.Name, credential.Name);
+            Assert.AreEqual(createdCredential.IssuingOrganization, credential.IssuingOrganization);
+            Assert.AreEqual(createdCredential.Description, credential.Description);
+            Assert.AreEqual(createdCredential.IssueDate, credential.IssueDate);
+            Assert.AreEqual(createdCredential.ExpirationDate, credential.ExpirationDate);
+            Assert.AreEqual(createdCredential.CredentialIdNumber, credential.CredentialIdNumber);
+        }
+
 
     }
 }

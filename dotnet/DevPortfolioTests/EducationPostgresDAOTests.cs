@@ -127,7 +127,7 @@ namespace Capstone.UnitTests.DAO
         [TestMethod]
         public void GetEducations_Returns_Empty_List_When_No_Educations()
         {
-            // Arrange
+            // Act
             List<Education> educations = dao.GetEducations();
 
             //Assert
