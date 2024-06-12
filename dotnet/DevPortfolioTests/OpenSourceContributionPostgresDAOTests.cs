@@ -118,6 +118,27 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(0, contributions.Count);
         }
 
+        [TestMethod]
+        public void GetOpenSourceContributionById_Returns_Correct_Contribution()
+        {
+            // Arrange
+            int portfolioId = 1;
+            OpenSourceContribution testOpenSourceContribution1 = CreateAnOpenSourceContributionTestObject1();
+            OpenSourceContribution createdOpenSourceContribution = dao.CreateOpenSourceContributionByPortfolioId(portfolioId, testOpenSourceContribution1);
+            SetUpOpenSourceContributionNestedDaoMockObjects();
+
+            // Act
+            OpenSourceContribution contribution = dao.GetOpenSourceContributionByPortfolioId(portfolioId, createdOpenSourceContribution.Id);
+
+            // Assert
+            Assert.AreEqual(createdOpenSourceContribution.ProjectName, contribution.ProjectName);
+            Assert.AreEqual(createdOpenSourceContribution.OrganizationName, contribution.OrganizationName);
+            Assert.AreEqual(createdOpenSourceContribution.StartDate, contribution.StartDate);
+            Assert.AreEqual(createdOpenSourceContribution.EndDate, contribution.EndDate);
+            Assert.AreEqual(createdOpenSourceContribution.ProjectDescription, contribution.ProjectDescription);
+            Assert.AreEqual(createdOpenSourceContribution.ContributionDetails, contribution.ContributionDetails);
+        }
+
 
     }
 }
