@@ -26,8 +26,8 @@ namespace Capstone.UnitTests.DAO
         {
             mockImageDao = new Mock<IImageDao>();
             mockWebsiteDao = new Mock<IWebsiteDao>();
-            mockSkillDao = new Mock<ISkillDao>();
             mockAchievementDao = new Mock<IAchievementDao>();
+            mockSkillDao = new Mock<ISkillDao>();
         }
 
         private OpenSourceContributionPostgresDao CreateDaoWithMocks()
@@ -36,8 +36,8 @@ namespace Capstone.UnitTests.DAO
                 TestConnectionString, 
                 mockImageDao.Object, 
                 mockWebsiteDao.Object, 
-                mockSkillDao.Object, 
-                mockAchievementDao.Object
+                mockAchievementDao.Object,
+                mockSkillDao.Object
             );
         }   
 
@@ -72,8 +72,42 @@ namespace Capstone.UnitTests.DAO
             mockImageDao.Setup(d => d.GetImageByOpenSourceContributionId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
             mockImageDao.Setup(d => d.GetAdditionalImagesByOpenSourceContributionId(It.IsAny<int>())).Returns(new List<Image>());
             mockWebsiteDao.Setup(d => d.GetWebsiteByOpenSourceContributionId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Website());
+            mockAchievementDao.Setup(d => d.GetAchievementsByOpenSourceContributionId(It.IsAny<int>())).Returns(new List<Achievement>());
             mockSkillDao.Setup(d => d.GetSkillsByOpenSourceContributionId(It.IsAny<int>())).Returns(new List<Skill>());
-            mockAchievementDao.Setup(d => d.GetAchievementsByOpenSourceContributionId(It.IsAny<int>(), It.IsAny<int>())).Returns(new List<Achievement>());
         }
+
+        [TestMethod]
+        public void GetOpenSourceContributions_Returns_All_Contributions()
+        {
+            // Arrange
+            int portfolioId = 1;
+            OpenSourceContribution testOpenSourceContribution1 = CreateAnOpenSourceContributionTestObject1();
+            OpenSourceContribution testOpenSourceContribution2 = CreateAnOpenSourceContributionTestObject2();
+
+            dao.CreateOpenSourceContributionByPortfolioId(portfolioId, testOpenSourceContribution1);
+            dao.CreateOpenSourceContributionByPortfolioId(portfolioId, testOpenSourceContribution2);
+            SetUpOpenSourceContributionNestedDaoMockObjects();
+
+            // Act
+            List<OpenSourceContribution> contributions = dao.GetOpenSourceContributions();
+
+            // Assert
+            Assert.AreEqual(2, contributions.Count);
+            Assert.AreEqual(testOpenSourceContribution1.ProjectName, contributions[0].ProjectName);
+            Assert.AreEqual(testOpenSourceContribution1.OrganizationName, contributions[0].OrganizationName);
+            Assert.AreEqual(testOpenSourceContribution1.StartDate, contributions[0].StartDate);
+            Assert.AreEqual(testOpenSourceContribution1.EndDate, contributions[0].EndDate);
+            Assert.AreEqual(testOpenSourceContribution1.ProjectDescription, contributions[0].ProjectDescription);
+            Assert.AreEqual(testOpenSourceContribution1.ContributionDetails, contributions[0].ContributionDetails);
+
+            Assert.AreEqual(testOpenSourceContribution2.ProjectName, contributions[1].ProjectName);
+            Assert.AreEqual(testOpenSourceContribution2.OrganizationName, contributions[1].OrganizationName);
+            Assert.AreEqual(testOpenSourceContribution2.StartDate, contributions[1].StartDate);
+            Assert.AreEqual(testOpenSourceContribution2.EndDate, contributions[1].EndDate);
+            Assert.AreEqual(testOpenSourceContribution2.ProjectDescription, contributions[1].ProjectDescription);
+            Assert.AreEqual(testOpenSourceContribution2.ContributionDetails, contributions[1].ContributionDetails);
+        }
+
+
     }
 }
