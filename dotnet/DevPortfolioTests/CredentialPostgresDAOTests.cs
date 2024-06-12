@@ -134,6 +134,20 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(createdCredential.CredentialIdNumber, credential.CredentialIdNumber);
         }
 
+        [TestMethod]
+        public void GetCredentialByPortfolioId_Returns_Null_When_Credential_Does_Not_Exist()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int credentialId = 1;
+
+            // Act
+            Credential? credential = dao.GetCredentialByPortfolioId(portfolioId, credentialId);
+
+            // Assert
+            Assert.IsNull(credential);
+        }
+
 
     }
 }
