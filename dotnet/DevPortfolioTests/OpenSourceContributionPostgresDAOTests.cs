@@ -108,6 +108,16 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(testOpenSourceContribution2.ContributionDetails, contributions[1].ContributionDetails);
         }
 
+        [TestMethod]
+        public void GetOpenSourceContributions_Returns_Empty_List_When_No_Contributions()
+        {
+            // Act
+            List<OpenSourceContribution> contributions = dao.GetOpenSourceContributions();
+
+            // Assert
+            Assert.AreEqual(0, contributions.Count);
+        }
+
 
     }
 }
