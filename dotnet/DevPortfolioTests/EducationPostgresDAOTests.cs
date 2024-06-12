@@ -94,6 +94,7 @@ namespace Capstone.UnitTests.DAO
             dao.CreateEducationByPortfolioId(portfolioId, testEducation2);
             SetUpEducationNestedDaoMockObjects();
 
+            // Act
             List<Education> educations = dao.GetEducations();
 
             //Assert

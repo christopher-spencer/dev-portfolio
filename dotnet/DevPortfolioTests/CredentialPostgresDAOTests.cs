@@ -42,7 +42,6 @@ namespace Capstone.UnitTests.DAO
         {
             return new Credential
             {
-                Id = 1,
                 Name = "Test Credential 1",
                 IssuingOrganization = "Test Issuing Organization 1",
                 Description = "Test Description 1",
@@ -56,7 +55,6 @@ namespace Capstone.UnitTests.DAO
         {
             return new Credential
             {
-                Id = 2,
                 Name = "Test Credential 2",
                 IssuingOrganization = "Test Issuing Organization 2",
                 Description = "Test Description 2",
@@ -71,6 +69,38 @@ namespace Capstone.UnitTests.DAO
             mockImageDao.Setup(m => m.GetImageByCredentialId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Image());
             mockWebsiteDao.Setup(m => m.GetWebsiteByCredentialId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Website());
             mockSkillDao.Setup(m => m.GetSkillsByCredentialId(It.IsAny<int>())).Returns(new List<Skill>());
+        }
+
+        [TestMethod]
+        public void GetCredentials_Returns_All_Credentials()    
+        {
+            // Arrange
+            int portfolioId = 1;
+            Credential testCredential1 = CreateACredentialTestObject1();
+            Credential testCredential2 = CreateACredentialTestObject2();
+
+            dao.CreateCredentialByPortfolioId(portfolioId, testCredential1);
+            dao.CreateCredentialByPortfolioId(portfolioId, testCredential2);
+            SetUpCredentialNestedDaoMockObjects();
+
+            // Act
+            List<Credential> credentials = dao.GetCredentials();
+
+            // Assert
+            Assert.AreEqual(2, credentials.Count);
+            Assert.AreEqual(testCredential1.Name, credentials[0].Name);
+            Assert.AreEqual(testCredential1.IssuingOrganization, credentials[0].IssuingOrganization);
+            Assert.AreEqual(testCredential1.Description, credentials[0].Description);
+            Assert.AreEqual(testCredential1.IssueDate, credentials[0].IssueDate);
+            Assert.AreEqual(testCredential1.ExpirationDate, credentials[0].ExpirationDate);
+            Assert.AreEqual(testCredential1.CredentialIdNumber, credentials[0].CredentialIdNumber);
+
+            Assert.AreEqual(testCredential2.Name, credentials[1].Name);
+            Assert.AreEqual(testCredential2.IssuingOrganization, credentials[1].IssuingOrganization);
+            Assert.AreEqual(testCredential2.Description, credentials[1].Description);
+            Assert.AreEqual(testCredential2.IssueDate, credentials[1].IssueDate);
+            Assert.AreEqual(testCredential2.ExpirationDate, credentials[1].ExpirationDate);
+            Assert.AreEqual(testCredential2.CredentialIdNumber, credentials[1].CredentialIdNumber);
         }
 
 
