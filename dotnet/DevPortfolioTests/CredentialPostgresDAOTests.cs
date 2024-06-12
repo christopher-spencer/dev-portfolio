@@ -260,7 +260,37 @@ namespace Capstone.UnitTests.DAO
             // Assert
             Credential? deletedCredential = dao.GetCredentialByPortfolioId(portfolioId, createdCredential.Id);
             Assert.IsNull(deletedCredential);
+        }
 
+        [TestMethod]
+        public void DeleteCredentialByPortfolioId_Returns_Correct_Number_Of_Rows_Affected()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            Credential credential = CreateACredentialTestObject1();
+            Credential createdCredential = dao.CreateCredentialByPortfolioId(portfolioId, credential);
+            SetUpCredentialNestedDaoMockObjects();
+
+            // Act
+            int rowsAffected = dao.DeleteCredentialByPortfolioId(portfolioId, createdCredential.Id);
+
+            // Assert
+            Assert.AreEqual(1, rowsAffected);
+        }
+
+        [TestMethod]
+        public void DeleteCredentialByPortfolioId_Throws_Argument_Exception_When_A_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+            int credentialId = 1;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.DeleteCredentialByPortfolioId(nonExistentPortfolioId, credentialId),
+                "PortfolioId must be greater than zero."
+            );
         }
 
 
