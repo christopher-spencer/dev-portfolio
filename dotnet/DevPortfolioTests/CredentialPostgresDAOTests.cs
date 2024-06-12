@@ -185,6 +185,32 @@ namespace Capstone.UnitTests.DAO
             );
         }
 
+        [TestMethod]
+        public void UpdateCredentialByPortfolioId_Updates_Credential()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            Credential credential = CreateACredentialTestObject1();
+            Credential updatedCredential = CreateACredentialTestObject2();
+
+            Credential createdCredential = dao.CreateCredentialByPortfolioId(portfolioId, credential);
+            
+            SetUpCredentialNestedDaoMockObjects();
+
+            // Act
+            Credential? updatedCredentialResult = dao.UpdateCredentialByPortfolioId(portfolioId, createdCredential.Id, updatedCredential);
+
+            // Assert
+            Assert.IsNotNull(updatedCredentialResult);
+            Assert.AreEqual(updatedCredential.Name, updatedCredentialResult.Name);
+            Assert.AreEqual(updatedCredential.IssuingOrganization, updatedCredentialResult.IssuingOrganization);
+            Assert.AreEqual(updatedCredential.Description, updatedCredentialResult.Description);
+            Assert.AreEqual(updatedCredential.IssueDate, updatedCredentialResult.IssueDate);
+            Assert.AreEqual(updatedCredential.ExpirationDate, updatedCredentialResult.ExpirationDate);
+            Assert.AreEqual(updatedCredential.CredentialIdNumber, updatedCredentialResult.CredentialIdNumber);
+        }
+
 
     }
 }
