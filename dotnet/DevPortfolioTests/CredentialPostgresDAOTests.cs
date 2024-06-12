@@ -244,6 +244,25 @@ namespace Capstone.UnitTests.DAO
             );
         }
 
+        [TestMethod]
+        public void DeleteCredentialByPortfolioId_Deletes_Credential()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            Credential credential = CreateACredentialTestObject1();
+            Credential createdCredential = dao.CreateCredentialByPortfolioId(portfolioId, credential);
+            SetUpCredentialNestedDaoMockObjects();
+
+            // Act
+            dao.DeleteCredentialByPortfolioId(portfolioId, createdCredential.Id);
+
+            // Assert
+            Credential? deletedCredential = dao.GetCredentialByPortfolioId(portfolioId, createdCredential.Id);
+            Assert.IsNull(deletedCredential);
+
+        }
+
 
     }
 }
