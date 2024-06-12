@@ -74,7 +74,7 @@ namespace Capstone.UnitTests.DAO
                 FinishDate = DateTime.Now
             };
         }
-//FIXME look into this and which ones exactly are necessary for propper testing
+//FIXME look into this and which ones exactly are necessary for proper testing
         private void SetUpSideProjectNestedDaoMockObjects()
         {
             goalDaoMock.Setup(d => d.GetGoalsBySideProjectId(It.IsAny<int>()))
@@ -135,7 +135,10 @@ namespace Capstone.UnitTests.DAO
                 Assert.IsNotNull(sideproject.ProjectStatus);
                 Assert.IsNotNull(sideproject.StartDate);
                 Assert.IsNotNull(sideproject.FinishDate);
+                
 //FIXME need to be asserting for these nested objects like so after SetUpSideProjectNestedDaoMockObjects() is called
+
+//FIXME MainImage, Website, GitHubRepoLink, are causing the test to fail, so look into this *******
                 Assert.IsNotNull(sideproject.GoalsAndObjectives);
                 Assert.IsNotNull(sideproject.MainImage);
                 Assert.IsNotNull(sideproject.AdditionalImages);
