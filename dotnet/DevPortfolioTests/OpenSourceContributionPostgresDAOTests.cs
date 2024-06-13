@@ -246,6 +246,24 @@ namespace Capstone.UnitTests.DAO
                 "ContributionId must be greater than zero.");
         }
 
+        [TestMethod]
+        public void DeleteOpenSourceContribution_Deletes_A_Contribution()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            OpenSourceContribution openSourceContribution = CreateAnOpenSourceContributionTestObject1();
+            OpenSourceContribution createdOpenSourceContribution = dao.CreateOpenSourceContributionByPortfolioId(portfolioId, openSourceContribution);
+            SetUpOpenSourceContributionNestedDaoMockObjects();
+
+            // Act
+            dao.DeleteOpenSourceContributionByPortfolioId(portfolioId, createdOpenSourceContribution.Id);
+
+            // Assert
+            OpenSourceContribution? deletedContribution = dao.GetOpenSourceContributionByPortfolioId(portfolioId, createdOpenSourceContribution.Id);
+            Assert.IsNull(deletedContribution);
+        }
+
 
 
 
