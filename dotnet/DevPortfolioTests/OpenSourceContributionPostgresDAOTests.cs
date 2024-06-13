@@ -281,6 +281,19 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(1, rowsAffected);
         }
 
+        [TestMethod]
+        public void DeleteOpenSourceContributionByPortfolioId_Throws_Argument_Exception_When_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+            int contributionId = 1;
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.DeleteOpenSourceContributionByPortfolioId(nonExistentPortfolioId, contributionId),
+                "PortfolioId must be greater than zero.");
+        }
+
 
 
     }
