@@ -187,7 +187,35 @@ namespace Capstone.UnitTests.DAO
                 "PortfolioId must be greater than zero.");
         }
 
-        
+        [TestMethod]
+        public void UpdateOpenSourceContribution_Returns_Updated_Contribution()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            OpenSourceContribution openSourceContributionOriginalObject = CreateAnOpenSourceContributionTestObject1();
+            OpenSourceContribution openSourceContributionUpdatedObject = CreateAnOpenSourceContributionTestObject2();
+
+
+            OpenSourceContribution createdOpenSourceContribution = dao.CreateOpenSourceContributionByPortfolioId(portfolioId, openSourceContributionOriginalObject);
+            
+            SetUpOpenSourceContributionNestedDaoMockObjects();
+
+            // Act
+            OpenSourceContribution updatedContribution = dao.UpdateOpenSourceContributionByPortfolioId(portfolioId, openSourceContributionOriginalObject.Id, openSourceContributionUpdatedObject);
+
+            // Assert
+            OpenSourceContribution contribution = dao.GetOpenSourceContributionByPortfolioId(portfolioId, createdOpenSourceContribution.Id);
+
+            Assert.AreEqual(updatedContribution.ProjectName, contribution.ProjectName);
+            Assert.AreEqual(updatedContribution.OrganizationName, contribution.OrganizationName);
+            Assert.AreEqual(updatedContribution.StartDate, contribution.StartDate);
+            Assert.AreEqual(updatedContribution.EndDate, contribution.EndDate);
+            Assert.AreEqual(updatedContribution.ProjectDescription, contribution.ProjectDescription);
+            Assert.AreEqual(updatedContribution.ContributionDetails, contribution.ContributionDetails);
+        }
+
+
 
 
     }
