@@ -594,7 +594,7 @@ namespace Capstone.DAO
 
         private int DeleteTechSkillsUtilizedByOpenSourceContributionId(int contributionId)
         {
-            List<Skill> skills = _skillDao.GetSkillsByOpenSourceContributionId(contributionId);
+            List<Skill> skills = _skillDao.GetSkillsByOpenSourceContributionId(contributionId) ?? new List<Skill>();
 
             int skillsDeletedCount = 0;
 
@@ -618,7 +618,7 @@ namespace Capstone.DAO
 
         private int DeletePullRequestsLinksByOpenSourceContributionId(int contributionId)
         {
-            List<Website> websites = _websiteDao.GetAllWebsitesByOpenSourceContributionId(contributionId);
+            List<Website> websites = _websiteDao.GetAllWebsitesByOpenSourceContributionId(contributionId) ?? new List<Website>();
 
             int websitesDeletedCount = 0;
 
@@ -642,7 +642,7 @@ namespace Capstone.DAO
 
         private int DeleteReviewCommentsAndFeedbackReceivedByOpenSourceContributionId(int contributionId)
         {
-            List<Achievement> achievements = _achievementDao.GetAchievementsByOpenSourceContributionId(contributionId);
+            List<Achievement> achievements = _achievementDao.GetAchievementsByOpenSourceContributionId(contributionId) ?? new List<Achievement>();
 
             int achievementsDeletedCount = 0;
 
@@ -666,7 +666,7 @@ namespace Capstone.DAO
 
         private int DeleteAdditionalImagesByOpenSourceContributionId(int contributionId)
         {
-            List<Image> additionalImages = _imageDao.GetAdditionalImagesByOpenSourceContributionId(contributionId);
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByOpenSourceContributionId(contributionId) ?? new List<Image>();
 
             int imagesDeletedCount = 0;
 
