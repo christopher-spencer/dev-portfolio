@@ -139,6 +139,20 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(createdOpenSourceContribution.ContributionDetails, contribution.ContributionDetails);
         }
 
+        [TestMethod]
+        public void GetOpenSourceContributionById_Returns_Null_When_Not_Found()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int contributionId = 1;       
+                 
+            // Act
+            OpenSourceContribution? contribution = dao.GetOpenSourceContributionByPortfolioId(portfolioId, contributionId);
+
+            // Assert
+            Assert.IsNull(contribution);
+        }
+
 
     }
 }
