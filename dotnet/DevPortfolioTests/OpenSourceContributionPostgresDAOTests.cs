@@ -220,7 +220,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             int nonExistentPortfolioId = -1;
-            
+
             OpenSourceContribution openSourceContribution = CreateAnOpenSourceContributionTestObject1();
             SetUpOpenSourceContributionNestedDaoMockObjects();
 
@@ -228,6 +228,22 @@ namespace Capstone.UnitTests.DAO
             Assert.ThrowsException<ArgumentException>(() => 
                 dao.UpdateOpenSourceContributionByPortfolioId(nonExistentPortfolioId, openSourceContribution.Id, openSourceContribution),
                 "PortfolioId must be greater than zero.");
+        }
+
+        [TestMethod]
+        public void UpdateOpenSourceContributionByPortfolioId_Throws_Argument_Exception_When_Contribution_Does_Not_Exist()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int nonExistentContributionId = -1;
+
+            OpenSourceContribution openSourceContribution = CreateAnOpenSourceContributionTestObject1();
+            SetUpOpenSourceContributionNestedDaoMockObjects();
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.UpdateOpenSourceContributionByPortfolioId(portfolioId, nonExistentContributionId, openSourceContribution),
+                "ContributionId must be greater than zero.");
         }
 
 
