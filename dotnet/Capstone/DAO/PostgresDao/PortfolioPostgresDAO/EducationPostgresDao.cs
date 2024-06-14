@@ -549,7 +549,7 @@ namespace Capstone.DAO
 
         private int DeleteHonorsAndAwardsByEducationId(int educationId)
         {
-            List<Achievement> honorsAndAwards = _achievementDao.GetAchievementsByEducationId(educationId);
+            List<Achievement> honorsAndAwards = _achievementDao.GetAchievementsByEducationId(educationId) ?? new List<Achievement>();
 
             int achievementsDeletedCount = 0;
 
@@ -573,7 +573,7 @@ namespace Capstone.DAO
 
         private int DeleteAdditionalImagesByEducationId(int educationId)
         {
-            List<Image> additionalImages = _imageDao.GetAdditionalImagesByEducationId(educationId);
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByEducationId(educationId) ?? new List<Image>();
 
             int imagesDeletedCount = 0;
 
