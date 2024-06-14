@@ -6,7 +6,7 @@ using Moq;
 namespace Capstone.UnitTests.DAO
 {
     [TestClass]
-    public class EducationPostgresDAOTests : PostgresDaoTestBase
+    public class HobbyPostgresDAOTests : PostgresDaoTestBase
     {
 
         private HobbyPostgresDao dao = null!;
