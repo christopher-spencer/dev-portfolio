@@ -548,7 +548,7 @@ namespace Capstone.DAO
 
         private int DeleteResponsibilitiesAndAchievementsByVolunteerWorkId(int volunteerWorkId)
         {
-            List<Achievement> achievements = _achievementDao.GetAchievementsByVolunteerWorkId(volunteerWorkId);
+            List<Achievement> achievements = _achievementDao.GetAchievementsByVolunteerWorkId(volunteerWorkId) ?? new List<Achievement>();
 
             int achievementsDeletedCount = 0;
 
@@ -572,7 +572,7 @@ namespace Capstone.DAO
 
         private int DeleteSkillsUsedAndObtainedByVolunteerWorkId(int volunteerWorkId)
         {
-            List<Skill> skills = _skillDao.GetSkillsByVolunteerWorkId(volunteerWorkId);
+            List<Skill> skills = _skillDao.GetSkillsByVolunteerWorkId(volunteerWorkId) ?? new List<Skill>();
 
             int skillsDeletedCount = 0;
 
@@ -596,7 +596,7 @@ namespace Capstone.DAO
 
         private int DeleteAdditionalImagesByVolunteerWorkId(int volunteerWorkId)
         {
-            List<Image> additionalImages = _imageDao.GetAdditionalImagesByVolunteerWorkId(volunteerWorkId);
+            List<Image> additionalImages = _imageDao.GetAdditionalImagesByVolunteerWorkId(volunteerWorkId) ?? new List<Image>();
 
             int additionalImagesDeletedCount = 0;
 
