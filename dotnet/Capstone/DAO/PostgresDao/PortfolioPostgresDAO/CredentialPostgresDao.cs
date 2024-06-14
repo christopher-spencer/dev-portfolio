@@ -581,7 +581,7 @@ namespace Capstone.DAO
 
         private int DeleteAssociatedSkillsByCredentialId(int credentialId)
         {
-            List<Skill> skills = _skillDao.GetSkillsByCredentialId(credentialId);
+            List<Skill> skills = _skillDao.GetSkillsByCredentialId(credentialId) ?? new List<Skill>();
 
             int skillsDeletedCount = 0;
 
