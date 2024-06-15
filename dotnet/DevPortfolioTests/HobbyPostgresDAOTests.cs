@@ -47,6 +47,7 @@ namespace Capstone.UnitTests.DAO
             {
                 Description = "Test Description 2"
             };
+        }
 
         private void SetUpHobbyNestedDaoMockObjects()
         {

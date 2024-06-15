@@ -136,7 +136,7 @@ namespace Capstone.DAO
                                              "RETURNING id;";
 
             string insertPortfolioVolunteerWorkSql = "INSERT INTO portfolio_volunteer_works (portfolio_id, " +
-                                                     "volunteer_id) " +
+                                                     "volunteer_work_id) " +
                                                      "VALUES (@portfolioId, @volunteerWorkId);";
 
             try
@@ -208,7 +208,7 @@ namespace Capstone.DAO
                          "vw.position_title, vw.start_date, vw.end_date, " +
                          "vw.organization_logo_id, vw.organization_website_id, vw.main_image_id " +
                          "FROM volunteer_works vw " +
-                         "JOIN portfolio_volunteer_works pvw ON vw.id = pvw.volunteer_id " +
+                         "JOIN portfolio_volunteer_works pvw ON vw.id = pvw.volunteer_work_id " +
                          "WHERE pvw.portfolio_id = @portfolioId;";
 
             try
@@ -253,7 +253,7 @@ namespace Capstone.DAO
                          "vw.position_title, vw.start_date, vw.end_date, " +
                          "vw.organization_logo_id, vw.organization_website_id, vw.main_image_id " +
                          "FROM volunteer_works vw " +
-                         "JOIN portfolio_volunteer_works pvw ON vw.id = pvw.volunteer_id " +
+                         "JOIN portfolio_volunteer_works pvw ON vw.id = pvw.volunteer_work_id " +
                          "WHERE pvw.portfolio_id = @portfolioId AND vw.id = @volunteerWorkId;";
 
             try
@@ -298,7 +298,7 @@ namespace Capstone.DAO
                          "organization_description = @organizationDescription, position_title = @positionTitle, " +
                          "start_date = @startDate, end_date = @endDate " +
                          "FROM portfolio_volunteer_works pvw " +
-                         "WHERE pvw.portfolio_id = @portfolioId AND pvw.volunteer_id = @volunteerWorkId;";
+                         "WHERE pvw.portfolio_id = @portfolioId AND pvw.volunteer_work_id = @volunteerWorkId;";
 
             try
             {
@@ -343,7 +343,7 @@ namespace Capstone.DAO
 
             string deletePortfolioVolunteerWorkSql = "DELETE FROM portfolio_volunteer_works " +
                                                      "WHERE portfolio_id = @portfolioId " +
-                                                     "AND volunteer_id = @volunteerWorkId;";
+                                                     "AND volunteer_work_id = @volunteerWorkId;";
 
             string deleteVolunteerWorkSql = "DELETE FROM volunteer_works " +
                                              "WHERE id = @volunteerWorkId;";

@@ -326,12 +326,12 @@ CREATE TABLE open_source_contribution_achievements (
     FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id),
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
-// FIXME volunteer_work_id
+
 CREATE TABLE volunteer_work_achievements (
-    volunteer_id INTEGER,
+    volunteer_work_id INTEGER,
     achievement_id INTEGER,
-    PRIMARY KEY (volunteer_id, achievement_id),
-    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id),
+    PRIMARY KEY (volunteer_work_id, achievement_id),
+    FOREIGN KEY (volunteer_work_id) REFERENCES volunteer_works(id),
     FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );
 
@@ -566,12 +566,12 @@ CREATE TABLE open_source_contribution_skills (
     FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id),
     FOREIGN KEY (skill_id) REFERENCES skills(id)
 );
-// FIXME volunteer_work_id
+
 CREATE TABLE volunteer_work_skills (
-    volunteer_id INTEGER,
+    volunteer_work_id INTEGER,
     skill_id INTEGER,
-    PRIMARY KEY (volunteer_id, skill_id),
-    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id),
+    PRIMARY KEY (volunteer_work_id, skill_id),
+    FOREIGN KEY (volunteer_work_id) REFERENCES volunteer_works(id),
     FOREIGN KEY (skill_id) REFERENCES skills(id)
 );
 
@@ -670,13 +670,13 @@ CREATE TABLE portfolio_open_source_contributions (
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
     FOREIGN KEY (contribution_id) REFERENCES open_source_contributions(id)
 );
-// FIXME volunteer_work_id
+
 CREATE TABLE portfolio_volunteer_works (
     portfolio_id INTEGER,
-    volunteer_id INTEGER,
-    PRIMARY KEY (portfolio_id, volunteer_id),
+    volunteer_work_id INTEGER,
+    PRIMARY KEY (portfolio_id, volunteer_work_id),
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
-    FOREIGN KEY (volunteer_id) REFERENCES volunteer_works(id)
+    FOREIGN KEY (volunteer_work_id) REFERENCES volunteer_works(id)
 );
 
 INSERT INTO users (username, password_hash, salt, user_role) VALUES ('user', 'Jg45HuwT7PZkfuKTz6IB90CtWY4=', 'LHxP4Xh7bN0=', 'user');
