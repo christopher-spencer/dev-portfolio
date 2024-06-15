@@ -110,5 +110,19 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(volunteerWork2.StartDate, volunteerWorks[1].StartDate);
             Assert.AreEqual(volunteerWork2.EndDate, volunteerWorks[1].EndDate);
         }
+
+        [TestMethod]
+        public void GetVolunteerWorks_Returns_Empty_List_When_No_Volunteer_Works()
+        {
+            // Act
+            List<VolunteerWork> volunteerWorks = dao.GetVolunteerWorks();
+
+            // Assert
+            Assert.AreEqual(0, volunteerWorks.Count);
+        }
+
+
+
+        
     }
 }
