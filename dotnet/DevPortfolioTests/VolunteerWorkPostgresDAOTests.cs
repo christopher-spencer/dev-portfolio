@@ -264,6 +264,19 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(deletedVolunteerWork);
         }
 
+        [TestMethod]
+        public void DeleteVolunteerWorkByPortfolioId_Throws_Argument_Exception_When_A_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+            int volunteerWorkId = 1;
+
+            // Act
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.DeleteVolunteerWorkByPortfolioId(nonExistentPortfolioId, volunteerWorkId),
+                "PortfolioId must be greater than zero.");
+        }
+
 
     }
 }
