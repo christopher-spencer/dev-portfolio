@@ -30,32 +30,70 @@ namespace Capstone.UnitTests.DAO
                 TestConnectionString,
                 imageDaoMock.Object);
         }
+
+        private Achievement CreateAWorkExperienceAchievementTestObject()
+        {
+            return new Achievement
+            {
+                Description = "Test work experience achievement"
+            };
+        }
+
+        private Achievement CreateAnEducationAchievementTestObject()
+        {
+            return new Achievement
+            {
+                Description = "Test education achievement"
+            };
+        }
+
+        private Achievement CreateAnOpenSourceContributionAchievementTestObject()
+        {
+            return new Achievement
+            {
+                Description = "Test open source contribution achievement"
+            };
+        }
+
+        private Achievement CreateAVolunteerWorkAchievementTestObject()
+        {
+            return new Achievement
+            {
+                Description = "Test volunteer work achievement"
+            };
+        }
+
+        private void SetupAchievementNestedDaoMockObjects()
+        {
+            imageDaoMock.Setup(m => m.GetImageByAchievementId(It.IsAny<int>())).Returns(new Image());
+        }
+
 // TODO add Unit Tests for AchievementPostgresDAOTests
 // FIXME need to build WorkExperience, Education, OpenSourceContribution, and VolunteerWork test data (which all hold achievements)
-        // [TestMethod]
-        // public void GetAchievements_Returns_All_Achievements()
-        // {
-        //     // Arrange
-        //     dao.CreateAchievementByPortfolioId(1, new Achievement
-        //     {
-        //         Description = "This is the first achievement",
-        //         IconId = 1
-        //     });
-        //     dao.CreateAchievementByPortfolioId(1, new Achievement
-        //     {
-        //         Description = "This is the second achievement",
-        //         IconId = 2
-        //     });
+        [TestMethod]
+        public void GetAchievements_Returns_All_Achievements()
+        {
+            // Arrange
+            int testId = 1;
 
-        //     imageDaoMock.Setup(m => m.GetImage(It.IsAny<int>())).Returns(new Image());
+            Achievement workExperienceAchievement = CreateAWorkExperienceAchievementTestObject();
+            Achievement educationAchievement = CreateAnEducationAchievementTestObject();
+            Achievement openSourceContributionAchievement = CreateAnOpenSourceContributionAchievementTestObject();
+            Achievement volunteerWorkAchievement = CreateAVolunteerWorkAchievementTestObject();
+
+            dao.CreateAchievementByWorkExperienceId(testId, workExperienceAchievement);
+            dao.CreateAchievementByEducationId(testId, educationAchievement);
+            dao.CreateAchievementByOpenSourceContributionId(testId, openSourceContributionAchievement);
+            dao.CreateAchievementByVolunteerWorkId(testId, volunteerWorkAchievement);
+
+            SetupAchievementNestedDaoMockObjects();
             
-        //     List<Achievement> achievements = dao.GetAchievements();
+            List<Achievement> achievements = dao.GetAchievements();
 
-        //     // Assert
-        //     Assert.AreEqual(2, achievements.Count);
-        //     Assert.AreEqual("This is the first achievement", achievements[0].Description);
-        //     Assert.AreEqual("This is the second achievement", achievements[1].Description);
-        // }
+            // Assert
+            Assert.AreEqual(4, achievements.Count);
+            
+        }
 
     }
 }
