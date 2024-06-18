@@ -58,7 +58,31 @@ namespace Capstone.UnitTests.DAO
             mockImageDao.Setup(m => m.GetImageByDependencyLibraryId(It.IsAny<int>())).Returns(new Image());
             mockWebsiteDao.Setup(m => m.GetWebsiteByDependencyLibraryId(It.IsAny<int>(), It.IsAny<int>())).Returns(new Website());
         }
-
+//FIXME Need to Create a SideProject object in TestData file for DependencyLibraryPostgresDaoTests
         // TODO Add tests for DependencyLibraryPostgresDao
+        [TestMethod]
+        public void GetDependenciesAndLibraries_Returns_All_Dependencies_And_Libraries()
+        {
+            // Arrange
+            int sideProjectId = 1;
+            DependencyLibrary dependencyLibrary1 = CreateADependencyLibraryTestObject1();
+            DependencyLibrary dependencyLibrary2 = CreateADependencyLibraryTestObject2();
+
+            dao.CreateDependencyOrLibraryBySideProjectId(sideProjectId, dependencyLibrary1);
+            dao.CreateDependencyOrLibraryBySideProjectId(sideProjectId, dependencyLibrary2);
+            SetUpDependencyLibraryNestedDaoMockObjects();
+
+            // Act
+            List<DependencyLibrary> dependenciesAndLibraries = dao.GetDependenciesAndLibrariesBySideProjectId(sideProjectId);
+
+            // Assert
+            Assert.AreEqual(2, dependenciesAndLibraries.Count);
+
+            Assert.AreEqual(dependencyLibrary1.Name, dependenciesAndLibraries[0].Name);
+            Assert.AreEqual(dependencyLibrary2.Description, dependenciesAndLibraries[0].Description);
+
+            Assert.AreEqual(dependencyLibrary2.Name, dependenciesAndLibraries[1].Name);
+            Assert.AreEqual(dependencyLibrary2.Description, dependenciesAndLibraries[1].Description);
+        }
     }
 }
