@@ -206,7 +206,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             int portfolioId = 1;
-            
+
             Hobby hobby = CreateAHobbyTestObject1();
             Hobby createdHobby = dao.CreateHobbyByPortfolioId(portfolioId, hobby);
             SetUpHobbyNestedDaoMockObjects();
@@ -218,6 +218,23 @@ namespace Capstone.UnitTests.DAO
 
             // Assert
             Assert.IsNull(deletedHobby);
+        }
+
+        [TestMethod]
+        public void DeleteHobbyByPortfolioId__Returns_Correct_Number_Of_Rows_Affected()
+        {
+            // Arrange
+            int portfolioId = 1;
+
+            Hobby hobby = CreateAHobbyTestObject1();
+            Hobby createdHobby = dao.CreateHobbyByPortfolioId(portfolioId, hobby);
+            SetUpHobbyNestedDaoMockObjects();
+
+            // Act
+            int rowsAffected = dao.DeleteHobbyByPortfolioId(portfolioId, createdHobby.Id);
+
+            // Assert
+            Assert.AreEqual(1, rowsAffected);
         }
 
 
