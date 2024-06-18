@@ -131,6 +131,22 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(testHobby1.Description, createdHobby.Description);
         }
 
+        [TestMethod]
+        public void CreateHobbyByPortfolioId_Throws_Argument_Exception_When_A_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+
+            Hobby hobby = CreateAHobbyTestObject1();
+            SetUpHobbyNestedDaoMockObjects();
+
+            // Act
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.CreateHobbyByPortfolioId(nonExistentPortfolioId, hobby),
+                "PortfolioId must be greater than zero."
+            );
+        }
+
 
 
     }
