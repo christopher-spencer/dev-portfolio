@@ -247,6 +247,23 @@ namespace Capstone.UnitTests.DAO
                 "VolunteerWorkId must be greater than zero.");
         }
 
+        [TestMethod]
+        public void DeleteVolunteerWorkByPortfolioId_Deletes_A_Volunteer_Work()
+        {
+            // Arrange
+            int portfolioId = 1;
+            VolunteerWork volunteerWorkTestObject = CreateAVolunteerWorkTestObject1();
+            VolunteerWork createdVolunteerWork = dao.CreateVolunteerWorkByPortfolioId(portfolioId, volunteerWorkTestObject);
+            SetUpVolunteerWorkDaoMockObjects();
+
+            // Act
+            dao.DeleteVolunteerWorkByPortfolioId(portfolioId, createdVolunteerWork.Id);
+
+            // Assert
+            VolunteerWork? deletedVolunteerWork = dao.GetVolunteerWorkByPortfolioId(portfolioId, createdVolunteerWork.Id);
+            Assert.IsNull(deletedVolunteerWork);
+        }
+
 
     }
 }
