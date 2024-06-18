@@ -116,6 +116,21 @@ namespace Capstone.UnitTests.DAO
             Assert.IsNull(hobby);
         }
 
+        [TestMethod]
+        public void CreateHobbyByPortfolioId_Returns_Created_Hobby()
+        {
+            // Arrange
+            int portfolioId = 1;
+            Hobby testHobby1 = CreateAHobbyTestObject1();
+            SetUpHobbyNestedDaoMockObjects();
+
+            // Act
+            Hobby createdHobby = dao.CreateHobbyByPortfolioId(portfolioId, testHobby1);
+
+            // Assert
+            Assert.AreEqual(testHobby1.Description, createdHobby.Description);
+        }
+
 
 
     }
