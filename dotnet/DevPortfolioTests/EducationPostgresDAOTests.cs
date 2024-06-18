@@ -232,9 +232,9 @@ namespace Capstone.UnitTests.DAO
             // Act
             Education updatedEducation = dao.UpdateEducationByPortfolioId(portfolioId, educationOriginalObject.Id, educationUpdatedObject);
 
-            // Assert
             Education education = dao.GetEducationByPortfolioId(portfolioId, createdOriginalEducation.Id);
 
+            // Assert
             Assert.AreEqual(updatedEducation.InstitutionName, education.InstitutionName);
             Assert.AreEqual(updatedEducation.Location, education.Location);
             Assert.AreEqual(updatedEducation.Description, education.Description);

@@ -190,6 +190,32 @@ namespace Capstone.UnitTests.DAO
                 "PortfolioId must be greater than zero.");
         }
 
+        [TestMethod]
+        public void UpdateVolunteerWorkByPortfolioId_Returns_Updated_Volunteer_Work()
+        {
+            // Arrange
+            int portfolioId = 1;
+            VolunteerWork volunteerWorkTestObject = CreateAVolunteerWorkTestObject1();
+            VolunteerWork volunteerWorkUpdatedObject = CreateAVolunteerWorkTestObject2(); 
+
+            VolunteerWork createdVolunteerWork = dao.CreateVolunteerWorkByPortfolioId(portfolioId, volunteerWorkTestObject);
+           
+            SetUpVolunteerWorkDaoMockObjects();
+
+            // Act
+            VolunteerWork updatedVolunteerWork = dao.UpdateVolunteerWorkByPortfolioId(portfolioId, createdVolunteerWork.Id, volunteerWorkUpdatedObject);
+
+            VolunteerWork volunteerWork = dao.GetVolunteerWorkByPortfolioId(portfolioId, createdVolunteerWork.Id);
+
+            // Assert
+            Assert.AreEqual(updatedVolunteerWork.OrganizationName, volunteerWork.OrganizationName);
+            Assert.AreEqual(updatedVolunteerWork.Location, volunteerWork.Location);
+            Assert.AreEqual(updatedVolunteerWork.OrganizationDescription, volunteerWork.OrganizationDescription);
+            Assert.AreEqual(updatedVolunteerWork.PositionTitle, volunteerWork.PositionTitle);
+            Assert.AreEqual(updatedVolunteerWork.StartDate, volunteerWork.StartDate);
+            Assert.AreEqual(updatedVolunteerWork.EndDate, volunteerWork.EndDate);
+        }
+
 
     }
 }
