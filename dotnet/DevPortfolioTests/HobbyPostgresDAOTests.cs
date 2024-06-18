@@ -54,7 +54,29 @@ namespace Capstone.UnitTests.DAO
             mockImageDao.Setup(m => m.GetImageByHobbyId(It.IsAny<int>())).Returns(new Image());
         }
 
-        // TODO add Unit Tests for HobbyPostgresDaoTests
+        [TestMethod]
+        public void GetHobbies_Returns_All_Hobbies()
+        {
+            // Arrange
+            int portfolioId = 1;
+            Hobby testHobby1 = CreateAHobbyTestObject1();
+            Hobby testHobby2 = CreateAHobbyTestObject2();
+
+            dao.CreateHobbyByPortfolioId(portfolioId, testHobby1);
+            dao.CreateHobbyByPortfolioId(portfolioId, testHobby2);
+            SetUpHobbyNestedDaoMockObjects();
+
+            // Act
+            List<Hobby> hobbies = dao.GetHobbiesByPortfolioId(portfolioId);
+
+            // Assert
+            Assert.AreEqual(2, hobbies.Count);
+            Assert.AreEqual(testHobby1.Description, hobbies[0].Description);
+        
+            Assert.AreEqual(testHobby2.Description, hobbies[1].Description);
+        }
+
+
 
     }
 }
