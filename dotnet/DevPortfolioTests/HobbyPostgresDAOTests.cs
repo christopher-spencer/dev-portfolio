@@ -169,12 +169,28 @@ namespace Capstone.UnitTests.DAO
         }
 
         [TestMethod]
+        public void UpdateHobbyByPortfolioId_Throws_Argument_Exception_When_Portfolio_Not_Found()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+
+            Hobby hobby = CreateAHobbyTestObject1();
+            SetUpHobbyNestedDaoMockObjects();
+
+            // Act & Assert
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.UpdateHobbyByPortfolioId(nonExistentPortfolioId, hobby.Id, hobby),
+                "PortfolioId must be greater than zero."
+            );
+        }
+
+        [TestMethod]
         public void UpdateHobbyByPortfolioId_Throws_Argument_Exception_When_Hobby_Not_Found()
         {
             // Arrange
             int portfolioId = 1;
             int nonExistentHobbyId = 1;
-            
+
             Hobby hobby = CreateAHobbyTestObject1();
             SetUpHobbyNestedDaoMockObjects();
 
