@@ -189,7 +189,7 @@ namespace Capstone.UnitTests.DAO
         {
             // Arrange
             int portfolioId = 1;
-            int nonExistentHobbyId = 1;
+            int nonExistentHobbyId = -1;
 
             Hobby hobby = CreateAHobbyTestObject1();
             SetUpHobbyNestedDaoMockObjects();
