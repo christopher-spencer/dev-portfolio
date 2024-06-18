@@ -293,9 +293,9 @@ namespace Capstone.UnitTests.DAO
 
             // Act
             dao.DeleteEducationByPortfolioId(portfolioId, createdEducation.Id);
+            Education? deletedEducation = dao.GetEducationByPortfolioId(portfolioId, createdEducation.Id);
 
             // Assert
-            Education? deletedEducation = dao.GetEducationByPortfolioId(portfolioId, createdEducation.Id);
             Assert.IsNull(deletedEducation);
         }
 

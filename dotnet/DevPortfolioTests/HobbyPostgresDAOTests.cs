@@ -201,6 +201,25 @@ namespace Capstone.UnitTests.DAO
             );
         }
 
+        [TestMethod]
+        public void DeleteHobbyByPortfolioId_Deletes_A_Hobby()
+        {
+            // Arrange
+            int portfolioId = 1;
+            
+            Hobby hobby = CreateAHobbyTestObject1();
+            Hobby createdHobby = dao.CreateHobbyByPortfolioId(portfolioId, hobby);
+            SetUpHobbyNestedDaoMockObjects();
+
+            // Act
+            dao.DeleteHobbyByPortfolioId(portfolioId, createdHobby.Id);
+
+            Hobby? deletedHobby = dao.GetHobbyByPortfolioId(portfolioId, createdHobby.Id);
+
+            // Assert
+            Assert.IsNull(deletedHobby);
+        }
+
 
 
     }
