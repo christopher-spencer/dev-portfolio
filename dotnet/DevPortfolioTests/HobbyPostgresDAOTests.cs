@@ -76,6 +76,16 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(testHobby2.Description, hobbies[1].Description);
         }
 
+        [TestMethod]
+        public void GetHobbies_Returns_Empty_List_When_No_Hobbies()
+        {
+            // Act
+            List<Hobby> hobbies = dao.GetHobbies();
+
+            // Assert
+            Assert.AreEqual(0, hobbies.Count);
+        }
+
 
 
     }
