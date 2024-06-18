@@ -216,6 +216,21 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(updatedVolunteerWork.EndDate, volunteerWork.EndDate);
         }
 
+        [TestMethod]
+        public void UpdateVolunteerWorkByPortfolioId_Throws_Argument_Exception_When_A_Portfolio_Does_Not_Exist()
+        {
+            // Arrange
+            int nonExistentPortfolioId = -1;
+
+            VolunteerWork volunteerWorkTestObject = CreateAVolunteerWorkTestObject1();           
+            SetUpVolunteerWorkDaoMockObjects();
+
+            // Act
+            Assert.ThrowsException<ArgumentException>(() => 
+                dao.UpdateVolunteerWorkByPortfolioId(nonExistentPortfolioId, volunteerWorkTestObject.Id, volunteerWorkTestObject),
+                "PortfolioId must be greater than zero.");
+        }
+
 
     }
 }
