@@ -102,6 +102,20 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(createdHobby.Description, hobby.Description);
         }
 
+        [TestMethod]
+        public void GetHobbyByPortfolioId_Returns_Null_When_Hobby_Not_Found()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int hobbyId = 1;
+            
+            // Act
+            Hobby? hobby = dao.GetHobbyByPortfolioId(portfolioId, hobbyId);
+
+            // Assert
+            Assert.IsNull(hobby);
+        }
+
 
 
     }
