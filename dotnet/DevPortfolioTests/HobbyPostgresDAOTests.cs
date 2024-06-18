@@ -147,6 +147,27 @@ namespace Capstone.UnitTests.DAO
             );
         }
 
+        [TestMethod]
+        public void UpdateHobbyByPortfolioId_Updates_A_Hobby()
+        {
+            // Arrange
+            int portfolioId = 1;
+            Hobby hobbyOriginalObject = CreateAHobbyTestObject1();
+            Hobby hobbyUpdatedObject = CreateAHobbyTestObject2();
+
+            Hobby createdOriginalHobby = dao.CreateHobbyByPortfolioId(portfolioId, hobbyOriginalObject);
+
+            SetUpHobbyNestedDaoMockObjects();
+
+            // Act
+            Hobby updatedHobby = dao.UpdateHobbyByPortfolioId(portfolioId, createdOriginalHobby.Id, hobbyUpdatedObject);
+
+            Hobby hobby = dao.GetHobbyByPortfolioId(portfolioId, createdOriginalHobby.Id);
+
+            // Assert
+            Assert.AreEqual(updatedHobby.Description, hobby.Description);
+        }
+
 
 
     }
