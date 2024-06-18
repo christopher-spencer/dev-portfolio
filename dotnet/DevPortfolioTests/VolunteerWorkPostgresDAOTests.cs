@@ -142,7 +142,19 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(createdVolunteerWork.EndDate, volunteerWork.EndDate);
         }
 
+        [TestMethod]
+        public void GetVolunteerWorkByPortfolioId_Returns_Null_When_Volunteer_Work_Not_Found()
+        {
+            // Arrange
+            int portfolioId = 1;
+            int volunteerWorkId = 1;
 
+            // Act
+            VolunteerWork? volunteerWork = dao.GetVolunteerWorkByPortfolioId(portfolioId, volunteerWorkId);
+
+            // Assert
+            Assert.IsNull(volunteerWork);
+        }
 
 
     }
