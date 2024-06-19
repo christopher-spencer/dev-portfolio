@@ -84,5 +84,15 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(dependencyLibrary2.Name, dependenciesAndLibraries[1].Name);
             Assert.AreEqual(dependencyLibrary2.Description, dependenciesAndLibraries[1].Description);
         }
+
+        [TestMethod]
+        public void GetDependenciesAndLibraries_Returns_Empty_List_When_No_Dependencies_And_Libraries()
+        {
+            // Act
+            List<DependencyLibrary> dependenciesAndLibraries = dao.GetDependenciesAndLibraries();
+
+            // Assert
+            Assert.AreEqual(0, dependenciesAndLibraries.Count);
+        }
     }
 }
