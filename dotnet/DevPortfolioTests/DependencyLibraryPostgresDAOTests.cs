@@ -79,7 +79,7 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(2, dependenciesAndLibraries.Count);
 
             Assert.AreEqual(dependencyLibrary1.Name, dependenciesAndLibraries[0].Name);
-            Assert.AreEqual(dependencyLibrary2.Description, dependenciesAndLibraries[0].Description);
+            Assert.AreEqual(dependencyLibrary1.Description, dependenciesAndLibraries[0].Description);
 
             Assert.AreEqual(dependencyLibrary2.Name, dependenciesAndLibraries[1].Name);
             Assert.AreEqual(dependencyLibrary2.Description, dependenciesAndLibraries[1].Description);

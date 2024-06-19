@@ -26,6 +26,7 @@
 -- --PORTFOLIO 1 SIDEPROJECTS VARIABLES
 -- --************************************************************************************
 
+    -- test_sideproject_id INT;
 --     test_sideproject_1_id INT;
 --     test_sideproject_2_id INT;
 --     test_sideproject_1_main_image_id INT;
@@ -334,15 +335,29 @@ VALUES ('Test Portfolio 2', 'Test Location 2', 'Test Professional Summary 2', 'e
 -- --************************************************************************************
 
 -- --Creating test portfolio sideprojects
-INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
-    start_date, finish_date) 
-VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
-    'Test Project Status', '2021-01-01', '2021-01-02')
-JOIN portfolio_sideprojects ON sideprojects.id = portfolio_sideprojects.sideproject_id
-JOIN portfolios ON portfolio_sideprojects.portfolio_id = portfolios.id
-WHERE portfolios.id = 2;
 
--- RETURNING id INTO test_sideproject_1_id;
+-- INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
+--     start_date, finish_date) 
+-- VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
+--     'Test Project Status', '2021-01-01', '2021-01-02')
+-- RETURNING id INTO test_sideproject_id;
+
+-- INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id) 
+-- VALUES (2, test_sideproject_id);
+
+DO $$
+DECLARE 
+    new_sideproject_id INT;
+BEGIN
+    -- Step 1: Insert into sideprojects table and get the new ID
+    INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, start_date, finish_date) 
+    VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 'Test Project Status', '2021-01-01', '2021-01-02')
+    RETURNING id INTO new_sideproject_id;
+
+    -- Step 2: Use the new ID to insert into portfolio_sideprojects table
+    INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id) 
+    VALUES (2, new_sideproject_id);
+END $$;
 
 -- INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id)
 -- VALUES (test_portfolio_id, test_sideproject_1_id);
