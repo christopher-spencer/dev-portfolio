@@ -134,7 +134,7 @@ namespace Capstone.UnitTests.DAO
             SetupAchievementNestedDaoMockObjects();
             
             // Act
-            List<Achievement> achievements = dao.GetAchievements();
+            List<Achievement> achievements = dao.GetAchievements();            
 
             // Assert
             Assert.AreEqual(8, achievements.Count);
@@ -142,14 +142,14 @@ namespace Capstone.UnitTests.DAO
             Assert.AreEqual(workExperienceAchievement1.Description, achievements[0].Description);
             Assert.AreEqual(workExperienceAchievement2.Description, achievements[1].Description);
 
-            Assert.AreEqual(educationAchievement1.Description, achievements[0].Description);
-            Assert.AreEqual(educationAchievement2.Description, achievements[1].Description);
+            Assert.AreEqual(educationAchievement1.Description, achievements[2].Description);
+            Assert.AreEqual(educationAchievement2.Description, achievements[3].Description);
 
-            Assert.AreEqual(openSourceContributionAchievement1.Description, achievements[0].Description);
-            Assert.AreEqual(openSourceContributionAchievement2.Description, achievements[1].Description);
+            Assert.AreEqual(openSourceContributionAchievement1.Description, achievements[4].Description);
+            Assert.AreEqual(openSourceContributionAchievement2.Description, achievements[5].Description);
 
-            Assert.AreEqual(volunteerWorkAchievement1.Description, achievements[0].Description);
-            Assert.AreEqual(volunteerWorkAchievement2.Description, achievements[1].Description);
+            Assert.AreEqual(volunteerWorkAchievement1.Description, achievements[6].Description);
+            Assert.AreEqual(volunteerWorkAchievement2.Description, achievements[7].Description);
         }
 
     }
