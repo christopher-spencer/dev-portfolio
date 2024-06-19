@@ -359,41 +359,46 @@ BEGIN
     VALUES (2, new_sideproject_id);
 END $$;
 
--- DO $$ 
--- DECLARE
---     test_work_experience_id INT;
---     test_education_id INT;
---     test_open_source_contribution_id INT;
---     test_volunteer_work_id INT;
--- BEGIN
---     INSERT INTO work_experiences (position_title, company_name, location, description, start_date, end_date)
---     VALUES ('Test Position Title', 'Test Company', 'Test Location', 'Test Description', '2021-01-01', '2021-01-02')
---     RETURNING id INTO test_work_experience_id;
+DO $$ 
+DECLARE
+    test_work_experience_id INT;
+    test_education_id INT;
+    test_open_source_contribution_id INT;
+    test_volunteer_work_id INT;
+BEGIN
+    INSERT INTO work_experiences (position_title, company_name, location, description, start_date, end_date)
+    VALUES ('Test Position Title', 'Test Company', 'Test Location', 'Test Description', '2021-01-01', 
+        '2021-01-02')
+    RETURNING id INTO test_work_experience_id;
 
---     INSERT INTO portfolio_work_experiences (portfolio_id, experience_id)
---     VALUES (2, test_work_experience_id);
+    INSERT INTO portfolio_work_experiences (portfolio_id, experience_id)
+    VALUES (2, test_work_experience_id);
 
---     INSERT INTO educations (institution_name, location, degree, major, graduation_date)
---     VALUES ('Test Institution', 'Test Location', 'Test Degree', 'Test Major', '2021-01-01')
---     RETURNING id INTO test_education_id;
+    INSERT INTO educations (institution_name, location, description, field_of_study, major, minor, 
+        degree_obtained, gpa_overall, gpa_in_major, start_date, graduation_date)
+    VALUES ('Test Institution', 'Test Location', 'Test Description', 'Test Degree', 'Test Major', 
+        'Test Minor', 'Test Degree obtained', 3.4, 3.0, '2020-01-01', '2021-01-01')
+    RETURNING id INTO test_education_id;
 
---     INSERT INTO portfolio_educations (portfolio_id, education_id)
---     VALUES (2, test_education_id);
+    INSERT INTO portfolio_educations (portfolio_id, education_id)
+    VALUES (2, test_education_id);
 
---     INSERT INTO open_source_contributions (organization_name, project_name, description, start_date, end_date)
---     VALUES ('Test Organization', 'Test Project', 'Test Description', '2021-01-01', '2021-01-02')
---     RETURNING id INTO test_open_source_contribution_id;
+    INSERT INTO open_source_contributions (organization_name, project_name, project_description, start_date, 
+        end_date, contribution_details)
+    VALUES ('Test Organization', 'Test Project', 'Test Description', '2021-01-01', 
+        '2021-01-02', 'contribution details description')
+    RETURNING id INTO test_open_source_contribution_id;
 
---     INSERT INTO portfolio_open_source_contributions (portfolio_id, contribution_id)
---     VALUES (2, test_open_source_contribution_id);
+    INSERT INTO portfolio_open_source_contributions (portfolio_id, contribution_id)
+    VALUES (2, test_open_source_contribution_id);
 
---     INSERT INTO volunteer_works (organization_name, location, description, start_date, end_date)
---     VALUES ('Test Organization', 'Test Location', 'Test Description', '2021-01-01', '2021-01-02')
---     RETURNING id INTO test_volunteer_work_id;
+    INSERT INTO volunteer_works (organization_name, location, position_title, organization_description, start_date, end_date)
+    VALUES ('Test Organization', 'Test Location', 'Position Title Test', 'Test Description', '2021-01-01', '2021-01-02')
+    RETURNING id INTO test_volunteer_work_id;
 
---     INSERT INTO portfolio_volunteer_works (portfolio_id, volunteer_id)
---     VALUES (2, test_volunteer_work_id);
--- END $$;
+    INSERT INTO portfolio_volunteer_works (portfolio_id, volunteer_work_id)
+    VALUES (2, test_volunteer_work_id);
+END $$;
 
 -- INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id)
 -- VALUES (test_portfolio_id, test_sideproject_1_id);

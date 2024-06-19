@@ -137,7 +137,7 @@ namespace Capstone.UnitTests.DAO
             List<Achievement> achievements = dao.GetAchievements();
 
             // Assert
-            Assert.AreEqual(4, achievements.Count);
+            Assert.AreEqual(8, achievements.Count);
 
             Assert.AreEqual(workExperienceAchievement1.Description, achievements[0].Description);
             Assert.AreEqual(workExperienceAchievement2.Description, achievements[1].Description);

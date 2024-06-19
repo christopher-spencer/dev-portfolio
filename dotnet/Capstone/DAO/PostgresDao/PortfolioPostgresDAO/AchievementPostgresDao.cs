@@ -906,7 +906,7 @@ namespace Capstone.DAO
             CheckAchievementDescriptionIsNotNullOrEmpty(achievement);
 
             string insertAchievementSql = "INSERT INTO achievements (description) VALUES (@description) RETURNING id;";
-            string insertVolunteerWorkAchievementSql = "INSERT INTO volunteer_work_achievements (volunteer_id, achievement_id) VALUES (@volunteerId, @achievementId);";
+            string insertVolunteerWorkAchievementSql = "INSERT INTO volunteer_work_achievements (volunteer_work_id, achievement_id) VALUES (@volunteerId, @achievementId);";
 
             try
             {
@@ -969,7 +969,7 @@ namespace Capstone.DAO
             string sql = "SELECT a.id, a.description, a.icon_id " +
                          "FROM achievements a " +
                          "JOIN volunteer_work_achievements va ON a.id = va.achievement_id " +
-                         "WHERE va.volunteer_id = @volunteerId;";
+                         "WHERE va.volunteer_work_id = @volunteerId;";
 
             try
             {
@@ -1011,7 +1011,7 @@ namespace Capstone.DAO
             string sql = "SELECT a.id, a.description, a.icon_id " +
                          "FROM achievements a " +
                          "JOIN volunteer_work_achievements va ON a.id = va.achievement_id " +
-                         "WHERE va.volunteer_id = @volunteerId AND a.id = @achievementId;";
+                         "WHERE va.volunteer_work_id = @volunteerId AND a.id = @achievementId;";
 
             try
             {
@@ -1055,7 +1055,7 @@ namespace Capstone.DAO
                          "SET description = @description " +
                          "FROM volunteer_work_achievements " +
                          "WHERE achievements.id = volunteer_work_achievements.achievement_id " +
-                         "AND volunteer_work_achievements.volunteer_id = @volunteerId " +
+                         "AND volunteer_work_achievements.volunteer_work_id = @volunteerId " +
                          "AND achievements.id = @achievementId;";
 
             try
@@ -1095,7 +1095,7 @@ namespace Capstone.DAO
                 throw new ArgumentException("VolunteerWorkId and AchievementId must be greater than zero.");
             }
 
-            string deleteAchievementFromVolunteerSql = "DELETE FROM volunteer_work_achievements WHERE volunteer_id = @volunteerId AND achievement_id = @achievementId;";
+            string deleteAchievementFromVolunteerSql = "DELETE FROM volunteer_work_achievements WHERE volunteer_work_id = @volunteerId AND achievement_id = @achievementId;";
             string deleteAchievementSql = "DELETE FROM achievements WHERE id = @achievementId;";
 
             try
