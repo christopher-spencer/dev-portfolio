@@ -202,6 +202,10 @@ VALUES ('testAdmin', 'jjjjjjjjj', 'kkkkkkkkkk', 'admin');
 --Creating a test portfolio
 INSERT INTO portfolios (name, location, professional_summary, email) 
 VALUES ('Test Portfolio', 'Test Location', 'Test Professional Summary', 'email1@test.com');
+
+INSERT INTO portfolios (name, location, professional_summary, email)
+VALUES ('Test Portfolio 2', 'Test Location 2', 'Test Professional Summary 2', 'email2@test.com');   
+
 -- RETURNING id INTO test_portfolio_id;
 
 -- --Creating a test portfolio main image
@@ -330,10 +334,14 @@ VALUES ('Test Portfolio', 'Test Location', 'Test Professional Summary', 'email1@
 -- --************************************************************************************
 
 -- --Creating test portfolio sideprojects
--- INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
---     start_date, finish_date) 
--- VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
---     'Test Project Status', '2021-01-01', '2021-01-02')
+INSERT INTO sideprojects (name, description, video_walkthrough_url, project_status, 
+    start_date, finish_date) 
+VALUES ('Test Sideproject', 'Test Description', 'Test Video Walkthrough URL', 
+    'Test Project Status', '2021-01-01', '2021-01-02')
+JOIN portfolio_sideprojects ON sideprojects.id = portfolio_sideprojects.sideproject_id
+JOIN portfolios ON portfolio_sideprojects.portfolio_id = portfolios.id
+WHERE portfolios.id = 2;
+
 -- RETURNING id INTO test_sideproject_1_id;
 
 -- INSERT INTO portfolio_sideprojects (portfolio_id, sideproject_id)

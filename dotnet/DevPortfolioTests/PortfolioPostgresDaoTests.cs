@@ -100,6 +100,7 @@ namespace Capstone.UnitTests.DAO
                 .Returns((int portfolioId) => new Image { Id = 1 });
 
             dao.DeletePortfolio(1);
+            dao.DeletePortfolio(2);
 
             // Act
             List<Portfolio> portfolios = dao.GetPortfolios();
