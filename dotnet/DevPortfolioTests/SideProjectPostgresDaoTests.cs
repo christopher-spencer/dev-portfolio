@@ -74,7 +74,7 @@ namespace Capstone.UnitTests.DAO
                 FinishDate = DateTime.Now
             };
         }
-//FIXME look into this and which ones exactly are necessary for proper testing
+//FIXME look into this and which ones exactly are necessary for proper testing and what theyre doing
         private void SetUpSideProjectNestedDaoMockObjects()
         {
             goalDaoMock.Setup(d => d.GetGoalsBySideProjectId(It.IsAny<int>()))
@@ -113,42 +113,33 @@ namespace Capstone.UnitTests.DAO
         {
             //Act
             int portfolioId = 1;
+            SideProject sideProject1 = CreateASideProjectTestObject1();
+            SideProject sideProject2 = CreateASideProjectTestObject2();
 
-            SideProject sideProjectTestObject = CreateASideProjectTestObject1();
+            dao.CreateSideProjectByPortfolioId(portfolioId, sideProject1);
+            dao.CreateSideProjectByPortfolioId(portfolioId, sideProject2);
             SetUpSideProjectNestedDaoMockObjects();
 
-            dao.CreateSideProjectByPortfolioId(portfolioId, sideProjectTestObject);
-
+            // Act
             List<SideProject> sideProjects = dao.GetSideProjects();
 
-            //Assert
-            Assert.AreEqual(1, sideProjects.Count);
-            Assert.IsTrue(sideProjects.Count > 0);
+            // Assert
+            Assert.IsNotNull(sideProjects);
+            Assert.AreEqual(2, sideProjects.Count);
 
-            // Additional assertions for properties
-            foreach (var sideproject in sideProjects)
-            {
-                Assert.IsNotNull(sideproject.Id);
-                Assert.IsNotNull(sideproject.Name);
-                Assert.IsNotNull(sideproject.Description);
-                Assert.IsNotNull(sideproject.VideoWalkthroughUrl);
-                Assert.IsNotNull(sideproject.ProjectStatus);
-                Assert.IsNotNull(sideproject.StartDate);
-                Assert.IsNotNull(sideproject.FinishDate);
-                
-//FIXME need to be asserting for these nested objects like so after SetUpSideProjectNestedDaoMockObjects() is called
+            Assert.AreEqual(sideProject1.Name, sideProjects[0].Name);
+            Assert.AreEqual(sideProject1.Description, sideProjects[0].Description);
+            Assert.AreEqual(sideProject1.VideoWalkthroughUrl, sideProjects[0].VideoWalkthroughUrl);
+            Assert.AreEqual(sideProject1.ProjectStatus, sideProjects[0].ProjectStatus);
+            Assert.AreEqual(sideProject1.StartDate, sideProjects[0].StartDate);
+            Assert.AreEqual(sideProject1.FinishDate, sideProjects[0].FinishDate);
 
-//FIXME MainImage, Website, GitHubRepoLink, are causing the test to fail, so look into this *******
-                Assert.IsNotNull(sideproject.GoalsAndObjectives);
-                Assert.IsNotNull(sideproject.MainImage);
-                Assert.IsNotNull(sideproject.AdditionalImages);
-                Assert.IsNotNull(sideproject.ToolsUsed);
-                Assert.IsNotNull(sideproject.Contributors);
-                Assert.IsNotNull(sideproject.ExternalAPIsAndServicesUsed);
-                Assert.IsNotNull(sideproject.DependenciesOrLibrariesUsed);
-                Assert.IsNotNull(sideproject.Website);
-                Assert.IsNotNull(sideproject.GitHubRepoLink);
-            }
+            Assert.AreEqual(sideProject2.Name, sideProjects[1].Name);
+            Assert.AreEqual(sideProject2.Description, sideProjects[1].Description);
+            Assert.AreEqual(sideProject2.VideoWalkthroughUrl, sideProjects[1].VideoWalkthroughUrl);
+            Assert.AreEqual(sideProject2.ProjectStatus, sideProjects[1].ProjectStatus);
+            Assert.AreEqual(sideProject2.StartDate, sideProjects[1].StartDate);
+            Assert.AreEqual(sideProject2.FinishDate, sideProjects[1].FinishDate);
         }
 
         [TestMethod]
