@@ -101,6 +101,7 @@ namespace Capstone.UnitTests.DAO
 
             dao.DeletePortfolio(1);
             //FIXME issue with foreign key constraint deleting 2nd portfolio since I added a sideproject within it, unclear what to do about this
+            // NOTE i have hit this foreign key constraint issue before and still need a solid solution for it
             dao.DeletePortfolio(2);
 
             // Act
